@@ -42,7 +42,7 @@ public:
 	explicit ExerciseModel(QObject *parent = nullptr);
 	ExerciseModel(const ExerciseModel * model, QObject *parent = nullptr);
 	virtual ExerciseModel * clone(qint64 programId)const;
-	virtual Training::ExerciseModel * cloneTraining(){return nullptr;}
+	virtual Training::ExerciseModel * cloneTraining(qint64){return nullptr;}
 	virtual int getType() const;	// For QML to know how to display it becausze of lacking object relationship.
 
 	QString getName()const;

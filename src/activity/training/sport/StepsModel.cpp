@@ -27,6 +27,7 @@
 #include <QSqlRecord>
 
 #include "src/activity/description/sport/StepsModel.h"
+#include "src/database/DatabaseQuery.h"
 
 using namespace Training;
 
@@ -44,8 +45,9 @@ StepsModel::StepsModel(const StepsModel * model, QObject *parent) : ExerciseMode
 	mType = 2;
 }
 
-ExerciseModel * StepsModel::clone()const{
+ExerciseModel * StepsModel::clone(qint64 trainId)const{
 	StepsModel *model = new StepsModel(this, nullptr);
+	model->setTrainId(trainId);
 	return model;
 }
 
@@ -59,87 +61,39 @@ void StepsModel::setTargetExercise(Description::ExerciseModel * data){
 	}
 }
 
-
 bool StepsModel::save() {
 	if(!ExerciseModel::save()) return false;
 	qDebug() << "Saving Steps" << mName << mDescription;
-	QSqlQuery query;
-	if(mDbId == 0){
-		query.prepare("INSERT INTO ex_steps(name,description, steps, work_time) VALUES(?,?,?,?) RETURNING id");
-		query.addBindValue(mName);
-		query.addBindValue(mDescription);
-		query.addBindValue(mSteps);
-		query.addBindValue(mWorkTime);
-		query.exec();
-		auto fieldNo = query.record().indexOf("id");
-		while (query.next()) {
-			mDbId = query.value(fieldNo).toInt();
-			qDebug() << "Insert Steps exercise : " << mDbId;
-		}
-	}else{
-		query.prepare("UPDATE ex_steps SET name=?, description=?, steps=?, work_time=? WHERE id=?");
-		query.addBindValue(mName);
-		query.addBindValue(mDescription);
-		query.addBindValue(mSteps);
-		query.addBindValue(mWorkTime);
-		query.addBindValue(mDbId);
-		qDebug() << "Update Steps exercise : " << mDbId << query.exec();;
-	}
-	return true;
-}
+	DatabaseQuery query;
 
-bool StepsModel::saveProgram(qint64 programId){
-	if(!ExerciseModel::saveProgram(programId)) return false;
-	qDebug() << "Saving " << mName << mDescription;
-	QSqlQuery query;
+	query.begin(mDbId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "tr_ex_steps");
+	query.add("train_id", getTrainId());
+	query.add("train_order", getTrainOrder());
+	query.add("name", mName);
+	query.add("description", mDescription);
+	query.add("steps", getSteps());
+	query.add("rest_time", getRestTime());
+	query.addConditionnal("id",mDbId);
 	if(mDbId == 0){
-		query.prepare("INSERT INTO pgrm_ex_steps(program_id, name,description, steps, work_time, program_order) VALUES(?,?,?,?,?,?) RETURNING id");
-		query.addBindValue(programId);
-		query.addBindValue(mName);
-		query.addBindValue(mDescription);
-		query.addBindValue(mSteps);
-		query.addBindValue(mWorkTime);
-		query.addBindValue(mProgramOrder);
-		query.exec();
-		auto fieldNo = query.record().indexOf("id");
-		while (query.next()) {
-			mDbId = query.value(fieldNo).toInt();
-			qDebug() << "Insert program steps exercise : " << mDbId << " at " << mProgramOrder;
+		if(!query.exec()) qCritical() << "Cannot save train steps : "  << query.mQuery.lastError().text();
+		auto fieldNo = query.mQuery.record().indexOf("id");
+		while (query.mQuery.next()) {
+			setId(query.mQuery.value(fieldNo).toInt());
+			qDebug() << "Insert train steps exercise: " << mDbId;
 		}
 	}else{
-		query.prepare("UPDATE pgrm_ex_steps SET name=?, description=?, steps=?, work_time=?, program_order=? WHERE id=?");
-		query.addBindValue(mName);
-		query.addBindValue(mDescription);
-		query.addBindValue(mSteps);
-		query.addBindValue(mWorkTime);
-		query.addBindValue(mProgramOrder);
-		query.addBindValue(mDbId);
-		qDebug() << "Update steps exercise : " << mDbId << " at " << mProgramOrder << query.exec();
+		if(!query.exec()) qCritical() << "Cannot update train steps : "  << query.mQuery.lastError().text();
+		else qDebug() << "Update train steps exercise: " << mDbId;
 	}
 	return true;
 }
 
 QList<ExerciseModel*> StepsModel::load(){
 	QList<ExerciseModel*> models;
-	QSqlQuery query( "SELECT * FROM ex_steps ORDER BY id ASC");
-
-	auto idField = query.record().indexOf("id");
-	auto nameField = query.record().indexOf("name");
-	auto descriptionField = query.record().indexOf("description");
-	auto stepsField = query.record().indexOf("steps");
-	auto workTimeField = query.record().indexOf("work_time");
-	QStringList ids;
+	QSqlQuery query( "SELECT * FROM tr_ex_steps ORDER BY id ASC");
 
 	while (query.next()) {
-		StepsModel * model = new StepsModel();
-		qint64 id = query.value(idField).toInt();
-		ids << QString::number(id);
-		model->setId(id);
-		model->setName(query.value(nameField).toString());
-		model->setDescription(query.value(descriptionField).toString());
-		model->setSteps(query.value(stepsField).toInt());
-		model->setWorkTime(query.value(workTimeField).toInt());
-		models << model;
+		models << load(query);
 	}
 	return models;
 }
@@ -151,15 +105,20 @@ StepsModel *StepsModel::load(QSqlQuery &query) {
 	auto nameField = query.record().indexOf("name");
 	auto descriptionField = query.record().indexOf("description");
 	auto stepsField = query.record().indexOf("steps");
-	auto workTimeField = query.record().indexOf("work_time");
-	auto programOrderField = query.record().indexOf("program_order");
+	auto restTimeField = query.record().indexOf("rest_time");
+	auto trainIdField = query.record().indexOf("train_id");
+	auto trainOrderField = query.record().indexOf("train_order");
 	model->setId(query.value(idField).toInt());
 	model->setName(query.value(nameField).toString());
 	model->setDescription(query.value(descriptionField).toString());
 	model->setSteps(query.value(stepsField).toInt());
-	model->setWorkTime(query.value(workTimeField).toInt());
-	if(programOrderField>=0){
-		model->setProgramOrder(query.value(programOrderField).toInt());
+	model->setRestTime(query.value(restTimeField).toInt());
+	model->setRestTime(query.value(restTimeField).toInt());
+	if(trainIdField>=0){
+		model->setTrainId(query.value(trainIdField).toInt());
+	}
+	if(trainOrderField>=0){
+		model->setTrainOrder(query.value(trainOrderField).toInt());
 	}
 	return model;
 }

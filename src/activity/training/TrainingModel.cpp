@@ -24,16 +24,16 @@ using namespace Training;
 
 TrainingModel::TrainingModel(QObject *parent)
 	: QObject{parent} {
-	mProgramModel = new ProgramModel();
-	connect(mProgramModel, &ProgramModel::exercisesChanged, this, &TrainingModel::exercisesChanged);
-	connect(mProgramModel, &ProgramModel::nextExercise, this, &TrainingModel::nextExercise);
+	mTrainModel = new TrainModel();
+	connect(mTrainModel, &TrainModel::exercisesChanged, this, &TrainingModel::exercisesChanged);
+	connect(mTrainModel, &TrainModel::nextExercise, this, &TrainingModel::nextExercise);
 
 	mRestTimer.setInterval(1000);
 	connect(&mRestTimer, &QTimer::timeout, this, &TrainingModel::refresh);
 }
 
 TrainingModel::~TrainingModel(){
-	mProgramModel->deleteLater();
+	mTrainModel->deleteLater();
 }
 
 bool TrainingModel::isWorking()const{
@@ -57,13 +57,15 @@ void TrainingModel::setIsResting(bool data){
 }
 
 void TrainingModel::start(){
-	mCurrentExercise = mProgramModel->getExercises().begin();
-	(*mCurrentExercise)->startWork();
-
+	mCurrentExercise = mTrainModel->start();
 }
 void TrainingModel::stop(){
 }
 void TrainingModel::resume(){
+}
+
+void TrainingModel::save(){
+	mTrainModel->save();
 }
 
 void TrainingModel::endOfCurrentWork(){
@@ -86,10 +88,10 @@ void TrainingModel::refresh(){
 }
 
 void TrainingModel::nextExercise(){
-	if(++mCurrentExercise == mProgramModel->getExercises().end()){
+	if(++mCurrentExercise == mTrainModel->getExercises().end()){
 		emit finished();
 	}else {
 		(*mCurrentExercise)->startWork();
-		emit workingNextExercise(mCurrentExercise - mProgramModel->getExercises().begin());
+		emit workingNextExercise(mCurrentExercise - mTrainModel->getExercises().begin());
 	}
 }

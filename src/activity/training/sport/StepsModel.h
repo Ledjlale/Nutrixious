@@ -37,10 +37,9 @@ class StepsModel : public ExerciseModel {
 public:
 	explicit StepsModel(QObject *parent = nullptr);
 	StepsModel(const StepsModel * model, QObject *parent = nullptr);
-	virtual ExerciseModel * clone()const;
+	virtual ExerciseModel * clone(qint64 programId)const;
 
 	Q_INVOKABLE virtual bool save();
-	virtual bool saveProgram(qint64 programId);
 	static QList<ExerciseModel*> load();
 	static StepsModel *load(QSqlQuery &query);	// Create a model from the current query.
 

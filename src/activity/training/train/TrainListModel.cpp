@@ -18,7 +18,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ProgramListModel.h"
+#include "TrainListModel.h"
 
 #include <QDebug>
 #include <QSqlQuery>
@@ -26,23 +26,23 @@
 
 using namespace Training;
 
-ProgramListModel::ProgramListModel(QObject *parent)
-	: ProxyAbstractListModel<ProgramModel*>{parent}
+TrainListModel::TrainListModel(QObject *parent)
+	: ProxyAbstractListModel<TrainModel*>{parent}
 {
-	mList << ProgramModel::load();
+	mList << TrainModel::load();
 	//mList << StrengthModel::load();
 	//mList << DistanceModel::load();
 	//mList << StepsModel::load();
 }
 
-QHash<int, QByteArray> ProgramListModel::roleNames () const {
+QHash<int, QByteArray> TrainListModel::roleNames () const {
 	QHash<int, QByteArray> roles;
 	roles[Qt::DisplayRole] = "$modelData";
 	roles[Qt::DisplayRole+1] = "displayText";
 	return roles;
 }
 
-QVariant ProgramListModel::data (const QModelIndex &index, int role) const {
+QVariant TrainListModel::data (const QModelIndex &index, int role) const {
 	int row = index.row();
 
 	if (!index.isValid() || row < 0 || row >= mList.count())

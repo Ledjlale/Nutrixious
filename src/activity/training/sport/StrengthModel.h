@@ -37,17 +37,16 @@ public:
 	explicit StrengthModel(QObject *parent = nullptr);
 	StrengthModel(const StrengthModel * model, QObject *parent = nullptr);
 	~StrengthModel();
-	virtual ExerciseModel * clone()const;
+	virtual ExerciseModel * clone(qint64 programId)const;
 	virtual void setTargetExercise(Description::ExerciseModel * data);
 
 	Q_INVOKABLE virtual bool save();
-	virtual bool saveProgram(qint64 programId);
 	static QList<ExerciseModel*> load();
 	static StrengthModel *load(QSqlQuery &query);	// Create a model from the current query.
 
 	QVariantList getVariantSets() const;
 	QList<StrengthWorkModel*> getSets() const;
-	Q_INVOKABLE void addSet(StrengthWorkModel *model);
+	Q_INVOKABLE void addSet(StrengthWorkModel *model, bool keepId);
 	Q_INVOKABLE void removeSet(StrengthWorkModel *model);
 
 	void nextSet();

@@ -40,7 +40,7 @@ ExerciseModel::ExerciseModel(QObject *parent)
 ExerciseModel::ExerciseModel(const ExerciseModel * model, QObject *parent) : QObject(parent){
 	mName = model->getName();
 	mDescription = model->getDescription();
-	mProgramOrder = model->getProgramOrder();
+	mTrainOrder = model->getTrainOrder();
 	setInvalidName( mName == "");
 	connect(this, &ExerciseModel::nameChanged, [this](){
 		setInvalidName( mName == "");
@@ -54,8 +54,9 @@ ExerciseModel::ExerciseModel(const ExerciseModel * model, QObject *parent) : QOb
 	});
 }
 
-ExerciseModel * ExerciseModel::clone()const{
+ExerciseModel * ExerciseModel::clone(qint64 trainId)const{
 	ExerciseModel *model = new ExerciseModel(this, nullptr);
+	model->setTrainId(trainId);
 	return model;
 }
 
@@ -71,10 +72,6 @@ void ExerciseModel::setType(int data){
 }
 
 bool ExerciseModel::save(){
-	return !mInvalidName && !mInvalidDescription;
-}
-
-bool ExerciseModel::saveProgram(qint64 programId){
 	return !mInvalidName && !mInvalidDescription;
 }
 
@@ -94,6 +91,17 @@ qint64 ExerciseModel::getId()const{
 
 void ExerciseModel::setId(qint64 id) {
 	mDbId = id;
+}
+
+qint64 ExerciseModel::getTrainId() const{
+	return mTrainId;
+}
+
+void ExerciseModel::setTrainId(qint64 id){
+	if(mTrainId != id){
+		mTrainId = id;
+		emit trainIdChanged();
+	}
 }
 
 QString ExerciseModel::getName() const{
@@ -118,14 +126,14 @@ void ExerciseModel::setDescription(QString description) {
 	}
 }
 
-int ExerciseModel::getProgramOrder() const {
-	return mProgramOrder;
+int ExerciseModel::getTrainOrder() const {
+	return mTrainOrder;
 }
 
-void ExerciseModel::setProgramOrder(int data){
-	if(mProgramOrder != data){
-		mProgramOrder = data;
-		emit programOrderChanged();
+void ExerciseModel::setTrainOrder(int data){
+	if(mTrainOrder != data){
+		mTrainOrder = data;
+		emit trainOrderChanged();
 	}
 }
 

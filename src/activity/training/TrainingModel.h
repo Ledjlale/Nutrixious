@@ -25,12 +25,12 @@
 #include <QTimer>
 #include <QTime>
 
-#include "src/activity/training/program/ProgramModel.h"
+#include "src/activity/training/train/TrainModel.h"
 
 namespace Training{
 class TrainingModel : public QObject {
 	Q_OBJECT
-	Q_PROPERTY(ProgramModel *programModel MEMBER mProgramModel NOTIFY programModelChanged)
+	Q_PROPERTY(TrainModel *trainModel MEMBER mTrainModel NOTIFY trainModelChanged)
 	Q_PROPERTY(bool pause MEMBER mPause NOTIFY pauseChanged)
 	Q_PROPERTY(bool resting READ isResting NOTIFY isRestingChanged)
 	Q_PROPERTY(bool working READ isWorking NOTIFY isWorkingChanged)
@@ -49,6 +49,7 @@ public:
 	Q_INVOKABLE void start();	// Start from 0
 	Q_INVOKABLE void stop();
 	Q_INVOKABLE void resume();	// Resume after pause
+	Q_INVOKABLE void save();
 
 	Q_INVOKABLE void endOfCurrentWork();
 	Q_INVOKABLE void endOfCurrentRest();
@@ -58,7 +59,7 @@ public:
 	void nextExercise();
 
 signals:
-	void programModelChanged();
+	void trainModelChanged();
 	void workTimeChanged();
 	void restTimeChanged();
 	void pauseChanged();
@@ -70,7 +71,7 @@ signals:
 	void finished();
 
 protected:
-	ProgramModel *mProgramModel;
+	TrainModel *mTrainModel;
 
 	QList<ExerciseModel*>::iterator mCurrentExercise;
 	QList<ExerciseModel*>::iterator mNextExercise;

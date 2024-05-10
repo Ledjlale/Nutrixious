@@ -28,7 +28,7 @@ import '../../Tool/Utils.js' as Utils
 Item {
 	id: mainItem
 	ColumnLayout{
-		anchors.fill: parent		
+		anchors.fill: parent
 		RowLayout{
 			Button{
 				text: 'Back'
@@ -38,6 +38,10 @@ Item {
 					while(stackView.depth > 1)
 						stackView.pop();
 				}
+			}
+			Text{
+				Layout.fillWidth: true
+				text: 'All default exercises'
 			}
 			Item{
 				Layout.fillWidth: true

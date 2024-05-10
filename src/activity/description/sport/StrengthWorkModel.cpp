@@ -47,27 +47,11 @@ StrengthWorkModel * StrengthWorkModel::clone(qint64 strengthId)const{
 	return model;
 }
 
-Training::StrengthWorkModel * StrengthWorkModel::cloneTraining(){
+Training::StrengthWorkModel * StrengthWorkModel::cloneTraining(qint64 trainId, qint64 strengthId){
 	Training::StrengthWorkModel * model = new Training::StrengthWorkModel();
 	model->setTargetWork(this);
-	return model;
-}
-
-StrengthWorkModel *StrengthWorkModel::load(QSqlQuery &query) {
-	StrengthWorkModel * model = new StrengthWorkModel();
-// TODO optimize
-	auto idField = query.record().indexOf("id");
-	auto programIdField = query.record().indexOf("program_id");
-	auto strengthIdField = query.record().indexOf("strength_id");
-	auto repsField = query.record().indexOf("reps");
-	auto weightField = query.record().indexOf("weight");
-	auto restTimeField = query.record().indexOf("rest_time");
-	model->setId(query.value(idField).toInt());
-	if(programIdField >= 0) model->setProgramId(query.value(programIdField).toInt());
-	model->setStrengthId(query.value(strengthIdField).toInt());
-	model->setRepetitions(query.value(repsField).toInt());
-	model->setWeight(query.value(weightField).toInt());
-	model->setRestTime(query.value(restTimeField).toInt());
+	model->setTrainId(trainId);
+	model->setStrengthId(strengthId);
 	return model;
 }
 
@@ -166,4 +150,23 @@ void StrengthWorkModel::save() {
 		if(!query.exec()) qCritical() << "Cannot update"<< (isProgramLinked() ? "program" : "") <<"set : "  << query.mQuery.lastError().text();
 		else qDebug() << "Update"<< (isProgramLinked() ? "program" : "") <<"strength exercise set: " << mDbId;
 	}
+}
+
+
+StrengthWorkModel *StrengthWorkModel::load(QSqlQuery &query) {
+	StrengthWorkModel * model = new StrengthWorkModel();
+// TODO optimize
+	auto idField = query.record().indexOf("id");
+	auto programIdField = query.record().indexOf("program_id");
+	auto strengthIdField = query.record().indexOf("strength_id");
+	auto repsField = query.record().indexOf("reps");
+	auto weightField = query.record().indexOf("weight");
+	auto restTimeField = query.record().indexOf("rest_time");
+	model->setId(query.value(idField).toInt());
+	if(programIdField >= 0) model->setProgramId(query.value(programIdField).toInt());
+	model->setStrengthId(query.value(strengthIdField).toInt());
+	model->setRepetitions(query.value(repsField).toInt());
+	model->setWeight(query.value(weightField).toInt());
+	model->setRestTime(query.value(restTimeField).toInt());
+	return model;
 }

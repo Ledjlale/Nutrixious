@@ -26,7 +26,7 @@ import App 1.0
 
 Item{
 	id: mainItem
-	property StrengthModel strengthModel
+	property var strengthModel
 	property bool showAddButton: false
 	property bool showSaveButton: true
 	property bool showRunning: false

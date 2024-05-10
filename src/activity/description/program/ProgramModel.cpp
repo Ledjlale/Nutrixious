@@ -47,6 +47,105 @@ ProgramModel::ProgramModel(QObject *parent)
 	});
 }
 
+qint64 ProgramModel::getId()const{
+	return mDbId;
+}
+
+void ProgramModel::setId(qint64 id) {
+	mDbId = id;
+	for(auto &i: mExercises) i->setProgramId(id);
+}
+
+QString ProgramModel::getName() const{
+	return mName;
+}
+
+void ProgramModel::setName(QString name) {
+	if(mName != name){
+		mName = name;
+		emit nameChanged();
+	}
+}
+void ProgramModel::setDescription(QString description) {
+	if(mDescription != description){
+		mDescription = description;
+		emit descriptionChanged();
+	}
+}
+
+QVariantList ProgramModel::getVariantExercises() const {
+	QVariantList exercises;
+	for(auto exercise: mExercises){
+		exercises << QVariant::fromValue(exercise);
+	 }
+	return exercises;
+}
+
+const QList<ExerciseModel*>& ProgramModel::getExercises()const {
+	return mExercises;
+}
+
+void ProgramModel::addExercise(ExerciseModel *model, bool keepId) {
+	int programOrder = model->getProgramOrder();
+	ExerciseModel * insertedModel = nullptr;
+	if(programOrder < 0) {
+		mExercises.push_back(model->clone(mDbId));
+		insertedModel = mExercises.back();
+		insertedModel->setProgramOrder(mExercises.size());
+	}else{
+		if( mExercises.size() == 0){
+			mExercises.push_back(model->clone(mDbId));
+			insertedModel = mExercises.back();
+		}else {
+			auto it = mExercises.begin();
+			while(it != mExercises.end() && (*it)->getProgramOrder() <= programOrder)
+				++it;
+			insertedModel = *mExercises.insert(it, model->clone(mDbId));
+		}
+	}
+	if(keepId)
+		insertedModel->setId(model->getId());
+	emit exercisesChanged();
+}
+
+void ProgramModel::removeExercise(ExerciseModel *model) {
+	mExercises.removeOne(model);
+	model->deleteLater();
+	emit exercisesChanged();
+}
+
+void ProgramModel::clearExercises(){
+	for(auto item : mExercises)
+		item->deleteLater();
+	mExercises.clear();
+	emit exercisesChanged();
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+
+void ProgramModel::setInvalidName(bool invalid) {
+	if(mInvalidName != invalid){
+		mInvalidName = invalid;
+		emit invalidNameChanged();
+	}
+}
+
+void ProgramModel::setInvalidDescription(bool invalid){
+	if(mInvalidDescription != invalid){
+		mInvalidDescription = invalid;
+		emit invalidDescriptionChanged();
+	}
+}
+
+void ProgramModel::setInvalidExercises(bool invalid) {
+	if(mInvalidExercises != invalid){
+		mInvalidExercises = invalid;
+		emit invalidExercisesChanged();
+	}
+}
+//-------------------------------------------------------------------------------------------------------------------
+
+
 bool ProgramModel::save(){
 	if( mInvalidName || mInvalidDescription || mInvalidExercises) return false;
 	qDebug() << "Saving Program " << mName << mDescription;
@@ -156,101 +255,3 @@ QList<ProgramModel*> ProgramModel::load(){
 
 	return models;
 }
-
-qint64 ProgramModel::getId()const{
-	return mDbId;
-}
-
-void ProgramModel::setId(qint64 id) {
-	mDbId = id;
-	for(auto &i: mExercises) i->setProgramId(id);
-}
-
-QString ProgramModel::getName() const{
-	return mName;
-}
-
-void ProgramModel::setName(QString name) {
-	if(mName != name){
-		mName = name;
-		emit nameChanged();
-	}
-}
-void ProgramModel::setDescription(QString description) {
-	if(mDescription != description){
-		mDescription = description;
-		emit descriptionChanged();
-	}
-}
-
-QVariantList ProgramModel::getVariantExercises() const {
-	QVariantList exercises;
-	for(auto exercise: mExercises){
-		exercises << QVariant::fromValue(exercise);
-	 }
-	return exercises;
-}
-
-const QList<ExerciseModel*>& ProgramModel::getExercises()const {
-	return mExercises;
-}
-
-void ProgramModel::addExercise(ExerciseModel *model, bool keepId) {
-	int programOrder = model->getProgramOrder();
-	ExerciseModel * insertedModel = nullptr;
-	if(programOrder < 0) {
-		mExercises.push_back(model->clone(mDbId));
-		insertedModel = mExercises.back();
-		insertedModel->setProgramOrder(mExercises.size());
-	}else{
-		if( mExercises.size() == 0){
-			mExercises.push_back(model->clone(mDbId));
-			insertedModel = mExercises.back();
-		}else {
-			auto it = mExercises.begin();
-			while(it != mExercises.end() && (*it)->getProgramOrder() <= programOrder)
-				++it;
-			insertedModel = *mExercises.insert(it, model->clone(mDbId));
-		}
-	}
-	if(keepId)
-		insertedModel->setId(model->getId());
-	emit exercisesChanged();
-}
-
-void ProgramModel::removeExercise(ExerciseModel *model) {
-	mExercises.removeOne(model);
-	model->deleteLater();
-	emit exercisesChanged();
-}
-
-void ProgramModel::clearExercises(){
-	for(auto item : mExercises)
-		item->deleteLater();
-	mExercises.clear();
-	emit exercisesChanged();
-}
-
-//-------------------------------------------------------------------------------------------------------------------
-
-void ProgramModel::setInvalidName(bool invalid) {
-	if(mInvalidName != invalid){
-		mInvalidName = invalid;
-		emit invalidNameChanged();
-	}
-}
-
-void ProgramModel::setInvalidDescription(bool invalid){
-	if(mInvalidDescription != invalid){
-		mInvalidDescription = invalid;
-		emit invalidDescriptionChanged();
-	}
-}
-
-void ProgramModel::setInvalidExercises(bool invalid) {
-	if(mInvalidExercises != invalid){
-		mInvalidExercises = invalid;
-		emit invalidExercisesChanged();
-	}
-}
-//-------------------------------------------------------------------------------------------------------------------

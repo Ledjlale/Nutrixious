@@ -37,7 +37,7 @@ Q_OBJECT
 	Q_PROPERTY(bool invalidName MEMBER mInvalidName NOTIFY invalidNameChanged)
 	Q_PROPERTY(bool invalidDescription MEMBER mInvalidDescription NOTIFY invalidDescriptionChanged)
 	Q_PROPERTY(int type READ getType WRITE setType NOTIFY typeChanged)
-	Q_PROPERTY(int programOrder READ getProgramOrder WRITE setProgramOrder NOTIFY programOrderChanged)
+	Q_PROPERTY(int trainOrder READ getTrainOrder WRITE setTrainOrder NOTIFY trainOrderChanged)
 
 	Q_PROPERTY(bool running READ getIsRunning WRITE setIsRunning NOTIFY isRunningChanged)
 	Q_PROPERTY(bool resting READ getIsResting WRITE setIsResting NOTIFY isRestingChanged)
@@ -45,7 +45,7 @@ Q_OBJECT
 public:
 	explicit ExerciseModel(QObject *parent = nullptr);
 	ExerciseModel(const ExerciseModel * model, QObject *parent = nullptr);
-	virtual ExerciseModel * clone()const;
+	virtual ExerciseModel * clone(qint64 trainId)const;
 
 	virtual int getType() const;	// For QML to know how to display it because of lacking object relationship.
 	void setType(int data);
@@ -64,8 +64,11 @@ public:
 	qint64 getId()const;
 	void setId(qint64 id);
 
-	int getProgramOrder() const;
-	void setProgramOrder(int data);
+	int getTrainOrder() const;
+	void setTrainOrder(int data);
+
+	qint64 getTrainId() const;
+	virtual void setTrainId(qint64 id);
 
 	bool getIsRunning() const;
 	void setIsRunning(bool data);
@@ -85,16 +88,14 @@ public:
 
 
 	Q_INVOKABLE virtual bool save();
-	virtual bool saveProgram(qint64 programId);
-
-
 
 
 signals:
+	void trainIdChanged();
 	void targetExerciseChanged();
 	void nameChanged();
 	void descriptionChanged();
-	void programOrderChanged();
+	void trainOrderChanged();
 	void typeChanged();
 	void isRunningChanged();
 	void isRestingChanged();
@@ -108,9 +109,10 @@ signals:
 protected:
 	Description::ExerciseModel *mTargetExercise = nullptr;
 	qint64 mDbId = 0;
+	qint64 mTrainId = -1;
 	QString mName;
 	QString mDescription;
-	int mProgramOrder = -1;			// Order in program
+	int mTrainOrder = -1;			// Order in train
 	int mType = 0;
 	bool mIsRunning = false;
 	bool mIsResting = false;

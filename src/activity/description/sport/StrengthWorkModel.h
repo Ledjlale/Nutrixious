@@ -42,7 +42,7 @@ public:
 	StrengthWorkModel(const StrengthWorkModel * model, QObject *parent = nullptr);
 
 	virtual StrengthWorkModel *clone(qint64 strengthId)const;
-	virtual Training::StrengthWorkModel * cloneTraining();
+	virtual Training::StrengthWorkModel * cloneTraining(qint64 programId, qint64 strengthId);
 	static StrengthWorkModel *load(QSqlQuery &query);	// Create a model from the current query.
 
 	int  getRepetitions() const;

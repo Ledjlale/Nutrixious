@@ -29,7 +29,7 @@ import '../Tool/Utils.js' as Utils
 
 Item{
 	id: mainItem
-	property ExerciseModel exerciseModel
+	property var exerciseModel
 	property bool isLive: exerciseModel && !!exerciseModel.targetExercise
 	property bool showSaveButton: !isLive
 	property bool isReadOnly: false
