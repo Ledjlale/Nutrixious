@@ -1,0 +1,3 @@
+[submodule "external/SCodes"]
+	path = external/SCodes
+	url = https://github.com/scytheStudio/SCodes.git
