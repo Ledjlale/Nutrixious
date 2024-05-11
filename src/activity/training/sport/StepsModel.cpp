@@ -78,6 +78,7 @@ bool StepsModel::save() {
 
 	query.begin(mExerciseId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "tr_ex_steps");
 	query.add("train_id", getTrainId());
+	if(getDescriptionExerciseId() >= 0) query.add("exercise_id", getDescriptionExerciseId());
 	query.add("train_order", getTrainOrder());
 	query.add("name", mName);
 	query.add("description", mDescription);
@@ -118,6 +119,7 @@ StepsModel *StepsModel::load(QSqlQuery &query, QObject * parent) {
 	auto restTimeField = query.record().indexOf("rest_time");
 	auto trainIdField = query.record().indexOf("train_id");
 	auto trainOrderField = query.record().indexOf("train_order");
+	auto descriptionExerciseIdField = query.record().indexOf("exercise_id");
 	model->setExerciseId(query.value(idField).toInt());
 	model->setName(query.value(nameField).toString());
 	model->setDescription(query.value(descriptionField).toString());
@@ -129,6 +131,9 @@ StepsModel *StepsModel::load(QSqlQuery &query, QObject * parent) {
 	}
 	if(trainOrderField>=0){
 		model->setTrainOrder(query.value(trainOrderField).toInt());
+	}
+	if(descriptionExerciseIdField>=0){
+		model->setDescriptionExerciseId(query.value(descriptionExerciseIdField).toInt());
 	}
 	return model;
 }
@@ -185,4 +190,8 @@ void StepsModel::endOfCurrentWork(){
 void StepsModel::endOfCurrentRest() {
 	setRestTime(mStart.secsTo(QDateTime::currentDateTime()));
 	emit finished();
+}
+
+void StepsModel::fillRandomValues(){
+	setSteps(10000.0 * std::rand() / RAND_MAX);
 }

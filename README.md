@@ -15,6 +15,7 @@ Focus on Android only! (and Linux for debugging).
 - Exercises and programs can be set.
 - A physical training on a program can be done.
 - Training can be saved after doing it.
+- Graphs on sum of weights, steps, distances.
 - A Bar code can be scanned that shows only the result.
 
 ### Main Goals:

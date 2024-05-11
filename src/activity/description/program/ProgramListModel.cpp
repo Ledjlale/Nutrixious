@@ -47,11 +47,11 @@ QVariant ProgramListModel::data (const QModelIndex &index, int role) const {
 
 	if (!index.isValid() || row < 0 || row >= mList.count())
 		return QVariant();
-	auto programModel = mList[row];
+	auto model = mList[row];
 	if (role == Qt::DisplayRole) {
-		return QVariant::fromValue(programModel);
+		return QVariant::fromValue(model);
 	}else{
-		return programModel->getName();
+		return model->getName();
 	}
 
 	return QVariant();

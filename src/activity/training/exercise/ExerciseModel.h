@@ -73,6 +73,9 @@ public:
 	qint64 getTrainId() const;
 	virtual void setTrainId(qint64 id);
 
+	qint64 getDescriptionExerciseId() const;
+	virtual void setDescriptionExerciseId(qint64 id);
+
 	bool getIsRunning() const;
 	void setIsRunning(bool data);
 
@@ -95,10 +98,13 @@ public:
 
 	Q_INVOKABLE virtual bool save();
 
+	virtual void fillRandomValues(); // Debug
+
 
 signals:
 	void exerciseIdChanged();
 	void trainIdChanged();
+	void descriptionExerciseIdChanged();
 	void targetExerciseChanged();
 	void nameChanged();
 	void descriptionChanged();
@@ -118,6 +124,7 @@ protected:
 	Description::ExerciseModel *mTargetExercise = nullptr;
 	qint64 mExerciseId = 0;
 	qint64 mTrainId = -1;
+	qint64 mDescriptionExerciseId = -1;
 	QString mName;
 	QString mDescription;
 	int mTrainOrder = -1;			// Order in train

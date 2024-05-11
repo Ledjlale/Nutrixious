@@ -110,12 +110,16 @@ bool StrengthModel::save() {
 
 	query.begin(mExerciseId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "tr_ex_strength");
 	query.add("train_id", getTrainId());
+	if(getDescriptionExerciseId() >= 0) query.add("exercise_id", getDescriptionExerciseId());
 	query.add("train_order", getTrainOrder());
 	query.add("name", mName);
 	query.add("description", mDescription);
 	query.addConditionnal("id",mExerciseId);
 	if(mExerciseId == 0){
-		if(!query.exec()) qCritical() << "Cannot save train strength : "  << query.mQuery.lastError().text();
+		if(!query.exec()){
+			qCritical() << "Cannot save train strength : "  << query.mQuery.lastError().text();
+			qCritical() << "	====== > exercise_id=" << getDescriptionExerciseId() << " / tran_id" << getTrainId();
+		}
 		auto fieldNo = query.mQuery.record().indexOf("id");
 		while (query.mQuery.next()) {
 			setExerciseId(query.mQuery.value(fieldNo).toInt());
@@ -166,6 +170,7 @@ StrengthModel *StrengthModel::load(QSqlQuery &query, QObject * parent) {
 	auto descriptionField = query.record().indexOf("description");
 	auto trainIdField = query.record().indexOf("train_id");
 	auto trainOrderField = query.record().indexOf("train_order");
+	auto descriptionExerciseIdField = query.record().indexOf("exercise_id");
 	model->setExerciseId(query.value(idField).toInt());
 	model->setName(query.value(nameField).toString());
 	model->setDescription(query.value(descriptionField).toString());
@@ -174,6 +179,9 @@ StrengthModel *StrengthModel::load(QSqlQuery &query, QObject * parent) {
 	}
 	if(trainOrderField>=0){
 		model->setTrainOrder(query.value(trainOrderField).toInt());
+	}
+	if(descriptionExerciseIdField>=0){
+		model->setDescriptionExerciseId(query.value(descriptionExerciseIdField).toInt());
 	}
 	return model;
 }
@@ -246,3 +254,8 @@ void StrengthModel::setInvalidSets(bool invalid){
 }
 
 //-------------------------------------------------------------------------------------------------------------------
+
+void StrengthModel::fillRandomValues(){
+	for(auto s : mSets)
+		s->fillRandomValues();
+}

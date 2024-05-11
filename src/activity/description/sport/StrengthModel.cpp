@@ -102,6 +102,7 @@ bool StrengthModel::save() {
 	if(isProgramLinked()){
 		query.add("program_id", getProgramId());
 		query.add("program_order", getProgramOrder());
+		if(getDescriptionExerciseId() >= 0) query.add("exercise_id", getDescriptionExerciseId());
 	}
 	query.add("name", mName);
 	query.add("description", mDescription);
@@ -111,6 +112,7 @@ bool StrengthModel::save() {
 		auto fieldNo = query.mQuery.record().indexOf("id");
 		while (query.mQuery.next()) {
 			setExerciseId(query.mQuery.value(fieldNo).toInt());
+			if(!isProgramLinked()) setDescriptionExerciseId(getExerciseId());
 			qDebug() << "Insert"<< (isProgramLinked() ? "program" : "") <<"strength exercise: " << mExerciseId;
 		}
 		for(auto set : mSets){
@@ -133,23 +135,16 @@ QList<ExerciseModel*> StrengthModel::load(QObject * parent){
 	QList<ExerciseModel*> models;
 	QSqlQuery query( "SELECT * FROM ex_strength ORDER BY id ASC");
 
-	auto idField = query.record().indexOf("id");
-	auto nameField = query.record().indexOf("name");
-	auto descriptionField = query.record().indexOf("description");
 	QStringList ids;
 
 	while (query.next()) {
-		StrengthModel * model = new StrengthModel(parent);
-		qint64 id = query.value(idField).toInt();
-		ids << QString::number(id);
-		model->setExerciseId(id);
-		model->setName(query.value(nameField).toString());
-		model->setDescription(query.value(descriptionField).toString());
+		auto model = load(query, parent);
+		qint64 id = model->getExerciseId();
 		models << model;
 	}
 
 	query.exec("SELECT * FROM ex_strength_set WHERE strength_id IN(" + ids.join(",") + ") ORDER BY strength_id ASC");
-	idField = query.record().indexOf("strength_id");
+	auto idField = query.record().indexOf("strength_id");
 	auto currentModel = models.begin();
 	while (query.next()) {
 		if(query.value(idField).toInt() != (*currentModel)->getExerciseId()) ++currentModel;
@@ -166,6 +161,7 @@ StrengthModel *StrengthModel::load(QSqlQuery &query, QObject * parent) {
 	auto descriptionField = query.record().indexOf("description");
 	auto programIdField = query.record().indexOf("program_id");
 	auto programOrderField = query.record().indexOf("program_order");
+	auto descriptionExerciseIdField = query.record().indexOf("exercise_id");
 	model->setExerciseId(query.value(idField).toInt());
 	model->setName(query.value(nameField).toString());
 	model->setDescription(query.value(descriptionField).toString());
@@ -174,6 +170,9 @@ StrengthModel *StrengthModel::load(QSqlQuery &query, QObject * parent) {
 	}
 	if(programOrderField>=0){
 		model->setProgramOrder(query.value(programOrderField).toInt());
+	}
+	if(descriptionExerciseIdField>=0){
+		model->setDescriptionExerciseId(query.value(descriptionExerciseIdField).toInt());
 	}
 	return model;
 }

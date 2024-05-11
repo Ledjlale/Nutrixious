@@ -54,6 +54,8 @@
 	src/database/DatabaseModel.cpp
 	src/food/FoodModel.cpp
 
+	src/stat/StatsModel.cpp
+
 	src/tool/proxyModel/SortFilterProxyModel.cpp
 	src/tool/proxyModel/ProxyAbstractObject.hpp
 

@@ -273,3 +273,7 @@ StrengthWorkModel *StrengthWorkModel::load(QSqlQuery &query, QObject * parent) {
 	model->setRestTime(query.value(restTimeField).toInt());
 	return model;
 }
+
+void StrengthWorkModel::fillRandomValues(){
+	setWeight(100.0 * std::rand() / RAND_MAX);
+}

@@ -39,6 +39,11 @@ ExerciseModel::ExerciseModel(QObject *parent)
 		setIsRunning(false);
 		setIsDone(true);
 	});
+	connect(this, &ExerciseModel::targetExerciseChanged, [this](){
+		if(mTargetExercise){
+			setDescriptionExerciseId(mTargetExercise->getDescriptionExerciseId());
+		}
+	});
 }
 
 ExerciseModel::ExerciseModel(const ExerciseModel * model, QObject *parent) : QObject(parent){
@@ -59,6 +64,11 @@ ExerciseModel::ExerciseModel(const ExerciseModel * model, QObject *parent) : QOb
 	connect(this, &ExerciseModel::finished, [this](){
 		setIsRunning(false);
 		setIsDone(true);
+	});
+	connect(this, &ExerciseModel::targetExerciseChanged, [this](){
+		if(mTargetExercise){
+			setDescriptionExerciseId(mTargetExercise->getDescriptionExerciseId());
+		}
 	});
 }
 
@@ -115,6 +125,16 @@ void ExerciseModel::setTrainId(qint64 id){
 	if(mTrainId != id){
 		mTrainId = id;
 		emit trainIdChanged();
+	}
+}
+
+qint64 ExerciseModel::getDescriptionExerciseId() const {
+	return mDescriptionExerciseId;
+}
+void ExerciseModel::setDescriptionExerciseId(qint64 id) {
+	if(mDescriptionExerciseId != id){
+		mDescriptionExerciseId = id;
+		emit descriptionExerciseIdChanged();
 	}
 }
 
@@ -227,3 +247,6 @@ void ExerciseModel::setInvalidDescription(bool invalid){
 }
 
 //-------------------------------------------------------------------------------------------------------------------
+
+void ExerciseModel::fillRandomValues(){
+}

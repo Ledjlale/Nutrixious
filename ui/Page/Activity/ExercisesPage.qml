@@ -114,7 +114,7 @@ Item {
 					spacing: 5
 					delegate:ExerciseModelView{
 						width: exercisesList.width
-						exerciseModel: modelData
+						exerciseModel: $modelData
 					}
 				}
 			}

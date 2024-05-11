@@ -92,6 +92,8 @@ public:
 	virtual void endOfCurrentRest();
 
 	void save();
+
+	virtual void fillRandomValues(); // Debug
 signals:
 	void targetWorkChanged();
 	void repetitionsChanged();

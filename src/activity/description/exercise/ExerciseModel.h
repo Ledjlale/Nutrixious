@@ -64,6 +64,9 @@ public:
 	virtual void setProgramId(qint64 id);
 	bool isProgramLinked()const;
 
+	qint64 getDescriptionExerciseId() const;
+	virtual void setDescriptionExerciseId(qint64 id);
+
 	int getProgramOrder() const;
 	void setProgramOrder(int data);
 
@@ -75,6 +78,7 @@ public:
 signals:
 	void exerciseIdChanged();
 	void programIdChanged();
+	void descriptionExerciseIdChanged();
 	void nameChanged();
 	void descriptionChanged();
 	void programOrderChanged();
@@ -86,6 +90,7 @@ signals:
 protected:
 	qint64 mExerciseId = 0;
 	qint64 mProgramId = -1;
+	qint64 mDescriptionExerciseId = -1;
 	QString mName;
 	QString mDescription;
 	int mProgramOrder = -1;			// Order in program

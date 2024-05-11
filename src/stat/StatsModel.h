@@ -18,25 +18,28 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef EXERCISE_LIST_MODEL_H
-#define EXERCISE_LIST_MODEL_H
+#ifndef STATS_MODEL_H
+#define STATS_MODEL_H
 
-#include "src/tool/proxyModel/ProxyAbstractListModel.hpp"
-#include "ExerciseModel.h"
+#include <QObject>
 
-namespace Description{
-class ExerciseListModel: public ProxyAbstractListModel<ExerciseModel*> {
-Q_OBJECT
+#include "src/activity/description/exercise/ExerciseModel.h"
+
+class StatsModel : public QObject {
+	Q_OBJECT
+
+
 public:
-	ExerciseListModel(QObject * parent = nullptr);
-	ExerciseListModel(QVariantList exercises, QObject * parent = nullptr);
+	StatsModel(QObject *parent = nullptr);
+	Q_INVOKABLE void setExercise(Description::ExerciseModel *exercise);
 
-	virtual QHash<int, QByteArray> roleNames () const override;
-	QVariant data (const QModelIndex &index, int role = Qt::DisplayRole) const override;
+	Q_INVOKABLE QVariantList computeWeights() const;
 
-	QVariantList getExercises() const;
+signals:
+	void exerciseModelChanged();
 
+protected:
+	Description::ExerciseModel *mExerciseModel;
 };
-}
 
 #endif

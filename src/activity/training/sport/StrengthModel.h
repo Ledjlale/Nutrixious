@@ -59,6 +59,8 @@ public:
 
 	void setInvalidSets(bool invalid);
 
+	virtual void fillRandomValues(); // Debug
+
 signals:
 	void setsChanged();
 

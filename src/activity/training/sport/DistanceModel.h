@@ -61,6 +61,8 @@ public:
 	virtual void endOfCurrentWork();
 	virtual void endOfCurrentRest();
 
+	virtual void fillRandomValues(); // Debug
+
 signals:
 	void nameChanged();
 	void descriptionChanged();

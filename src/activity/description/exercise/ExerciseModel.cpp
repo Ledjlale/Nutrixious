@@ -40,6 +40,7 @@ ExerciseModel::ExerciseModel(const ExerciseModel * model, QObject *parent) : QOb
 	mName = model->getName();
 	mDescription = model->getDescription();
 	mProgramOrder = model->getProgramOrder();
+	mDescriptionExerciseId = model->getDescriptionExerciseId();
 	setInvalidName( mName == "");
 	connect(this, &ExerciseModel::exerciseIdChanged, [this](){
 		setIsSaved(getExerciseId() > 0);
@@ -87,6 +88,16 @@ void ExerciseModel::setProgramId(qint64 id){
 
 bool ExerciseModel::isProgramLinked() const {
 	return mProgramId >= 0;
+}
+
+qint64 ExerciseModel::getDescriptionExerciseId() const {
+	return mDescriptionExerciseId;
+}
+void ExerciseModel::setDescriptionExerciseId(qint64 id) {
+	if(mDescriptionExerciseId != id){
+		mDescriptionExerciseId = id;
+		emit descriptionExerciseIdChanged();
+	}
 }
 
 QString ExerciseModel::getName() const{

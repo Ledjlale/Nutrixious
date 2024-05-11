@@ -45,8 +45,8 @@ DatabaseModel::DatabaseModel(QObject *parent)
 
 void DatabaseModel::migrate(){
 	QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-	//db.setDatabaseName("data");
-	db.setDatabaseName(":memory:");
+	db.setDatabaseName("data");
+	//db.setDatabaseName(":memory:");
 	if (!db.open()) {
 		qCritical() << QObject::tr("Unable to establish a database connection.\n"
 						"This example needs SQLite support. Please read "
@@ -93,23 +93,29 @@ void DatabaseModel::migrate(){
 			", description TEXT)")) qCritical() << "Cannot create programs : " << query.lastError().text();
 		if(!query.exec("CREATE TABLE pgrm_ex_steps (id INTEGER PRIMARY KEY"
 			", program_id INTEGER NOT NULL"
+			", exercise_id INTEGER"
 			", name TEXT, description TEXT"
 			", steps INTEGER"
 			", rest_time INTEGER"
 			", program_order INTEGER"
+					", FOREIGN KEY (exercise_id) REFERENCES ex_steps (id) ON UPDATE CASCADE ON DELETE SET NULL"
 					", FOREIGN KEY (program_id) REFERENCES programs (id) ON UPDATE CASCADE ON DELETE CASCADE)")) qCritical() << "Cannot create pgrm_ex_steps : " << query.lastError().text();
 		if(!query.exec("CREATE TABLE pgrm_ex_distance (id INTEGER PRIMARY KEY"
 			", program_id INTEGER NOT NULL"
+			", exercise_id INTEGER"
 			", name TEXT, description TEXT"
 			", distance INTEGER"
 			", rest_time INTEGER"
 			", program_order INTEGER"
+					", FOREIGN KEY (exercise_id) REFERENCES ex_distance (id) ON UPDATE CASCADE ON DELETE SET NULL"
 					", FOREIGN KEY (program_id) REFERENCES programs (id) ON UPDATE CASCADE ON DELETE CASCADE)")) qCritical() << "Cannot create pgrm_ex_distance : " << query.lastError().text();
 		if(!query.exec("CREATE TABLE pgrm_ex_strength (id INTEGER PRIMARY KEY"
 			", program_id INTEGER NOT NULL"
+			", exercise_id INTEGER"
 			", name TEXT"
 			", description TEXT"
 			", program_order INTEGER"
+					", FOREIGN KEY (exercise_id) REFERENCES ex_strength (id) ON UPDATE CASCADE ON DELETE SET NULL"
 					", FOREIGN KEY (program_id) REFERENCES programs (id) ON UPDATE CASCADE ON DELETE CASCADE)")) qCritical() << "Cannot create pgrm_ex_strength : " << query.lastError().text();
 		if(!query.exec("CREATE TABLE pgrm_ex_strength_set (id INTEGER PRIMARY KEY"
 			", program_id INTEGER NOT NULL"
@@ -127,25 +133,33 @@ void DatabaseModel::migrate(){
 			", start_date_time INTERGER)")) qCritical() << "Cannot create trains : " << query.lastError().text();
 		if(!query.exec("CREATE TABLE tr_ex_steps (id INTEGER PRIMARY KEY"
 			", train_id INTEGER NOT NULL"
+			", exercise_id INTEGER"
 			", name TEXT"
 			", description TEXT"
 			", steps INTEGER"
 			", rest_time INTEGER"
 			", train_order INTEGER"
+					", FOREIGN KEY (exercise_id) REFERENCES ex_steps (id) ON UPDATE CASCADE ON DELETE SET NULL"
 					", FOREIGN KEY (train_id) REFERENCES trains (id) ON UPDATE CASCADE ON DELETE CASCADE)")) qCritical() << "Cannot create tr_ex_steps : " << query.lastError().text();
 		if(!query.exec("CREATE TABLE tr_ex_distance (id INTEGER PRIMARY KEY"
 			", train_id INTEGER NOT NULL"
+			", exercise_id INTEGER"
 			", name TEXT"
 			", description TEXT"
 			", distance INTEGER"
 			", rest_time INTEGER"
 			", train_order INTEGER"
+					", FOREIGN KEY (exercise_id) REFERENCES ex_distance (id) ON UPDATE CASCADE ON DELETE SET NULL"
 					", FOREIGN KEY (train_id) REFERENCES trains (id) ON UPDATE CASCADE ON DELETE CASCADE)")) qCritical() << "Cannot create tr_ex_distance : " << query.lastError().text();
+
 		if(!query.exec("CREATE TABLE tr_ex_strength (id INTEGER PRIMARY KEY"
 			", train_id INTEGER NOT NULL"
+			", exercise_id INTEGER"
 			", name TEXT, description TEXT"
 			", train_order INTEGER"
+					", FOREIGN KEY (exercise_id) REFERENCES ex_strength (id) ON UPDATE CASCADE ON DELETE SET NULL"
 					", FOREIGN KEY (train_id) REFERENCES trains (id) ON UPDATE CASCADE ON DELETE CASCADE)")) qCritical() << "Cannot create tr_ex_strength : " << query.lastError().text();
+
 		if(!query.exec("CREATE TABLE tr_ex_strength_set (id INTEGER PRIMARY KEY"
 			", train_id INTEGER NOT NULL"
 			", strength_id INTEGER NOT NULL"
@@ -418,6 +432,7 @@ void DatabaseModel::insertDefaultData() {
 			trains.push_back(new Training::TrainModel(nullptr));
 			trains.back()->setTargetProgramModel(i);
 			trains.back()->setStartDateTime(QDateTime::currentDateTime().addDays(10-j));
+			trains.back()->fillRandomValues();
 			trains.back()->save();
 		}
 	}

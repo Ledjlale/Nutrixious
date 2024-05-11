@@ -78,6 +78,8 @@ public:
 	static TrainModel *load(QSqlQuery &query, QObject * parent);
 	QList<ExerciseModel*>::Iterator start();
 
+	void fillRandomValues(); // Debug
+
 signals:
 	void targetProgramModelChanged();
 	void trainIdChanged();

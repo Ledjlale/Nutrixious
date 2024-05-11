@@ -79,6 +79,7 @@ bool DistanceModel::save() {
 	query.begin(mExerciseId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "tr_ex_distance");
 
 	query.add("train_id", getTrainId());
+	if(getDescriptionExerciseId() >= 0) query.add("exercise_id", getDescriptionExerciseId());
 	query.add("train_order", getTrainOrder());
 	query.add("name", mName);
 	query.add("description", mDescription);
@@ -120,6 +121,7 @@ DistanceModel *DistanceModel::load(QSqlQuery &query, QObject * parent) {
 	auto restTimeField = query.record().indexOf("rest_time");
 	auto trainIdField = query.record().indexOf("train_id");
 	auto trainOrderField = query.record().indexOf("train_order");
+	auto descriptionExerciseIdField = query.record().indexOf("exercise_id");
 	model->setExerciseId(query.value(idField).toInt());
 	model->setName(query.value(nameField).toString());
 	model->setDescription(query.value(descriptionField).toString());
@@ -130,6 +132,9 @@ DistanceModel *DistanceModel::load(QSqlQuery &query, QObject * parent) {
 	}
 	if(trainOrderField>=0){
 		model->setTrainOrder(query.value(trainOrderField).toInt());
+	}
+	if(descriptionExerciseIdField>=0){
+		model->setDescriptionExerciseId(query.value(descriptionExerciseIdField).toInt());
 	}
 	return model;
 }
@@ -186,4 +191,8 @@ void DistanceModel::endOfCurrentWork(){
 void DistanceModel::endOfCurrentRest() {
 	setRestTime(mStart.secsTo(QDateTime::currentDateTime()));
 	emit finished();
+}
+
+void DistanceModel::fillRandomValues(){
+	setDistance(100000.0 * std::rand() / RAND_MAX);
 }

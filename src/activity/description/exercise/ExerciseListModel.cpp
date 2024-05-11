@@ -46,6 +46,30 @@ ExerciseListModel::ExerciseListModel(QVariantList exercises, QObject *parent)
 	}
 }
 
+QHash<int, QByteArray> ExerciseListModel::roleNames () const {
+	QHash<int, QByteArray> roles;
+	roles[Qt::DisplayRole] = "$modelData";
+	roles[Qt::DisplayRole+1] = "displayText";
+	return roles;
+}
+
+QVariant ExerciseListModel::data (const QModelIndex &index, int role) const {
+	int row = index.row();
+
+	if (!index.isValid() || row < 0 || row >= mList.count())
+		return QVariant();
+	auto model = mList[row];
+	if (role == Qt::DisplayRole) {
+		return QVariant::fromValue(model);
+	}else{
+		return model->getName();
+	}
+
+	return QVariant();
+}
+
+
+
 QVariantList ExerciseListModel::getExercises() const{
 	QVariantList models;
 	for(auto exercise : mList){

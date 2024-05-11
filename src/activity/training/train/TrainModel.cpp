@@ -328,4 +328,7 @@ QList<ExerciseModel*>::Iterator TrainModel::start(){
 	return f;
 }
 
-
+void TrainModel::fillRandomValues() {
+	for(auto e : mExercises)
+		e->fillRandomValues();
+}

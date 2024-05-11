@@ -26,6 +26,7 @@
 	ui/Page/SettingsPage.qml
 	ui/Page/FoodPage.qml
 	ui/Page/ActivitiesPage.qml
+	ui/Page/StatisticsPage.qml
 
 	ui/Item/Dialog.qml
 	ui/Item/ScannerOverlay.qml

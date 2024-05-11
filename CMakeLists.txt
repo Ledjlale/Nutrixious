@@ -25,7 +25,7 @@ project(${TARGET_NAME} VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INSTALL_PREFIX "OUTPUT")
 
-find_package(Qt6 6.4 REQUIRED COMPONENTS Quick QuickControls2 Sql)
+find_package(Qt6 6.4 REQUIRED COMPONENTS Quick QuickControls2 Sql Charts)
 
 add_subdirectory(external/SCodes/src)
 
@@ -72,7 +72,7 @@ set_target_properties(${TARGET_NAME} PROPERTIES
 include_directories(/usr/local/include)
 
 target_link_libraries(${TARGET_NAME}
-	PRIVATE Qt6::Quick Qt6::QuickControls2 Qt6::Sql SCodes
+	PRIVATE Qt6::Quick Qt6::QuickControls2 Qt6::Sql Qt6::Charts SCodes
 )
 include(GNUInstallDirs)
 install(TARGETS ${TARGET_NAME}

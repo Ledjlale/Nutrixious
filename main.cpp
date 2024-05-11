@@ -55,6 +55,8 @@
 #include "src/activity/training/train/TrainListModel.h"
 #include "src/activity/training/train/TrainModel.h"
 
+#include "src/stat/StatsModel.h"
+
 
 void registerTypes(){
 	qmlRegisterType<SBarcodeScanner>("com.scythestudio.scodes", 1, 0, "SBarcodeScanner");
@@ -89,17 +91,22 @@ void registerTypes(){
 	qmlRegisterType<Training::TrainListModel>("App.Training", 1, 0, "TrainListModel");
 	qmlRegisterType<Training::TrainProxyModel>("App.Training", 1, 0, "TrainProxyModel");
 
+	qmlRegisterType<StatsModel>("App", 1, 0, "StatsModel");
 }
 
 static QQmlApplicationEngine * gEngine = nullptr;
 
+#include <QApplication>
+#include <QStyle>
+
 int main(int argc, char *argv[]) {
-    QGuiApplication app(argc, argv);
+	QApplication app(argc, argv);	// Not QGuiApplication because of Qt Chart that will crash on QApplication::style()
 	// Ignore vertical sync. This way, we avoid blinking on resizes(and other refresh steps like layouts etc.).
 	auto ignoreVSync = QSurfaceFormat::defaultFormat();
 	ignoreVSync.setSwapInterval(0);
 	QSurfaceFormat::setDefaultFormat(ignoreVSync);
 	DatabaseModel::migrate();
+
 
 	QStringList selectors("custom");
 	gEngine = new QQmlApplicationEngine();

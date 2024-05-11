@@ -50,6 +50,7 @@ ApplicationWindow {
 			ExercisesPage{}
 			ProgramsPage{}
 			TrainingsPage{}
+			StatisticsPage{}
 			SettingsPage{}
 		}
 	}
@@ -127,7 +128,7 @@ ApplicationWindow {
 					}
 				}
 				Repeater{
-					model:[{title: 'Overview'},{title: 'Diary'},{title: 'Food'},{title: 'Training'}, {title: 'Exercises'},{title: 'Programs'},{title: 'Trainings'},{title: 'Settings'}]
+					model:[{title: 'Overview'},{title: 'Diary'},{title: 'Food'},{title: 'Training'}, {title: 'Exercises'},{title: 'Programs'},{title: 'Trainings'},{title: 'Statistics'},{title: 'Settings'}]
 					delegate: MouseArea{
 						Layout.fillWidth: true
 						Layout.preferredHeight: 80
