@@ -29,15 +29,24 @@
 #include "src/activity/description/sport/StepsModel.h"
 #include "src/database/DatabaseQuery.h"
 
+#include <QQmlApplicationEngine>
+extern QQmlApplicationEngine * gEngine;
+
 using namespace Training;
 
+StepsModel::StepsModel() : StepsModel(nullptr){
+	gEngine->setObjectOwnership(this, QQmlEngine::JavaScriptOwnership);
+}
+
 StepsModel::StepsModel(QObject *parent) : ExerciseModel(parent){
+	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	mName = "Steps";
 	mInvalidName = false;
 	mType = 2;
 }
 
 StepsModel::StepsModel(const StepsModel * model, QObject *parent) : ExerciseModel(model, parent){
+	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	mSteps = model->getSteps();
 	mWeight = model->getWeight();
 	mWorkTime = model->getWorkTime();
@@ -45,8 +54,8 @@ StepsModel::StepsModel(const StepsModel * model, QObject *parent) : ExerciseMode
 	mType = 2;
 }
 
-ExerciseModel * StepsModel::clone(qint64 trainId)const{
-	StepsModel *model = new StepsModel(this, nullptr);
+ExerciseModel * StepsModel::clone(qint64 trainId, QObject *parent)const{
+	StepsModel *model = new StepsModel(this, parent);
 	model->setTrainId(trainId);
 	return model;
 }
@@ -66,40 +75,40 @@ bool StepsModel::save() {
 	qDebug() << "Saving Steps" << mName << mDescription;
 	DatabaseQuery query;
 
-	query.begin(mDbId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "tr_ex_steps");
+	query.begin(mExerciseId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "tr_ex_steps");
 	query.add("train_id", getTrainId());
 	query.add("train_order", getTrainOrder());
 	query.add("name", mName);
 	query.add("description", mDescription);
 	query.add("steps", getSteps());
 	query.add("rest_time", getRestTime());
-	query.addConditionnal("id",mDbId);
-	if(mDbId == 0){
+	query.addConditionnal("id",mExerciseId);
+	if(mExerciseId == 0){
 		if(!query.exec()) qCritical() << "Cannot save train steps : "  << query.mQuery.lastError().text();
 		auto fieldNo = query.mQuery.record().indexOf("id");
 		while (query.mQuery.next()) {
-			setId(query.mQuery.value(fieldNo).toInt());
-			qDebug() << "Insert train steps exercise: " << mDbId;
+			setExerciseId(query.mQuery.value(fieldNo).toInt());
+			qDebug() << "Insert train steps exercise: " << mExerciseId;
 		}
 	}else{
 		if(!query.exec()) qCritical() << "Cannot update train steps : "  << query.mQuery.lastError().text();
-		else qDebug() << "Update train steps exercise: " << mDbId;
+		else qDebug() << "Update train steps exercise: " << mExerciseId;
 	}
 	return true;
 }
 
-QList<ExerciseModel*> StepsModel::load(){
+QList<ExerciseModel*> StepsModel::load(QObject * parent){
 	QList<ExerciseModel*> models;
 	QSqlQuery query( "SELECT * FROM tr_ex_steps ORDER BY id ASC");
 
 	while (query.next()) {
-		models << load(query);
+		models << load(query, parent);
 	}
 	return models;
 }
 
-StepsModel *StepsModel::load(QSqlQuery &query) {
-	StepsModel * model = new StepsModel();
+StepsModel *StepsModel::load(QSqlQuery &query, QObject * parent) {
+	StepsModel * model = new StepsModel(parent);
 // TODO optimize
 	auto idField = query.record().indexOf("id");
 	auto nameField = query.record().indexOf("name");
@@ -108,7 +117,7 @@ StepsModel *StepsModel::load(QSqlQuery &query) {
 	auto restTimeField = query.record().indexOf("rest_time");
 	auto trainIdField = query.record().indexOf("train_id");
 	auto trainOrderField = query.record().indexOf("train_order");
-	model->setId(query.value(idField).toInt());
+	model->setExerciseId(query.value(idField).toInt());
 	model->setName(query.value(nameField).toString());
 	model->setDescription(query.value(descriptionField).toString());
 	model->setSteps(query.value(stepsField).toInt());

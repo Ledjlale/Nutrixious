@@ -29,7 +29,7 @@ import '../Tool/Utils.js' as Utils
 
 Item{
 	id: mainItem
-	property Training.ExerciseModel exerciseModel
+	property var exerciseModel
 	property bool showAddButton: false
 	property bool showRunning: false
 	property bool expandAll: false
@@ -43,7 +43,7 @@ Item{
 	implicitHeight: mainLayout.implicitHeight
 	height: implicitHeight
 
-	signal addClicked(ExerciseModel exerciseModel)
+	signal addClicked(var exerciseModel)
 	Timer{
 		id: workTimer
 		property int count: 0

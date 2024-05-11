@@ -54,8 +54,11 @@ ExerciseModel::ExerciseModel(const ExerciseModel * model, QObject *parent) : QOb
 	});
 }
 
-ExerciseModel * ExerciseModel::clone(qint64 trainId)const{
-	ExerciseModel *model = new ExerciseModel(this, nullptr);
+ExerciseModel::~ExerciseModel(){
+}
+
+ExerciseModel * ExerciseModel::clone(qint64 trainId, QObject *parent)const{
+	ExerciseModel *model = new ExerciseModel(this, parent);
 	model->setTrainId(trainId);
 	return model;
 }
@@ -85,12 +88,15 @@ void ExerciseModel::setTargetExercise(Description::ExerciseModel * data) {
 	}
 }
 
-qint64 ExerciseModel::getId()const{
-	return mDbId;
+qint64 ExerciseModel::getExerciseId()const{
+	return mExerciseId;
 }
 
-void ExerciseModel::setId(qint64 id) {
-	mDbId = id;
+void ExerciseModel::setExerciseId(qint64 id) {
+	if(mExerciseId != id){
+		mExerciseId = id;
+		emit exerciseIdChanged();
+	}
 }
 
 qint64 ExerciseModel::getTrainId() const{

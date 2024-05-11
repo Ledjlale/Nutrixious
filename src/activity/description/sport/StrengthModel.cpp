@@ -32,20 +32,40 @@
 #include "StrengthWorkModel.h"
 #include "src/activity/training/sport/StrengthModel.h"
 
+#include <QQmlApplicationEngine>
+extern QQmlApplicationEngine * gEngine;
+
 using namespace Description;
 
+StrengthModel::StrengthModel() : StrengthModel(nullptr){
+	gEngine->setObjectOwnership(this, QQmlEngine::JavaScriptOwnership);
+}
 StrengthModel::StrengthModel(QObject *parent) : ExerciseModel(parent){
+	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	mName = "Strength";
 	mInvalidName = false;
 	connect(this, &StrengthModel::setsChanged, [this](){
 		setInvalidSets( mSets.size() == 0);
 	});
+	connect(this, &ExerciseModel::exerciseIdChanged, [this](){
+		for(auto &i: mSets) i->setStrengthId(mExerciseId);
+	});
+	connect(this, &ExerciseModel::programIdChanged, [this](){
+		for(auto &i: mSets) i->setProgramId(mProgramId);
+	});
 }
 
 StrengthModel::StrengthModel(const StrengthModel * model, QObject *parent) : ExerciseModel(model, parent){
+	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	for(auto set : model->getSets()) {
-		mSets << set->clone(mDbId);
+		mSets << set->clone(mExerciseId, this);
 	}
+	connect(this, &ExerciseModel::exerciseIdChanged, [this](){
+		for(auto &i: mSets) i->setStrengthId(mExerciseId);
+	});
+	connect(this, &ExerciseModel::programIdChanged, [this](){
+		for(auto &i: mSets) i->setProgramId(mProgramId);
+	});
 	setInvalidSets( mSets.size() == 0);
 }
 
@@ -54,16 +74,17 @@ StrengthModel::~StrengthModel(){
 		set->deleteLater();
 }
 
-ExerciseModel * StrengthModel::clone(qint64 programId)const{
-	StrengthModel *model = new StrengthModel(this, nullptr);
+ExerciseModel * StrengthModel::clone(qint64 programId, QObject *parent)const{
+	StrengthModel *model = new StrengthModel(this, parent);
 	model->setProgramId(programId);
 	return model;
 }
 
-Training::ExerciseModel * StrengthModel::cloneTraining(qint64 trainId){
-	Training::StrengthModel * model = new Training::StrengthModel();
+Training::ExerciseModel * StrengthModel::cloneTraining(qint64 trainId, QObject *parent){
+	Training::StrengthModel * model = new Training::StrengthModel(parent);
 	model->setTargetExercise(this);
 	model->setTrainId(trainId);
+	model->setTrainOrder(getProgramOrder());
 	return model;
 }
 
@@ -71,38 +92,26 @@ int StrengthModel::getType() const{
 	return 3;
 }
 
-void StrengthModel::setId(qint64 id) {
-	for(auto &i: mSets) i->setStrengthId(id);
-	ExerciseModel::setId(id);
-}
-
-void StrengthModel::setProgramId(qint64 id) {
-	for(auto &i: mSets) i->setProgramId(id);
-	ExerciseModel::setProgramId(id);
-}
-
-
-
 bool StrengthModel::save() {
 	if(!ExerciseModel::save() || mInvalidSets) return false;
 	qDebug() << "Saving " << mName << mDescription;
 
 	DatabaseQuery query;
 
-	query.begin(mDbId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, isProgramLinked() ? "pgrm_ex_strength" : "ex_strength");
+	query.begin(mExerciseId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, isProgramLinked() ? "pgrm_ex_strength" : "ex_strength");
 	if(isProgramLinked()){
 		query.add("program_id", getProgramId());
 		query.add("program_order", getProgramOrder());
 	}
 	query.add("name", mName);
 	query.add("description", mDescription);
-	query.addConditionnal("id",mDbId);
-	if(mDbId == 0){
+	query.addConditionnal("id",mExerciseId);
+	if(mExerciseId == 0){
 		if(!query.exec()) qCritical() << "Cannot save"<< (isProgramLinked() ? "program" : "") <<"strength : "  << query.mQuery.lastError().text();
 		auto fieldNo = query.mQuery.record().indexOf("id");
 		while (query.mQuery.next()) {
-			setId(query.mQuery.value(fieldNo).toInt());
-			qDebug() << "Insert"<< (isProgramLinked() ? "program" : "") <<"strength exercise: " << mDbId;
+			setExerciseId(query.mQuery.value(fieldNo).toInt());
+			qDebug() << "Insert"<< (isProgramLinked() ? "program" : "") <<"strength exercise: " << mExerciseId;
 		}
 		for(auto set : mSets){
 			set->save();
@@ -110,7 +119,7 @@ bool StrengthModel::save() {
 	}else{
 		if(!query.exec()) qCritical() << "Cannot update"<< (isProgramLinked() ? "program" : "") <<"strength : "  << query.mQuery.lastError().text();
 		else {
-			qDebug() << "Update"<< (isProgramLinked() ? "program" : "") <<"strength exercise: " << mDbId;
+			qDebug() << "Update"<< (isProgramLinked() ? "program" : "") <<"strength exercise: " << mExerciseId;
 			for(auto set : mSets){
 				set->save();
 			}
@@ -120,7 +129,7 @@ bool StrengthModel::save() {
 	return true;
 }
 
-QList<ExerciseModel*> StrengthModel::load(){
+QList<ExerciseModel*> StrengthModel::load(QObject * parent){
 	QList<ExerciseModel*> models;
 	QSqlQuery query( "SELECT * FROM ex_strength ORDER BY id ASC");
 
@@ -130,10 +139,10 @@ QList<ExerciseModel*> StrengthModel::load(){
 	QStringList ids;
 
 	while (query.next()) {
-		StrengthModel * model = new StrengthModel();
+		StrengthModel * model = new StrengthModel(parent);
 		qint64 id = query.value(idField).toInt();
 		ids << QString::number(id);
-		model->setId(id);
+		model->setExerciseId(id);
 		model->setName(query.value(nameField).toString());
 		model->setDescription(query.value(descriptionField).toString());
 		models << model;
@@ -143,21 +152,21 @@ QList<ExerciseModel*> StrengthModel::load(){
 	idField = query.record().indexOf("strength_id");
 	auto currentModel = models.begin();
 	while (query.next()) {
-		if(query.value(idField).toInt() != (*currentModel)->getId()) ++currentModel;
-		dynamic_cast<StrengthModel*>(*currentModel)->addSet(StrengthWorkModel::load(query), true);
+		if(query.value(idField).toInt() != (*currentModel)->getExerciseId()) ++currentModel;
+		dynamic_cast<StrengthModel*>(*currentModel)->addSet(StrengthWorkModel::load(query, *currentModel), true);
 	}
 	return models;
 }
 
-StrengthModel *StrengthModel::load(QSqlQuery &query) {
-	StrengthModel * model = new StrengthModel();
+StrengthModel *StrengthModel::load(QSqlQuery &query, QObject * parent) {
+	StrengthModel * model = new StrengthModel(parent);
 // TODO optimize
 	auto idField = query.record().indexOf("id");
 	auto nameField = query.record().indexOf("name");
 	auto descriptionField = query.record().indexOf("description");
 	auto programIdField = query.record().indexOf("program_id");
 	auto programOrderField = query.record().indexOf("program_order");
-	model->setId(query.value(idField).toInt());
+	model->setExerciseId(query.value(idField).toInt());
 	model->setName(query.value(nameField).toString());
 	model->setDescription(query.value(descriptionField).toString());
 	if(programIdField>=0){
@@ -184,10 +193,10 @@ QList<StrengthWorkModel*> StrengthModel::getSets() const{
 }
 
 void StrengthModel::addSet(StrengthWorkModel *model, bool keepId) {
-	mSets.push_back(model->clone(mDbId));
+	mSets.push_back(model->clone(mExerciseId, this));
 	mSets.back()->setProgramId(getProgramId());
 	if(keepId) {
-		mSets.back()->setId(model->getId());
+		mSets.back()->setWorkId(model->getWorkId());
 	}
 	emit setsChanged();
 }

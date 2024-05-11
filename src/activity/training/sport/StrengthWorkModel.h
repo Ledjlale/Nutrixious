@@ -42,11 +42,13 @@ class StrengthWorkModel : public QObject {
 	Q_PROPERTY(bool done READ getIsDone WRITE setIsDone NOTIFY isDoneChanged)
 
 public:
-	explicit StrengthWorkModel(QObject *parent = nullptr);
-	StrengthWorkModel(const StrengthWorkModel * model, QObject *parent = nullptr);
+	StrengthWorkModel();
+	explicit StrengthWorkModel(QObject *parent );
+	StrengthWorkModel(const StrengthWorkModel * model, QObject *parent);
 
-	virtual StrengthWorkModel * clone(qint64 trainId, qint64 strengthId)const;
-	static StrengthWorkModel *load(QSqlQuery &query);	// Create a model from the current query.
+
+	virtual StrengthWorkModel * clone(qint64 trainId, qint64 strengthId, QObject *parent)const;
+	static StrengthWorkModel *load(QSqlQuery &query, QObject * parent);	// Create a model from the current query.
 
 	void setTargetWork(Description::StrengthWorkModel * data);
 
@@ -71,8 +73,8 @@ public:
 	bool getIsDone() const;
 	void setIsDone(bool data);
 
-	qint64 getId() const;
-	void setId(qint64 id);
+	qint64 getWorkId() const;
+	void setWorkId(qint64 id);
 
 	qint64 getStrengthId() const;
 	void setStrengthId(qint64 id);
@@ -91,7 +93,7 @@ signals:
 	void weightChanged();
 	void workTimeChanged();
 	void restTimeChanged();
-	void idChanged();
+	void workIdChanged();
 	void strengthIdChanged();
 	void trainIdChanged();
 	void isRunningChanged();
@@ -101,7 +103,7 @@ signals:
 
 protected:
 	Description::StrengthWorkModel *mTargetWork;
-	qint64 mDbId = 0;
+	qint64 mWorkId = 0;
 	qint64 mStrengthId = 0;
 	qint64 mTrainId = -1;
 	int mRepetitions = 1;

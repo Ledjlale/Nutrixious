@@ -37,7 +37,7 @@ Item{
 	implicitHeight: mainLine.implicitHeight
 
 
-	signal addClicked(ExerciseModel exerciseModel)
+	signal addClicked(var exerciseModel)
 
 	function saveValues(){
 		if(nameTextField.isEdited) stepsModel.name = nameTextField.newValue

@@ -27,11 +27,22 @@
 #include <QSqlRecord>
 #include <QSqlError>
 
+
 #include "src/database/DatabaseQuery.h"
+
+#include <QQmlApplicationEngine>
+extern QQmlApplicationEngine * gEngine;
 
 using namespace Training;
 
+
+
+StrengthWorkModel::StrengthWorkModel() : StrengthWorkModel(nullptr){
+	gEngine->setObjectOwnership(this, QQmlEngine::JavaScriptOwnership);
+}
+
 StrengthWorkModel::StrengthWorkModel(QObject *parent) : QObject(parent){
+	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	connect(this, &StrengthWorkModel::finished, [this](){
 		setIsRunning(false);
 		setIsDone(true);
@@ -39,6 +50,7 @@ StrengthWorkModel::StrengthWorkModel(QObject *parent) : QObject(parent){
 }
 
 StrengthWorkModel::StrengthWorkModel(const StrengthWorkModel * model, QObject *parent) : QObject(parent){
+	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	mRepetitions = model->getRepetitions();
 	mWeight = model->getWeight();
 	mWorkTime = model->getWorkTime();
@@ -50,8 +62,8 @@ StrengthWorkModel::StrengthWorkModel(const StrengthWorkModel * model, QObject *p
 	});
 }
 
-StrengthWorkModel * StrengthWorkModel::clone(qint64 trainId, qint64 strengthId)const{
-	StrengthWorkModel *model = new StrengthWorkModel(this, nullptr);
+StrengthWorkModel * StrengthWorkModel::clone(qint64 trainId, qint64 strengthId, QObject *parent)const{
+	StrengthWorkModel *model = new StrengthWorkModel(this, parent);
 	model->setTrainId(trainId);
 	model->setStrengthId(strengthId);
 	return model;
@@ -107,14 +119,14 @@ void StrengthWorkModel::setRestTime(int restTime){
 	}
 }
 
-qint64 StrengthWorkModel::getId() const{
-	return mDbId;
+qint64 StrengthWorkModel::getWorkId() const{
+	return mWorkId;
 }
 
-void StrengthWorkModel::setId(qint64 id){
-	if(mDbId != id){
-		mDbId = id;
-		emit idChanged();
+void StrengthWorkModel::setWorkId(qint64 id){
+	if(mWorkId != id){
+		mWorkId = id;
+		emit workIdChanged();
 	}
 }
 
@@ -202,29 +214,30 @@ void StrengthWorkModel::save() {
 
 	DatabaseQuery query;
 
-	query.begin(mDbId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "tr_ex_strength_set");
+	query.begin(mWorkId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "tr_ex_strength_set");
 
 	query.add("train_id", getTrainId());
 	query.add("strength_id", getStrengthId());
 	query.add("reps", getRepetitions());
 	query.add("weight", getWeight());
 	query.add("rest_time", getRestTime());
-	query.addConditionnal("id",mDbId);
-	if(mDbId == 0) {
+	query.add("work_time", getWorkTime());
+	query.addConditionnal("id",mWorkId);
+	if(mWorkId == 0) {
 		if(!query.exec()) qCritical() << "Cannot save train set : "  << query.mQuery.lastError().text();
 		auto fieldNo = query.mQuery.record().indexOf("id");
 		while (query.mQuery.next()) {
-			setId(query.mQuery.value(fieldNo).toInt());
-			qDebug() << "Insert train strength exercise set: " << mDbId;
+			setWorkId(query.mQuery.value(fieldNo).toInt());
+			qDebug() << "Insert train strength exercise set: " << mWorkId;
 		}
 	}else{
 		if(!query.exec()) qCritical() << "Cannot update train set : "  << query.mQuery.lastError().text();
-		else qDebug() << "Update train strength exercise set: " << mDbId;
+		else qDebug() << "Update train strength exercise set: " << mWorkId;
 	}
 }
 
-StrengthWorkModel *StrengthWorkModel::load(QSqlQuery &query) {
-	StrengthWorkModel * model = new StrengthWorkModel();
+StrengthWorkModel *StrengthWorkModel::load(QSqlQuery &query, QObject * parent) {
+	StrengthWorkModel * model = new StrengthWorkModel(parent);
 // TODO optimize
 	auto idField = query.record().indexOf("id");
 	auto trainIdField = query.record().indexOf("train_id");
@@ -233,7 +246,7 @@ StrengthWorkModel *StrengthWorkModel::load(QSqlQuery &query) {
 	auto weightField = query.record().indexOf("weight");
 	auto workTimeField = query.record().indexOf("work_time");
 	auto restTimeField = query.record().indexOf("rest_time");
-	model->setId(query.value(idField).toInt());
+	model->setWorkId(query.value(idField).toInt());
 	if(trainIdField >= 0) model->setTrainId(query.value(trainIdField).toInt());
 	model->setStrengthId(query.value(strengthIdField).toInt());
 	model->setRepetitions(query.value(repsField).toInt());

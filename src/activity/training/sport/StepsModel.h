@@ -35,13 +35,14 @@ class StepsModel : public ExerciseModel {
 	Q_PROPERTY(int workTime MEMBER mWorkTime NOTIFY workTimeChanged)
 	Q_PROPERTY(int restTime MEMBER mRestTime NOTIFY restTimeChanged)
 public:
-	explicit StepsModel(QObject *parent = nullptr);
-	StepsModel(const StepsModel * model, QObject *parent = nullptr);
-	virtual ExerciseModel * clone(qint64 programId)const;
+	StepsModel();
+	explicit StepsModel(QObject *parent );
+	StepsModel(const StepsModel * model, QObject *parent );
+	virtual ExerciseModel * clone(qint64 programId, QObject *parent)const;
 
 	Q_INVOKABLE virtual bool save();
-	static QList<ExerciseModel*> load();
-	static StepsModel *load(QSqlQuery &query);	// Create a model from the current query.
+	static QList<ExerciseModel*> load(QObject * parent);
+	static StepsModel *load(QSqlQuery &query, QObject * parent);	// Create a model from the current query.
 
 	virtual void setTargetExercise(Description::ExerciseModel * data);
 

@@ -34,16 +34,17 @@ class DistanceModel : public ExerciseModel {
 	Q_PROPERTY(int weight MEMBER mWeight NOTIFY weightChanged)
 	Q_PROPERTY(int restTime MEMBER mRestTime NOTIFY restTimeChanged)
 public:
-	explicit DistanceModel(QObject *parent = nullptr);
-	DistanceModel(const DistanceModel * model, QObject *parent = nullptr);
-	virtual ExerciseModel * clone(qint64 programId)const;
-	virtual Training::ExerciseModel * cloneTraining(qint64 programId);
+	DistanceModel();
+	DistanceModel(QObject *parent);
+	DistanceModel(const DistanceModel * model, QObject *parent);
+	virtual ExerciseModel * clone(qint64 programId, QObject *parent)const;
+	virtual Training::ExerciseModel * cloneTraining(qint64 programId, QObject *parent);
 	virtual int getType() const;
 
 	Q_INVOKABLE virtual bool save();
 	//virtual bool saveProgram(qint64 programId);
-	static QList<ExerciseModel*> load();
-	static DistanceModel *load(QSqlQuery &query);	// Create a model from the current query.
+	static QList<ExerciseModel*> load(QObject * parent);
+	static DistanceModel *load(QSqlQuery &query, QObject * parent);	// Create a model from the current query.
 
 	int getDistance() const;
 	void setDistance(int distance);

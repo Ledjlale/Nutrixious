@@ -30,25 +30,34 @@
 #include "src/database/DatabaseQuery.h"
 #include "src/activity/training/sport/StrengthWorkModel.h"
 
+#include <QQmlApplicationEngine>
+extern QQmlApplicationEngine * gEngine;
+
 using namespace Description;
 
+StrengthWorkModel::StrengthWorkModel() : StrengthWorkModel(nullptr){
+	gEngine->setObjectOwnership(this, QQmlEngine::JavaScriptOwnership);
+}
+
 StrengthWorkModel::StrengthWorkModel(QObject *parent) : QObject(parent){
+	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 }
 
 StrengthWorkModel::StrengthWorkModel(const StrengthWorkModel * model, QObject *parent) : QObject(parent){
+	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	mRepetitions = model->getRepetitions();
 	mWeight = model->getWeight();
 	mRestTime = model->getRestTime();
 }
 
-StrengthWorkModel * StrengthWorkModel::clone(qint64 strengthId)const{
-	StrengthWorkModel *model = new StrengthWorkModel(this, nullptr);
+StrengthWorkModel * StrengthWorkModel::clone(qint64 strengthId, QObject *parent)const{
+	StrengthWorkModel *model = new StrengthWorkModel(this, parent);
 	model->setStrengthId(strengthId);
 	return model;
 }
 
-Training::StrengthWorkModel * StrengthWorkModel::cloneTraining(qint64 trainId, qint64 strengthId){
-	Training::StrengthWorkModel * model = new Training::StrengthWorkModel();
+Training::StrengthWorkModel * StrengthWorkModel::cloneTraining(qint64 trainId, qint64 strengthId, QObject *parent){
+	Training::StrengthWorkModel * model = new Training::StrengthWorkModel(parent);
 	model->setTargetWork(this);
 	model->setTrainId(trainId);
 	model->setStrengthId(strengthId);
@@ -85,14 +94,14 @@ void StrengthWorkModel::setRestTime(int restTime){
 	}
 }
 
-qint64 StrengthWorkModel::getId() const{
-	return mDbId;
+qint64 StrengthWorkModel::getWorkId() const{
+	return mWorkId;
 }
 
-void StrengthWorkModel::setId(qint64 id){
-	if(mDbId != id){
-		mDbId = id;
-		emit idChanged();
+void StrengthWorkModel::setWorkId(qint64 id){
+	if(mWorkId != id){
+		mWorkId = id;
+		emit workIdChanged();
 	}
 }
 
@@ -130,7 +139,7 @@ void StrengthWorkModel::save() {
 
 	DatabaseQuery query;
 
-	query.begin(mDbId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, isProgramLinked() ? "pgrm_ex_strength_set" : "ex_strength_set");
+	query.begin(mWorkId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, isProgramLinked() ? "pgrm_ex_strength_set" : "ex_strength_set");
 	if(isProgramLinked()){
 		query.add("program_id", getProgramId());
 	}
@@ -138,23 +147,23 @@ void StrengthWorkModel::save() {
 	query.add("reps", getRepetitions());
 	query.add("weight", getWeight());
 	query.add("rest_time", getRestTime());
-	query.addConditionnal("id",mDbId);
-	if(mDbId == 0) {
+	query.addConditionnal("id",mWorkId);
+	if(mWorkId == 0) {
 		if(!query.exec()) qCritical() << "Cannot save"<< (isProgramLinked() ? "program" : "") <<"set : "  << query.mQuery.lastError().text();
 		auto fieldNo = query.mQuery.record().indexOf("id");
 		while (query.mQuery.next()) {
-			setId(query.mQuery.value(fieldNo).toInt());
-			qDebug() << "Insert"<< (isProgramLinked() ? "program" : "") <<"strength exercise set: " << mDbId;
+			setWorkId(query.mQuery.value(fieldNo).toInt());
+			qDebug() << "Insert"<< (isProgramLinked() ? "program" : "") <<"strength exercise set: " << mWorkId;
 		}
 	}else{
 		if(!query.exec()) qCritical() << "Cannot update"<< (isProgramLinked() ? "program" : "") <<"set : "  << query.mQuery.lastError().text();
-		else qDebug() << "Update"<< (isProgramLinked() ? "program" : "") <<"strength exercise set: " << mDbId;
+		else qDebug() << "Update"<< (isProgramLinked() ? "program" : "") <<"strength exercise set: " << mWorkId;
 	}
 }
 
 
-StrengthWorkModel *StrengthWorkModel::load(QSqlQuery &query) {
-	StrengthWorkModel * model = new StrengthWorkModel();
+StrengthWorkModel *StrengthWorkModel::load(QSqlQuery &query, QObject * parent) {
+	StrengthWorkModel * model = new StrengthWorkModel(parent);
 // TODO optimize
 	auto idField = query.record().indexOf("id");
 	auto programIdField = query.record().indexOf("program_id");
@@ -162,7 +171,7 @@ StrengthWorkModel *StrengthWorkModel::load(QSqlQuery &query) {
 	auto repsField = query.record().indexOf("reps");
 	auto weightField = query.record().indexOf("weight");
 	auto restTimeField = query.record().indexOf("rest_time");
-	model->setId(query.value(idField).toInt());
+	model->setWorkId(query.value(idField).toInt());
 	if(programIdField >= 0) model->setProgramId(query.value(programIdField).toInt());
 	model->setStrengthId(query.value(strengthIdField).toInt());
 	model->setRepetitions(query.value(repsField).toInt());

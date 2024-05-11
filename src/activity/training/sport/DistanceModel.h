@@ -35,13 +35,14 @@ class DistanceModel : public ExerciseModel {
 	Q_PROPERTY(int workTime MEMBER mWorkTime NOTIFY workTimeChanged)
 	Q_PROPERTY(int restTime MEMBER mRestTime NOTIFY restTimeChanged)
 public:
-	explicit DistanceModel(QObject *parent = nullptr);
-	DistanceModel(const DistanceModel * model, QObject *parent = nullptr);
-	virtual ExerciseModel * clone(qint64 trainId)const;
+	DistanceModel();
+	explicit DistanceModel(QObject *parent);
+	DistanceModel(const DistanceModel * model, QObject *parent);
+	virtual ExerciseModel * clone(qint64 trainId, QObject *parent)const;
 
 	Q_INVOKABLE virtual bool save();
-	static QList<ExerciseModel*> load();
-	static DistanceModel *load(QSqlQuery &query);	// Create a model from the current query.
+	static QList<ExerciseModel*> load(QObject * parent);
+	static DistanceModel *load(QSqlQuery &query, QObject * parent);	// Create a model from the current query.
 
 	virtual void setTargetExercise(Description::ExerciseModel * data);
 

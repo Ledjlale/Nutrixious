@@ -30,24 +30,49 @@
 #include "src/activity/description/sport/StrengthModel.h"
 #include "src/database/DatabaseQuery.h"
 
+#include <QQmlApplicationEngine>
+extern QQmlApplicationEngine * gEngine;
+
 using namespace Training;
 
+StrengthModel::StrengthModel() : StrengthModel(nullptr){
+	gEngine->setObjectOwnership(this, QQmlEngine::JavaScriptOwnership);
+}
+
 StrengthModel::StrengthModel(QObject *parent) : ExerciseModel(parent){
+	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	mName = "Strength";
 	mInvalidName = false;
 	mType = 3;
 	connect(this, &StrengthModel::setsChanged, [this](){
 		setInvalidSets( mSets.size() == 0);
 	});
+	connect(this, &ExerciseModel::exerciseIdChanged, [this](){
+		for(auto &i: mSets) i->setStrengthId(getExerciseId());
+	});
+	connect(this, &ExerciseModel::trainIdChanged, [this](){
+		for(auto &i: mSets) i->setTrainId(getTrainId());
+	});
 }
 StrengthModel::StrengthModel(const StrengthModel * model, QObject *parent) : ExerciseModel(model, parent){
+	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	for(auto set : model->getSets()) {
-		auto newSet = set->clone(mTrainId, mDbId);
+		auto newSet = set->clone(mTrainId, mExerciseId, this);
 		connect(newSet, &StrengthWorkModel::finished, this, &StrengthModel::nextSet);
 		mSets << newSet;
 	}
-	setInvalidSets( mSets.size() == 0);
 	mType = 3;
+	connect(this, &StrengthModel::setsChanged, [this](){
+		setInvalidSets( mSets.size() == 0);
+	});
+	connect(this, &ExerciseModel::exerciseIdChanged, [this](){
+		for(auto &i: mSets) i->setStrengthId(getExerciseId());
+	});
+	connect(this, &ExerciseModel::trainIdChanged, [this](){
+		for(auto &i: mSets) i->setTrainId(getTrainId());
+	});
+	setInvalidSets( mSets.size() == 0);
+
 }
 
 StrengthModel::~StrengthModel(){
@@ -55,8 +80,8 @@ StrengthModel::~StrengthModel(){
 		set->deleteLater();
 }
 
-ExerciseModel * StrengthModel::clone(qint64 trainId)const{
-	StrengthModel *model = new StrengthModel(this, nullptr);
+ExerciseModel * StrengthModel::clone(qint64 trainId, QObject *parent)const{
+	StrengthModel *model = new StrengthModel(this, parent);
 	model->setTrainId(trainId);
 	return model;
 }
@@ -67,7 +92,7 @@ void StrengthModel::setTargetExercise(Description::ExerciseModel * data){
 		auto model = dynamic_cast<Description::StrengthModel*>(data);
 		mSets.clear();
 		for(auto set : dynamic_cast<Description::StrengthModel*>(mTargetExercise)->getSets()){
-			auto newSet = set->cloneTraining(mTrainId, mDbId);
+			auto newSet = set->cloneTraining(mTrainId, mExerciseId, this);
 			connect(newSet, &StrengthWorkModel::finished, this, &StrengthModel::nextSet);
 			mSets << newSet;
 		}
@@ -83,18 +108,18 @@ bool StrengthModel::save() {
 
 	DatabaseQuery query;
 
-	query.begin(mDbId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "tr_ex_strength");
+	query.begin(mExerciseId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "tr_ex_strength");
 	query.add("train_id", getTrainId());
 	query.add("train_order", getTrainOrder());
 	query.add("name", mName);
 	query.add("description", mDescription);
-	query.addConditionnal("id",mDbId);
-	if(mDbId == 0){
+	query.addConditionnal("id",mExerciseId);
+	if(mExerciseId == 0){
 		if(!query.exec()) qCritical() << "Cannot save train strength : "  << query.mQuery.lastError().text();
 		auto fieldNo = query.mQuery.record().indexOf("id");
 		while (query.mQuery.next()) {
-			setId(query.mQuery.value(fieldNo).toInt());
-			qDebug() << "Insert train strength exercise: " << mDbId;
+			setExerciseId(query.mQuery.value(fieldNo).toInt());
+			qDebug() << "Insert train strength exercise: " << mExerciseId;
 		}
 		for(auto set : mSets){
 			set->save();
@@ -102,7 +127,7 @@ bool StrengthModel::save() {
 	}else{
 		if(!query.exec()) qCritical() << "Cannot update train strength : "  << query.mQuery.lastError().text();
 		else {
-			qDebug() << "Update train strength exercise: " << mDbId;
+			qDebug() << "Update train strength exercise: " << mExerciseId;
 			for(auto set : mSets){
 				set->save();
 			}
@@ -112,36 +137,36 @@ bool StrengthModel::save() {
 	return true;
 }
 
-QList<ExerciseModel*> StrengthModel::load(){
+QList<ExerciseModel*> StrengthModel::load(QObject * parent){
 	QList<ExerciseModel*> models;
 	QSqlQuery query( "SELECT * FROM tr_ex_strength ORDER BY id ASC");
 	QStringList ids;
 
 	while (query.next()) {
-		auto model = load(query);
+		auto model = load(query, parent);
 		models << model;
-		ids << QString::number(model->getId());
+		ids << QString::number(model->getExerciseId());
 	}
 
 	query.exec("SELECT * FROM tr_ex_strength_set WHERE strength_id IN(" + ids.join(",") + ") ORDER BY strength_id ASC");
 	auto idField = query.record().indexOf("strength_id");
 	auto currentModel = models.begin();
 	while (query.next()) {
-		if(query.value(idField).toInt() != (*currentModel)->getId()) ++currentModel;
-		dynamic_cast<StrengthModel*>(*currentModel)->addSet(StrengthWorkModel::load(query), true);
+		if(query.value(idField).toInt() != (*currentModel)->getExerciseId()) ++currentModel;
+		dynamic_cast<StrengthModel*>(*currentModel)->addSet(StrengthWorkModel::load(query, *currentModel), true);
 	}
 	return models;
 }
 
-StrengthModel *StrengthModel::load(QSqlQuery &query) {
-	StrengthModel * model = new StrengthModel();
+StrengthModel *StrengthModel::load(QSqlQuery &query, QObject * parent) {
+	StrengthModel * model = new StrengthModel(parent);
 // TODO optimize
 	auto idField = query.record().indexOf("id");
 	auto nameField = query.record().indexOf("name");
 	auto descriptionField = query.record().indexOf("description");
 	auto trainIdField = query.record().indexOf("train_id");
 	auto trainOrderField = query.record().indexOf("train_order");
-	model->setId(query.value(idField).toInt());
+	model->setExerciseId(query.value(idField).toInt());
 	model->setName(query.value(nameField).toString());
 	model->setDescription(query.value(descriptionField).toString());
 	if(trainIdField>=0){
@@ -168,9 +193,9 @@ QList<StrengthWorkModel*> StrengthModel::getSets() const{
 }
 
 void StrengthModel::addSet(StrengthWorkModel *model, bool keepId) {
-	mSets.push_back(model->clone(mTrainId, mDbId));
+	mSets.push_back(model->clone(mTrainId, mExerciseId, this));
 	if(keepId) {
-		mSets.back()->setId(model->getId());
+		mSets.back()->setWorkId(model->getWorkId());
 	}
 	emit setsChanged();
 }
