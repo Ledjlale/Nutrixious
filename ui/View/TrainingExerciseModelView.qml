@@ -33,12 +33,12 @@ Item{
 	property bool showAddButton: false
 	property bool showRunning: false
 	property bool expandAll: false
-	property bool running : exerciseModel.running
-	property bool resting: exerciseModel.resting
-	property bool done: exerciseModel.done
+	property bool isRunning : exerciseModel.isRunning
+	property bool isResting: exerciseModel.isResting
+	property bool isDone: exerciseModel.isDone
 	property bool autoRun: false
 	property var lastExercise
-	onRestingChanged: if(resting) restingPopup.pause(exerciseModel, exerciseModel.targetExercise.restTime)
+	onIsRestingChanged: if(isResting) restingPopup.pause(exerciseModel, exerciseModel.targetExercise.restTime)
 
 	implicitHeight: mainLayout.implicitHeight
 	height: implicitHeight
@@ -59,10 +59,10 @@ Item{
 	Rectangle{
 		id: mainLineBackground
 		anchors.fill: parent
-		visible: mainItem.running || mainItem.done
-		color: exerciseModel.resting
+		visible: mainItem.isRunning || mainItem.isDone
+		color: exerciseModel.isResting
 					? Material.color(Material.Green, Material.Shade100)
-					: exerciseModel.done
+					: exerciseModel.isDone
 						? Material.color(Material.Blue, Material.Shade100)
 						: Material.color(Material.accent, Material.Shade100)
 	}
@@ -89,8 +89,8 @@ Item{
 			Text{
 				visible: exerciseModel.type == 1 || exerciseModel.type == 2
 				text: visible ? exerciseModel.type == 1
-								? 'D:'+exerciseModel.targetExercise.distance + (exerciseModel.done ? ' / ' + exerciseModel.distance : '')
-								: 'S:'+exerciseModel.targetExercise.steps+ (exerciseModel.done ? ' / ' + exerciseModel.steps : '')
+								? 'D:'+exerciseModel.targetExercise.distance + (exerciseModel.isDone ? ' / ' + exerciseModel.distance : '')
+								: 'S:'+exerciseModel.targetExercise.steps+ (exerciseModel.isDone ? ' / ' + exerciseModel.steps : '')
 							: ''
 			}
 			Text{
@@ -99,7 +99,7 @@ Item{
 			}
 			Text{
 				visible: exerciseModel.type == 1 || exerciseModel.type == 2
-				text: visible ? 'Rest Time:' +(exerciseModel.done ? exerciseModel.restTime : exerciseModel.targetExercise.restTime) +'s': ''
+				text: visible ? 'Rest Time:' +(exerciseModel.isDone ? exerciseModel.restTime : exerciseModel.targetExercise.restTime) +'s': ''
 			}
 			Text{
 				visible: exerciseModel.type == 1 || exerciseModel.type == 2
@@ -164,17 +164,17 @@ Item{
 			interactive: false
 			model: visible ? exerciseModel.sets : []
 			delegate:Rectangle{
-				property bool resting: modelData.resting
+				property bool isResting: modelData.isResting
 
-				onRestingChanged: if(resting) restingPopup.pause(modelData, modelData.targetWork.restTime)
+				onIsRestingChanged: if(isResting) restingPopup.pause(modelData, modelData.targetWork.restTime)
 				width: setList.width
 				height: 40
 				Rectangle{
 					anchors.fill: parent
-					visible: modelData.running || modelData.done
-					color: modelData.resting
+					visible: modelData.isRunning || modelData.isDone
+					color: modelData.isResting
 								? Material.color(Material.Green, Material.Shade100)
-								: modelData.done
+								: modelData.isDone
 									? Material.color(Material.Blue, Material.Shade100)
 									: Material.color(Material.accent, Material.Shade100)
 				}
@@ -190,20 +190,20 @@ Item{
 						Layout.fillWidth: true
 						Layout.fillHeight: true
 						Layout.preferredWidth: setList.width / parent.children.length
-						text: modelData.targetWork.repetitions + (modelData.done ? ' / ' + modelData.repetitions : '')
+						text: modelData.targetWork.repetitions + (modelData.isDone ? ' / ' + modelData.repetitions : '')
 					}
 					Text{
 						Layout.fillWidth: true
 						Layout.fillHeight: true
 						Layout.preferredWidth: setList.width / parent.children.length
-						text: modelData.targetWork.weight + (modelData.done ? ' / ' + modelData.weight : '')
+						text: modelData.targetWork.weight + (modelData.isDone ? ' / ' + modelData.weight : '')
 					}
 					Text{
 						Layout.fillWidth: true
 						Layout.fillHeight: true
 						Layout.preferredWidth: setList.width / parent.children.length
 						color: modelData.restTime <= modelData.targetWork.restTime ? Material.foreground : Material.accent
-						text: modelData.targetWork.restTime + (modelData.done ? ' / ' + modelData.restTime : '')
+						text: modelData.targetWork.restTime + (modelData.isDone ? ' / ' + modelData.restTime : '')
 					}
 					Text{
 						Layout.fillWidth: true
@@ -235,7 +235,7 @@ Item{
 				anchors.fill: parent
 			Text{
 				Layout.fillWidth: true
-				text: 'Resting for max: '+restingPopup.restTime +' s'
+				text: 'isResting for max: '+restingPopup.restTime +' s'
 			}
 			Text{
 				Layout.fillWidth: true
@@ -283,13 +283,13 @@ Item{
 				active: !!mainItem.lastExercise
 			}
 		}
-		onAccepted: target.resting = false
-		onRejected: target.resting = false
+		onAccepted: target.isResting = false
+		onRejected: target.isResting = false
 		Timer{
 			id: restTimer
 			property int count: 0
 			interval: 1000
-			running: !!restingPopup.target && restingPopup.target.resting
+			running: !!restingPopup.target && restingPopup.target.isResting
 			onRunningChanged: count = 0
 			repeat: true
 			onTriggered: ++count
@@ -297,9 +297,9 @@ Item{
 		Timer{
 			id: autoRunTimer
 			interval: restingPopup.restTime* 1000
-			running: mainItem.autoRun && !!restingPopup.target && restingPopup.target.resting
+			running: mainItem.autoRun && !!restingPopup.target && restingPopup.target.isResting
 			onTriggered: {
-				restingPopup.target.resting = false
+				restingPopup.target.isResting = false
 				restingPopup.close()
 			}
 		}

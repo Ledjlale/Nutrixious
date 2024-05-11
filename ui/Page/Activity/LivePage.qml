@@ -28,7 +28,7 @@ import '../../Tool/Utils.js' as Utils
 
 Item {
 	id: mainItem
-	property bool running
+	property bool isRunning
 	property var lastExercise
 	property ProgramModel targetProgramModel
 	property TrainingModel trainingModel: TrainingModel{
@@ -40,10 +40,10 @@ Item {
 		}
 		onFinished: {
 			finishPopup.open()
-			mainItem.running = false
+			mainItem.isRunning = false
 		}
 	}
-	onRunningChanged: if(running)
+	onIsRunningChanged: if(isRunning)
 						trainingModel.start()
 					else
 						trainingModel.stop()
@@ -59,13 +59,13 @@ Item {
 				Layout.fillWidth: true
 			}
 			Button{
-				text: mainItem.running ? 'Stop' : 'Run'
-				onClicked: mainItem.running = !mainItem.running
+				text: mainItem.isRunning ? 'Stop' : 'Run'
+				onClicked: mainItem.isRunning = !mainItem.isRunning
 			}
 		}
 		ListView{
 			id: exercisesList
-			property bool running
+			property bool isRunning
 			Layout.fillWidth: true
 			Layout.fillHeight: true
 			clip: true
@@ -86,7 +86,7 @@ Item {
 			Item{Layout.fillWidth: true}
 			Button{
 				Layout.bottomMargin: 15
-				visible: mainItem.running
+				visible: mainItem.isRunning
 				text: 'End - Good'
 				onClicked: {
 					mainItem.lastExercise = trainingModel.getCurrentWork()
@@ -95,7 +95,7 @@ Item {
 			}
 			Button{
 				Layout.bottomMargin: 15
-				visible: mainItem.running
+				visible: mainItem.isRunning
 				text: 'End - Fail'
 				onClicked: {
 					mainItem.lastExercise = trainingModel.getCurrentWork()
@@ -104,7 +104,7 @@ Item {
 			}
 			Button{
 				Layout.bottomMargin: 15
-				visible: mainItem.running
+				visible: mainItem.isRunning
 				text: 'End - All'
 				onClicked: {
 					trainingModel.save()

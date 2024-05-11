@@ -22,6 +22,7 @@ Focus on Android only! (and Linux for debugging).
 - V1: Main features (Proof of concept)
 - V2: Design (Usability)
 - V3: Secondary features (Improvements)
+- V4: ReDesign (Quality)
 
 #### Main features:
 - Setup exercises

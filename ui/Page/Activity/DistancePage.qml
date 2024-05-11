@@ -26,7 +26,7 @@ import App 1.0
 
 Item {
 	id: mainItem
-	property DistanceModel exerciseModel: DistanceModel{}
+	property var exerciseModel: DistanceModel{}
 	function save(){
 		return exerciseModel.save()
 	}
@@ -75,6 +75,15 @@ Item {
 				title: 'Rest Time'
 				text: exerciseModel.restTime
 				onEditingFinished: exerciseModel.restTime = newValue
+			}
+			TextField{
+				id: workTimeField
+				Layout.fillWidth: true
+				inputMethodHints: Qt.ImhDigitsOnly
+				visible: !!exerciseModel.workTime
+				title: 'Work Time'
+				text: visible ? exerciseModel.workTime : ''
+				onEditingFinished: exerciseModel.workTime = newValue
 			}
 		}
 

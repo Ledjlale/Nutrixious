@@ -25,6 +25,9 @@ using namespace Description;
 ExerciseModel::ExerciseModel(QObject *parent)
 	: QObject{parent}
 {
+	connect(this, &ExerciseModel::exerciseIdChanged, [this](){
+		setIsSaved(getExerciseId() > 0);
+	});
 	connect(this, &ExerciseModel::nameChanged, [this](){
 		setInvalidName( mName == "");
 	});
@@ -38,6 +41,9 @@ ExerciseModel::ExerciseModel(const ExerciseModel * model, QObject *parent) : QOb
 	mDescription = model->getDescription();
 	mProgramOrder = model->getProgramOrder();
 	setInvalidName( mName == "");
+	connect(this, &ExerciseModel::exerciseIdChanged, [this](){
+		setIsSaved(getExerciseId() > 0);
+	});
 	connect(this, &ExerciseModel::nameChanged, [this](){
 		setInvalidName( mName == "");
 	});
@@ -113,6 +119,17 @@ void ExerciseModel::setProgramOrder(int data){
 	if(mProgramOrder != data){
 		mProgramOrder = data;
 		emit programOrderChanged();
+	}
+}
+
+bool ExerciseModel::getIsSaved() const {
+	return mIsSaved;
+}
+
+void ExerciseModel::setIsSaved(bool data) {
+	if(mIsSaved != data){
+		mIsSaved = data;
+		emit isSavedChanged();
 	}
 }
 

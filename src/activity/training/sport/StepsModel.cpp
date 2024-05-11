@@ -51,6 +51,7 @@ StepsModel::StepsModel(const StepsModel * model, QObject *parent) : ExerciseMode
 	mWeight = model->getWeight();
 	mWorkTime = model->getWorkTime();
 	mRestTime = model->getRestTime();
+	mIsDone = mExerciseId > 0;
 	mType = 2;
 }
 

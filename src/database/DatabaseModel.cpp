@@ -31,6 +31,12 @@
 #include "src/activity/description/sport/DistanceModel.h"
 #include "src/activity/description/program/ProgramModel.h"
 
+#include "src/activity/training/sport/StepsModel.h"
+#include "src/activity/training/sport/DistanceModel.h"
+#include "src/activity/training/sport/StrengthModel.h"
+#include "src/activity/training/sport/StrengthWorkModel.h"
+#include "src/activity/training/train/TrainModel.h"
+
 DatabaseModel::DatabaseModel(QObject *parent)
 	: QObject{parent}
 {}
@@ -405,11 +411,21 @@ void DatabaseModel::insertDefaultData() {
 	programs.back()->addExercise(steps2);
 	programs.back()->save();
 
+	QVector<Training::TrainModel*> trains;
+
+	for(auto i : programs) {
+		trains.push_back(new Training::TrainModel(nullptr));
+		trains.back()->setTargetProgramModel(i);
+		trains.back()->save();
+	}
+
+
 	steps->deleteLater();
 	steps2->deleteLater();
 	distance->deleteLater();
 	distance2->deleteLater();
-
+	for(auto i : trains)
+		i->deleteLater();
 	for(auto i : programs)
 		i->deleteLater();
 	for(auto i : strengthWorks)

@@ -39,9 +39,11 @@ Q_OBJECT
 	Q_PROPERTY(int type READ getType WRITE setType NOTIFY typeChanged)
 	Q_PROPERTY(int trainOrder READ getTrainOrder WRITE setTrainOrder NOTIFY trainOrderChanged)
 
-	Q_PROPERTY(bool running READ getIsRunning WRITE setIsRunning NOTIFY isRunningChanged)
-	Q_PROPERTY(bool resting READ getIsResting WRITE setIsResting NOTIFY isRestingChanged)
-	Q_PROPERTY(bool done READ getIsDone WRITE setIsDone NOTIFY isDoneChanged)
+	Q_PROPERTY(bool isRunning READ getIsRunning WRITE setIsRunning NOTIFY isRunningChanged)
+	Q_PROPERTY(bool isResting READ getIsResting WRITE setIsResting NOTIFY isRestingChanged)
+	Q_PROPERTY(bool isDone READ getIsDone WRITE setIsDone NOTIFY isDoneChanged)
+	Q_PROPERTY(bool isSaved READ getIsSaved WRITE setIsSaved NOTIFY isSavedChanged)
+	Q_PROPERTY(bool isTraining MEMBER mIsTraining CONSTANT)
 public:
 	explicit ExerciseModel(QObject *parent = nullptr);
 	ExerciseModel(const ExerciseModel * model, QObject *parent = nullptr);
@@ -80,6 +82,9 @@ public:
 	bool getIsDone() const;
 	void setIsDone(bool data);
 
+	bool getIsSaved() const;
+	void setIsSaved(bool data);
+
 	virtual void startWork();
 
 	virtual void endOfCurrentWork(){}
@@ -102,6 +107,7 @@ signals:
 	void isRunningChanged();
 	void isRestingChanged();
 	void isDoneChanged();
+	void isSavedChanged();
 	void finished();
 
 
@@ -119,6 +125,8 @@ protected:
 	bool mIsRunning = false;
 	bool mIsResting = false;
 	bool mIsDone = false;
+	bool mIsSaved = false;
+	bool mIsTraining = true;
 
 	QDateTime mStart;
 

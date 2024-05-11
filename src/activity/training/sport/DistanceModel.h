@@ -72,7 +72,7 @@ signals:
 protected:
 	int mDistance = 10000;// 10 km
 	int mWeight = 0;
-	int mWorkTime = 0;
+	int mWorkTime = 10;
 	int mRestTime = 2;
 };
 }

@@ -31,7 +31,7 @@ Item{
 	property bool showSaveButton: true
 	property bool showRunning: false
 	property bool expandAll: false
-	property bool running : false
+	property bool isRunning : false
 	property bool isReadOnly: false
 
 	implicitHeight: mainLayout.implicitHeight

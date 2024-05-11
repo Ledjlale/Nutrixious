@@ -51,6 +51,7 @@ DistanceModel::DistanceModel(const DistanceModel * model, QObject *parent) : Exe
 	mWeight = model->getWeight();
 	mWorkTime = model->getWorkTime();
 	mRestTime = model->getRestTime();
+	mIsDone = mExerciseId > 0;
 	mType = 1;
 }
 

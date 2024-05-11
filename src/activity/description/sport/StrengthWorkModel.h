@@ -37,6 +37,9 @@ class StrengthWorkModel : public QObject {
 	Q_PROPERTY(int weight MEMBER mWeight NOTIFY weightChanged)
 	Q_PROPERTY(int restTime MEMBER mRestTime NOTIFY restTimeChanged)
 
+	Q_PROPERTY(bool isSaved READ getIsSaved WRITE setIsSaved NOTIFY isSavedChanged)
+	Q_PROPERTY(bool isTraining MEMBER mIsTraining CONSTANT)
+
 public:
 	StrengthWorkModel();
 	explicit StrengthWorkModel(QObject *parent);
@@ -65,6 +68,9 @@ public:
 	void setProgramId(qint64 id);
 	bool isProgramLinked()const;
 
+	bool getIsSaved() const;
+	void setIsSaved(bool data);
+
 	Q_INVOKABLE void save();
 signals:
 	void repetitionsChanged();
@@ -73,6 +79,7 @@ signals:
 	void workIdChanged();
 	void strengthIdChanged();
 	void programIdChanged();
+	void isSavedChanged();
 
 protected:
 	qint64 mWorkId = 0;
@@ -81,6 +88,8 @@ protected:
 	int mRepetitions = 1;
 	int mWeight = 0;
 	int mRestTime = 2;
+	bool mIsSaved = false;
+	bool mIsTraining = false;
 };
 }
 #endif

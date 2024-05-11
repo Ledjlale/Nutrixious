@@ -47,6 +47,9 @@ StrengthWorkModel::StrengthWorkModel(QObject *parent) : QObject(parent){
 		setIsRunning(false);
 		setIsDone(true);
 	});
+	connect(this, &StrengthWorkModel::workIdChanged, [this](){
+		setIsSaved(getWorkId() > 0);
+	});
 }
 
 StrengthWorkModel::StrengthWorkModel(const StrengthWorkModel * model, QObject *parent) : QObject(parent){
@@ -55,10 +58,14 @@ StrengthWorkModel::StrengthWorkModel(const StrengthWorkModel * model, QObject *p
 	mWeight = model->getWeight();
 	mWorkTime = model->getWorkTime();
 	mRestTime = model->getRestTime();
+	mIsSaved = mWorkId > 0;
 
 	connect(this, &StrengthWorkModel::finished, [this](){
 		setIsRunning(false);
 		setIsDone(true);
+	});
+	connect(this, &StrengthWorkModel::workIdChanged, [this](){
+		setIsSaved(getWorkId() > 0);
 	});
 }
 
@@ -186,6 +193,17 @@ void StrengthWorkModel::setIsDone(bool data) {
 	if(mIsDone != data){
 		mIsDone = data;
 		emit isDoneChanged();
+	}
+}
+
+bool StrengthWorkModel::getIsSaved() const {
+	return mIsSaved;
+}
+
+void StrengthWorkModel::setIsSaved(bool data) {
+	if(mIsSaved != data){
+		mIsSaved = data;
+		emit isSavedChanged();
 	}
 }
 

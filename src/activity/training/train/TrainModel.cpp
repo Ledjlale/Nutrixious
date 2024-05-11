@@ -61,6 +61,7 @@ TrainModel::TrainModel(QObject *parent)
 	connect(this, &TrainModel::targetProgramModelChanged, [this](){
 		mExercises.clear();
 		if(mTargetProgramModel){
+			setName("Train : " + mTargetProgramModel->getName());
 			for(auto model : mTargetProgramModel->getExercises()){
 				auto newExercise = model->cloneTraining(mTrainId, this);
 				connect(newExercise, &ExerciseModel::finished, this, &TrainModel::nextExercise);
@@ -79,6 +80,13 @@ void TrainModel::setTrainId(qint64 id) {
 	if(mTrainId != id){
 		mTrainId = id;
 		emit trainIdChanged();
+	}
+}
+
+void TrainModel::setTargetProgramModel(Description::ProgramModel *data) {
+	if(mTargetProgramModel != data){
+		mTargetProgramModel = data;
+		emit targetProgramModelChanged();
 	}
 }
 

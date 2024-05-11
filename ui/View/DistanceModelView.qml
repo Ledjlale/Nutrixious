@@ -31,7 +31,7 @@ Item{
 	property bool showSaveButton: true
 	property bool showRunning: false
 	property bool expandAll: false
-	property bool running : false
+	property bool isRunning : false
 	property bool isReadOnly: false
 	property bool trainingResultEdition: false
 
@@ -45,6 +45,7 @@ Item{
 		if(descriptionTextField.isEdited) distanceModel.description = descriptionTextField.newValue
 		if(distanceTextField.isEdited) distanceModel.distance = distanceTextField.newValue
 		if(restTextField.isEdited) distanceModel.restTime = restTextField.newValue
+		if(workTextField.isEdited) distanceModel.workTime = workTextField.newValue
 	}
 
 	RowLayout{
@@ -55,22 +56,22 @@ Item{
 			id: nameTextField
 			Layout.fillWidth: true
 			visible: !mainItem.trainingResultEdition
-			text: distanceModel.name
+			text: distanceModel ? distanceModel.name : ''
 			readOnly: isReadOnly
 		}
 		TextField{
 			id: descriptionTextField
 			Layout.fillWidth: true
 			visible: !mainItem.trainingResultEdition
-			text: distanceModel.description
+			text:distanceModel ?  distanceModel.description : ''
 			readOnly: isReadOnly
 		}
 		TextField{
 			id: distanceTextField
 			Layout.fillWidth: true
 			inputMethodHints: Qt.ImhDigitsOnly
-			title: mainItem.trainingResultEdition ? 'Distance(m)' : ''
-			text: distanceModel.distance
+			title: mainItem.trainingResultEdition ? 'Distance (m)' : ''
+			text: distanceModel ? distanceModel.distance : ''
 			readOnly: isReadOnly
 		}
 		TextField{
@@ -78,11 +79,19 @@ Item{
 			Layout.fillWidth: true
 			visible: !mainItem.trainingResultEdition
 			inputMethodHints: Qt.ImhDigitsOnly
-			text: distanceModel.restTime
+			text: distanceModel ? distanceModel.restTime : ''
+			readOnly: isReadOnly
+		}
+		TextField{
+			id: workTextField
+			Layout.fillWidth: true
+			visible: !mainItem.trainingResultEdition && distanceModel && distanceModel.isSaved && distanceModel.workTime !== undefined
+			inputMethodHints: Qt.ImhDigitsOnly
+			text: visible ? distanceModel.workTime : ''
 			readOnly: isReadOnly
 		}
 		Button{
-			visible: !mainItem.isReadOnly && mainItem.showSaveButton && (nameTextField.isEdited || descriptionTextField.isEdited || distanceTextField.isEdited || restTextField.isEdited)
+			visible: !mainItem.isReadOnly && mainItem.showSaveButton && (nameTextField.isEdited || descriptionTextField.isEdited || distanceTextField.isEdited || restTextField.isEdited || workTextField.isEdited)
 			text: 'Save'
 			onClicked: {
 				mainItem.saveValues()

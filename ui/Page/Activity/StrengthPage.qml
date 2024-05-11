@@ -26,8 +26,8 @@ import App 1.0
 
 Item {
 	id: mainItem
-	property StrengthModel exerciseModel: StrengthModel{}
-	property StrengthWorkModel workModel: StrengthWorkModel{}
+	property var exerciseModel: StrengthModel{}
+	property var workModel: StrengthWorkModel{}
 
 
 	Component.onCompleted: Material.background = Qt.darker(Material.background, 1.02)
@@ -94,6 +94,15 @@ Item {
 				onEditingFinished: {
 					workModel.restTime = newValue
 				}
+			}
+			TextField{
+				id: workTimeField
+				Layout.fillWidth: true
+				inputMethodHints: Qt.ImhDigitsOnly
+				visible: !!workModel.workTime
+				title: 'Work Time (s)'
+				text: visible ? workModel.workTime : ''
+				onEditingFinished: workModel.workTime = newValue
 			}
 		}
 		Button{

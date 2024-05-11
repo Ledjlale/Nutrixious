@@ -30,17 +30,17 @@ Rectangle{
 	id: mainItem
 	property var workModel
 	property bool isLive: false
-	property bool resting: !!workModel.resting
+	property bool resting: !!workModel.isResting
 	property bool isReadOnly: isLive
 	property bool showSaveButton: true
 	property bool trainingResultEdition: false
 	implicitHeight: contentLayout.implicitHeight
 	Rectangle{
 		anchors.fill: parent
-		visible: mainItem.isLive && ( workModel.running || workModel.done)
-		color: workModel.resting
+		visible: mainItem.isLive && ( workModel.isRunning || workModel.isDone)
+		color: workModel.isResting
 					? Material.color(Material.Green, Material.Shade100)
-					: workModel.done
+					: workModel.isDone
 						? Material.color(Material.Blue, Material.Shade100)
 						: Material.color(Material.accent, Material.Shade100)
 	}
@@ -62,7 +62,7 @@ Rectangle{
 			title: mainItem.trainingResultEdition ? 'Reps' : ''
 			textColor: !mainItem.isLive || workModel.repetitions <= workModel.targetWork.repetitions ? Material.foreground : Material.accent
 			text: mainItem.isLive
-							? workModel.targetWork.repetitions + (workModel.done ? ' / ' + workModel.repetitions : '')
+							? workModel.targetWork.repetitions + (workModel.isDone ? ' / ' + workModel.repetitions : '')
 							: workModel.repetitions
 			onEditingFinished: if(!mainItem.showSaveButton) workModel.repetitions = newValue
 		}
@@ -75,7 +75,7 @@ Rectangle{
 			title: mainItem.trainingResultEdition ? 'Weight(kg)' : ''
 			textColor: !mainItem.isLive || workModel.weight <= workModel.targetWork.weight ? Material.foreground : Material.accent
 			text: mainItem.isLive
-							? ( workModel.targetWork.weight + (workModel.done ? ' / ' + workModel.weight : ''))
+							? ( workModel.targetWork.weight + (workModel.isDone ? ' / ' + workModel.weight : ''))
 							: workModel.weight
 
 			onEditingFinished: if(!mainItem.showSaveButton) workModel.weight = newValue
@@ -90,7 +90,7 @@ Rectangle{
 			title: mainItem.trainingResultEdition ? 'RestTime(s)' : ''
 			textColor: !mainItem.isLive || workModel.restTime <= workModel.targetWork.restTime ? Material.foreground : Material.accent
 			text: mainItem.isLive
-							? workModel.targetWork.restTime + (workModel.done ? ' / ' + workModel.restTime : '')
+							? workModel.targetWork.restTime + (workModel.isDone ? ' / ' + workModel.restTime : '')
 							: workModel.restTime
 			onEditingFinished: if(!mainItem.showSaveButton) workModel.restTime = newValue
 		}
@@ -98,8 +98,8 @@ Rectangle{
 			Layout.fillWidth: true
 			Layout.fillHeight: true
 			Layout.preferredWidth: mainItem.width / parent.visibleChildren.length
-			visible: mainItem.isLive
-			text: mainItem.isLive ? workModel.workTime : ''
+			visible: (mainItem.isLive || workModel.isSaved) && workModel.isTraining
+			text: visible ? workModel.workTime : ''
 		}
 		Button{
 			visible: !mainItem.isReadOnly && mainItem.showSaveButton && (repsTextField.isEdited || weightTextField.isEdited || restTextField.isEdited)

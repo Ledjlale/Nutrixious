@@ -37,9 +37,11 @@ class StrengthWorkModel : public QObject {
 	Q_PROPERTY(int workTime MEMBER mWorkTime NOTIFY workTimeChanged)
 	Q_PROPERTY(int restTime MEMBER mRestTime NOTIFY restTimeChanged)
 
-	Q_PROPERTY(bool running READ getIsRunning WRITE setIsRunning NOTIFY isRunningChanged)
-	Q_PROPERTY(bool resting READ getIsResting WRITE setIsResting NOTIFY isRestingChanged)
-	Q_PROPERTY(bool done READ getIsDone WRITE setIsDone NOTIFY isDoneChanged)
+	Q_PROPERTY(bool isRunning READ getIsRunning WRITE setIsRunning NOTIFY isRunningChanged)
+	Q_PROPERTY(bool isResting READ getIsResting WRITE setIsResting NOTIFY isRestingChanged)
+	Q_PROPERTY(bool isDone READ getIsDone WRITE setIsDone NOTIFY isDoneChanged)
+	Q_PROPERTY(bool isSaved READ getIsSaved WRITE setIsSaved NOTIFY isSavedChanged)
+	Q_PROPERTY(bool isTraining MEMBER mIsTraining CONSTANT)
 
 public:
 	StrengthWorkModel();
@@ -73,6 +75,9 @@ public:
 	bool getIsDone() const;
 	void setIsDone(bool data);
 
+	bool getIsSaved() const;
+	void setIsSaved(bool data);
+
 	qint64 getWorkId() const;
 	void setWorkId(qint64 id);
 
@@ -99,6 +104,7 @@ signals:
 	void isRunningChanged();
 	void isRestingChanged();
 	void isDoneChanged();
+	void isSavedChanged();
 	void finished();
 
 protected:
@@ -108,12 +114,14 @@ protected:
 	qint64 mTrainId = -1;
 	int mRepetitions = 1;
 	int mWeight = 0;
-	int mWorkTime = 0;
+	int mWorkTime = 10;
 	int mRestTime = 60;
 
 	bool mIsRunning = false;
 	bool mIsResting = false;
 	bool mIsDone = false;
+	bool mIsSaved = false;
+	bool mIsTraining = true;
 	QDateTime mStart;
 };
 }

@@ -72,7 +72,7 @@ signals:
 protected:
 	int mSteps = 1000;
 	int mWeight = 0;
-	int mWorkTime = 0;
+	int mWorkTime = 10;
 	int mRestTime = 2;
 };
 }

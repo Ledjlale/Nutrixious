@@ -31,7 +31,7 @@ Item{
 	property bool showSaveButton: true
 	property bool showRunning: false
 	property bool expandAll: false
-	property bool running : false
+	property bool isRunning : false
 	property bool isReadOnly: false
 	property bool trainingResultEdition: false
 	implicitHeight: mainLine.implicitHeight
@@ -44,6 +44,7 @@ Item{
 		if(descriptionTextField.isEdited) stepsModel.description = descriptionTextField.newValue
 		if(stepsTextField.isEdited) stepsModel.steps = stepsTextField.newValue
 		if(restTextField.isEdited) stepsModel.restTime = restTextField.newValue
+		if(workTextField.isEdited) stepsModel.workTime = workTextField.newValue
 	}
 
 	RowLayout{
@@ -55,14 +56,14 @@ Item{
 			Layout.fillWidth: true
 			visible: !mainItem.trainingResultEdition
 			readOnly: isReadOnly
-			text: stepsModel.name
+			text: visible ? stepsModel.name : ''
 		}
 		TextField{
 			id: descriptionTextField
 			Layout.fillWidth: true
 			visible: !mainItem.trainingResultEdition
 			readOnly: isReadOnly
-			text: stepsModel.description
+			text: visible ? stepsModel.description : ''
 		}
 		TextField{
 			id: stepsTextField
@@ -70,7 +71,7 @@ Item{
 			readOnly: isReadOnly
 			inputMethodHints: Qt.ImhDigitsOnly
 			title: mainItem.trainingResultEdition ? 'Steps' : ''
-			text: stepsModel.steps
+			text: visible ? stepsModel.steps : ''
 		}
 		TextField{
 			id: restTextField
@@ -78,10 +79,18 @@ Item{
 			visible: !mainItem.trainingResultEdition
 			readOnly: isReadOnly
 			inputMethodHints: Qt.ImhDigitsOnly
-			text: stepsModel.restTime
+			text: visible ? stepsModel.restTime : ''
+		}
+		TextField{
+			id: workTextField
+			Layout.fillWidth: true
+			visible: !mainItem.trainingResultEdition && stepsModel && stepsModel.isSaved && stepsModel.workTime !== undefined
+			inputMethodHints: Qt.ImhDigitsOnly
+			text: visible ? stepsModel.workTime : ''
+			readOnly: isReadOnly
 		}
 		Button{
-			visible: !mainItem.isReadOnly && mainItem.showSaveButton && (nameTextField.isEdited || descriptionTextField.isEdited || stepsTextField.isEdited || restTextField.isEdited)
+			visible: !mainItem.isReadOnly && mainItem.showSaveButton && (nameTextField.isEdited || descriptionTextField.isEdited || stepsTextField.isEdited || restTextField.isEdited || workTextField.isEdited)
 			text: 'Save'
 			onClicked: {
 				mainItem.saveValues()

@@ -27,10 +27,10 @@ import '../../Tool/Utils.js' as Utils
 
 Item {
 	id: mainItem
-	property bool running : false
+	property bool isRunning : false
 	property ProgramModel selectedProgramModel
 	onSelectedProgramModelChanged: programExercises.setExercises(selectedProgramModel.exercises)
-	onRunningChanged: if(running){
+	onIsRunningChanged: if(isRunning){
 			//stackView.push(livePage, {exercises: programExercises.getExercises()});
 			stackView.push(livePage, {targetProgramModel: mainItem.selectedProgramModel});
 		}else {
@@ -49,7 +49,7 @@ Item {
 			ComboBox{
 				id: programChoice
 				Layout.fillWidth: true
-				enabled: !mainItem.running
+				enabled: !mainItem.isRunning
 				textRole: "displayText"
 				valueRole: "$modelData"
 				model: ProgramProxyModel{
@@ -60,8 +60,8 @@ Item {
 			}
 			Button{
 				visible: programChoice.currentIndex >= 0
-				text: mainItem.running ? 'Cancel' : 'Begin'
-				onClicked: mainItem.running = !mainItem.running
+				text: mainItem.isRunning ? 'Cancel' : 'Begin'
+				onClicked: mainItem.isRunning = !mainItem.isRunning
 			}
 			Button{
 				text: 'Reload'

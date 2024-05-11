@@ -64,7 +64,7 @@ Rectangle{
 			Layout.fillWidth: true
 			Layout.margins: 10
 			color: mainItem.textColor
-			text: mainItem.text
+			text: mainItem.text === undefined ? '' : mainItem.text
 			onEditingFinished: mainItem.editingFinished()
 		}
 	}

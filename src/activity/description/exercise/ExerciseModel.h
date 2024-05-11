@@ -38,6 +38,9 @@ Q_OBJECT
 	Q_PROPERTY(bool invalidDescription MEMBER mInvalidDescription NOTIFY invalidDescriptionChanged)
 	Q_PROPERTY(int type READ getType CONSTANT)
 	Q_PROPERTY(int programOrder READ getProgramOrder WRITE setProgramOrder NOTIFY programOrderChanged)
+
+	Q_PROPERTY(bool isSaved READ getIsSaved WRITE setIsSaved NOTIFY isSavedChanged)
+	Q_PROPERTY(bool isTraining MEMBER mIsTraining CONSTANT)
 public:
 	explicit ExerciseModel(QObject *parent);
 	ExerciseModel(const ExerciseModel * model, QObject *parent);
@@ -64,6 +67,9 @@ public:
 	int getProgramOrder() const;
 	void setProgramOrder(int data);
 
+	bool getIsSaved() const;
+	void setIsSaved(bool data);
+
 	Q_INVOKABLE virtual bool save();
 
 signals:
@@ -72,6 +78,7 @@ signals:
 	void nameChanged();
 	void descriptionChanged();
 	void programOrderChanged();
+	void isSavedChanged();
 
 	void invalidNameChanged();
 	void invalidDescriptionChanged();
@@ -85,6 +92,8 @@ protected:
 
 	bool mInvalidName = true;
 	bool mInvalidDescription = false;
+	bool mIsSaved = false;
+	bool mIsTraining = false;
 };
 }
 

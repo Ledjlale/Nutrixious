@@ -32,7 +32,7 @@ Item{
 	property bool showRunning: false
 	property bool isReadOnly: false
 	property bool expandAll: false
-	property bool running : false
+	property bool isRunning : false
 
 	implicitHeight: mainLayout.implicitHeight
 	height: implicitHeight

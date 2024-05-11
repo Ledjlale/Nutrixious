@@ -47,6 +47,8 @@ public:
 	TrainModel();
 	explicit TrainModel(QObject *parent );
 
+	void setTargetProgramModel(Description::ProgramModel *data);
+
 	QString getName() const;
 	void setName(QString name);
 	void setDescription(QString description);

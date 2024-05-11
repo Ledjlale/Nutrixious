@@ -105,6 +105,7 @@ Item {
 					delegate: ExerciseModelView{
 						width: trainDetailsList.width
 						exerciseModel: modelData
+						isReadOnly: true
 					}
 				}
 			}

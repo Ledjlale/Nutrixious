@@ -41,6 +41,9 @@ StrengthWorkModel::StrengthWorkModel() : StrengthWorkModel(nullptr){
 
 StrengthWorkModel::StrengthWorkModel(QObject *parent) : QObject(parent){
 	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
+	connect(this, &StrengthWorkModel::workIdChanged, [this](){
+		setIsSaved(getWorkId() > 0);
+	});
 }
 
 StrengthWorkModel::StrengthWorkModel(const StrengthWorkModel * model, QObject *parent) : QObject(parent){
@@ -48,6 +51,11 @@ StrengthWorkModel::StrengthWorkModel(const StrengthWorkModel * model, QObject *p
 	mRepetitions = model->getRepetitions();
 	mWeight = model->getWeight();
 	mRestTime = model->getRestTime();
+	mIsSaved = mWorkId > 0;
+
+	connect(this, &StrengthWorkModel::workIdChanged, [this](){
+		setIsSaved(getWorkId() > 0);
+	});
 }
 
 StrengthWorkModel * StrengthWorkModel::clone(qint64 strengthId, QObject *parent)const{
@@ -129,6 +137,17 @@ void StrengthWorkModel::setProgramId(qint64 id){
 
 bool StrengthWorkModel::isProgramLinked() const {
 	return mProgramId >= 0;
+}
+
+bool StrengthWorkModel::getIsSaved() const {
+	return mIsSaved;
+}
+
+void StrengthWorkModel::setIsSaved(bool data) {
+	if(mIsSaved != data){
+		mIsSaved = data;
+		emit isSavedChanged();
+	}
 }
 
 void StrengthWorkModel::save() {
