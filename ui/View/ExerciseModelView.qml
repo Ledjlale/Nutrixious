@@ -26,7 +26,7 @@ import App 1.0
 
 Item{
 	id: mainItem
-	property ExerciseModel exerciseModel
+	property var exerciseModel
 	property bool showAddButton: false
 	property bool showSaveButton: !isReadOnly
 	property bool showRunning: false
@@ -97,10 +97,12 @@ Item{
 					onAddClicked: function(exerciseModel) {mainItem.addClicked(exerciseModel) }
 				}
 			}
-			sourceComponent: exerciseModel.type == 1 ? distanceComponent
-								: exerciseModel.type ==  2 ? stepsComponent
-									: exerciseModel.type ==  3 ? strengthComponent
-										: undefined
+			sourceComponent: !!exerciseModel
+								? exerciseModel.type == 1 ? distanceComponent
+									: exerciseModel.type ==  2 ? stepsComponent
+										: exerciseModel.type ==  3 ? strengthComponent
+											: undefined
+								: undefined
 		}
 	}
 }

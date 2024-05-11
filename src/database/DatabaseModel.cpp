@@ -39,7 +39,8 @@ DatabaseModel::DatabaseModel(QObject *parent)
 
 void DatabaseModel::migrate(){
 	QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-	db.setDatabaseName(":memory:");
+	db.setDatabaseName("data");
+	//db.setDatabaseName(":memory:");
 	if (!db.open()) {
 		qCritical() << QObject::tr("Unable to establish a database connection.\n"
 						"This example needs SQLite support. Please read "
@@ -59,25 +60,97 @@ void DatabaseModel::migrate(){
 		qDebug() << "Creating database";
 		query.exec("PRAGMA foreign_keys=ON");
 // Exercise units
-		if(!query.exec("CREATE TABLE ex_steps (id INTEGER PRIMARY KEY, name TEXT, description TEXT, steps INTEGER, rest_time INTEGER)")) qCritical() << "Cannot create ex_steps : " << query.lastError().text();
-		if(!query.exec("CREATE TABLE ex_distance (id INTEGER PRIMARY KEY, name TEXT, description TEXT, distance INTEGER, rest_time INTEGER)")) qCritical() << "Cannot create ex_steps : " << query.lastError().text();
-		if(!query.exec("CREATE TABLE ex_strength (id INTEGER PRIMARY KEY, name TEXT, description TEXT)")) qCritical() << "Cannot create ex_steps : " << query.lastError().text();
-		if(!query.exec("CREATE TABLE ex_strength_set (id INTEGER PRIMARY KEY, strength_id INTEGER NOT NULL, reps INTEGER, weight INTERGER, rest_time INTEGER"
+		if(!query.exec("CREATE TABLE ex_steps (id INTEGER PRIMARY KEY"
+			", name TEXT"
+			", description TEXT"
+			", steps INTEGER"
+			", rest_time INTEGER)")) qCritical() << "Cannot create ex_steps : " << query.lastError().text();
+		if(!query.exec("CREATE TABLE ex_distance (id INTEGER PRIMARY KEY"
+			", name TEXT"
+			", description TEXT"
+			", distance INTEGER"
+			", rest_time INTEGER)")) qCritical() << "Cannot create ex_steps : " << query.lastError().text();
+		if(!query.exec("CREATE TABLE ex_strength (id INTEGER PRIMARY KEY"
+			", name TEXT"
+			", description TEXT)")) qCritical() << "Cannot create ex_steps : " << query.lastError().text();
+		if(!query.exec("CREATE TABLE ex_strength_set (id INTEGER PRIMARY KEY"
+			", strength_id INTEGER NOT NULL"
+			", reps INTEGER"
+			", weight INTERGER"
+			", rest_time INTEGER"
 				   ", FOREIGN KEY (strength_id) REFERENCES ex_strength (id) ON UPDATE CASCADE ON DELETE CASCADE"
 				   ")")) qCritical() << "Cannot create ex_strength_set table : " << query.lastError().text();
 
 // Programs = copy of Exercise units
-		if(!query.exec("CREATE TABLE programs (id INTEGER PRIMARY KEY, name TEXT, description TEXT)")) qCritical() << "Cannot create programs : " << query.lastError().text();
-		if(!query.exec("CREATE TABLE pgrm_ex_steps (id INTEGER PRIMARY KEY, program_id INTEGER NOT NULL, name TEXT, description TEXT, steps INTEGER, rest_time INTEGER, program_order INTEGER"
+		if(!query.exec("CREATE TABLE programs (id INTEGER PRIMARY KEY"
+			", name TEXT"
+			", description TEXT)")) qCritical() << "Cannot create programs : " << query.lastError().text();
+		if(!query.exec("CREATE TABLE pgrm_ex_steps (id INTEGER PRIMARY KEY"
+			", program_id INTEGER NOT NULL"
+			", name TEXT, description TEXT"
+			", steps INTEGER"
+			", rest_time INTEGER"
+			", program_order INTEGER"
 					", FOREIGN KEY (program_id) REFERENCES programs (id) ON UPDATE CASCADE ON DELETE CASCADE)")) qCritical() << "Cannot create pgrm_ex_steps : " << query.lastError().text();
-		if(!query.exec("CREATE TABLE pgrm_ex_distance (id INTEGER PRIMARY KEY, program_id INTEGER NOT NULL, name TEXT, description TEXT, distance INTEGER, rest_time INTEGER, program_order INTEGER"
+		if(!query.exec("CREATE TABLE pgrm_ex_distance (id INTEGER PRIMARY KEY"
+			", program_id INTEGER NOT NULL"
+			", name TEXT, description TEXT"
+			", distance INTEGER"
+			", rest_time INTEGER"
+			", program_order INTEGER"
 					", FOREIGN KEY (program_id) REFERENCES programs (id) ON UPDATE CASCADE ON DELETE CASCADE)")) qCritical() << "Cannot create pgrm_ex_distance : " << query.lastError().text();
-		if(!query.exec("CREATE TABLE pgrm_ex_strength (id INTEGER PRIMARY KEY, program_id INTEGER NOT NULL, name TEXT, description TEXT, program_order INTEGER"
+		if(!query.exec("CREATE TABLE pgrm_ex_strength (id INTEGER PRIMARY KEY"
+			", program_id INTEGER NOT NULL"
+			", name TEXT"
+			", description TEXT"
+			", program_order INTEGER"
 					", FOREIGN KEY (program_id) REFERENCES programs (id) ON UPDATE CASCADE ON DELETE CASCADE)")) qCritical() << "Cannot create pgrm_ex_strength : " << query.lastError().text();
-		if(!query.exec("CREATE TABLE pgrm_ex_strength_set (id INTEGER PRIMARY KEY, program_id INTEGER NOT NULL, strength_id INTEGER NOT NULL, reps INTEGER, weight INTERGER, rest_time INTEGER"
+		if(!query.exec("CREATE TABLE pgrm_ex_strength_set (id INTEGER PRIMARY KEY"
+			", program_id INTEGER NOT NULL"
+			", strength_id INTEGER NOT NULL"
+			", reps INTEGER, weight INTERGER"
+			", rest_time INTEGER"
 					", FOREIGN KEY (program_id) REFERENCES programs (id) ON UPDATE CASCADE ON DELETE CASCADE"
 					", FOREIGN KEY (strength_id) REFERENCES pgrm_ex_strength (id) ON UPDATE CASCADE ON DELETE CASCADE"
 					")")) qCritical() << "Cannot create pgrm_ex_strength_set table : " << query.lastError().text();
+
+// Trains = copy of Program units
+
+		if(!query.exec("CREATE TABLE trains (id INTEGER PRIMARY KEY"
+			", name TEXT, description TEXT"
+			", start_time INTERGER)")) qCritical() << "Cannot create trains : " << query.lastError().text();
+		if(!query.exec("CREATE TABLE tr_ex_steps (id INTEGER PRIMARY KEY"
+			", train_id INTEGER NOT NULL"
+			", name TEXT"
+			", description TEXT"
+			", steps INTEGER"
+			", rest_time INTEGER"
+			", train_order INTEGER"
+					", FOREIGN KEY (train_id) REFERENCES trains (id) ON UPDATE CASCADE ON DELETE CASCADE)")) qCritical() << "Cannot create tr_ex_steps : " << query.lastError().text();
+		if(!query.exec("CREATE TABLE tr_ex_distance (id INTEGER PRIMARY KEY"
+			", train_id INTEGER NOT NULL"
+			", name TEXT"
+			", description TEXT"
+			", distance INTEGER"
+			", rest_time INTEGER"
+			", train_order INTEGER"
+					", FOREIGN KEY (train_id) REFERENCES trains (id) ON UPDATE CASCADE ON DELETE CASCADE)")) qCritical() << "Cannot create tr_ex_distance : " << query.lastError().text();
+		if(!query.exec("CREATE TABLE tr_ex_strength (id INTEGER PRIMARY KEY"
+			", train_id INTEGER NOT NULL"
+			", name TEXT, description TEXT"
+			", train_order INTEGER"
+					", FOREIGN KEY (train_id) REFERENCES trains (id) ON UPDATE CASCADE ON DELETE CASCADE)")) qCritical() << "Cannot create tr_ex_strength : " << query.lastError().text();
+		if(!query.exec("CREATE TABLE tr_ex_strength_set (id INTEGER PRIMARY KEY"
+			", train_id INTEGER NOT NULL"
+			", strength_id INTEGER NOT NULL"
+			", reps INTEGER"
+			", weight INTERGER"
+			", rest_time INTEGER"
+					", FOREIGN KEY (train_id) REFERENCES trains (id) ON UPDATE CASCADE ON DELETE CASCADE"
+					", FOREIGN KEY (strength_id) REFERENCES tr_ex_strength_set (id) ON UPDATE CASCADE ON DELETE CASCADE"
+					")")) qCritical() << "Cannot create tr_ex_strength_set table : " << query.lastError().text();
+
+
 
 		insertDefaultData();
 

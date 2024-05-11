@@ -28,6 +28,7 @@
 
 #include "StrengthWorkModel.h"
 #include "src/activity/description/sport/StrengthModel.h"
+#include "src/database/DatabaseQuery.h"
 
 using namespace Training;
 
@@ -39,10 +40,9 @@ StrengthModel::StrengthModel(QObject *parent) : ExerciseModel(parent){
 		setInvalidSets( mSets.size() == 0);
 	});
 }
-
 StrengthModel::StrengthModel(const StrengthModel * model, QObject *parent) : ExerciseModel(model, parent){
 	for(auto set : model->getSets()) {
-		auto newSet = set->clone();
+		auto newSet = set->clone(mTrainId, mDbId);
 		connect(newSet, &StrengthWorkModel::finished, this, &StrengthModel::nextSet);
 		mSets << newSet;
 	}
@@ -55,8 +55,9 @@ StrengthModel::~StrengthModel(){
 		set->deleteLater();
 }
 
-ExerciseModel * StrengthModel::clone()const{
+ExerciseModel * StrengthModel::clone(qint64 trainId)const{
 	StrengthModel *model = new StrengthModel(this, nullptr);
+	model->setTrainId(trainId);
 	return model;
 }
 
@@ -66,7 +67,7 @@ void StrengthModel::setTargetExercise(Description::ExerciseModel * data){
 		auto model = dynamic_cast<Description::StrengthModel*>(data);
 		mSets.clear();
 		for(auto set : dynamic_cast<Description::StrengthModel*>(mTargetExercise)->getSets()){
-			auto newSet = set->cloneTraining();
+			auto newSet = set->cloneTraining(mTrainId, mDbId);
 			connect(newSet, &StrengthWorkModel::finished, this, &StrengthModel::nextSet);
 			mSets << newSet;
 		}
@@ -76,124 +77,80 @@ void StrengthModel::setTargetExercise(Description::ExerciseModel * data){
 }
 
 
-
 bool StrengthModel::save() {
-/*
 	if(!ExerciseModel::save() || mInvalidSets) return false;
 	qDebug() << "Saving " << mName << mDescription;
-	QSqlQuery query;
-	if(mDbId == 0){
-		query.prepare("INSERT INTO ex_strength(name,description) VALUES(?,?) RETURNING id");
-		query.addBindValue(mName);
-		query.addBindValue(mDescription);
-		query.exec();
-		auto fieldNo = query.record().indexOf("id");
-		while (query.next()) {
-			mDbId = query.value(fieldNo).toInt();
-			qDebug() << "Insert strength exercise : " << mDbId;
-		}
-		for(auto set : mSets){
-			set->save(mDbId);
-		}
-	}else{
-		query.prepare("UPDATE ex_strength SET name=?, description=? WHERE id=?");
-		query.addBindValue(mName);
-		query.addBindValue(mDescription);
-		query.addBindValue(mDbId);
-		qDebug() << "Update strength exercise : " << mDbId << query.exec();
-		for(auto set : mSets){
-			set->save(mDbId);
-		}
-	}
-	return true;
-	*/
-	return false;
-}
 
-bool StrengthModel::saveProgram(qint64 programId){
-/*
-	if(!ExerciseModel::saveProgram(programId) || mInvalidSets) return false;
-	qDebug() << "Saving " << mName << mDescription;
-	QSqlQuery query;
+	DatabaseQuery query;
+
+	query.begin(mDbId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "tr_ex_strength");
+	query.add("train_id", getTrainId());
+	query.add("train_order", getTrainOrder());
+	query.add("name", mName);
+	query.add("description", mDescription);
+	query.addConditionnal("id",mDbId);
 	if(mDbId == 0){
-		query.prepare("INSERT INTO pgrm_ex_strength(program_id, name,description,program_order) VALUES(?,?,?,?) RETURNING id");
-		query.addBindValue(programId);
-		query.addBindValue(mName);
-		query.addBindValue(mDescription);
-		query.addBindValue(mProgramOrder);
-		query.exec();
-		auto fieldNo = query.record().indexOf("id");
-		while (query.next()) {
-			mDbId = query.value(fieldNo).toInt();
-			qDebug() << "Insert program strength exercise : " << mDbId << " at " << mProgramOrder;
+		if(!query.exec()) qCritical() << "Cannot save train strength : "  << query.mQuery.lastError().text();
+		auto fieldNo = query.mQuery.record().indexOf("id");
+		while (query.mQuery.next()) {
+			setId(query.mQuery.value(fieldNo).toInt());
+			qDebug() << "Insert train strength exercise: " << mDbId;
 		}
 		for(auto set : mSets){
-			set->saveProgram(programId, mDbId);
+			set->save();
 		}
 	}else{
-		query.prepare("UPDATE pgrm_ex_strength SET name=?, description=?, program_id=?, program_order=? WHERE id=?");
-		query.addBindValue(mName);
-		query.addBindValue(mDescription);
-		query.addBindValue(programId);
-		query.addBindValue(mProgramOrder);
-		query.addBindValue(mDbId);
-		qDebug() << "Update strength exercise : " << mDbId << " at " << mProgramOrder << query.exec();
-		for(auto set : mSets){
-			set->saveProgram(programId, mDbId);
+		if(!query.exec()) qCritical() << "Cannot update train strength : "  << query.mQuery.lastError().text();
+		else {
+			qDebug() << "Update train strength exercise: " << mDbId;
+			for(auto set : mSets){
+				set->save();
+			}
 		}
 	}
+
 	return true;
-	*/
-	return false;
 }
 
 QList<ExerciseModel*> StrengthModel::load(){
 	QList<ExerciseModel*> models;
-	/*
-	QSqlQuery query( "SELECT * FROM ex_strength ORDER BY id ASC");
-
-	auto idField = query.record().indexOf("id");
-	auto nameField = query.record().indexOf("name");
-	auto descriptionField = query.record().indexOf("description");
+	QSqlQuery query( "SELECT * FROM tr_ex_strength ORDER BY id ASC");
 	QStringList ids;
 
 	while (query.next()) {
-		StrengthModel * model = new StrengthModel();
-		qint64 id = query.value(idField).toInt();
-		ids << QString::number(id);
-		model->setId(id);
-		model->setName(query.value(nameField).toString());
-		model->setDescription(query.value(descriptionField).toString());
+		auto model = load(query);
 		models << model;
+		ids << QString::number(model->getId());
 	}
 
-	query.exec("SELECT * FROM ex_strength_set WHERE strength_id IN(" + ids.join(",") + ") ORDER BY strength_id ASC");
-	idField = query.record().indexOf("strength_id");
+	query.exec("SELECT * FROM tr_ex_strength_set WHERE strength_id IN(" + ids.join(",") + ") ORDER BY strength_id ASC");
+	auto idField = query.record().indexOf("strength_id");
 	auto currentModel = models.begin();
 	while (query.next()) {
 		if(query.value(idField).toInt() != (*currentModel)->getId()) ++currentModel;
 		dynamic_cast<StrengthModel*>(*currentModel)->addSet(StrengthWorkModel::load(query), true);
-	}*/
+	}
 	return models;
 }
 
 StrengthModel *StrengthModel::load(QSqlQuery &query) {
-/*
 	StrengthModel * model = new StrengthModel();
 // TODO optimize
 	auto idField = query.record().indexOf("id");
 	auto nameField = query.record().indexOf("name");
 	auto descriptionField = query.record().indexOf("description");
-	auto programOrderField = query.record().indexOf("program_order");
+	auto trainIdField = query.record().indexOf("train_id");
+	auto trainOrderField = query.record().indexOf("train_order");
 	model->setId(query.value(idField).toInt());
 	model->setName(query.value(nameField).toString());
 	model->setDescription(query.value(descriptionField).toString());
-	if(programOrderField>=0){
-		model->setProgramOrder(query.value(programOrderField).toInt());
+	if(trainIdField>=0){
+		model->setTrainId(query.value(trainIdField).toInt());
+	}
+	if(trainOrderField>=0){
+		model->setTrainOrder(query.value(trainOrderField).toInt());
 	}
 	return model;
-	*/
-	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------------------------
@@ -210,8 +167,11 @@ QList<StrengthWorkModel*> StrengthModel::getSets() const{
 	return mSets;
 }
 
-void StrengthModel::addSet(StrengthWorkModel *model) {
-	mSets.push_back(model->clone());
+void StrengthModel::addSet(StrengthWorkModel *model, bool keepId) {
+	mSets.push_back(model->clone(mTrainId, mDbId));
+	if(keepId) {
+		mSets.back()->setId(model->getId());
+	}
 	emit setsChanged();
 }
 

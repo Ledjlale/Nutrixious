@@ -50,9 +50,10 @@ ExerciseModel * DistanceModel::clone(qint64 programId)const{
 	return model;
 }
 
-Training::ExerciseModel * DistanceModel::cloneTraining(){
+Training::ExerciseModel * DistanceModel::cloneTraining(qint64 trainId){
 	Training::DistanceModel * model = new Training::DistanceModel();
 	model->setTargetExercise(this);
+	model->setTrainId(trainId);
 	return model;
 }
 
@@ -122,12 +123,15 @@ DistanceModel *DistanceModel::load(QSqlQuery &query) {
 	auto descriptionField = query.record().indexOf("description");
 	auto distanceField = query.record().indexOf("distance");
 	auto restTimeField = query.record().indexOf("rest_time");
+	auto programIdField = query.record().indexOf("program_id");
 	auto programOrderField = query.record().indexOf("program_order");
 	model->setId(query.value(idField).toInt());
 	model->setName(query.value(nameField).toString());
 	model->setDescription(query.value(descriptionField).toString());
 	model->setDistance(query.value(distanceField).toInt());
-	model->setRestTime(query.value(restTimeField).toInt());
+	model->setRestTime(query.value(restTimeField).toInt());if(programIdField>=0){
+		model->setProgramId(query.value(programIdField).toInt());
+	}
 	if(programOrderField>=0){
 		model->setProgramOrder(query.value(programOrderField).toInt());
 	}

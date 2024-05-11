@@ -23,6 +23,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import App 1.0
+import App.Training 1.0 as Training
 
 Item {
 	id: mainItem
@@ -40,29 +41,12 @@ Item {
 			}
 			Text{
 				Layout.fillWidth: true
-				text: 'All default programs'
-			}
-			Component{
-				id: programEditorComponent
-				ProgramEditorPage{}
-			}
-			Button{
-				text: stackView.depth == 1 ? 'New' : 'Create'
-				onClicked: if(stackView.depth == 1)
-						stackView.push(programEditorComponent);
-					else {
-						if(stackView.currentItem.save()){
-							while(stackView.depth > 1)
-								stackView.pop();
-							programs.update()
-						}
-						//stackView.replace(programEditorComponent);
-					}
+				text: 'All training done'
 			}
 			Button{
 				text: 'Reload'
 				visible: stackView.depth == 1
-				onClicked: programs.update()
+				onClicked: trains.update()
 			}
 		}
 		StackView{
@@ -71,15 +55,15 @@ Item {
 			Layout.fillHeight: true
 			initialItem: ColumnLayout{
 				ListView{
-					id: programList
+					id: trainList
 					Layout.fillWidth: true
 					Layout.fillHeight: true
 					clip: true
-					model: ProgramProxyModel{
-						id: programs
+					model: Training.TrainProxyModel{
+						id: trains
 					}
 					delegate:Rectangle{
-						width: programList.width
+						width: trainList.width
 						height: 40
 						RowLayout{
 							Item{
@@ -100,7 +84,7 @@ Item {
 						}
 						MouseArea{
 							anchors.fill: parent
-							onClicked: programExercises.setExercises($modelData.exercises)
+							onClicked: trainExercises.setExercises($modelData.exercises)
 						}
 					}
 				}
@@ -110,16 +94,16 @@ Item {
 					color: 'black'
 				}
 				ListView{
-					id: programDetailsList
+					id: trainDetailsList
 					Layout.fillWidth: true
 					Layout.fillHeight: true
 					visible: count > 0
 					clip: true
-					model: ExerciseProxyModel{
-						id: programExercises
+					model: Training.ExerciseProxyModel{
+						id: trainExercises
 					}
-					delegate:ExerciseModelView{
-						width: programDetailsList.width
+					delegate: ExerciseModelView{
+						width: trainDetailsList.width
 						exerciseModel: modelData
 					}
 				}

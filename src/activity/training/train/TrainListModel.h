@@ -22,13 +22,13 @@
 #define TRAINING_PROGRAM_LIST_MODEL_H
 
 #include "src/tool/proxyModel/ProxyAbstractListModel.hpp"
-#include "ProgramModel.h"
+#include "TrainModel.h"
 
 namespace Training{
-class ProgramListModel: public ProxyAbstractListModel<ProgramModel*> {
+class TrainListModel: public ProxyAbstractListModel<TrainModel*> {
 Q_OBJECT
 public:
-	ProgramListModel(QObject * parent = nullptr);
+	TrainListModel(QObject * parent = nullptr);
 	virtual QHash<int, QByteArray> roleNames () const override;
 	QVariant data (const QModelIndex &index, int role = Qt::DisplayRole) const override;
 

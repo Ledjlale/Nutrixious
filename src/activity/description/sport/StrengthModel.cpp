@@ -60,9 +60,10 @@ ExerciseModel * StrengthModel::clone(qint64 programId)const{
 	return model;
 }
 
-Training::ExerciseModel * StrengthModel::cloneTraining(){
+Training::ExerciseModel * StrengthModel::cloneTraining(qint64 trainId){
 	Training::StrengthModel * model = new Training::StrengthModel();
 	model->setTargetExercise(this);
+	model->setTrainId(trainId);
 	return model;
 }
 

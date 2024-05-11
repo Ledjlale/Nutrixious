@@ -42,9 +42,9 @@
 	src/activity/training/exercise/ExerciseListModel.cpp
 	src/activity/training/exercise/ExerciseProxyModel.cpp
 
-	src/activity/training/program/ProgramModel.cpp
-	src/activity/training/program/ProgramListModel.cpp
-	src/activity/training/program/ProgramProxyModel.cpp
+	src/activity/training/train/TrainModel.cpp
+	src/activity/training/train/TrainListModel.cpp
+	src/activity/training/train/TrainProxyModel.cpp
 
 	src/activity/training/TrainingModel.cpp
 

@@ -49,6 +49,7 @@
 	ui/Page/Activity/StrengthPage.qml
 
 	ui/Page/Activity/TrainingPage.qml
+	ui/Page/Activity/TrainingsPage.qml
 	ui/Page/Activity/LivePage.qml
 
 

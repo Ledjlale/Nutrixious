@@ -28,6 +28,7 @@
 #include <QSqlError>
 
 #include "src/activity/description/sport/DistanceModel.h"
+#include "src/database/DatabaseQuery.h"
 
 using namespace Training;
 
@@ -45,8 +46,9 @@ DistanceModel::DistanceModel(const DistanceModel * model, QObject *parent) : Exe
 	mType = 1;
 }
 
-ExerciseModel * DistanceModel::clone()const{
+ExerciseModel * DistanceModel::clone(qint64 trainId)const{
 	ExerciseModel *model = new DistanceModel(this, nullptr);
+	model->setTrainId(trainId);
 	return model;
 }
 
@@ -61,91 +63,40 @@ void DistanceModel::setTargetExercise(Description::ExerciseModel * data){
 }
 
 bool DistanceModel::save() {
-/*
 	if(!ExerciseModel::save()) return false;
 	qDebug() << "Saving Distance" << mName << mDescription;
-	QSqlQuery query;
-	if(mDbId == 0){
-		query.prepare("INSERT INTO ex_distance(name,description, distance, work_time) VALUES(?,?,?,?) RETURNING id");
-		query.addBindValue(mName);
-		query.addBindValue(mDescription);
-		query.addBindValue(mDistance);
-		query.addBindValue(mWorkTime);
-		query.exec();
-		auto fieldNo = query.record().indexOf("id");
-		while (query.next()) {
-			mDbId = query.value(fieldNo).toInt();
-			qDebug() << "Insert Distance exercise : " << mDbId;
-		}
-	}else{
-		query.prepare("UPDATE ex_distance SET name=?, description=?, distance=?, work_time=? WHERE id=?");
-		query.addBindValue(mName);
-		query.addBindValue(mDescription);
-		query.addBindValue(mDistance);
-		query.addBindValue(mWorkTime);
-		query.addBindValue(mDbId);
-		qDebug() << "Update Distance exercise : " << mDbId << query.exec();;
-	}
-	return true;
-	*/
-	return false;
-}
+	DatabaseQuery query;
 
-bool DistanceModel::saveProgram(qint64 programId){
-/*
-	if(!ExerciseModel::saveProgram(programId)) return false;
-	qDebug() << "Saving " << mName << mDescription;
-	QSqlQuery query;
+	query.begin(mDbId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "tr_ex_distance");
+
+	query.add("train_id", getTrainId());
+	query.add("train_order", getTrainOrder());
+	query.add("name", mName);
+	query.add("description", mDescription);
+	query.add("distance", getDistance());
+	query.add("rest_time", getRestTime());
+	query.addConditionnal("id",mDbId);
 	if(mDbId == 0){
-		query.prepare("INSERT INTO pgrm_ex_distance(program_id, name,description, distance, work_time, program_order) VALUES(?,?,?,?,?,?) RETURNING id");
-		query.addBindValue(programId);
-		query.addBindValue(mName);
-		query.addBindValue(mDescription);
-		query.addBindValue(mDistance);
-		query.addBindValue(mWorkTime);
-		query.addBindValue(mProgramOrder);
-		if(!query.exec()) qCritical() << "Cannot insert distance in program : " << query.lastError().text();
-		auto fieldNo = query.record().indexOf("id");
-		while (query.next()) {
-			mDbId = query.value(fieldNo).toInt();
-			qDebug() << "Insert program distance exercise : " << mDbId << " at " << mProgramOrder;
+		if(!query.exec()) qCritical() << "Cannot save training distance : "  << query.mQuery.lastError().text();
+		auto fieldNo = query.mQuery.record().indexOf("id");
+		while (query.mQuery.next()) {
+			setId(query.mQuery.value(fieldNo).toInt());
+			qDebug() << "Insert training distance exercise: " << mDbId;
 		}
 	}else{
-		query.prepare("UPDATE pgrm_ex_distance SET name=?, description=?, distance=?, work_time=?, program_order=? WHERE id=?");
-		query.addBindValue(mName);
-		query.addBindValue(mDescription);
-		query.addBindValue(mDistance);
-		query.addBindValue(mWorkTime);
-		query.addBindValue(mProgramOrder);
-		query.addBindValue(mDbId);
-		qDebug() << "Update distance exercise : " << mDbId << " at " << mProgramOrder << query.exec();
+		if(!query.exec()) qCritical() << "Cannot update training distance : "  << query.mQuery.lastError().text();
+		else qDebug() << "Update training distance exercise: " << mDbId;
 	}
-	return true;
-	*/
+
 	return false;
 }
 
 QList<ExerciseModel*> DistanceModel::load(){
 	QList<ExerciseModel*> models;
-	QSqlQuery query( "SELECT * FROM ex_distance ORDER BY id ASC");
-
-	auto idField = query.record().indexOf("id");
-	auto nameField = query.record().indexOf("name");
-	auto descriptionField = query.record().indexOf("description");
-	auto distanceField = query.record().indexOf("distance");
-	auto workTimeField = query.record().indexOf("work_time");
-	QStringList ids;
+	QSqlQuery query( "SELECT * FROM tr_ex_distance ORDER BY id ASC");
 
 	while (query.next()) {
-		DistanceModel * model = new DistanceModel();
-		qint64 id = query.value(idField).toInt();
-		ids << QString::number(id);
-		model->setId(id);
-		model->setName(query.value(nameField).toString());
-		model->setDescription(query.value(descriptionField).toString());
-		model->setDistance(query.value(distanceField).toInt());
-		model->setWorkTime(query.value(workTimeField).toInt());
-		models << model;
+		models  << load(query);
 	}
 	return models;
 }
@@ -157,15 +108,19 @@ DistanceModel *DistanceModel::load(QSqlQuery &query) {
 	auto nameField = query.record().indexOf("name");
 	auto descriptionField = query.record().indexOf("description");
 	auto distanceField = query.record().indexOf("distance");
-	auto workTimeField = query.record().indexOf("work_time");
-	auto programOrderField = query.record().indexOf("program_order");
+	auto restTimeField = query.record().indexOf("rest_time");
+	auto trainIdField = query.record().indexOf("train_id");
+	auto trainOrderField = query.record().indexOf("train_order");
 	model->setId(query.value(idField).toInt());
 	model->setName(query.value(nameField).toString());
 	model->setDescription(query.value(descriptionField).toString());
 	model->setDistance(query.value(distanceField).toInt());
-	model->setWorkTime(query.value(workTimeField).toInt());
-	if(programOrderField>=0){
-		model->setProgramOrder(query.value(programOrderField).toInt());
+	model->setRestTime(query.value(restTimeField).toInt());
+	if(trainIdField>=0){
+		model->setTrainId(query.value(trainIdField).toInt());
+	}
+	if(trainOrderField>=0){
+		model->setTrainOrder(query.value(trainOrderField).toInt());
 	}
 	return model;
 }

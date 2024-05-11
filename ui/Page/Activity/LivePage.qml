@@ -33,8 +33,8 @@ Item {
 	property ProgramModel targetProgramModel
 	property TrainingModel trainingModel: TrainingModel{
 		id: trainingModel
-		programModel.targetProgramModel: mainItem.targetProgramModel
-		onExercisesChanged: programExercises.setExercises(programModel.exercises)
+		trainModel.targetProgramModel: mainItem.targetProgramModel
+		onExercisesChanged: programExercises.setExercises(trainModel.exercises)
 		onWorkingNextExercise: function(index){
 			exercisesList.positionViewAtIndex(index,ListView.Beginning)
 		}
@@ -108,5 +108,7 @@ Item {
 	Dialog{
 		id: finishPopup
 		text: 'Program is over'
+		onAccepted: trainingModel.save()
+		onRejected: trainingModel.save()
 	}
 }

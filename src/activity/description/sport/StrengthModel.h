@@ -40,7 +40,7 @@ public:
 	StrengthModel(const StrengthModel * model, QObject *parent = nullptr);
 	~StrengthModel();
 	virtual ExerciseModel * clone(qint64 programId)const;
-	virtual Training::ExerciseModel * cloneTraining();
+	virtual Training::ExerciseModel * cloneTraining(qint64 programId);
 	virtual int getType() const;
 
 	Q_INVOKABLE virtual bool save();

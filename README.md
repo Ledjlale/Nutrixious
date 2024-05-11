@@ -8,7 +8,14 @@ It will allow you to follow your physical training and carry out calorie assessm
 
 ## RoadMap:
 
-Focus on Android only! (and Linux for debugging)
+### Current Status
+
+Focus on Android only! (and Linux for debugging).
+
+- Exercises and programs can be set.
+- A physical training on a program can be done.
+- Training can be saved after doing it.
+- A Bar code can be scanned that shows only the result.
 
 ### Main Goals:
 

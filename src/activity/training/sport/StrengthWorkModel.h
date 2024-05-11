@@ -45,7 +45,7 @@ public:
 	explicit StrengthWorkModel(QObject *parent = nullptr);
 	StrengthWorkModel(const StrengthWorkModel * model, QObject *parent = nullptr);
 
-	virtual StrengthWorkModel * clone()const;
+	virtual StrengthWorkModel * clone(qint64 trainId, qint64 strengthId)const;
 	static StrengthWorkModel *load(QSqlQuery &query);	// Create a model from the current query.
 
 	void setTargetWork(Description::StrengthWorkModel * data);
@@ -74,13 +74,17 @@ public:
 	qint64 getId() const;
 	void setId(qint64 id);
 
+	qint64 getStrengthId() const;
+	void setStrengthId(qint64 id);
+
+	qint64 getTrainId() const;
+	void setTrainId(qint64 id);
+
 	void startWork();
 	virtual void endOfCurrentWork();
 	virtual void endOfCurrentRest();
 
-	void save(qint64 parentId);
-	void saveProgram(qint64 programId, qint64 parentId);
-
+	void save();
 signals:
 	void targetWorkChanged();
 	void repetitionsChanged();
@@ -88,6 +92,8 @@ signals:
 	void workTimeChanged();
 	void restTimeChanged();
 	void idChanged();
+	void strengthIdChanged();
+	void trainIdChanged();
 	void isRunningChanged();
 	void isRestingChanged();
 	void isDoneChanged();
@@ -96,6 +102,8 @@ signals:
 protected:
 	Description::StrengthWorkModel *mTargetWork;
 	qint64 mDbId = 0;
+	qint64 mStrengthId = 0;
+	qint64 mTrainId = -1;
 	int mRepetitions = 1;
 	int mWeight = 0;
 	int mWorkTime = 0;

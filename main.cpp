@@ -40,8 +40,6 @@
 #include "src/activity/description/program/ProgramListModel.h"
 #include "src/activity/description/program/ProgramModel.h"
 
-#include "src/activity/training/TrainingModel.h"
-
 #include "src/activity/training/sport/DistanceModel.h"
 #include "src/activity/training/sport/StepsModel.h"
 #include "src/activity/training/sport/StrengthModel.h"
@@ -51,9 +49,11 @@
 #include "src/activity/training/exercise/ExerciseListModel.h"
 #include "src/activity/training/exercise/ExerciseModel.h"
 
-#include "src/activity/training/program/ProgramProxyModel.h"
-#include "src/activity/training/program/ProgramListModel.h"
-#include "src/activity/training/program/ProgramModel.h"
+#include "src/activity/training/TrainingModel.h"
+
+#include "src/activity/training/train/TrainProxyModel.h"
+#include "src/activity/training/train/TrainListModel.h"
+#include "src/activity/training/train/TrainModel.h"
 
 
 void registerTypes(){
@@ -85,9 +85,9 @@ void registerTypes(){
 	qmlRegisterType<Training::ExerciseListModel>("App.Training", 1, 0, "ExerciseListModel");
 	qmlRegisterType<Training::ExerciseProxyModel>("App.Training", 1, 0, "ExerciseProxyModel");
 
-	qmlRegisterType<Training::ProgramModel>("App.Training", 1, 0, "ProgramModel");
-	qmlRegisterType<Training::ProgramListModel>("App.Training", 1, 0, "ProgramListModel");
-	qmlRegisterType<Training::ProgramProxyModel>("App.Training", 1, 0, "ProgramProxyModel");
+	qmlRegisterType<Training::TrainModel>("App.Training", 1, 0, "TrainModel");
+	qmlRegisterType<Training::TrainListModel>("App.Training", 1, 0, "TrainListModel");
+	qmlRegisterType<Training::TrainProxyModel>("App.Training", 1, 0, "TrainProxyModel");
 
 }
 

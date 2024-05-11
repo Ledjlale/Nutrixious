@@ -56,10 +56,6 @@ int ExerciseModel::getType() const{
 	return 0;
 }
 
-bool ExerciseModel::save(){
-	return !mInvalidName && !mInvalidDescription;
-}
-
 qint64 ExerciseModel::getId()const{
 	return mDbId;
 }
@@ -137,3 +133,7 @@ void ExerciseModel::setInvalidDescription(bool invalid){
 }
 
 //-------------------------------------------------------------------------------------------------------------------
+
+bool ExerciseModel::save(){
+	return !mInvalidName && !mInvalidDescription;
+}

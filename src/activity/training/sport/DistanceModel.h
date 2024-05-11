@@ -37,10 +37,9 @@ class DistanceModel : public ExerciseModel {
 public:
 	explicit DistanceModel(QObject *parent = nullptr);
 	DistanceModel(const DistanceModel * model, QObject *parent = nullptr);
-	virtual ExerciseModel * clone()const;
+	virtual ExerciseModel * clone(qint64 trainId)const;
 
 	Q_INVOKABLE virtual bool save();
-	virtual bool saveProgram(qint64 programId);
 	static QList<ExerciseModel*> load();
 	static DistanceModel *load(QSqlQuery &query);	// Create a model from the current query.
 

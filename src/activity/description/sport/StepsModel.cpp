@@ -48,9 +48,10 @@ ExerciseModel * StepsModel::clone(qint64 programId)const{
 	return model;
 }
 
-Training::ExerciseModel * StepsModel::cloneTraining(){
+Training::ExerciseModel * StepsModel::cloneTraining(qint64 trainId){
 	Training::StepsModel * model = new Training::StepsModel();
 	model->setTargetExercise(this);
+	model->setTrainId(trainId);
 	return model;
 }
 
@@ -121,12 +122,17 @@ StepsModel *StepsModel::load(QSqlQuery &query) {
 	auto descriptionField = query.record().indexOf("description");
 	auto stepsField = query.record().indexOf("steps");
 	auto restTimeField = query.record().indexOf("rest_time");
+	auto programIdField = query.record().indexOf("program_id");
 	auto programOrderField = query.record().indexOf("program_order");
 	model->setId(query.value(idField).toInt());
 	model->setName(query.value(nameField).toString());
 	model->setDescription(query.value(descriptionField).toString());
 	model->setSteps(query.value(stepsField).toInt());
 	model->setRestTime(query.value(restTimeField).toInt());
+	model->setRestTime(query.value(restTimeField).toInt());
+	if(programIdField>=0){
+		model->setProgramId(query.value(programIdField).toInt());
+	}
 	if(programOrderField>=0){
 		model->setProgramOrder(query.value(programOrderField).toInt());
 	}

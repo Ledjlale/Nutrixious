@@ -49,29 +49,9 @@ ApplicationWindow {
 			TrainingPage{}
 			ExercisesPage{}
 			ProgramsPage{}
+			TrainingsPage{}
 			SettingsPage{}
-		}/*
-		TabBar{
-			id: mainTab
-			Layout.fillWidth: true
-			position: TabBar.Footer
-			currentIndex: mainView.currentIndex
-			TabButton{
-				text: qsTr('Overview')
-			}
-			TabButton{
-				text: qsTr('Diary')
-			}
-			TabButton{
-				text: qsTr('Food')
-			}
-			TabButton{
-				text: qsTr('Activities')
-			}
-			TabButton{
-				text: qsTr('Settings')
-			}
-		}*/
+		}
 	}
 	Item{
 		id: menuPanel
@@ -147,7 +127,7 @@ ApplicationWindow {
 					}
 				}
 				Repeater{
-					model:[{title: 'Overview'},{title: 'Diary'},{title: 'Food'},{title: 'Training'}, {title: 'Exercises'},{title: 'Programs'},{title: 'Settings'}]
+					model:[{title: 'Overview'},{title: 'Diary'},{title: 'Food'},{title: 'Training'}, {title: 'Exercises'},{title: 'Programs'},{title: 'Trainings'},{title: 'Settings'}]
 					delegate: MouseArea{
 						Layout.fillWidth: true
 						Layout.preferredHeight: 80

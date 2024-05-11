@@ -18,19 +18,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ProgramProxyModel.h"
-#include "ProgramListModel.h"
+#ifndef TRAINING_PROGRAM_PROXY_MODEL_H
+#define TRAINING_PROGRAM_PROXY_MODEL_H
 
-using namespace Training;
+#include "src/tool/proxyModel/SortFilterProxyModel.hpp"
 
-ProgramProxyModel::ProgramProxyModel(QObject *parent)
-	: SortFilterProxyModel{parent}
-{
-	setSourceModel(new ProgramListModel());
+namespace Training{
+class TrainProxyModel: public SortFilterProxyModel {
+Q_OBJECT
+public:
+	TrainProxyModel(QObject * parent = nullptr);
+
+	Q_INVOKABLE void update();
+
+};
 }
 
-void ProgramProxyModel::update(){
-	sourceModel()->deleteLater();
-	setSourceModel(new ProgramListModel());
-}
-
+#endif

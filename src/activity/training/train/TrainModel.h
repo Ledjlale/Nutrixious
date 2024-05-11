@@ -24,6 +24,7 @@
 #include <QObject>
 #include <QVector>
 #include <QVariantList>
+#include <QSqlQuery>
 
 #include "src/activity/training/exercise/ExerciseModel.h"
 namespace Description{
@@ -32,7 +33,7 @@ namespace Description{
 //#include "src/activity/description/program/ProgramModel.h"
 
 namespace Training{
-class ProgramModel : public QObject{
+class TrainModel : public QObject{
 Q_OBJECT
 	Q_PROPERTY(Description::ProgramModel *targetProgramModel MEMBER mTargetProgramModel NOTIFY targetProgramModelChanged)
 	Q_PROPERTY(QString name MEMBER mName NOTIFY nameChanged)
@@ -43,11 +44,15 @@ Q_OBJECT
 	Q_PROPERTY(bool invalidDescription MEMBER mInvalidDescription NOTIFY invalidDescriptionChanged)
 	Q_PROPERTY(bool invalidExercises MEMBER mInvalidExercises NOTIFY invalidExercisesChanged)
 public:
-	explicit ProgramModel(QObject *parent = nullptr);
+	explicit TrainModel(QObject *parent = nullptr);
 
 	QString getName() const;
 	void setName(QString name);
 	void setDescription(QString description);
+
+	QDateTime getStartTime() const;
+	void setStartTime(const time_t& data_ms);	// ms
+	void setStartTime(const QDateTime& data);
 
 	QVariantList getVariantExercises() const;
 	const QList<ExerciseModel*>& getExercises() const;
@@ -61,15 +66,18 @@ public:
 	void setInvalidDescription(bool invalid);
 
 	qint64 getId()const;
-	void setId(qint64 id);
+	virtual void setId(qint64 id);
 
 	Q_INVOKABLE virtual bool save();
-	static QList<ProgramModel*> load();
+	static QList<TrainModel*> load();
+	static TrainModel *load(QSqlQuery &query);
+	QList<ExerciseModel*>::Iterator start();
 
 signals:
 	void targetProgramModelChanged();
 	void nameChanged();
 	void descriptionChanged();
+	void startTimeChanged();
 	void exercisesChanged();
 	void nextExercise();
 
@@ -82,6 +90,7 @@ protected:
 	qint64 mDbId = 0;
 	QString mName;
 	QString mDescription;
+	QDateTime mStartTime;
 	QList<ExerciseModel*> mExercises;
 
 	bool mInvalidName = true;
