@@ -29,7 +29,7 @@ using namespace Description;
 ProgramListModel::ProgramListModel(QObject *parent)
 	: ProxyAbstractListModel<ProgramModel*>{parent}
 {
-	mList << ProgramModel::load();
+	mList << ProgramModel::load(parent);
 	//mList << StrengthModel::load();
 	//mList << DistanceModel::load();
 	//mList << StepsModel::load();

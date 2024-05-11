@@ -29,7 +29,7 @@ using namespace Training;
 TrainListModel::TrainListModel(QObject *parent)
 	: ProxyAbstractListModel<TrainModel*>{parent}
 {
-	mList << TrainModel::load();
+	mList << TrainModel::load(this);
 	//mList << StrengthModel::load();
 	//mList << DistanceModel::load();
 	//mList << StepsModel::load();

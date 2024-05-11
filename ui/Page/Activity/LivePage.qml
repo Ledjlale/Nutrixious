@@ -102,6 +102,14 @@ Item {
 					trainingModel.endOfCurrentWork()
 				}
 			}
+			Button{
+				Layout.bottomMargin: 15
+				visible: mainItem.running
+				text: 'End - All'
+				onClicked: {
+					trainingModel.save()
+				}
+			}
 			Item{Layout.fillWidth: true}
 		}
 	}

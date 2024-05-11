@@ -30,30 +30,39 @@
 
 #include "src/activity/training/sport/DistanceModel.h"
 
+#include <QQmlApplicationEngine>
+extern QQmlApplicationEngine * gEngine;
+
 using namespace Description;
 
+DistanceModel::DistanceModel() : DistanceModel(nullptr){
+	gEngine->setObjectOwnership(this, QQmlEngine::JavaScriptOwnership);
+}
+
 DistanceModel::DistanceModel(QObject *parent) : ExerciseModel(parent){
+	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	mName = "Distance";
 	mInvalidName = false;
 }
 
 DistanceModel::DistanceModel(const DistanceModel * model, QObject *parent) : ExerciseModel(model, parent){
-
+	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	mDistance = model->getDistance();
 	mWeight = model->getWeight();
 	mRestTime = model->getRestTime();
 }
 
-ExerciseModel * DistanceModel::clone(qint64 programId)const{
-	ExerciseModel *model = new DistanceModel(this, nullptr);
+ExerciseModel * DistanceModel::clone(qint64 programId, QObject *parent)const{
+	ExerciseModel *model = new DistanceModel(this, parent);
 	model->setProgramId(programId);
 	return model;
 }
 
-Training::ExerciseModel * DistanceModel::cloneTraining(qint64 trainId){
-	Training::DistanceModel * model = new Training::DistanceModel();
+Training::ExerciseModel * DistanceModel::cloneTraining(qint64 trainId, QObject *parent){
+	Training::DistanceModel * model = new Training::DistanceModel(parent);
 	model->setTargetExercise(this);
 	model->setTrainId(trainId);
+	model->setTrainOrder(getProgramOrder());
 	return model;
 }
 
@@ -66,7 +75,7 @@ bool DistanceModel::save() {
 	qDebug() << "Saving Distance" << mName << mDescription;
 	DatabaseQuery query;
 
-	query.begin(mDbId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, isProgramLinked() ? "pgrm_ex_distance" : "ex_distance");
+	query.begin(mExerciseId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, isProgramLinked() ? "pgrm_ex_distance" : "ex_distance");
 	if(isProgramLinked()){
 		query.add("program_id", getProgramId());
 		query.add("program_order", getProgramOrder());
@@ -75,22 +84,22 @@ bool DistanceModel::save() {
 	query.add("description", mDescription);
 	query.add("distance", getDistance());
 	query.add("rest_time", getRestTime());
-	query.addConditionnal("id",mDbId);
-	if(mDbId == 0){
+	query.addConditionnal("id",mExerciseId);
+	if(mExerciseId == 0){
 		if(!query.exec()) qCritical() << "Cannot save"<< (isProgramLinked() ? "program" : "") <<"distance : "  << query.mQuery.lastError().text();
 		auto fieldNo = query.mQuery.record().indexOf("id");
 		while (query.mQuery.next()) {
-			setId(query.mQuery.value(fieldNo).toInt());
-			qDebug() << "Insert"<< (isProgramLinked() ? "program" : "") <<"distance exercise: " << mDbId;
+			setExerciseId(query.mQuery.value(fieldNo).toInt());
+			qDebug() << "Insert"<< (isProgramLinked() ? "program" : "") <<"distance exercise: " << mExerciseId;
 		}
 	}else{
 		if(!query.exec()) qCritical() << "Cannot update"<< (isProgramLinked() ? "program" : "") <<"distance : "  << query.mQuery.lastError().text();
-		else qDebug() << "Update"<< (isProgramLinked() ? "program" : "") <<"distance exercise: " << mDbId;
+		else qDebug() << "Update"<< (isProgramLinked() ? "program" : "") <<"distance exercise: " << mExerciseId;
 	}
 	return true;
 }
 
-QList<ExerciseModel*> DistanceModel::load(){
+QList<ExerciseModel*> DistanceModel::load(QObject * parent){
 	QList<ExerciseModel*> models;
 	QSqlQuery query( "SELECT * FROM ex_distance ORDER BY id ASC");
 
@@ -102,10 +111,10 @@ QList<ExerciseModel*> DistanceModel::load(){
 	QStringList ids;
 
 	while (query.next()) {
-		DistanceModel * model = new DistanceModel();
+		DistanceModel * model = new DistanceModel(parent);
 		qint64 id = query.value(idField).toInt();
 		ids << QString::number(id);
-		model->setId(id);
+		model->setExerciseId(id);
 		model->setName(query.value(nameField).toString());
 		model->setDescription(query.value(descriptionField).toString());
 		model->setDistance(query.value(distanceField).toInt());
@@ -115,8 +124,8 @@ QList<ExerciseModel*> DistanceModel::load(){
 	return models;
 }
 
-DistanceModel *DistanceModel::load(QSqlQuery &query) {
-	DistanceModel * model = new DistanceModel();
+DistanceModel *DistanceModel::load(QSqlQuery &query, QObject * parent) {
+	DistanceModel * model = new DistanceModel(parent);
 // TODO optimize
 	auto idField = query.record().indexOf("id");
 	auto nameField = query.record().indexOf("name");
@@ -125,7 +134,7 @@ DistanceModel *DistanceModel::load(QSqlQuery &query) {
 	auto restTimeField = query.record().indexOf("rest_time");
 	auto programIdField = query.record().indexOf("program_id");
 	auto programOrderField = query.record().indexOf("program_order");
-	model->setId(query.value(idField).toInt());
+	model->setExerciseId(query.value(idField).toInt());
 	model->setName(query.value(nameField).toString());
 	model->setDescription(query.value(descriptionField).toString());
 	model->setDistance(query.value(distanceField).toInt());

@@ -37,7 +37,7 @@ Item{
 	implicitHeight: mainLayout.implicitHeight
 
 
-	signal addClicked(ExerciseModel exerciseModel)
+	signal addClicked(var exerciseModel)
 
 	function saveValues(){
 		if(nameTextField.isEdited) strengthModel.name = nameTextField.newValue

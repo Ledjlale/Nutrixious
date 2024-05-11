@@ -29,29 +29,38 @@
 #include "src/activity/training/sport/StepsModel.h"
 #include "src/database/DatabaseQuery.h"
 
+#include <QQmlApplicationEngine>
+extern QQmlApplicationEngine * gEngine;
 using namespace Description;
 
+StepsModel::StepsModel() : StepsModel(nullptr){
+	gEngine->setObjectOwnership(this, QQmlEngine::JavaScriptOwnership);
+}
+
 StepsModel::StepsModel(QObject *parent) : ExerciseModel(parent){
+	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	mName = "Steps";
 	mInvalidName = false;
 }
 
 StepsModel::StepsModel(const StepsModel * model, QObject *parent) : ExerciseModel(model, parent){
+	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	mSteps = model->getSteps();
 	mWeight = model->getWeight();
 	mRestTime = model->getRestTime();
 }
 
-ExerciseModel * StepsModel::clone(qint64 programId)const{
-	StepsModel *model = new StepsModel(this, nullptr);
+ExerciseModel * StepsModel::clone(qint64 programId, QObject *parent)const{
+	StepsModel *model = new StepsModel(this, parent);
 	model->setProgramId(programId);
 	return model;
 }
 
-Training::ExerciseModel * StepsModel::cloneTraining(qint64 trainId){
-	Training::StepsModel * model = new Training::StepsModel();
+Training::ExerciseModel * StepsModel::cloneTraining(qint64 trainId, QObject *parent){
+	Training::StepsModel * model = new Training::StepsModel(parent);
 	model->setTargetExercise(this);
 	model->setTrainId(trainId);
+	model->setTrainOrder(getProgramOrder());
 	return model;
 }
 
@@ -65,7 +74,7 @@ bool StepsModel::save() {
 	qDebug() << "Saving Steps" << mName << mDescription;
 	DatabaseQuery query;
 
-	query.begin(mDbId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, isProgramLinked() ? "pgrm_ex_steps" : "ex_steps");
+	query.begin(mExerciseId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, isProgramLinked() ? "pgrm_ex_steps" : "ex_steps");
 	if(isProgramLinked()){
 		query.add("program_id", getProgramId());
 		query.add("program_order", getProgramOrder());
@@ -74,22 +83,22 @@ bool StepsModel::save() {
 	query.add("description", mDescription);
 	query.add("steps", getSteps());
 	query.add("rest_time", getRestTime());
-	query.addConditionnal("id",mDbId);
-	if(mDbId == 0){
+	query.addConditionnal("id",mExerciseId);
+	if(mExerciseId == 0){
 		if(!query.exec()) qCritical() << "Cannot save"<< (isProgramLinked() ? "program" : "") <<"steps : "  << query.mQuery.lastError().text();
 		auto fieldNo = query.mQuery.record().indexOf("id");
 		while (query.mQuery.next()) {
-			setId(query.mQuery.value(fieldNo).toInt());
-			qDebug() << "Insert"<< (isProgramLinked() ? "program" : "") <<"steps exercise: " << mDbId;
+			setExerciseId(query.mQuery.value(fieldNo).toInt());
+			qDebug() << "Insert"<< (isProgramLinked() ? "program" : "") <<"steps exercise: " << mExerciseId;
 		}
 	}else{
 		if(!query.exec()) qCritical() << "Cannot update"<< (isProgramLinked() ? "program" : "") <<"steps : "  << query.mQuery.lastError().text();
-		else qDebug() << "Update"<< (isProgramLinked() ? "program" : "") <<"steps exercise: " << mDbId;
+		else qDebug() << "Update"<< (isProgramLinked() ? "program" : "") <<"steps exercise: " << mExerciseId;
 	}
 	return true;
 }
 
-QList<ExerciseModel*> StepsModel::load(){
+QList<ExerciseModel*> StepsModel::load(QObject * parent){
 	QList<ExerciseModel*> models;
 	QSqlQuery query( "SELECT * FROM ex_steps ORDER BY id ASC");
 
@@ -101,10 +110,10 @@ QList<ExerciseModel*> StepsModel::load(){
 	QStringList ids;
 
 	while (query.next()) {
-		StepsModel * model = new StepsModel();
+		StepsModel * model = new StepsModel(parent);
 		qint64 id = query.value(idField).toInt();
 		ids << QString::number(id);
-		model->setId(id);
+		model->setExerciseId(id);
 		model->setName(query.value(nameField).toString());
 		model->setDescription(query.value(descriptionField).toString());
 		model->setSteps(query.value(stepsField).toInt());
@@ -114,8 +123,8 @@ QList<ExerciseModel*> StepsModel::load(){
 	return models;
 }
 
-StepsModel *StepsModel::load(QSqlQuery &query) {
-	StepsModel * model = new StepsModel();
+StepsModel *StepsModel::load(QSqlQuery &query, QObject * parent) {
+	StepsModel * model = new StepsModel(parent);
 // TODO optimize
 	auto idField = query.record().indexOf("id");
 	auto nameField = query.record().indexOf("name");
@@ -124,7 +133,7 @@ StepsModel *StepsModel::load(QSqlQuery &query) {
 	auto restTimeField = query.record().indexOf("rest_time");
 	auto programIdField = query.record().indexOf("program_id");
 	auto programOrderField = query.record().indexOf("program_order");
-	model->setId(query.value(idField).toInt());
+	model->setExerciseId(query.value(idField).toInt());
 	model->setName(query.value(nameField).toString());
 	model->setDescription(query.value(descriptionField).toString());
 	model->setSteps(query.value(stepsField).toInt());

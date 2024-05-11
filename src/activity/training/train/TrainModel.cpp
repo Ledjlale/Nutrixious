@@ -31,11 +31,19 @@
 #include "src/activity/training/sport/StrengthWorkModel.h"
 #include "src/database/DatabaseQuery.h"
 
+#include <QQmlApplicationEngine>
+extern QQmlApplicationEngine * gEngine;
+
 using namespace Training;
+
+TrainModel::TrainModel() : TrainModel(nullptr){
+	gEngine->setObjectOwnership(this, QQmlEngine::JavaScriptOwnership);
+}
 
 TrainModel::TrainModel(QObject *parent)
 	: QObject{parent}
 {
+	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	mName = "Train";
 	mInvalidName = false;
 	connect(this, &TrainModel::nameChanged, [this](){
@@ -47,11 +55,14 @@ TrainModel::TrainModel(QObject *parent)
 	connect(this, &TrainModel::exercisesChanged, [this](){
 		setInvalidExercises( mExercises.size() == 0);
 	});
+	connect(this, &TrainModel::trainIdChanged, [this](){
+		for(auto &i: mExercises) i->setTrainId(mTrainId);
+	});
 	connect(this, &TrainModel::targetProgramModelChanged, [this](){
 		mExercises.clear();
 		if(mTargetProgramModel){
 			for(auto model : mTargetProgramModel->getExercises()){
-				auto newExercise = model->cloneTraining(mDbId);
+				auto newExercise = model->cloneTraining(mTrainId, this);
 				connect(newExercise, &ExerciseModel::finished, this, &TrainModel::nextExercise);
 				mExercises << newExercise;
 			}
@@ -60,13 +71,15 @@ TrainModel::TrainModel(QObject *parent)
 	});
 }
 
-qint64 TrainModel::getId()const{
-	return mDbId;
+qint64 TrainModel::getTrainId()const{
+	return mTrainId;
 }
 
-void TrainModel::setId(qint64 id) {
-	mDbId = id;
-	for(auto &i: mExercises) i->setTrainId(id);
+void TrainModel::setTrainId(qint64 id) {
+	if(mTrainId != id){
+		mTrainId = id;
+		emit trainIdChanged();
+	}
 }
 
 QString TrainModel::getName() const{
@@ -119,22 +132,22 @@ void TrainModel::addExercise(ExerciseModel *model, bool keepId) {
 	int trainOrder = model->getTrainOrder();
 	ExerciseModel * insertedModel = nullptr;
 	if(trainOrder < 0) {
-		mExercises.push_back(model->clone(mDbId));
+		mExercises.push_back(model->clone(mTrainId, this));
 		insertedModel = mExercises.back();
 		insertedModel->setTrainOrder(mExercises.size());
 	}else{
 		if( mExercises.size() == 0){
-			mExercises.push_back(model->clone(mDbId));
+			mExercises.push_back(model->clone(mTrainId, this));
 			insertedModel = mExercises.back();
 		}else {
 			auto it = mExercises.begin();
 			while(it != mExercises.end() && (*it)->getTrainOrder() <= trainOrder)
 				++it;
-			insertedModel = *mExercises.insert(it, model->clone(mDbId));
+			insertedModel = *mExercises.insert(it, model->clone(mTrainId, this));
 		}
 	}
 	if(keepId)
-		insertedModel->setId(model->getId());
+		insertedModel->setExerciseId(model->getExerciseId());
 	emit exercisesChanged();
 }
 
@@ -182,17 +195,17 @@ bool TrainModel::save(){
 	qDebug() << "Saving Training Train " << mName << mDescription;
 	DatabaseQuery query;
 
-	query.begin(mDbId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "trains" );
+	query.begin(mTrainId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "trains" );
 
 	query.add("name", mName);
 	query.add("description", mDescription);
-	query.addConditionnal("id",mDbId);
-	if(mDbId == 0){
+	query.addConditionnal("id",mTrainId);
+	if(mTrainId == 0){
 		if(!query.exec()) qCritical() << "Cannot save train: "  << query.mQuery.lastError().text();
 		auto fieldNo = query.mQuery.record().indexOf("id");
 		while (query.mQuery.next()) {
-			setId(query.mQuery.value(fieldNo).toInt());
-			qDebug() << "Insert train: " << mDbId;
+			setTrainId(query.mQuery.value(fieldNo).toInt());
+			qDebug() << "Insert train: " << mTrainId;
 		}
 		for(auto exercise : mExercises){
 			exercise->save();
@@ -200,7 +213,7 @@ bool TrainModel::save(){
 	}else{
 		if(!query.exec()) qCritical() << "Cannot update train: "  << query.mQuery.lastError().text();
 		else {
-			qDebug() << "Update train: " << mDbId;
+			qDebug() << "Update train: " << mTrainId;
 			for(auto exercise : mExercises){
 			exercise->save();
 		}
@@ -209,15 +222,15 @@ bool TrainModel::save(){
 	return false;
 }
 
-QList<TrainModel*> TrainModel::load(){
+QList<TrainModel*> TrainModel::load(QObject * parent){
 QList<TrainModel*> models;
 	QSqlQuery query( "SELECT * FROM trains ORDER BY id ASC");
 	QStringList ids;
 
 	while (query.next()) {
-		auto model = load(query);
+		auto model = load(query, parent);
 		models << model;
-		ids << QString::number(model->getId());
+		ids << QString::number(model->getTrainId());
 	}
 	if(models.size() == 0) return models;
 
@@ -227,8 +240,8 @@ QList<TrainModel*> models;
 	auto trainIdField = query.record().indexOf("train_id");
 	auto currentModel = models.begin();
 	while (query.next()) {
-		while(query.value(trainIdField).toInt() != (*currentModel)->getId()) ++currentModel;
-		auto model = StrengthModel::load(query);
+		while(query.value(trainIdField).toInt() != (*currentModel)->getTrainId()) ++currentModel;
+		auto model = StrengthModel::load(query, *currentModel);
 		(*currentModel)->addExercise(model, true);
 	}
 
@@ -239,14 +252,14 @@ QList<TrainModel*> models;
 	currentModel = models.begin();
 	auto currentExercise = (*currentModel)->getExercises().begin();
 	while (query.next()) {
-		while(query.value(trainIdField).toInt() != (*currentModel)->getId()){
+		while(query.value(trainIdField).toInt() != (*currentModel)->getTrainId()){
 			++currentModel;
 			currentExercise = (*currentModel)->getExercises().begin();
 		}
-		while(query.value(strengthId).toInt() != (*currentExercise)->getId()) {
+		while(query.value(strengthId).toInt() != (*currentExercise)->getExerciseId()) {
 			++currentExercise;
 		}
-		auto model = StrengthWorkModel::load(query);
+		auto model = StrengthWorkModel::load(query, *currentExercise);
 		dynamic_cast<StrengthModel*>(*currentExercise)->addSet(model, true);
 	}
 
@@ -256,8 +269,8 @@ QList<TrainModel*> models;
 	trainIdField = query.record().indexOf("train_id");
 	currentModel = models.begin();
 	while (query.next()) {
-		while(query.value(trainIdField).toInt() != (*currentModel)->getId()) ++currentModel;
-		auto model = DistanceModel::load(query);
+		while(query.value(trainIdField).toInt() != (*currentModel)->getTrainId()) ++currentModel;
+		auto model = DistanceModel::load(query, *currentModel);
 		(*currentModel)->addExercise(model, true);
 	}
 
@@ -267,8 +280,8 @@ QList<TrainModel*> models;
 	trainIdField = query.record().indexOf("train_id");
 	currentModel = models.begin();
 	while (query.next()) {
-		while(query.value(trainIdField).toInt() != (*currentModel)->getId()) ++currentModel;
-		auto model = StepsModel::load(query);
+		while(query.value(trainIdField).toInt() != (*currentModel)->getTrainId()) ++currentModel;
+		auto model = StepsModel::load(query, *currentModel);
 		(*currentModel)->addExercise(model, true);
 	}
 
@@ -278,14 +291,14 @@ QList<TrainModel*> models;
 
 }
 
-TrainModel *TrainModel::load(QSqlQuery &query) {
-	TrainModel * model = new TrainModel();
+TrainModel *TrainModel::load(QSqlQuery &query, QObject * parent) {
+	TrainModel * model = new TrainModel(parent);
 // TODO optimize
 	auto idField = query.record().indexOf("id");
 	auto nameField = query.record().indexOf("name");
 	auto descriptionField = query.record().indexOf("description");
 	auto startTimeField = query.record().indexOf("start_time");
-	model->setId(query.value(idField).toInt());
+	model->setTrainId(query.value(idField).toInt());
 	model->setName(query.value(nameField).toString());
 	model->setDescription(query.value(descriptionField).toString());
 	model->setStartTime(query.value(startTimeField).toULongLong());

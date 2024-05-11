@@ -33,9 +33,9 @@ using namespace Training;
 ExerciseListModel::ExerciseListModel(QObject *parent)
 	: ProxyAbstractListModel<ExerciseModel*>{parent}
 {
-	mList << StrengthModel::load();
-	mList << DistanceModel::load();
-	mList << StepsModel::load();
+	mList << StrengthModel::load(this);
+	mList << DistanceModel::load(this);
+	mList << StepsModel::load(this);
 }
 
 ExerciseListModel::ExerciseListModel(QVariantList exercises, QObject *parent)

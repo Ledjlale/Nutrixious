@@ -24,6 +24,7 @@
 #include <QObject>
 #include <QVector>
 #include <QVariantList>
+#include <QSqlQuery>
 
 #include "src/activity/description/exercise/ExerciseModel.h"
 
@@ -38,7 +39,8 @@ Q_OBJECT
 	Q_PROPERTY(bool invalidDescription MEMBER mInvalidDescription NOTIFY invalidDescriptionChanged)
 	Q_PROPERTY(bool invalidExercises MEMBER mInvalidExercises NOTIFY invalidExercisesChanged)
 public:
-	explicit ProgramModel(QObject *parent = nullptr);
+	ProgramModel();	// QML
+	ProgramModel(QObject *parent);
 
 	QString getName() const;
 	void setName(QString name);
@@ -54,13 +56,15 @@ public:
 	void setInvalidName(bool invalid);
 	void setInvalidDescription(bool invalid);
 
-	qint64 getId()const;
-	virtual void setId(qint64 id);
+	qint64 getProgramId()const;
+	virtual void setProgramId(qint64 id);
 
 	Q_INVOKABLE virtual bool save();
-	static QList<ProgramModel*> load();
+	static QList<ProgramModel*> load(QObject * parent);
+	static ProgramModel *load(QSqlQuery &query, QObject * parent);
 
 signals:
+	void programIdChanged();
 	void nameChanged();
 	void descriptionChanged();
 	void exercisesChanged();
@@ -70,7 +74,7 @@ signals:
 	void invalidExercisesChanged();
 
 protected:
-	qint64 mDbId = 0;
+	qint64 mProgramId = 0;
 	QString mName;
 	QString mDescription;
 	QList<ExerciseModel*> mExercises;

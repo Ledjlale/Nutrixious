@@ -20,6 +20,7 @@
 
 #include "ProgramModel.h"
 
+#include <QQmlApplicationEngine>
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlError>
@@ -31,9 +32,15 @@
 
 using namespace Description;
 
+extern QQmlApplicationEngine * gEngine;
+
+ProgramModel::ProgramModel() : ProgramModel(nullptr){	// QML
+	gEngine->setObjectOwnership(this, QQmlEngine::JavaScriptOwnership);
+}
 ProgramModel::ProgramModel(QObject *parent)
 	: QObject{parent}
 {
+	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	mName = "Program";
 	mInvalidName = false;
 	connect(this, &ProgramModel::nameChanged, [this](){
@@ -45,15 +52,21 @@ ProgramModel::ProgramModel(QObject *parent)
 	connect(this, &ProgramModel::exercisesChanged, [this](){
 		setInvalidExercises( mExercises.size() == 0);
 	});
+	connect(this, &ProgramModel::programIdChanged, [this](){
+		for(auto &i: mExercises) i->setProgramId(mProgramId);
+	});
 }
 
-qint64 ProgramModel::getId()const{
-	return mDbId;
+qint64 ProgramModel::getProgramId()const{
+	return mProgramId;
 }
 
-void ProgramModel::setId(qint64 id) {
-	mDbId = id;
-	for(auto &i: mExercises) i->setProgramId(id);
+void ProgramModel::setProgramId(qint64 id) {
+	if(mProgramId != id) {
+		mProgramId = id;
+		emit programIdChanged();
+	}
+
 }
 
 QString ProgramModel::getName() const{
@@ -89,22 +102,22 @@ void ProgramModel::addExercise(ExerciseModel *model, bool keepId) {
 	int programOrder = model->getProgramOrder();
 	ExerciseModel * insertedModel = nullptr;
 	if(programOrder < 0) {
-		mExercises.push_back(model->clone(mDbId));
+		mExercises.push_back(model->clone(mProgramId, this));
 		insertedModel = mExercises.back();
 		insertedModel->setProgramOrder(mExercises.size());
 	}else{
 		if( mExercises.size() == 0){
-			mExercises.push_back(model->clone(mDbId));
+			mExercises.push_back(model->clone(mProgramId, this));
 			insertedModel = mExercises.back();
 		}else {
 			auto it = mExercises.begin();
 			while(it != mExercises.end() && (*it)->getProgramOrder() <= programOrder)
 				++it;
-			insertedModel = *mExercises.insert(it, model->clone(mDbId));
+			insertedModel = *mExercises.insert(it, model->clone(mProgramId, this));
 		}
 	}
 	if(keepId)
-		insertedModel->setId(model->getId());
+		insertedModel->setExerciseId(model->getExerciseId());
 	emit exercisesChanged();
 }
 
@@ -151,17 +164,17 @@ bool ProgramModel::save(){
 	qDebug() << "Saving Program " << mName << mDescription;
 	DatabaseQuery query;
 
-	query.begin(mDbId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "programs" );
+	query.begin(mProgramId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "programs" );
 
 	query.add("name", mName);
 	query.add("description", mDescription);
-	query.addConditionnal("id",mDbId);
-	if(mDbId == 0){
+	query.addConditionnal("id",mProgramId);
+	if(mProgramId == 0){
 		if(!query.exec()) qCritical() << "Cannot save program: "  << query.mQuery.lastError().text();
 		auto fieldNo = query.mQuery.record().indexOf("id");
 		while (query.mQuery.next()) {
-			setId(query.mQuery.value(fieldNo).toInt());
-			qDebug() << "Insert program: " << mDbId;
+			setProgramId(query.mQuery.value(fieldNo).toInt());
+			qDebug() << "Insert program: " << mProgramId;
 		}
 		for(auto exercise : mExercises){
 			exercise->save();
@@ -169,7 +182,7 @@ bool ProgramModel::save(){
 	}else{
 		if(!query.exec()) qCritical() << "Cannot update program: "  << query.mQuery.lastError().text();
 		else {
-			qDebug() << "Update program: " << mDbId;
+			qDebug() << "Update program: " << mProgramId;
 			for(auto exercise : mExercises){
 			exercise->save();
 		}
@@ -178,9 +191,19 @@ bool ProgramModel::save(){
 
 	return true;
 }
+ProgramModel *ProgramModel::load(QSqlQuery &query, QObject * parent) {
+	ProgramModel * model = new ProgramModel(parent);
+// TODO optimize
+	auto idField = query.record().indexOf("id");
+	auto nameField = query.record().indexOf("name");
+	auto descriptionField = query.record().indexOf("description");
+	model->setProgramId(query.value(idField).toInt());
+	model->setName(query.value(nameField).toString());
+	model->setDescription(query.value(descriptionField).toString());
+	return model;
+}
 
-
-QList<ProgramModel*> ProgramModel::load(){
+QList<ProgramModel*> ProgramModel::load(QObject * parent){
 	QList<ProgramModel*> models;
 	QSqlQuery query( "SELECT * FROM programs ORDER BY id ASC");
 
@@ -190,12 +213,8 @@ QList<ProgramModel*> ProgramModel::load(){
 	QStringList ids;
 
 	while (query.next()) {
-		ProgramModel * model = new ProgramModel();
-		qint64 id = query.value(idField).toInt();
-		ids << QString::number(id);
-		model->setId(id);
-		model->setName(query.value(nameField).toString());
-		model->setDescription(query.value(descriptionField).toString());
+		auto model = load(query, parent);
+		ids << QString::number(model->getProgramId());
 		models << model;
 	}
 	if(models.size() == 0) return models;
@@ -206,8 +225,8 @@ QList<ProgramModel*> ProgramModel::load(){
 	auto programIdField = query.record().indexOf("program_id");
 	auto currentModel = models.begin();
 	while (query.next()) {
-		while(query.value(programIdField).toInt() != (*currentModel)->getId()) ++currentModel;
-		auto model = StrengthModel::load(query);
+		while(query.value(programIdField).toInt() != (*currentModel)->getProgramId()) ++currentModel;
+		auto model = StrengthModel::load(query, *currentModel);
 		(*currentModel)->addExercise(model, true);
 	}
 
@@ -218,14 +237,14 @@ QList<ProgramModel*> ProgramModel::load(){
 	currentModel = models.begin();
 	auto currentExercise = (*currentModel)->getExercises().begin();
 	while (query.next()) {
-		while(query.value(programIdField).toInt() != (*currentModel)->getId()){
+		while(query.value(programIdField).toInt() != (*currentModel)->getProgramId()){
 			++currentModel;
 			currentExercise = (*currentModel)->getExercises().begin();
 		}
-		while(query.value(strengthId).toInt() != (*currentExercise)->getId()) {
+		while(query.value(strengthId).toInt() != (*currentExercise)->getExerciseId()) {
 			++currentExercise;
 		}
-		auto model = StrengthWorkModel::load(query);
+		auto model = StrengthWorkModel::load(query, *currentExercise);
 		dynamic_cast<StrengthModel*>(*currentExercise)->addSet(model, true);
 	}
 
@@ -235,8 +254,8 @@ QList<ProgramModel*> ProgramModel::load(){
 	programIdField = query.record().indexOf("program_id");
 	currentModel = models.begin();
 	while (query.next()) {
-		while(query.value(programIdField).toInt() != (*currentModel)->getId()) ++currentModel;
-		auto model = DistanceModel::load(query);
+		while(query.value(programIdField).toInt() != (*currentModel)->getProgramId()) ++currentModel;
+		auto model = DistanceModel::load(query, *currentModel);
 		(*currentModel)->addExercise(model, true);
 	}
 
@@ -246,8 +265,8 @@ QList<ProgramModel*> ProgramModel::load(){
 	programIdField = query.record().indexOf("program_id");
 	currentModel = models.begin();
 	while (query.next()) {
-		while(query.value(programIdField).toInt() != (*currentModel)->getId()) ++currentModel;
-		auto model = StepsModel::load(query);
+		while(query.value(programIdField).toInt() != (*currentModel)->getProgramId()) ++currentModel;
+		auto model = StepsModel::load(query, *currentModel);
 		(*currentModel)->addExercise(model, true);
 	}
 

@@ -36,7 +36,8 @@ class TrainingModel : public QObject {
 	Q_PROPERTY(bool working READ isWorking NOTIFY isWorkingChanged)
 
 public:
-	explicit TrainingModel(QObject *parent = nullptr);
+	TrainingModel();
+	explicit TrainingModel(QObject *parent);
 	~TrainingModel();
 
 

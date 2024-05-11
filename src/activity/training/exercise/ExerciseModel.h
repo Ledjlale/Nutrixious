@@ -45,7 +45,8 @@ Q_OBJECT
 public:
 	explicit ExerciseModel(QObject *parent = nullptr);
 	ExerciseModel(const ExerciseModel * model, QObject *parent = nullptr);
-	virtual ExerciseModel * clone(qint64 trainId)const;
+	virtual ~ExerciseModel();
+	virtual ExerciseModel * clone(qint64 trainId, QObject *parent)const;
 
 	virtual int getType() const;	// For QML to know how to display it because of lacking object relationship.
 	void setType(int data);
@@ -61,8 +62,8 @@ public:
 	void setInvalidName(bool invalid);
 	void setInvalidDescription(bool invalid);
 
-	qint64 getId()const;
-	void setId(qint64 id);
+	qint64 getExerciseId()const;
+	void setExerciseId(qint64 id);
 
 	int getTrainOrder() const;
 	void setTrainOrder(int data);
@@ -91,6 +92,7 @@ public:
 
 
 signals:
+	void exerciseIdChanged();
 	void trainIdChanged();
 	void targetExerciseChanged();
 	void nameChanged();
@@ -108,7 +110,7 @@ signals:
 
 protected:
 	Description::ExerciseModel *mTargetExercise = nullptr;
-	qint64 mDbId = 0;
+	qint64 mExerciseId = 0;
 	qint64 mTrainId = -1;
 	QString mName;
 	QString mDescription;

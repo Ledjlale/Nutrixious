@@ -34,15 +34,17 @@ class StrengthModel : public ExerciseModel {
 	Q_PROPERTY(QVariantList sets READ getVariantSets NOTIFY setsChanged)
 	Q_PROPERTY(bool invalidSets MEMBER mInvalidSets NOTIFY invalidSetsChanged)
 public:
-	explicit StrengthModel(QObject *parent = nullptr);
-	StrengthModel(const StrengthModel * model, QObject *parent = nullptr);
-	~StrengthModel();
-	virtual ExerciseModel * clone(qint64 programId)const;
+	StrengthModel();
+	explicit StrengthModel(QObject *parent );
+	StrengthModel(const StrengthModel * model, QObject *parent);
+	virtual ~StrengthModel();
+
+	virtual ExerciseModel * clone(qint64 programId, QObject *parent)const;
 	virtual void setTargetExercise(Description::ExerciseModel * data);
 
 	Q_INVOKABLE virtual bool save();
-	static QList<ExerciseModel*> load();
-	static StrengthModel *load(QSqlQuery &query);	// Create a model from the current query.
+	static QList<ExerciseModel*> load(QObject * parent);
+	static StrengthModel *load(QSqlQuery &query, QObject * parent);	// Create a model from the current query.
 
 	QVariantList getVariantSets() const;
 	QList<StrengthWorkModel*> getSets() const;

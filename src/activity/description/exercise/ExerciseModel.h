@@ -39,10 +39,10 @@ Q_OBJECT
 	Q_PROPERTY(int type READ getType CONSTANT)
 	Q_PROPERTY(int programOrder READ getProgramOrder WRITE setProgramOrder NOTIFY programOrderChanged)
 public:
-	explicit ExerciseModel(QObject *parent = nullptr);
-	ExerciseModel(const ExerciseModel * model, QObject *parent = nullptr);
-	virtual ExerciseModel * clone(qint64 programId)const;
-	virtual Training::ExerciseModel * cloneTraining(qint64){return nullptr;}
+	explicit ExerciseModel(QObject *parent);
+	ExerciseModel(const ExerciseModel * model, QObject *parent);
+	virtual ExerciseModel * clone(qint64 programId, QObject *parent)const;
+	virtual Training::ExerciseModel * cloneTraining(qint64, QObject *){return nullptr;}
 	virtual int getType() const;	// For QML to know how to display it becausze of lacking object relationship.
 
 	QString getName()const;
@@ -54,8 +54,8 @@ public:
 	void setInvalidName(bool invalid);
 	void setInvalidDescription(bool invalid);
 
-	qint64 getId()const;
-	virtual void setId(qint64 id);
+	qint64 getExerciseId()const;
+	virtual void setExerciseId(qint64 id);
 
 	qint64 getProgramId() const;
 	virtual void setProgramId(qint64 id);
@@ -67,7 +67,7 @@ public:
 	Q_INVOKABLE virtual bool save();
 
 signals:
-	void idChanged();
+	void exerciseIdChanged();
 	void programIdChanged();
 	void nameChanged();
 	void descriptionChanged();
@@ -77,7 +77,7 @@ signals:
 	void invalidDescriptionChanged();
 
 protected:
-	qint64 mDbId = 0;
+	qint64 mExerciseId = 0;
 	qint64 mProgramId = -1;
 	QString mName;
 	QString mDescription;

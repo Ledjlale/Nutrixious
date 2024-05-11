@@ -20,11 +20,19 @@
 
 #include "TrainingModel.h"
 
+#include <QQmlApplicationEngine>
+extern QQmlApplicationEngine * gEngine;
+
 using namespace Training;
+
+TrainingModel::TrainingModel() : TrainingModel(nullptr){
+	gEngine->setObjectOwnership(this, QQmlEngine::JavaScriptOwnership);
+}
 
 TrainingModel::TrainingModel(QObject *parent)
 	: QObject{parent} {
-	mTrainModel = new TrainModel();
+	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
+	mTrainModel = new TrainModel(this);
 	connect(mTrainModel, &TrainModel::exercisesChanged, this, &TrainingModel::exercisesChanged);
 	connect(mTrainModel, &TrainModel::nextExercise, this, &TrainingModel::nextExercise);
 

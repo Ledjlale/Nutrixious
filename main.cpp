@@ -91,6 +91,8 @@ void registerTypes(){
 
 }
 
+static QQmlApplicationEngine * gEngine = nullptr;
+
 int main(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
 	// Ignore vertical sync. This way, we avoid blinking on resizes(and other refresh steps like layouts etc.).
@@ -98,20 +100,23 @@ int main(int argc, char *argv[]) {
 	ignoreVSync.setSwapInterval(0);
 	QSurfaceFormat::setDefaultFormat(ignoreVSync);
 	DatabaseModel::migrate();
-    QQmlApplicationEngine engine;
+
 	QStringList selectors("custom");
-	auto selector = new QQmlFileSelector(&engine, &engine);
+	gEngine = new QQmlApplicationEngine();
+	auto selector = new QQmlFileSelector(gEngine, gEngine);
 	selector->setExtraSelectors(selectors);
-	engine.addImportPath(":/");
+	gEngine->addImportPath(":/");
 	const QUrl url(u"qrc:/App/ui/Main.qml"_qs);
     QObject::connect(
-        &engine,
+		gEngine,
         &QQmlApplicationEngine::objectCreationFailed,
         &app,
         []() { QCoreApplication::exit(-1); },
 		Qt::QueuedConnection);
 	QQuickStyle::setStyle("Material");
 	registerTypes();
-	engine.load(url);
-    return app.exec();
+	gEngine->load(url);
+	int result = app.exec();
+	gEngine->deleteLater();
+	return result;
 }

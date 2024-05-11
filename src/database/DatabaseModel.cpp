@@ -39,8 +39,8 @@ DatabaseModel::DatabaseModel(QObject *parent)
 
 void DatabaseModel::migrate(){
 	QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-	db.setDatabaseName("data");
-	//db.setDatabaseName(":memory:");
+	//db.setDatabaseName("data");
+	db.setDatabaseName(":memory:");
 	if (!db.open()) {
 		qCritical() << QObject::tr("Unable to establish a database connection.\n"
 						"This example needs SQLite support. Please read "
@@ -146,6 +146,7 @@ void DatabaseModel::migrate(){
 			", reps INTEGER"
 			", weight INTERGER"
 			", rest_time INTEGER"
+			", work_time INTEGER"
 					", FOREIGN KEY (train_id) REFERENCES trains (id) ON UPDATE CASCADE ON DELETE CASCADE"
 					", FOREIGN KEY (strength_id) REFERENCES tr_ex_strength_set (id) ON UPDATE CASCADE ON DELETE CASCADE"
 					")")) qCritical() << "Cannot create tr_ex_strength_set table : " << query.lastError().text();
@@ -171,31 +172,31 @@ void DatabaseModel::insertDefaultData() {
 // Exercises
 	QVector<Description::StrengthModel *> strengths;
 	//---------------------------------------------------------------------
-	strengths.push_back(new Description::StrengthModel());
+	strengths.push_back(new Description::StrengthModel(nullptr));
 	strengths.back()->setName("Shoulder");
 	strengths.back()->setDescription("Lateral elevations");
 
 	QVector<Description::StrengthWorkModel *> strengthWorks;
 
-	strengthWorks.push_back(new Description::StrengthWorkModel());
+	strengthWorks.push_back(new Description::StrengthWorkModel(nullptr));
 	strengthWorks.back()->setRepetitions(12);
 	strengthWorks.back()->setWeight(15);
 	strengthWorks.back()->setRestTime(1);
 	strengths.back()->addSet(strengthWorks.back());
 
-	strengthWorks.push_back(new Description::StrengthWorkModel());
+	strengthWorks.push_back(new Description::StrengthWorkModel(nullptr));
 	strengthWorks.back()->setRepetitions(10);
 	strengthWorks.back()->setWeight(10);
 	strengthWorks.back()->setRestTime(2);
 	strengths.back()->addSet(strengthWorks.back());
 
-	strengthWorks.push_back(new Description::StrengthWorkModel());
+	strengthWorks.push_back(new Description::StrengthWorkModel(nullptr));
 	strengthWorks.back()->setRepetitions(8);
 	strengthWorks.back()->setWeight(8);
 	strengthWorks.back()->setRestTime(3);
 	strengths.back()->addSet(strengthWorks.back());
 
-	strengthWorks.push_back(new Description::StrengthWorkModel());
+	strengthWorks.push_back(new Description::StrengthWorkModel(nullptr));
 	strengthWorks.back()->setRepetitions(8);
 	strengthWorks.back()->setWeight(5);
 	strengthWorks.back()->setRestTime(2);
@@ -205,35 +206,35 @@ void DatabaseModel::insertDefaultData() {
 
 	//---------------------------------------------------------------------
 
-	strengths.push_back(new Description::StrengthModel());
+	strengths.push_back(new Description::StrengthModel(nullptr));
 	strengths.back()->setName("Pectorals");
 	strengths.back()->setDescription("Bench press");
 
-	strengthWorks.push_back(new Description::StrengthWorkModel());
+	strengthWorks.push_back(new Description::StrengthWorkModel(nullptr));
 	strengthWorks.back()->setRepetitions(10);
 	strengthWorks.back()->setWeight(60);
 	strengthWorks.back()->setRestTime(2);
 	strengths.back()->addSet(strengthWorks.back());
 
-	strengthWorks.push_back(new Description::StrengthWorkModel());
+	strengthWorks.push_back(new Description::StrengthWorkModel(nullptr));
 	strengthWorks.back()->setRepetitions(10);
 	strengthWorks.back()->setWeight(60);
 	strengthWorks.back()->setRestTime(1);
 	strengths.back()->addSet(strengthWorks.back());
 
-	strengthWorks.push_back(new Description::StrengthWorkModel());
+	strengthWorks.push_back(new Description::StrengthWorkModel(nullptr));
 	strengthWorks.back()->setRepetitions(8);
 	strengthWorks.back()->setWeight(50);
 	strengthWorks.back()->setRestTime(2);
 	strengths.back()->addSet(strengthWorks.back());
 
-	strengthWorks.push_back(new Description::StrengthWorkModel());
+	strengthWorks.push_back(new Description::StrengthWorkModel(nullptr));
 	strengthWorks.back()->setRepetitions(6);
 	strengthWorks.back()->setWeight(50);
 	strengthWorks.back()->setRestTime(4);
 	strengths.back()->addSet(strengthWorks.back());
 
-	strengthWorks.push_back(new Description::StrengthWorkModel());
+	strengthWorks.push_back(new Description::StrengthWorkModel(nullptr));
 	strengthWorks.back()->setRepetitions(6);
 	strengthWorks.back()->setWeight(40);
 	strengthWorks.back()->setRestTime(3);
@@ -243,29 +244,29 @@ void DatabaseModel::insertDefaultData() {
 
 //---------------------------------------------------------------------
 
-	strengths.push_back(new Description::StrengthModel());
+	strengths.push_back(new Description::StrengthModel(nullptr));
 	strengths.back()->setName("Biceps");
 	strengths.back()->setDescription("Curls");
 
-	strengthWorks.push_back(new Description::StrengthWorkModel());
+	strengthWorks.push_back(new Description::StrengthWorkModel(nullptr));
 	strengthWorks.back()->setRepetitions(12);
 	strengthWorks.back()->setWeight(60);
 	strengthWorks.back()->setRestTime(1);
 	strengths.back()->addSet(strengthWorks.back());
 
-	strengthWorks.push_back(new Description::StrengthWorkModel());
+	strengthWorks.push_back(new Description::StrengthWorkModel(nullptr));
 	strengthWorks.back()->setRepetitions(12);
 	strengthWorks.back()->setWeight(55);
 	strengthWorks.back()->setRestTime(1);
 	strengths.back()->addSet(strengthWorks.back());
 
-	strengthWorks.push_back(new Description::StrengthWorkModel());
+	strengthWorks.push_back(new Description::StrengthWorkModel(nullptr));
 	strengthWorks.back()->setRepetitions(10);
 	strengthWorks.back()->setWeight(50);
 	strengthWorks.back()->setRestTime(2);
 	strengths.back()->addSet(strengthWorks.back());
 
-	strengthWorks.push_back(new Description::StrengthWorkModel());
+	strengthWorks.push_back(new Description::StrengthWorkModel(nullptr));
 	strengthWorks.back()->setRepetitions(8);
 	strengthWorks.back()->setWeight(45);
 	strengthWorks.back()->setRestTime(2);
@@ -275,29 +276,29 @@ void DatabaseModel::insertDefaultData() {
 
 //---------------------------------------------------------------------
 
-	strengths.push_back(new Description::StrengthModel());
+	strengths.push_back(new Description::StrengthModel(nullptr));
 	strengths.back()->setName("Triciceps");
 	strengths.back()->setDescription("Push-ups");
 
-	strengthWorks.push_back(new Description::StrengthWorkModel());
+	strengthWorks.push_back(new Description::StrengthWorkModel(nullptr));
 	strengthWorks.back()->setRepetitions(15);
 	strengthWorks.back()->setWeight(80);
 	strengthWorks.back()->setRestTime(3);
 	strengths.back()->addSet(strengthWorks.back());
 
-	strengthWorks.push_back(new Description::StrengthWorkModel());
+	strengthWorks.push_back(new Description::StrengthWorkModel(nullptr));
 	strengthWorks.back()->setRepetitions(15);
 	strengthWorks.back()->setWeight(80);
 	strengthWorks.back()->setRestTime(1);
 	strengths.back()->addSet(strengthWorks.back());
 
-	strengthWorks.push_back(new Description::StrengthWorkModel());
+	strengthWorks.push_back(new Description::StrengthWorkModel(nullptr));
 	strengthWorks.back()->setRepetitions(10);
 	strengthWorks.back()->setWeight(80);
 	strengthWorks.back()->setRestTime(3);
 	strengths.back()->addSet(strengthWorks.back());
 
-	strengthWorks.push_back(new Description::StrengthWorkModel());
+	strengthWorks.push_back(new Description::StrengthWorkModel(nullptr));
 	strengthWorks.back()->setRepetitions(10);
 	strengthWorks.back()->setWeight(80);
 	strengthWorks.back()->setRestTime(1);
@@ -307,12 +308,12 @@ void DatabaseModel::insertDefaultData() {
 
 	//---------------------------------------------------------------------
 
-	strengths.push_back(new Description::StrengthModel());
+	strengths.push_back(new Description::StrengthModel(nullptr));
 	strengths.back()->setName("Abs");
 	strengths.back()->setDescription("Crunchs");
 
 	for(int i = 0 ; i < 5 ; ++i) {
-		strengthWorks.push_back(new Description::StrengthWorkModel());
+		strengthWorks.push_back(new Description::StrengthWorkModel(nullptr));
 		strengthWorks.back()->setRepetitions(20);
 		strengthWorks.back()->setWeight(80);
 		strengthWorks.back()->setRestTime(i);
@@ -323,12 +324,12 @@ void DatabaseModel::insertDefaultData() {
 
 	//---------------------------------------------------------------------
 
-	strengths.push_back(new Description::StrengthModel());
+	strengths.push_back(new Description::StrengthModel(nullptr));
 	strengths.back()->setName("Abs");
 	strengths.back()->setDescription("Lateral Crunchs");
 
 	for(int i = 0 ; i < 3 ; ++i) {
-		strengthWorks.push_back(new Description::StrengthWorkModel());
+		strengthWorks.push_back(new Description::StrengthWorkModel(strengths.back()));
 		strengthWorks.back()->setRepetitions(20);
 		strengthWorks.back()->setWeight(80);
 		strengthWorks.back()->setRestTime(i);
@@ -341,24 +342,24 @@ void DatabaseModel::insertDefaultData() {
 
 
 
-	Description::DistanceModel * distance = new Description::DistanceModel();
+	Description::DistanceModel * distance = new Description::DistanceModel(nullptr);
 	distance->setName("Exo Distance");
 	distance->setDescription("Dummy Distance");
 	distance->setRestTime(1);
 	distance->save();
-	Description::DistanceModel * distance2 = new Description::DistanceModel();
+	Description::DistanceModel * distance2 = new Description::DistanceModel(nullptr);
 	distance2->setName("Exo Distance2");
 	distance2->setDescription("Dummy Distance2");
 	distance2->setDistance(12332);
 	distance2->setRestTime(2);
 	distance2->save();
 
-	Description::StepsModel * steps = new Description::StepsModel();
+	Description::StepsModel * steps = new Description::StepsModel(nullptr);
 	steps->setName("Exo Steps");
 	steps->setDescription("Dummy Steps");
 	steps->setRestTime(1);
 	steps->save();
-	Description::StepsModel * steps2 = new Description::StepsModel();
+	Description::StepsModel * steps2 = new Description::StepsModel(nullptr);
 	steps2->setName("Exo Steps2");
 	steps2->setSteps(6666);
 	steps2->setRestTime(2);
@@ -366,14 +367,14 @@ void DatabaseModel::insertDefaultData() {
 
 // Programs
 	QVector<Description::ProgramModel *> programs;
-	programs.push_back(new Description::ProgramModel());
+	programs.push_back(new Description::ProgramModel(nullptr));
 	programs.back()->setName("Easy 1");
 	programs.back()->setDescription("Day 1");
 	for(auto i : strengths)
 		programs.back()->addExercise(i);
 	programs.back()->save();
 
-	programs.push_back(new Description::ProgramModel());
+	programs.push_back(new Description::ProgramModel(nullptr));
 	programs.back()->setDescription("Dummy Program");
 	programs.back()->addExercise(strengths[3]);
 	programs.back()->addExercise(distance);
@@ -383,21 +384,21 @@ void DatabaseModel::insertDefaultData() {
 	programs.back()->addExercise(strengths[1]);
 	programs.back()->save();
 
-	programs.push_back(new Description::ProgramModel());
+	programs.push_back(new Description::ProgramModel(nullptr));
 	programs.back()->setName("Program Strength");
 	programs.back()->setDescription("Dummy program");
 	programs.back()->addExercise(strengths[2]);
 	programs.back()->addExercise(strengths[3]);
 	programs.back()->save();
 
-	programs.push_back(new Description::ProgramModel());
+	programs.push_back(new Description::ProgramModel(nullptr));
 	programs.back()->setName("Program Distance");
 	programs.back()->setDescription("Dummy program");
 	programs.back()->addExercise(distance);
 	programs.back()->addExercise(distance2);
 	programs.back()->save();
 
-	programs.push_back(new Description::ProgramModel());
+	programs.push_back(new Description::ProgramModel(nullptr));
 	programs.back()->setName("Program Steps");
 	programs.back()->setDescription("Dummy program");
 	programs.back()->addExercise(steps);

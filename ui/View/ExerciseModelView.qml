@@ -37,7 +37,7 @@ Item{
 	implicitHeight: mainLayout.implicitHeight
 	height: implicitHeight
 
-	signal addClicked(ExerciseModel exerciseModel)
+	signal addClicked(var exerciseModel)
 	Timer{
 		id: workTimer
 		property int count: 0

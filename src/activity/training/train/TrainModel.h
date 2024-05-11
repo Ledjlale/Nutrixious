@@ -44,7 +44,8 @@ Q_OBJECT
 	Q_PROPERTY(bool invalidDescription MEMBER mInvalidDescription NOTIFY invalidDescriptionChanged)
 	Q_PROPERTY(bool invalidExercises MEMBER mInvalidExercises NOTIFY invalidExercisesChanged)
 public:
-	explicit TrainModel(QObject *parent = nullptr);
+	TrainModel();
+	explicit TrainModel(QObject *parent );
 
 	QString getName() const;
 	void setName(QString name);
@@ -65,16 +66,17 @@ public:
 	void setInvalidName(bool invalid);
 	void setInvalidDescription(bool invalid);
 
-	qint64 getId()const;
-	virtual void setId(qint64 id);
+	qint64 getTrainId()const;
+	virtual void setTrainId(qint64 id);
 
 	Q_INVOKABLE virtual bool save();
-	static QList<TrainModel*> load();
-	static TrainModel *load(QSqlQuery &query);
+	static QList<TrainModel*> load(QObject * parent);
+	static TrainModel *load(QSqlQuery &query, QObject * parent);
 	QList<ExerciseModel*>::Iterator start();
 
 signals:
 	void targetProgramModelChanged();
+	void trainIdChanged();
 	void nameChanged();
 	void descriptionChanged();
 	void startTimeChanged();
@@ -87,7 +89,7 @@ signals:
 
 protected:
 	Description::ProgramModel *mTargetProgramModel;
-	qint64 mDbId = 0;
+	qint64 mTrainId = 0;
 	QString mName;
 	QString mDescription;
 	QDateTime mStartTime;

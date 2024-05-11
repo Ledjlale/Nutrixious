@@ -28,7 +28,6 @@ import '../../Tool/Utils.js' as Utils
 Item {
 	id: mainItem
 	property ProgramModel programModel: ProgramModel{}
-	property ExerciseModel workModel: ExerciseModel{}
 
 
 	Component.onCompleted: Material.background = Qt.darker(Material.background, 1.02)
