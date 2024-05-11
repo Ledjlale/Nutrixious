@@ -107,18 +107,25 @@ void TrainModel::setDescription(QString description) {
 	}
 }
 
-QDateTime TrainModel::getStartTime() const{
-	return mStartTime;
+QDateTime TrainModel::getStartDateTime() const{
+	return mStartDateTime;
 }
 
-void TrainModel::setStartTime(const time_t& data_ms){
-	setStartTime(QDateTime::fromMSecsSinceEpoch(data_ms));
+void TrainModel::setStartDateTime(const time_t& data_ms){
+	setStartDateTime(QDateTime::fromMSecsSinceEpoch(data_ms));
 }
-void TrainModel::setStartTime(const QDateTime& data){
-	if(mStartTime != data){
-		mStartTime = data;
-		emit startTimeChanged();
+void TrainModel::setStartDateTime(const QDateTime& data){
+	if(mStartDateTime != data){
+		mStartDateTime = data;
+		emit startDateTimeChanged();
 	}
+}
+
+QString TrainModel::getStartDateTimeStr()const{
+	if(mStartDateTime.isValid())
+		return QLocale().toString(mStartDateTime, QLocale().dateTimeFormat(QLocale::FormatType::ShortFormat));
+	else
+		return "";
 }
 
 QVariantList TrainModel::getVariantExercises() const {
@@ -207,6 +214,7 @@ bool TrainModel::save(){
 
 	query.add("name", mName);
 	query.add("description", mDescription);
+	query.add("start_date_time", mStartDateTime.toMSecsSinceEpoch());
 	query.addConditionnal("id",mTrainId);
 	if(mTrainId == 0){
 		if(!query.exec()) qCritical() << "Cannot save train: "  << query.mQuery.lastError().text();
@@ -305,16 +313,16 @@ TrainModel *TrainModel::load(QSqlQuery &query, QObject * parent) {
 	auto idField = query.record().indexOf("id");
 	auto nameField = query.record().indexOf("name");
 	auto descriptionField = query.record().indexOf("description");
-	auto startTimeField = query.record().indexOf("start_time");
+	auto startDateTimeField = query.record().indexOf("start_date_time");
 	model->setTrainId(query.value(idField).toInt());
 	model->setName(query.value(nameField).toString());
 	model->setDescription(query.value(descriptionField).toString());
-	model->setStartTime(query.value(startTimeField).toULongLong());
+	model->setStartDateTime(query.value(startDateTimeField).toULongLong());
 	return model;
 }
 
 QList<ExerciseModel*>::Iterator TrainModel::start(){
-	mStartTime = QDateTime::currentDateTime();
+	setStartDateTime(QDateTime::currentDateTime());
 	auto f = mExercises.begin();
 	(*f)->startWork();
 	return f;

@@ -38,6 +38,7 @@
 	ui/View/StrengthModelView.qml
 	ui/View/ExerciseSetModelView.qml
 	ui/View/ExerciseSetModelListView.qml
+	ui/View/TrainModelView.qml
 	ui/View/TrainingExerciseModelView.qml
 	ui/View/ScannerView.qml
 

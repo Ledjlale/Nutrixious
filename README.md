@@ -47,7 +47,7 @@ Focus on Android only! (and Linux for debugging).
 - Icons
 
 #### Secondary features:
-- Translations
+- Translations (Weblate)
 - Optimizations
 - Import/Export data
 - Multi local account (main interest for Desktop)

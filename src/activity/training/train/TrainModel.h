@@ -39,6 +39,7 @@ Q_OBJECT
 	Q_PROPERTY(QString name MEMBER mName NOTIFY nameChanged)
 	Q_PROPERTY(QString description MEMBER mDescription NOTIFY descriptionChanged)
 	Q_PROPERTY(QVariantList exercises READ getVariantExercises NOTIFY exercisesChanged)
+	Q_PROPERTY(QString startDateTimeStr READ getStartDateTimeStr NOTIFY startDateTimeChanged)
 
 	Q_PROPERTY(bool invalidName MEMBER mInvalidName NOTIFY invalidNameChanged)
 	Q_PROPERTY(bool invalidDescription MEMBER mInvalidDescription NOTIFY invalidDescriptionChanged)
@@ -53,9 +54,10 @@ public:
 	void setName(QString name);
 	void setDescription(QString description);
 
-	QDateTime getStartTime() const;
-	void setStartTime(const time_t& data_ms);	// ms
-	void setStartTime(const QDateTime& data);
+	QDateTime getStartDateTime() const;
+	void setStartDateTime(const time_t& data_ms);	// ms
+	void setStartDateTime(const QDateTime& data);
+	QString getStartDateTimeStr()const;
 
 	QVariantList getVariantExercises() const;
 	const QList<ExerciseModel*>& getExercises() const;
@@ -81,7 +83,7 @@ signals:
 	void trainIdChanged();
 	void nameChanged();
 	void descriptionChanged();
-	void startTimeChanged();
+	void startDateTimeChanged();
 	void exercisesChanged();
 	void nextExercise();
 
@@ -94,7 +96,7 @@ protected:
 	qint64 mTrainId = 0;
 	QString mName;
 	QString mDescription;
-	QDateTime mStartTime;
+	QDateTime mStartDateTime;
 	QList<ExerciseModel*> mExercises;
 
 	bool mInvalidName = true;

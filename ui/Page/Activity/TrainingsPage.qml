@@ -62,26 +62,9 @@ Item {
 					model: Training.TrainProxyModel{
 						id: trains
 					}
-					delegate:Rectangle{
+					delegate:TrainModelView{
 						width: trainList.width
-						height: 40
-						RowLayout{
-							Item{
-								Layout.fillWidth: true
-							}
-							Text{
-								text: $modelData.name
-							}
-							Text{
-								text: ' | '
-							}
-							Text{
-								text: $modelData.description
-							}
-							Item{
-								Layout.fillWidth: true
-							}
-						}
+						trainModel: $modelData
 						MouseArea{
 							anchors.fill: parent
 							onClicked: trainExercises.setExercises($modelData.exercises)

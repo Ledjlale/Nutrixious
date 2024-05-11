@@ -124,7 +124,7 @@ void DatabaseModel::migrate(){
 
 		if(!query.exec("CREATE TABLE trains (id INTEGER PRIMARY KEY"
 			", name TEXT, description TEXT"
-			", start_time INTERGER)")) qCritical() << "Cannot create trains : " << query.lastError().text();
+			", start_date_time INTERGER)")) qCritical() << "Cannot create trains : " << query.lastError().text();
 		if(!query.exec("CREATE TABLE tr_ex_steps (id INTEGER PRIMARY KEY"
 			", train_id INTEGER NOT NULL"
 			", name TEXT"
@@ -413,11 +413,16 @@ void DatabaseModel::insertDefaultData() {
 
 	QVector<Training::TrainModel*> trains;
 
-	for(auto i : programs) {
-		trains.push_back(new Training::TrainModel(nullptr));
-		trains.back()->setTargetProgramModel(i);
-		trains.back()->save();
+	for(int j = 0 ; j < 10 ; ++j) {
+		for(auto i : programs) {
+			trains.push_back(new Training::TrainModel(nullptr));
+			trains.back()->setTargetProgramModel(i);
+			trains.back()->setStartDateTime(QDateTime::currentDateTime().addDays(10-j));
+			trains.back()->save();
+		}
 	}
+
+
 
 
 	steps->deleteLater();
