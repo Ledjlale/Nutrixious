@@ -53,6 +53,7 @@ Item {
 				model: ExerciseProxyModel{
 					id: exercises
 				}
+				Component.onCompleted: exercises.update()
 				//onCurrentValueChanged: programExercises.setExercises(currentValue.exercises)
 				onCurrentValueChanged:{
 					chartView.exerciseType = currentValue.type

@@ -431,7 +431,7 @@ void DatabaseModel::insertDefaultData() {
 		for(auto i : programs) {
 			trains.push_back(new Training::TrainModel(nullptr));
 			trains.back()->setTargetProgramModel(i);
-			trains.back()->setStartDateTime(QDateTime::currentDateTime().addDays(10-j));
+			trains.back()->setStartDateTime(QDateTime::currentDateTime().addDays(j-10));
 			trains.back()->fillRandomValues();
 			trains.back()->save();
 		}

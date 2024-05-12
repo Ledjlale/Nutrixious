@@ -155,6 +155,16 @@ QList<ExerciseModel*>& TrainModel::getExercises(){
 	return mExercises;
 }
 
+
+void TrainModel::addExercise(Description::ExerciseModel *model, bool keepId) {
+	auto newTargetExercise = mTargetProgramModel->addExercise(model, keepId);
+	auto newExercise = newTargetExercise->cloneTraining(mTrainId, this);
+	connect(newExercise, &ExerciseModel::finished, this, &TrainModel::nextExercise);
+	mExercises << newExercise;
+	newExercise->setTrainOrder(mExercises.size());
+	emit exercisesChanged();
+}
+
 void TrainModel::addExercise(ExerciseModel *model, bool keepId) {
 	int trainOrder = model->getTrainOrder();
 	ExerciseModel * insertedModel = nullptr;
@@ -344,3 +354,4 @@ void TrainModel::fillRandomValues() {
 	for(auto e : mExercises)
 		e->fillRandomValues();
 }
+

@@ -73,10 +73,10 @@ Item {
 				}
 				delegate: ExerciseModelView{
 					width: exercisesList.width
-					exerciseModel: modelData
+					exerciseModel: $modelData
 					showAddButton: true
 					showSaveButton: false
-					onAddClicked: programModel.addExercise(modelData)
+					onAddClicked: programModel.addExercise($modelData)
 				}
 			}
 		}

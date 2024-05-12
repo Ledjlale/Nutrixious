@@ -98,7 +98,7 @@ const QList<ExerciseModel*>& ProgramModel::getExercises()const {
 	return mExercises;
 }
 
-void ProgramModel::addExercise(ExerciseModel *model, bool keepId) {
+ExerciseModel* ProgramModel::addExercise(ExerciseModel *model, bool keepId) {
 	int programOrder = model->getProgramOrder();
 	ExerciseModel * insertedModel = nullptr;
 	if(programOrder < 0) {
@@ -119,6 +119,7 @@ void ProgramModel::addExercise(ExerciseModel *model, bool keepId) {
 	if(keepId)
 		insertedModel->setExerciseId(model->getExerciseId());
 	emit exercisesChanged();
+	return insertedModel;
 }
 
 void ProgramModel::removeExercise(ExerciseModel *model) {

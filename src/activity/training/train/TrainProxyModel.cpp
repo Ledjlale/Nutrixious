@@ -27,10 +27,21 @@ TrainProxyModel::TrainProxyModel(QObject *parent)
 	: SortFilterProxyModel{parent}
 {
 	setSourceModel(new TrainListModel());
+	sort(0);
 }
 
 void TrainProxyModel::update(){
 	sourceModel()->deleteLater();
 	setSourceModel(new TrainListModel());
+	sort(0);
 }
+
+
+bool TrainProxyModel::lessThan (const QModelIndex &left, const QModelIndex &right) const {
+		if( !sourceModel())
+			return false;
+		auto a = sourceModel()->data(left).value<TrainModel*>();
+		auto b = sourceModel()->data(right).value<TrainModel*>();
+		return a->getStartDateTime() > b->getStartDateTime();
+	}
 

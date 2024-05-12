@@ -55,9 +55,25 @@ Item {
 				id: autoRunCheckBox
 				text: 'Auto unpause'
 			}
-			Item{
+
+			ComboBox{
+				id: exerciseChoice
 				Layout.fillWidth: true
+				textRole: "displayText"
+				valueRole: "$modelData"
+				model: ExerciseProxyModel{
+					id: exercises
+				}
+				Component.onCompleted: exercises.update()
 			}
+			Button{
+				visible: !trainingModel.trainModel.isSaved
+				text: 'Add Exo'
+				onClicked: {
+						trainingModel.trainModel.addExercise(exerciseChoice.currentValue, false)
+				}
+			}
+
 			Button{
 				visible: !trainingModel.trainModel.isSaved
 				text: mainItem.isRunning ? 'Stop' : 'Run'

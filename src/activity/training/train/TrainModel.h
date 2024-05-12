@@ -64,7 +64,8 @@ public:
 	QVariantList getVariantExercises() const;
 	const QList<ExerciseModel*>& getExercises() const;
 	QList<ExerciseModel*>& getExercises();
-	Q_INVOKABLE void addExercise(ExerciseModel *model, bool keepId = false);
+	Q_INVOKABLE void addExercise(Description::ExerciseModel *model, bool keepId);
+	void addExercise(ExerciseModel *model, bool keepId);
 	Q_INVOKABLE void removeExercise(ExerciseModel *model);
 	void clearExercises();
 
