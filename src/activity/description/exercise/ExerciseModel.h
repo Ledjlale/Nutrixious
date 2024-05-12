@@ -37,7 +37,7 @@ Q_OBJECT
 	Q_PROPERTY(bool invalidName MEMBER mInvalidName NOTIFY invalidNameChanged)
 	Q_PROPERTY(bool invalidDescription MEMBER mInvalidDescription NOTIFY invalidDescriptionChanged)
 	Q_PROPERTY(int type READ getType CONSTANT)
-	Q_PROPERTY(int programOrder READ getProgramOrder WRITE setProgramOrder NOTIFY programOrderChanged)
+	Q_PROPERTY(int order READ getOrder WRITE setOrder NOTIFY orderChanged)
 
 	Q_PROPERTY(bool isSaved READ getIsSaved WRITE setIsSaved NOTIFY isSavedChanged)
 	Q_PROPERTY(bool isTraining MEMBER mIsTraining CONSTANT)
@@ -67,8 +67,8 @@ public:
 	qint64 getDescriptionExerciseId() const;
 	virtual void setDescriptionExerciseId(qint64 id);
 
-	int getProgramOrder() const;
-	void setProgramOrder(int data);
+	int getOrder() const;
+	void setOrder(int data);
 
 	bool getIsSaved() const;
 	void setIsSaved(bool data);
@@ -81,7 +81,7 @@ signals:
 	void descriptionExerciseIdChanged();
 	void nameChanged();
 	void descriptionChanged();
-	void programOrderChanged();
+	void orderChanged();
 	void isSavedChanged();
 
 	void invalidNameChanged();
@@ -93,7 +93,7 @@ protected:
 	qint64 mDescriptionExerciseId = -1;
 	QString mName;
 	QString mDescription;
-	int mProgramOrder = -1;			// Order in program
+	int mOrder = -1;			// Order in contrainer
 
 	bool mInvalidName = true;
 	bool mInvalidDescription = false;

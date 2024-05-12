@@ -26,7 +26,7 @@
 namespace Training{
 class ExerciseProxyModel: public SortFilterProxyModel {
 Q_OBJECT
-	//Q_PROPERTY(QVariantList exercises WRITE setExercises NOTIFY exercisesChanged)
+	Q_PROPERTY(QVariantList exercises READ getExercises WRITE setExercises NOTIFY exercisesChanged)
 public:
 	ExerciseProxyModel(QObject * parent = nullptr);
 

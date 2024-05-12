@@ -69,6 +69,10 @@ public:
 	Q_INVOKABLE void removeExercise(ExerciseModel *model);
 	void clearExercises();
 
+	Q_INVOKABLE void updateTrainOrder();
+	Q_INVOKABLE void decrementExerciseOrder(ExerciseModel *model);
+	Q_INVOKABLE void incrementExerciseOrder(ExerciseModel *model);
+
 	void setInvalidExercises(bool invalid);
 	void setInvalidName(bool invalid);
 	void setInvalidDescription(bool invalid);
@@ -95,6 +99,7 @@ signals:
 	void startDateTimeChanged();
 	void exercisesChanged();
 	void nextExercise();
+	void workStarted();
 
 	void invalidNameChanged();
 	void invalidDescriptionChanged();

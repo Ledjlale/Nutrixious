@@ -55,7 +55,7 @@
 	ui/Page/Activity/LivePage.qml
 
 
-
+	ui/Tool/DragDropTool.qml
 	ui/Tool/Utils.js
 )
 

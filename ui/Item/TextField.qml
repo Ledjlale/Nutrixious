@@ -50,10 +50,13 @@ Flipable {
 				id: frontItem
 				anchors.fill: parent
 				implicitHeight: readOnlyLayout.implicitHeight
-				onClicked: {
+				propagateComposedEvents: true
+				preventStealing: true
+				onClicked: function(mouse){
 					console.log("Flip!")
 					mainItem.flipped = true
 					backItem.forceActiveFocus()
+					mouse.accepted= false
 				}
 				ColumnLayout{
 					id: readOnlyLayout
@@ -106,6 +109,7 @@ Flipable {
 					onEditingFinished:  {
 						mainItem.newValue = textField.text
 						mainItem.editingFinished()
+						mainItem.flipped = false
 					}
 					onActiveFocusChanged: {
 						if(!activeFocus) mainItem.flipped = false

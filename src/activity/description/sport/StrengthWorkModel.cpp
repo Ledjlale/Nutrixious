@@ -51,6 +51,7 @@ StrengthWorkModel::StrengthWorkModel(const StrengthWorkModel * model, QObject *p
 	mRepetitions = model->getRepetitions();
 	mWeight = model->getWeight();
 	mRestTime = model->getRestTime();
+	mOrder = model->getOrder();
 	mIsSaved = mWorkId > 0;
 
 	connect(this, &StrengthWorkModel::workIdChanged, [this](){
@@ -69,6 +70,7 @@ Training::StrengthWorkModel * StrengthWorkModel::cloneTraining(qint64 trainId, q
 	model->setTargetWork(this);
 	model->setTrainId(trainId);
 	model->setStrengthId(strengthId);
+	model->setOrder(getOrder());
 	return model;
 }
 
@@ -110,6 +112,17 @@ void StrengthWorkModel::setWorkId(qint64 id){
 	if(mWorkId != id){
 		mWorkId = id;
 		emit workIdChanged();
+	}
+}
+
+int StrengthWorkModel::getOrder() const {
+	return mOrder;
+}
+
+void StrengthWorkModel::setOrder(int data){
+	if(mOrder != data){
+		mOrder = data;
+		emit orderChanged();
 	}
 }
 
@@ -166,6 +179,8 @@ void StrengthWorkModel::save() {
 	query.add("reps", getRepetitions());
 	query.add("weight", getWeight());
 	query.add("rest_time", getRestTime());
+	query.add("set_order", getOrder());
+
 	query.addConditionnal("id",mWorkId);
 	if(mWorkId == 0) {
 		if(!query.exec()) qCritical() << "Cannot save"<< (isProgramLinked() ? "program" : "") <<"set : "  << query.mQuery.lastError().text();
@@ -190,11 +205,13 @@ StrengthWorkModel *StrengthWorkModel::load(QSqlQuery &query, QObject * parent) {
 	auto repsField = query.record().indexOf("reps");
 	auto weightField = query.record().indexOf("weight");
 	auto restTimeField = query.record().indexOf("rest_time");
+	auto orderField = query.record().indexOf("set_order");
 	model->setWorkId(query.value(idField).toInt());
 	if(programIdField >= 0) model->setProgramId(query.value(programIdField).toInt());
 	model->setStrengthId(query.value(strengthIdField).toInt());
 	model->setRepetitions(query.value(repsField).toInt());
 	model->setWeight(query.value(weightField).toInt());
 	model->setRestTime(query.value(restTimeField).toInt());
+	model->setOrder(query.value(orderField).toInt());
 	return model;
 }

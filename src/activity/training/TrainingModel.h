@@ -34,6 +34,7 @@ class TrainingModel : public QObject {
 	Q_PROPERTY(bool pause MEMBER mPause NOTIFY pauseChanged)
 	Q_PROPERTY(bool resting READ isResting NOTIFY isRestingChanged)
 	Q_PROPERTY(bool working READ isWorking NOTIFY isWorkingChanged)
+	Q_PROPERTY(QVariant currentWork READ getCurrentWork NOTIFY currentWorkChanged)
 
 public:
 	TrainingModel();
@@ -69,13 +70,14 @@ signals:
 
 	void exercisesChanged();
 	void workingNextExercise(int index);
+	void currentWorkChanged();
 	void finished();
 
 protected:
 	TrainModel *mTrainModel;
 
-	QList<ExerciseModel*>::iterator mCurrentExercise;
-	QList<ExerciseModel*>::iterator mNextExercise;
+	QList<ExerciseModel*>::Iterator mCurrentExercise;
+	QList<ExerciseModel*>::Iterator mNextExercise;
 
 	bool mPause = false;
 	QTimer mRestTimer;

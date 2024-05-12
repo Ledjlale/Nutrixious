@@ -69,15 +69,18 @@ Item {
 			id: stackView
 			Layout.fillWidth: true
 			Layout.fillHeight: true
+
+
+
 			initialItem: ColumnLayout{
 				ListView{
 					id: programList
 					Layout.fillWidth: true
 					Layout.fillHeight: true
 					clip: true
-					model: ProgramProxyModel{
-						id: programs
-					}
+					model:  ProgramProxyModel{
+							id: programs
+						}
 					delegate:Rectangle{
 						width: programList.width
 						height: 40
@@ -100,7 +103,10 @@ Item {
 						}
 						MouseArea{
 							anchors.fill: parent
-							onClicked: programExercises.setExercises($modelData.exercises)
+							onClicked: {
+								programExercises.program = $modelData
+								//programExercises.setExercises($modelData.exercises)
+							}
 						}
 					}
 				}
@@ -117,12 +123,91 @@ Item {
 					clip: true
 					model: ExerciseProxyModel{
 						id: programExercises
+						property var program
+						exercises: !!program ? program.exercises : []
 					}
 					delegate:ExerciseModelView{
 						width: programDetailsList.width
 						exerciseModel: $modelData
+						programModel: programExercises.program
 					}
 				}
+
+
+
+/*
+				DelegateModel {
+					id: visualModel
+					model: ExerciseProxyModel{
+						id: programExercises
+						property var program
+					}
+					delegate: DragDropTool{
+								id: dragRopTool
+								width: programDetailsList.width
+								height: exerciseModelView.implicitHeight
+								ExerciseModelView{
+									id: exerciseModelView
+									width: programDetailsList.width
+									exerciseModel: $modelData
+								}
+								onHeldChanged: {
+									if(!held){
+										programExercises.program.updateProgramOrder()
+										programDetailsList.interactive = true
+									}else{
+										programDetailsList.interactive = false
+									}
+								}
+							}
+				}
+*/
+/*
+				DelegateModel {
+					id: visualModel
+					model: ExerciseProxyModel{
+						id: programExercises
+						property var program
+					}
+					delegate: RowLayout{
+								width: programDetailsList.width
+								height: exerciseModelView.implicitHeight
+								ExerciseModelView{
+									id: exerciseModelView
+									Layout.fillWidth: true
+									exerciseModel: $modelData
+									DropArea {
+										anchors.fill: parent
+										onDropped: dragRopTool.DelegateModel.move(drag.source.DelegateModel.itemsIndex,
+													dragRopTool.DelegateModel.itemsIndex, 1);
+										onEntered: (drag) => {
+											console.log("move")
+											visualModel.items.move(
+													drag.source.DelegateModel.itemsIndex,
+													dragRopTool.DelegateModel.itemsIndex)
+										}
+									}
+								}
+								DragDropTool{
+									id: dragRopTool
+									Layout.preferredWidth: 40
+									Layout.fillHeight: true
+									target: parent
+								}
+
+							}
+				}
+
+				ListView{
+					id: programDetailsList
+					Layout.fillWidth: true
+					Layout.fillHeight: true
+
+					visible: count > 0
+					clip: true
+					model:visualModel
+				}
+				*/
 			}
 		}
 	}

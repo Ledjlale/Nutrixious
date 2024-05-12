@@ -26,7 +26,8 @@ import App 1.0
 
 Item{
 	id: mainItem
-	property var stepsModel
+	property var exerciseModel
+	property var programModel
 	property bool showAddButton: false
 	property bool showSaveButton: true
 	property bool showRunning: false
@@ -40,11 +41,11 @@ Item{
 	signal addClicked(var exerciseModel)
 
 	function saveValues(){
-		if(nameTextField.isEdited) stepsModel.name = nameTextField.newValue
-		if(descriptionTextField.isEdited) stepsModel.description = descriptionTextField.newValue
-		if(stepsTextField.isEdited) stepsModel.steps = stepsTextField.newValue
-		if(restTextField.isEdited) stepsModel.restTime = restTextField.newValue
-		if(workTextField.isEdited) stepsModel.workTime = workTextField.newValue
+		if(nameTextField.isEdited) exerciseModel.name = nameTextField.newValue
+		if(descriptionTextField.isEdited) exerciseModel.description = descriptionTextField.newValue
+		if(stepsTextField.isEdited) exerciseModel.steps = stepsTextField.newValue
+		if(restTextField.isEdited) exerciseModel.restTime = restTextField.newValue
+		if(workTextField.isEdited) exerciseModel.workTime = workTextField.newValue
 	}
 
 	RowLayout{
@@ -57,7 +58,7 @@ Item{
 			visible: !mainItem.trainingResultEdition
 			showTitle: false
 			readOnly: isReadOnly
-			text: visible ? stepsModel.name : ''
+			text: visible ? exerciseModel.name : ''
 		}
 		TextField{
 			id: descriptionTextField
@@ -65,7 +66,7 @@ Item{
 			visible: !mainItem.trainingResultEdition
 			showTitle: false
 			readOnly: isReadOnly
-			text: visible ? stepsModel.description : ''
+			text: visible ? exerciseModel.description : ''
 		}
 		TextField{
 			id: stepsTextField
@@ -74,7 +75,7 @@ Item{
 			readOnly: isReadOnly
 			inputMethodHints: Qt.ImhDigitsOnly
 			title: 'Steps'
-			text: visible ? stepsModel.steps : ''
+			text: visible ? exerciseModel.steps : ''
 		}
 		TextField{
 			id: restTextField
@@ -84,16 +85,16 @@ Item{
 			readOnly: isReadOnly
 			inputMethodHints: Qt.ImhDigitsOnly
 			title: 'Rest Time (s)'
-			text: visible ? stepsModel.restTime : ''
+			text: visible ? exerciseModel.restTime : ''
 		}
 		TextField{
 			id: workTextField
 			Layout.fillWidth: true
-			visible: !mainItem.trainingResultEdition && stepsModel && stepsModel.isSaved && stepsModel.workTime !== undefined
+			visible: !mainItem.trainingResultEdition && exerciseModel && exerciseModel.isSaved && exerciseModel.workTime !== undefined
 			showTitle: false
 			inputMethodHints: Qt.ImhDigitsOnly
 			title: 'Work Time (s)'
-			text: visible ? stepsModel.workTime : ''
+			text: visible ? exerciseModel.workTime : ''
 			readOnly: isReadOnly
 		}
 		Button{
@@ -101,7 +102,7 @@ Item{
 			text: 'Save'
 			onClicked: {
 				mainItem.saveValues()
-				if(!mainItem.trainingResultEdition) stepsModel.save()
+				if(!mainItem.trainingResultEdition) exerciseModel.save()
 			}
 		}
 		Button{
@@ -110,7 +111,45 @@ Item{
 			text: 'Add'
 			onClicked: {
 				mainItem.saveValues()
-				mainItem.addClicked(stepsModel)
+				mainItem.addClicked(exerciseModel)
+			}
+		}
+		Rectangle{
+			Layout.alignment: Qt.AlignCenter
+			Layout.preferredHeight: 30
+			Layout.preferredWidth: 30
+			visible: !!mainItem.programModel
+			color: Material.primary
+			radius: width / 2
+			Text{
+				anchors.centerIn: parent
+				color: 'white'
+				text: '+'
+			}
+			MouseArea{
+				anchors.fill: parent
+				onClicked:{
+					mainItem.programModel.decrementExerciseOrder(mainItem.exerciseModel)
+				}
+			}
+		}
+		Rectangle{
+			Layout.alignment: Qt.AlignCenter
+			Layout.preferredHeight: 30
+			Layout.preferredWidth: 30
+			visible: !!mainItem.programModel
+			color: Material.primary
+			radius: width / 2
+			Text{
+				anchors.centerIn: parent
+				color: 'white'
+				text: '-'
+			}
+			MouseArea{
+				anchors.fill: parent
+				onClicked:{
+					mainItem.programModel.incrementExerciseOrder(mainItem.exerciseModel)
+				}
 			}
 		}
 	}

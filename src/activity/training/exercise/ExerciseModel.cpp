@@ -49,7 +49,7 @@ ExerciseModel::ExerciseModel(QObject *parent)
 ExerciseModel::ExerciseModel(const ExerciseModel * model, QObject *parent) : QObject(parent){
 	mName = model->getName();
 	mDescription = model->getDescription();
-	mTrainOrder = model->getTrainOrder();
+	mOrder = model->getOrder();
 	setInvalidName( mName == "");
 
 	connect(this, &ExerciseModel::exerciseIdChanged, [this](){
@@ -160,14 +160,14 @@ void ExerciseModel::setDescription(QString description) {
 	}
 }
 
-int ExerciseModel::getTrainOrder() const {
-	return mTrainOrder;
+int ExerciseModel::getOrder() const {
+	return mOrder;
 }
 
-void ExerciseModel::setTrainOrder(int data){
-	if(mTrainOrder != data){
-		mTrainOrder = data;
-		emit trainOrderChanged();
+void ExerciseModel::setOrder(int data){
+	if(mOrder != data){
+		mOrder = data;
+		emit orderChanged();
 	}
 }
 
@@ -224,6 +224,7 @@ void ExerciseModel::startWork(){
 	setIsRunning(true);
 	setIsResting(false);
 	setIsDone(false);
+	emit workStarted();
 }
 
 QVariant ExerciseModel::getCurrentWork() {

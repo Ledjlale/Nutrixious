@@ -44,12 +44,7 @@ Item{
 		RowLayout{
 			id: headersLayout
 			visible: setList.visible && setList.count > 0
-			Text{
-				Layout.fillWidth: true
-				Layout.fillHeight: true
-				Layout.preferredWidth: mainLayout.width / parent.visibleChildren.length
-				text: 'Index'
-			}
+			spacing: 0
 			Text{
 				Layout.fillWidth: true
 				Layout.fillHeight: true
@@ -75,6 +70,11 @@ Item{
 				visible: mainItem.isLive || (mainItem.exerciseModel && mainItem.exerciseModel.isSaved && mainItem.exerciseModel.isTraining)
 				text: 'Work Time (s)'
 			}
+			Item{// Actions
+				Layout.fillWidth: true
+				Layout.fillHeight: true
+				Layout.preferredWidth: mainLayout.width / parent.visibleChildren.length
+			}
 		}
 		ListView{
 			id: setList
@@ -84,6 +84,7 @@ Item{
 			clip: true
 			model: visible && mainItem.exerciseModel? mainItem.exerciseModel.sets : []
 			delegate:ExerciseSetModelView{
+				exerciseModel: mainItem.exerciseModel
 				workModel: modelData
 				onRestingChanged: if(mainItem.isLive && resting) restingPopup.pause(modelData, modelData.targetWork.restTime)
 				width: setList.width

@@ -29,7 +29,7 @@ Item {
 	id: mainItem
 	property bool isRunning : false
 	property ProgramModel selectedProgramModel
-	onSelectedProgramModelChanged: programExercises.setExercises(selectedProgramModel.exercises)
+	//onSelectedProgramModelChanged: programExercises.setExercises(selectedProgramModel.exercises)
 	onIsRunningChanged: if(isRunning){
 			//stackView.push(livePage, {exercises: programExercises.getExercises()});
 			stackView.push(livePage, {targetProgramModel: mainItem.selectedProgramModel});
@@ -85,11 +85,13 @@ Item {
 					clip: true
 					model: ExerciseProxyModel{
 						id: programExercises
+						exercises: !!mainItem.selectedProgramModel ? mainItem.selectedProgramModel.exercises : []
 					}
 					spacing: 5
 					delegate:ExerciseModelView{
 						width: exercisesList.width
-						exerciseModel: modelData
+						exerciseModel: $modelData
+
 						isReadOnly: true
 					}
 				}

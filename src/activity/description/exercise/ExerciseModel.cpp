@@ -39,7 +39,7 @@ ExerciseModel::ExerciseModel(QObject *parent)
 ExerciseModel::ExerciseModel(const ExerciseModel * model, QObject *parent) : QObject(parent){
 	mName = model->getName();
 	mDescription = model->getDescription();
-	mProgramOrder = model->getProgramOrder();
+	mOrder = model->getOrder();
 	mDescriptionExerciseId = model->getDescriptionExerciseId();
 	setInvalidName( mName == "");
 	connect(this, &ExerciseModel::exerciseIdChanged, [this](){
@@ -122,14 +122,14 @@ void ExerciseModel::setDescription(QString description) {
 	}
 }
 
-int ExerciseModel::getProgramOrder() const {
-	return mProgramOrder;
+int ExerciseModel::getOrder() const {
+	return mOrder;
 }
 
-void ExerciseModel::setProgramOrder(int data){
-	if(mProgramOrder != data){
-		mProgramOrder = data;
-		emit programOrderChanged();
+void ExerciseModel::setOrder(int data){
+	if(mOrder != data){
+		mOrder = data;
+		emit orderChanged();
 	}
 }
 

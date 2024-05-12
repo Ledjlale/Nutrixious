@@ -93,6 +93,7 @@ Item {
 			delegate: TrainingExerciseModelView{
 				width: exercisesList.width
 				exerciseModel: modelData
+				trainModel: trainingModel.trainModel
 				showRunning: true
 				expandAll: true
 				autoRun: autoRunCheckBox.checked
@@ -119,14 +120,39 @@ Item {
 					trainingModel.endOfCurrentWork()
 				}
 			}
-			Button{
+			Rectangle{
+				id: timerArea
+				Layout.preferredHeight: 30
+				Layout.preferredWidth: 140
 				Layout.bottomMargin: 15
-				visible: mainItem.isRunning
-				text: 'End - All'
-				onClicked: {
-					trainingModel.save()
+				color: Material.primary
+				radius: 15
+				property var currentWork: trainingModel.currentWork
+				visible: !!currentWork && !currentWork.isResting && !currentWork.isDone
+				Text{
+					anchors.centerIn: parent
+					text: timer.count + ' s'
+					color: 'white'
+					Timer{
+						id: timer
+						property int count:0
+						interval: 1000
+						repeat: true
+						running: timerArea.visible
+						onRunningChanged: count = 0
+						onTriggered: {++count}
+					}
 				}
 			}
+
+			//Button{
+			//	Layout.bottomMargin: 15
+			//	visible: mainItem.isRunning
+			//	text: 'End - All'
+			//	onClicked: {
+			//		trainingModel.save()
+			//	}
+			//}
 			Item{Layout.fillWidth: true}
 		}
 	}

@@ -26,7 +26,8 @@ import App 1.0
 
 Item{
 	id: mainItem
-	property var strengthModel
+	property var exerciseModel
+	property var programModel
 	property bool showAddButton: false
 	property bool showSaveButton: true
 	property bool showRunning: false
@@ -40,8 +41,8 @@ Item{
 	signal addClicked(var exerciseModel)
 
 	function saveValues(){
-		if(nameTextField.isEdited) strengthModel.name = nameTextField.newValue
-		if(descriptionTextField.isEdited) strengthModel.description = descriptionTextField.newValue
+		if(nameTextField.isEdited) exerciseModel.name = nameTextField.newValue
+		if(descriptionTextField.isEdited) exerciseModel.description = descriptionTextField.newValue
 	}
 	ColumnLayout{
 		id: mainLayout
@@ -53,14 +54,14 @@ Item{
 				Layout.fillWidth: true
 				showTitle: false
 				readOnly: isReadOnly
-				text: strengthModel.name
+				text: exerciseModel.name
 			}
 			TextField{
 				id: descriptionTextField
 				Layout.fillWidth: true
 				showTitle: false
 				readOnly: isReadOnly
-				text: strengthModel.description
+				text: exerciseModel.description
 			}
 			Button{
 				Layout.rightMargin: 15
@@ -72,7 +73,7 @@ Item{
 				text: 'Save'
 				onClicked: {
 					mainItem.saveValues()
-					strengthModel.save()
+					exerciseModel.save()
 				}
 			}
 			Button{
@@ -81,7 +82,45 @@ Item{
 				text: 'Add'
 				onClicked: {
 					mainItem.saveValues()
-					mainItem.addClicked(strengthModel)
+					mainItem.addClicked(exerciseModel)
+				}
+			}
+			Rectangle{
+				Layout.alignment: Qt.AlignCenter
+				Layout.preferredHeight: 30
+				Layout.preferredWidth: 30
+				visible: !!mainItem.programModel
+				color: Material.primary
+				radius: width / 2
+				Text{
+					anchors.centerIn: parent
+					color: 'white'
+					text: '+'
+				}
+				MouseArea{
+					anchors.fill: parent
+					onClicked:{
+						mainItem.programModel.decrementExerciseOrder(mainItem.exerciseModel)
+					}
+				}
+			}
+			Rectangle{
+				Layout.alignment: Qt.AlignCenter
+				Layout.preferredHeight: 30
+				Layout.preferredWidth: 30
+				visible: !!mainItem.programModel
+				color: Material.primary
+				radius: width / 2
+				Text{
+					anchors.centerIn: parent
+					color: 'white'
+					text: '-'
+				}
+				MouseArea{
+					anchors.fill: parent
+					onClicked:{
+						mainItem.programModel.incrementExerciseOrder(mainItem.exerciseModel)
+					}
 				}
 			}
 		}
@@ -90,7 +129,7 @@ Item{
 			Layout.fillWidth: true
 			Layout.preferredHeight: implicitHeight
 			visible: mainItem.expandAll
-			exerciseModel: visible ? mainItem.strengthModel : null
+			exerciseModel: visible ? mainItem.exerciseModel : null
 			showSaveButton: mainItem.showSaveButton
 			isReadOnly: mainItem.isReadOnly
 		}

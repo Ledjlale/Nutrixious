@@ -67,7 +67,7 @@ Item {
 						trainModel: $modelData
 						MouseArea{
 							anchors.fill: parent
-							onClicked: trainExercises.setExercises($modelData.exercises)
+							onClicked: trainExercises.program = $modelData
 						}
 					}
 				}
@@ -84,10 +84,13 @@ Item {
 					clip: true
 					model: Training.ExerciseProxyModel{
 						id: trainExercises
+						property var program
+						exercises: !!program ? program.exercises : []
 					}
 					delegate: ExerciseModelView{
 						width: trainDetailsList.width
-						exerciseModel: modelData
+						exerciseModel: $modelData
+						programModel: trainExercises.program
 						isReadOnly: true
 					}
 				}

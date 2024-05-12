@@ -62,7 +62,7 @@ Training::ExerciseModel * DistanceModel::cloneTraining(qint64 trainId, QObject *
 	Training::DistanceModel * model = new Training::DistanceModel(parent);
 	model->setTargetExercise(this);
 	model->setTrainId(trainId);
-	model->setTrainOrder(getProgramOrder());
+	model->setOrder(getOrder());
 	return model;
 }
 
@@ -78,7 +78,7 @@ bool DistanceModel::save() {
 	query.begin(mExerciseId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, isProgramLinked() ? "pgrm_ex_distance" : "ex_distance");
 	if(isProgramLinked()){
 		query.add("program_id", getProgramId());
-		query.add("program_order", getProgramOrder());
+		query.add("program_order", getOrder());
 		if(getDescriptionExerciseId() >= 0) query.add("exercise_id", getDescriptionExerciseId());
 	}
 	query.add("name", mName);
@@ -120,7 +120,7 @@ DistanceModel *DistanceModel::load(QSqlQuery &query, QObject * parent) {
 	auto distanceField = query.record().indexOf("distance");
 	auto restTimeField = query.record().indexOf("rest_time");
 	auto programIdField = query.record().indexOf("program_id");
-	auto programOrderField = query.record().indexOf("program_order");
+	auto orderField = query.record().indexOf("program_order");
 	auto descriptionExerciseIdField = query.record().indexOf("exercise_id");
 	model->setExerciseId(query.value(idField).toInt());
 	model->setName(query.value(nameField).toString());
@@ -129,8 +129,8 @@ DistanceModel *DistanceModel::load(QSqlQuery &query, QObject * parent) {
 	model->setRestTime(query.value(restTimeField).toInt());if(programIdField>=0){
 		model->setProgramId(query.value(programIdField).toInt());
 	}
-	if(programOrderField>=0){
-		model->setProgramOrder(query.value(programOrderField).toInt());
+	if(orderField>=0){
+		model->setOrder(query.value(orderField).toInt());
 	}
 	if(descriptionExerciseIdField>=0){
 		model->setDescriptionExerciseId(query.value(descriptionExerciseIdField).toInt());

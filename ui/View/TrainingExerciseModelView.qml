@@ -30,6 +30,7 @@ import '../Tool/Utils.js' as Utils
 Item{
 	id: mainItem
 	property var exerciseModel
+	property var trainModel
 	property bool showAddButton: false
 	property bool showRunning: false
 	property bool expandAll: false
@@ -121,6 +122,45 @@ Item{
 				visible: mainItem.showAddButton
 				text: 'Add'
 				onClicked: mainItem.addClicked(exerciseModel)
+			}
+			Rectangle{
+				Layout.alignment: Qt.AlignCenter
+				Layout.preferredHeight: 30
+				Layout.preferredWidth: 30
+				visible: !!mainItem.trainModel// && !mainItem.exerciseModel.isDone && !mainItem.exerciseModel.isRunning
+				color: Material.primary
+
+				radius: width / 2
+				Text{
+					anchors.centerIn: parent
+					color: 'white'
+					text: '+'
+				}
+				MouseArea{
+					anchors.fill: parent
+					onClicked:{
+						mainItem.trainModel.decrementExerciseOrder(mainItem.exerciseModel)
+					}
+				}
+			}
+			Rectangle{
+				Layout.alignment: Qt.AlignCenter
+				Layout.preferredHeight: 30
+				Layout.preferredWidth: 30
+				visible: !!mainItem.trainModel// && !mainItem.exerciseModel.isDone && !mainItem.exerciseModel.isRunning
+				color: Material.primary
+				radius: width / 2
+				Text{
+					anchors.centerIn: parent
+					color: 'white'
+					text: '-'
+				}
+				MouseArea{
+					anchors.fill: parent
+					onClicked:{
+						mainItem.trainModel.incrementExerciseOrder(mainItem.exerciseModel)
+					}
+				}
 			}
 		}
 
@@ -253,7 +293,7 @@ Item{
 				Component{
 					id: distanceComponent
 					DistanceModelView{
-						distanceModel:mainItem.lastExercise
+						exerciseModel:mainItem.lastExercise
 						trainingResultEdition: true
 						showAddButton: false
 						showSaveButton: true
@@ -263,7 +303,7 @@ Item{
 				Component{
 					id: stepsComponent
 					StepsModelView{
-						stepsModel: mainItem.lastExercise
+						exerciseModel: mainItem.lastExercise
 						trainingResultEdition: true
 						showAddButton: false
 						showSaveButton: true

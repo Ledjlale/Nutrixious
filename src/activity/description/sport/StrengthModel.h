@@ -53,10 +53,14 @@ public:
 	Q_INVOKABLE void addSet(StrengthWorkModel *model, bool keepId = false);
 	Q_INVOKABLE void removeSet(StrengthWorkModel *model);
 
+	Q_INVOKABLE void decrementWorkOrder(StrengthWorkModel *model);
+	Q_INVOKABLE void incrementWorkOrder(StrengthWorkModel *model);
+
 	void setInvalidSets(bool invalid);
 
 signals:
 	void setsChanged();
+	void orderSetsChanged();
 
 	void invalidSetsChanged();
 

@@ -35,6 +35,7 @@ TrainingModel::TrainingModel(QObject *parent)
 	mTrainModel = new TrainModel(this);
 	connect(mTrainModel, &TrainModel::exercisesChanged, this, &TrainingModel::exercisesChanged);
 	connect(mTrainModel, &TrainModel::nextExercise, this, &TrainingModel::nextExercise);
+	connect(mTrainModel, &TrainModel::workStarted, this, &TrainingModel::currentWorkChanged);
 
 	mRestTimer.setInterval(1000);
 	connect(&mRestTimer, &QTimer::timeout, this, &TrainingModel::refresh);
@@ -66,6 +67,8 @@ void TrainingModel::setIsResting(bool data){
 
 void TrainingModel::start(){
 	mCurrentExercise = mTrainModel->start();
+	emit workingNextExercise(0);
+	emit currentWorkChanged();// becase affectation of iterator is done before the TrainModel signal.
 }
 void TrainingModel::stop(){
 }
@@ -87,7 +90,10 @@ void TrainingModel::endOfCurrentRest(){
 	//(*mCurrentExercise)->endOfCurrentRest();
 }
 QVariant TrainingModel::getCurrentWork() {
-	return (*mCurrentExercise)->getCurrentWork();
+	if(mTrainModel && mCurrentExercise != QList<ExerciseModel*>::Iterator())
+		return (*mCurrentExercise)->getCurrentWork();
+	else
+		return QVariant();
 }
 
 void TrainingModel::refresh(){
@@ -101,5 +107,6 @@ void TrainingModel::nextExercise(){
 	}else {
 		(*mCurrentExercise)->startWork();
 		emit workingNextExercise(mCurrentExercise - mTrainModel->getExercises().begin());
+		emit currentWorkChanged();
 	}
 }

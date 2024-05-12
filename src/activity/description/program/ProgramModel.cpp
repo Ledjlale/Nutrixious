@@ -30,6 +30,8 @@
 #include "../sport/StepsModel.h"
 #include "src/database/DatabaseQuery.h"
 
+#include "src/tool/Utils.h"
+
 using namespace Description;
 
 extern QQmlApplicationEngine * gEngine;
@@ -99,23 +101,7 @@ const QList<ExerciseModel*>& ProgramModel::getExercises()const {
 }
 
 ExerciseModel* ProgramModel::addExercise(ExerciseModel *model, bool keepId) {
-	int programOrder = model->getProgramOrder();
-	ExerciseModel * insertedModel = nullptr;
-	if(programOrder < 0) {
-		mExercises.push_back(model->clone(mProgramId, this));
-		insertedModel = mExercises.back();
-		insertedModel->setProgramOrder(mExercises.size());
-	}else{
-		if( mExercises.size() == 0){
-			mExercises.push_back(model->clone(mProgramId, this));
-			insertedModel = mExercises.back();
-		}else {
-			auto it = mExercises.begin();
-			while(it != mExercises.end() && (*it)->getProgramOrder() <= programOrder)
-				++it;
-			insertedModel = *mExercises.insert(it, model->clone(mProgramId, this));
-		}
-	}
+	auto insertedModel = Utils::add<ExerciseModel>(model, mProgramId, this, mExercises);
 	if(keepId)
 		insertedModel->setExerciseId(model->getExerciseId());
 	emit exercisesChanged();
@@ -133,6 +119,25 @@ void ProgramModel::clearExercises(){
 		item->deleteLater();
 	mExercises.clear();
 	emit exercisesChanged();
+}
+
+void ProgramModel::updateProgramOrder(){
+	for(size_t i = 0 ; i < mExercises.size() ; ++i)
+		mExercises[i]->setOrder(i);
+}
+
+
+void ProgramModel::decrementExerciseOrder(ExerciseModel *model) {
+	if(Utils::decrementOrder<ExerciseModel>(model, mExercises)){
+		emit exercisesChanged();
+		save();
+	}
+}
+void ProgramModel::incrementExerciseOrder(ExerciseModel *model){
+	if(Utils::incrementOrder<ExerciseModel>(model, mExercises)){
+		emit exercisesChanged();
+		save();
+	}
 }
 
 //-------------------------------------------------------------------------------------------------------------------
@@ -221,7 +226,7 @@ QList<ProgramModel*> ProgramModel::load(QObject * parent){
 	if(models.size() == 0) return models;
 
 //----------------------		Strength
-	if(!query.exec("SELECT * FROM pgrm_ex_strength WHERE program_id IN(" + ids.join(",") + ") ORDER BY program_id ASC, id ASC"))
+	if(!query.exec("SELECT * FROM pgrm_ex_strength WHERE program_id IN(" + ids.join(",") + ") ORDER BY program_id ASC, program_order ASC"))
 		qCritical() << "Cannot request program strength :" << query.lastError().text();
 	auto programIdField = query.record().indexOf("program_id");
 	auto currentModel = models.begin();
@@ -231,18 +236,19 @@ QList<ProgramModel*> ProgramModel::load(QObject * parent){
 		(*currentModel)->addExercise(model, true);
 	}
 
-	if(!query.exec("SELECT * FROM pgrm_ex_strength_set WHERE program_id IN(" + ids.join(",") + ") ORDER BY program_id ASC, strength_id ASC"))
+	if(!query.exec("SELECT * FROM pgrm_ex_strength_set WHERE program_id IN(" + ids.join(",") + ") ORDER BY program_id ASC, set_order ASC"))
 		qCritical() << "Cannot request program strength set :" << query.lastError().text();
 	programIdField = query.record().indexOf("program_id");
-	auto strengthId = query.record().indexOf("strength_id");
+	auto strengthIdField = query.record().indexOf("strength_id");
 	currentModel = models.begin();
 	auto currentExercise = (*currentModel)->getExercises().begin();
 	while (query.next()) {
-		while(query.value(programIdField).toInt() != (*currentModel)->getProgramId()){
+		auto strengthId = query.value(strengthIdField).toInt();
+		auto programId = query.value(programIdField).toInt();
+		while(programId != (*currentModel)->getProgramId())
 			++currentModel;
-			currentExercise = (*currentModel)->getExercises().begin();
-		}
-		while(query.value(strengthId).toInt() != (*currentExercise)->getExerciseId()) {
+		currentExercise = (*currentModel)->getExercises().begin();
+		while( strengthId != (*currentExercise)->getExerciseId()) {
 			++currentExercise;
 		}
 		auto model = StrengthWorkModel::load(query, *currentExercise);
@@ -250,7 +256,7 @@ QList<ProgramModel*> ProgramModel::load(QObject * parent){
 	}
 
 //----------------------		Distance
-	if(!query.exec("SELECT * FROM pgrm_ex_distance WHERE program_id IN(" + ids.join(",") + ") ORDER BY program_id ASC, id ASC"))
+	if(!query.exec("SELECT * FROM pgrm_ex_distance WHERE program_id IN(" + ids.join(",") + ") ORDER BY program_id ASC, program_order ASC"))
 		qCritical() << "Cannot request program distance :" << query.lastError().text();
 	programIdField = query.record().indexOf("program_id");
 	currentModel = models.begin();
@@ -261,7 +267,7 @@ QList<ProgramModel*> ProgramModel::load(QObject * parent){
 	}
 
 //----------------------		Steps
-	if(!query.exec("SELECT * FROM pgrm_ex_steps WHERE program_id IN(" + ids.join(",") + ") ORDER BY program_id ASC, id ASC"))
+	if(!query.exec("SELECT * FROM pgrm_ex_steps WHERE program_id IN(" + ids.join(",") + ") ORDER BY program_id ASC, program_order ASC"))
 		qCritical() << "Cannot request program steps :" << query.lastError().text();
 	programIdField = query.record().indexOf("program_id");
 	currentModel = models.begin();

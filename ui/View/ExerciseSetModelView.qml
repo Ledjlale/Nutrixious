@@ -29,13 +29,17 @@ import '../Tool/Utils.js' as Utils
 Rectangle{
 	id: mainItem
 	property var workModel
+	property var exerciseModel
 	property bool isLive: false
 	property bool resting: !!workModel.isResting
 	property bool isReadOnly: isLive
 	property bool showSaveButton: true
 	property bool showTitle: true
 	property bool trainingResultEdition: false
+	property bool doSave: true
+
 	implicitHeight: contentLayout.implicitHeight
+
 	Rectangle{
 		anchors.fill: parent
 		visible: mainItem.isLive && ( workModel.isRunning || workModel.isDone)
@@ -48,17 +52,13 @@ Rectangle{
 	RowLayout{
 		id: contentLayout
 		anchors.fill: parent
-		Text{
-			Layout.fillWidth: true
-			Layout.fillHeight: true
-			Layout.preferredWidth: mainItem.width / parent.visibleChildren.length
-			text: index
-		}
+		property int _visibleChildren : visibleChildren.length - 1
+		spacing: 0
 		TextField{
 			id: repsTextField
 			Layout.fillWidth: true
 			Layout.fillHeight: true
-			Layout.preferredWidth: mainItem.width / parent.visibleChildren.length
+			Layout.preferredWidth: mainItem.width / parent._visibleChildren
 			showTitle: mainItem.trainingResultEdition
 			readOnly: mainItem.isReadOnly
 			inputMethodHints: Qt.ImhDigitsOnly
@@ -73,7 +73,7 @@ Rectangle{
 			id: weightTextField
 			Layout.fillWidth: true
 			Layout.fillHeight: true
-			Layout.preferredWidth: mainItem.width / parent.visibleChildren.length
+			Layout.preferredWidth: mainItem.width / parent._visibleChildren
 			showTitle: mainItem.trainingResultEdition
 			readOnly: mainItem.isReadOnly
 			inputMethodHints: Qt.ImhDigitsOnly
@@ -89,7 +89,7 @@ Rectangle{
 			id: restTextField
 			Layout.fillWidth: true
 			Layout.fillHeight: true
-			Layout.preferredWidth: mainItem.width / parent.visibleChildren.length
+			Layout.preferredWidth: mainItem.width / parent._visibleChildren
 			visible: !mainItem.trainingResultEdition
 			showTitle: mainItem.trainingResultEdition
 			readOnly: mainItem.isLive
@@ -104,7 +104,7 @@ Rectangle{
 		Text{
 			Layout.fillWidth: true
 			Layout.fillHeight: true
-			Layout.preferredWidth: mainItem.width / parent.visibleChildren.length
+			Layout.preferredWidth: mainItem.width / parent._visibleChildren
 			visible: (mainItem.isLive || workModel.isSaved) && workModel.isTraining
 			text: visible ? workModel.workTime : ''
 		}
@@ -115,8 +115,49 @@ Rectangle{
 				if(repsTextField.isEdited) workModel.repetitions = repsTextField.newValue
 				if(weightTextField.isEdited) workModel.weight = weightTextField.newValue
 				if(restTextField.isEdited) workModel.restTime = restTextField.newValue
-				if(!mainItem.trainingResultEdition) workModel.save()
+				if(!mainItem.trainingResultEdition && mainItem.doSave) {
+					workModel.save()
+				}
+			}
+		}
+
+		Rectangle{
+			Layout.alignment: Qt.AlignCenter
+			Layout.preferredHeight: 30
+			Layout.preferredWidth: 30
+			color: Material.primary
+
+			radius: width / 2
+			Text{
+				anchors.centerIn: parent
+				color: 'white'
+				text: '+'
+			}
+			MouseArea{
+				anchors.fill: parent
+				onClicked:{
+					exerciseModel.decrementWorkOrder(mainItem.workModel)
+				}
+			}
+		}
+		Rectangle{
+			Layout.alignment: Qt.AlignCenter
+			Layout.preferredHeight: 30
+			Layout.preferredWidth: 30
+			color: Material.primary
+			radius: width / 2
+			Text{
+				anchors.centerIn: parent
+				color: 'white'
+				text: '-'
+			}
+			MouseArea{
+				anchors.fill: parent
+				onClicked:{
+					exerciseModel.incrementWorkOrder(mainItem.workModel)
+				}
 			}
 		}
 	}
 }
+

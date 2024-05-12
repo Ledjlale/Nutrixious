@@ -27,6 +27,7 @@ import App 1.0
 Item{
 	id: mainItem
 	property var exerciseModel
+	property var programModel
 	property bool showAddButton: false
 	property bool showSaveButton: !isReadOnly
 	property bool showRunning: false
@@ -69,7 +70,8 @@ Item{
 			Component{
 				id: distanceComponent
 				DistanceModelView{
-					distanceModel: mainItem.exerciseModel
+					exerciseModel: mainItem.exerciseModel
+					programModel: mainItem.programModel
 					showAddButton: mainItem.showAddButton
 					showSaveButton: mainItem.showSaveButton
 					isReadOnly: mainItem.isReadOnly
@@ -79,7 +81,8 @@ Item{
 			Component{
 				id: stepsComponent
 				StepsModelView{
-					stepsModel: mainItem.exerciseModel
+					exerciseModel: mainItem.exerciseModel
+					programModel: mainItem.programModel
 					showAddButton: mainItem.showAddButton
 					showSaveButton: mainItem.showSaveButton
 					isReadOnly: mainItem.isReadOnly
@@ -89,7 +92,8 @@ Item{
 			Component{
 				id: strengthComponent
 				StrengthModelView{
-					strengthModel: mainItem.exerciseModel
+					exerciseModel: mainItem.exerciseModel
+					programModel: mainItem.programModel
 					showAddButton: mainItem.showAddButton
 					showSaveButton: mainItem.showSaveButton
 					isReadOnly: mainItem.isReadOnly

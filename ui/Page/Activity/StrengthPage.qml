@@ -114,6 +114,23 @@ Item {
 				exerciseModel.addSet(workModel)
 			}
 		}
+
+		ListView{
+			id: workList
+			Layout.fillWidth: true
+			Layout.fillHeight: true
+			clip: true
+			model: mainItem.exerciseModel.sets
+			delegate:ExerciseSetModelView{
+				workModel: modelData
+				width: workList.width
+				isReadOnly: false
+				showTitle: false
+				doSave: false
+			}
+
+
+/*
 		ListView{
 			id: workList
 			Layout.fillWidth: true
@@ -171,6 +188,7 @@ Item {
 					}
 				}
 			}
+			*/
 		}
 	}
 }

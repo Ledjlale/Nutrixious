@@ -36,6 +36,7 @@ class StrengthWorkModel : public QObject {
 	Q_PROPERTY(int repetitions MEMBER mRepetitions NOTIFY repetitionsChanged)
 	Q_PROPERTY(int weight MEMBER mWeight NOTIFY weightChanged)
 	Q_PROPERTY(int restTime MEMBER mRestTime NOTIFY restTimeChanged)
+	Q_PROPERTY(int order READ getOrder WRITE setOrder NOTIFY orderChanged)
 
 	Q_PROPERTY(bool isSaved READ getIsSaved WRITE setIsSaved NOTIFY isSavedChanged)
 	Q_PROPERTY(bool isTraining MEMBER mIsTraining CONSTANT)
@@ -61,6 +62,9 @@ public:
 	qint64 getWorkId() const;
 	void setWorkId(qint64 id);
 
+	int getOrder() const;
+	void setOrder(int data);
+
 	qint64 getStrengthId() const;
 	void setStrengthId(qint64 id);
 
@@ -77,14 +81,17 @@ signals:
 	void weightChanged();
 	void restTimeChanged();
 	void workIdChanged();
+	void orderChanged();
 	void strengthIdChanged();
 	void programIdChanged();
 	void isSavedChanged();
+
 
 protected:
 	qint64 mWorkId = 0;
 	qint64 mStrengthId = 0;
 	qint64 mProgramId = -1;
+	int mOrder = -1;
 	int mRepetitions = 1;
 	int mWeight = 0;
 	int mRestTime = 2;

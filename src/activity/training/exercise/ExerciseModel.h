@@ -37,7 +37,7 @@ Q_OBJECT
 	Q_PROPERTY(bool invalidName MEMBER mInvalidName NOTIFY invalidNameChanged)
 	Q_PROPERTY(bool invalidDescription MEMBER mInvalidDescription NOTIFY invalidDescriptionChanged)
 	Q_PROPERTY(int type READ getType WRITE setType NOTIFY typeChanged)
-	Q_PROPERTY(int trainOrder READ getTrainOrder WRITE setTrainOrder NOTIFY trainOrderChanged)
+	Q_PROPERTY(int order READ getOrder WRITE setOrder NOTIFY orderChanged)
 
 	Q_PROPERTY(bool isRunning READ getIsRunning WRITE setIsRunning NOTIFY isRunningChanged)
 	Q_PROPERTY(bool isResting READ getIsResting WRITE setIsResting NOTIFY isRestingChanged)
@@ -67,8 +67,8 @@ public:
 	qint64 getExerciseId()const;
 	void setExerciseId(qint64 id);
 
-	int getTrainOrder() const;
-	void setTrainOrder(int data);
+	int getOrder() const;
+	void setOrder(int data);
 
 	qint64 getTrainId() const;
 	virtual void setTrainId(qint64 id);
@@ -108,13 +108,14 @@ signals:
 	void targetExerciseChanged();
 	void nameChanged();
 	void descriptionChanged();
-	void trainOrderChanged();
+	void orderChanged();
 	void typeChanged();
 	void isRunningChanged();
 	void isRestingChanged();
 	void isDoneChanged();
 	void isSavedChanged();
 	void finished();
+	void workStarted();
 
 
 	void invalidNameChanged();
@@ -127,7 +128,7 @@ protected:
 	qint64 mDescriptionExerciseId = -1;
 	QString mName;
 	QString mDescription;
-	int mTrainOrder = -1;			// Order in train
+	int mOrder = -1;			// Order in train
 	int mType = 0;
 	bool mIsRunning = false;
 	bool mIsResting = false;

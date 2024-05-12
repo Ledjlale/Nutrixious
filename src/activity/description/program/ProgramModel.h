@@ -52,6 +52,11 @@ public:
 	Q_INVOKABLE void removeExercise(ExerciseModel *model);
 	void clearExercises();
 
+	Q_INVOKABLE void decrementExerciseOrder(ExerciseModel *model);
+	Q_INVOKABLE void incrementExerciseOrder(ExerciseModel *model);
+
+	Q_INVOKABLE void updateProgramOrder();
+
 	void setInvalidExercises(bool invalid);
 	void setInvalidName(bool invalid);
 	void setInvalidDescription(bool invalid);

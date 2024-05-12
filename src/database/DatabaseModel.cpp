@@ -120,8 +120,10 @@ void DatabaseModel::migrate(){
 		if(!query.exec("CREATE TABLE pgrm_ex_strength_set (id INTEGER PRIMARY KEY"
 			", program_id INTEGER NOT NULL"
 			", strength_id INTEGER NOT NULL"
-			", reps INTEGER, weight INTERGER"
+			", reps INTEGER"
+			", weight INTERGER"
 			", rest_time INTEGER"
+			", set_order INTEGER"
 					", FOREIGN KEY (program_id) REFERENCES programs (id) ON UPDATE CASCADE ON DELETE CASCADE"
 					", FOREIGN KEY (strength_id) REFERENCES pgrm_ex_strength (id) ON UPDATE CASCADE ON DELETE CASCADE"
 					")")) qCritical() << "Cannot create pgrm_ex_strength_set table : " << query.lastError().text();
@@ -167,6 +169,7 @@ void DatabaseModel::migrate(){
 			", weight INTERGER"
 			", rest_time INTEGER"
 			", work_time INTEGER"
+			", set_order INTEGER"
 					", FOREIGN KEY (train_id) REFERENCES trains (id) ON UPDATE CASCADE ON DELETE CASCADE"
 					", FOREIGN KEY (strength_id) REFERENCES tr_ex_strength_set (id) ON UPDATE CASCADE ON DELETE CASCADE"
 					")")) qCritical() << "Cannot create tr_ex_strength_set table : " << query.lastError().text();

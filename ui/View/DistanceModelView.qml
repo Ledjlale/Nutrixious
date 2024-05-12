@@ -26,7 +26,8 @@ import App 1.0
 
 Item{
 	id: mainItem
-	property var distanceModel
+	property var exerciseModel
+	property var programModel
 	property bool showAddButton: false
 	property bool showSaveButton: true
 	property bool showRunning: false
@@ -41,11 +42,11 @@ Item{
 	signal addClicked(var exerciseModel)
 
 	function saveValues(){
-		if(nameTextField.isEdited) distanceModel.name = nameTextField.newValue
-		if(descriptionTextField.isEdited) distanceModel.description = descriptionTextField.newValue
-		if(distanceTextField.isEdited) distanceModel.distance = distanceTextField.newValue
-		if(restTextField.isEdited) distanceModel.restTime = restTextField.newValue
-		if(workTextField.isEdited) distanceModel.workTime = workTextField.newValue
+		if(nameTextField.isEdited) exerciseModel.name = nameTextField.newValue
+		if(descriptionTextField.isEdited) exerciseModel.description = descriptionTextField.newValue
+		if(distanceTextField.isEdited) exerciseModel.distance = distanceTextField.newValue
+		if(restTextField.isEdited) exerciseModel.restTime = restTextField.newValue
+		if(workTextField.isEdited) exerciseModel.workTime = workTextField.newValue
 	}
 
 	RowLayout{
@@ -58,7 +59,7 @@ Item{
 			Layout.preferredWidth: mainLayout.width / parent.visibleChanged.length
 			visible: !mainItem.trainingResultEdition
 			showTitle: false
-			text: distanceModel ? distanceModel.name : ''
+			text: exerciseModel ? exerciseModel.name : ''
 			readOnly: isReadOnly
 		}
 		TextField{
@@ -67,7 +68,7 @@ Item{
 			Layout.preferredWidth: mainLayout.width / parent.visibleChanged.length
 			visible: !mainItem.trainingResultEdition
 			showTitle: false
-			text:distanceModel ?  distanceModel.description : ''
+			text:exerciseModel ?  exerciseModel.description : ''
 			readOnly: isReadOnly
 		}
 		TextField{
@@ -77,7 +78,7 @@ Item{
 			inputMethodHints: Qt.ImhDigitsOnly
 			showTitle: mainItem.trainingResultEdition
 			title: 'Distance (m)'
-			text: distanceModel ? distanceModel.distance : ''
+			text: exerciseModel ? exerciseModel.distance : ''
 			readOnly: isReadOnly
 		}
 		TextField{
@@ -88,18 +89,18 @@ Item{
 			inputMethodHints: Qt.ImhDigitsOnly
 			showTitle: mainItem.trainingResultEdition
 			title: 'Rest Time (s)'
-			text: distanceModel ? distanceModel.restTime : ''
+			text: exerciseModel ? exerciseModel.restTime : ''
 			readOnly: isReadOnly
 		}
 		TextField{
 			id: workTextField
 			Layout.fillWidth: true
 			Layout.preferredWidth: mainLayout.width / parent.visibleChanged.length
-			visible: !mainItem.trainingResultEdition && distanceModel && distanceModel.isSaved && distanceModel.workTime !== undefined
+			visible: !mainItem.trainingResultEdition && exerciseModel && exerciseModel.isSaved && exerciseModel.workTime !== undefined
 			showTitle: false
 			inputMethodHints: Qt.ImhDigitsOnly
 			title: 'Work Time (s)'
-			text: visible ? distanceModel.workTime : ''
+			text: visible ? exerciseModel.workTime : ''
 			readOnly: isReadOnly
 		}
 		Button{
@@ -107,7 +108,7 @@ Item{
 			text: 'Save'
 			onClicked: {
 				mainItem.saveValues()
-				if(!mainItem.trainingResultEdition) distanceModel.save()
+				if(!mainItem.trainingResultEdition) exerciseModel.save()
 			}
 		}
 		Button{
@@ -116,7 +117,45 @@ Item{
 			text: 'Add'
 			onClicked: {
 				mainItem.saveValues()
-				mainItem.addClicked(distanceModel)
+				mainItem.addClicked(exerciseModel)
+			}
+		}
+		Rectangle{
+			Layout.alignment: Qt.AlignCenter
+			Layout.preferredHeight: 30
+			Layout.preferredWidth: 30
+			visible: !!mainItem.programModel
+			color: Material.primary
+			radius: width / 2
+			Text{
+				anchors.centerIn: parent
+				color: 'white'
+				text: '+'
+			}
+			MouseArea{
+				anchors.fill: parent
+				onClicked:{
+					mainItem.programModel.decrementExerciseOrder(mainItem.exerciseModel)
+				}
+			}
+		}
+		Rectangle{
+			Layout.alignment: Qt.AlignCenter
+			Layout.preferredHeight: 30
+			Layout.preferredWidth: 30
+			visible: !!mainItem.programModel
+			color: Material.primary
+			radius: width / 2
+			Text{
+				anchors.centerIn: parent
+				color: 'white'
+				text: '-'
+			}
+			MouseArea{
+				anchors.fill: parent
+				onClicked:{
+					mainItem.programModel.incrementExerciseOrder(mainItem.exerciseModel)
+				}
 			}
 		}
 	}

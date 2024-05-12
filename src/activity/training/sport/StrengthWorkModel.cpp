@@ -58,6 +58,7 @@ StrengthWorkModel::StrengthWorkModel(const StrengthWorkModel * model, QObject *p
 	mWeight = model->getWeight();
 	mWorkTime = model->getWorkTime();
 	mRestTime = model->getRestTime();
+	mOrder = model->getOrder();
 	mIsSaved = mWorkId > 0;
 
 	connect(this, &StrengthWorkModel::finished, [this](){
@@ -69,9 +70,8 @@ StrengthWorkModel::StrengthWorkModel(const StrengthWorkModel * model, QObject *p
 	});
 }
 
-StrengthWorkModel * StrengthWorkModel::clone(qint64 trainId, qint64 strengthId, QObject *parent)const{
+StrengthWorkModel * StrengthWorkModel::clone(qint64 strengthId, QObject *parent)const{
 	StrengthWorkModel *model = new StrengthWorkModel(this, parent);
-	model->setTrainId(trainId);
 	model->setStrengthId(strengthId);
 	return model;
 }
@@ -159,6 +159,17 @@ void StrengthWorkModel::setTrainId(qint64 id){
 	}
 }
 
+int StrengthWorkModel::getOrder() const {
+	return mOrder;
+}
+
+void StrengthWorkModel::setOrder(int data){
+	if(mOrder != data){
+		mOrder = data;
+		emit orderChanged();
+	}
+}
+
 bool StrengthWorkModel::getIsRunning() const {
 	return mIsRunning;
 }
@@ -240,6 +251,7 @@ void StrengthWorkModel::save() {
 	query.add("weight", getWeight());
 	query.add("rest_time", getRestTime());
 	query.add("work_time", getWorkTime());
+	query.add("set_order", getOrder());
 	query.addConditionnal("id",mWorkId);
 	if(mWorkId == 0) {
 		if(!query.exec()) qCritical() << "Cannot save train set : "  << query.mQuery.lastError().text();
@@ -264,6 +276,7 @@ StrengthWorkModel *StrengthWorkModel::load(QSqlQuery &query, QObject * parent) {
 	auto weightField = query.record().indexOf("weight");
 	auto workTimeField = query.record().indexOf("work_time");
 	auto restTimeField = query.record().indexOf("rest_time");
+	auto orderField = query.record().indexOf("set_order");
 	model->setWorkId(query.value(idField).toInt());
 	if(trainIdField >= 0) model->setTrainId(query.value(trainIdField).toInt());
 	model->setStrengthId(query.value(strengthIdField).toInt());
@@ -271,6 +284,7 @@ StrengthWorkModel *StrengthWorkModel::load(QSqlQuery &query, QObject * parent) {
 	model->setWeight(query.value(weightField).toInt());
 	model->setWorkTime(query.value(workTimeField).toInt());
 	model->setRestTime(query.value(restTimeField).toInt());
+	model->setOrder(query.value(orderField).toInt());
 	return model;
 }
 

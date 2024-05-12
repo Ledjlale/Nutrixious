@@ -79,7 +79,7 @@ bool StepsModel::save() {
 	query.begin(mExerciseId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "tr_ex_steps");
 	query.add("train_id", getTrainId());
 	if(getDescriptionExerciseId() >= 0) query.add("exercise_id", getDescriptionExerciseId());
-	query.add("train_order", getTrainOrder());
+	query.add("train_order", getOrder());
 	query.add("name", mName);
 	query.add("description", mDescription);
 	query.add("steps", getSteps());
@@ -118,7 +118,7 @@ StepsModel *StepsModel::load(QSqlQuery &query, QObject * parent) {
 	auto stepsField = query.record().indexOf("steps");
 	auto restTimeField = query.record().indexOf("rest_time");
 	auto trainIdField = query.record().indexOf("train_id");
-	auto trainOrderField = query.record().indexOf("train_order");
+	auto orderField = query.record().indexOf("train_order");
 	auto descriptionExerciseIdField = query.record().indexOf("exercise_id");
 	model->setExerciseId(query.value(idField).toInt());
 	model->setName(query.value(nameField).toString());
@@ -129,8 +129,8 @@ StepsModel *StepsModel::load(QSqlQuery &query, QObject * parent) {
 	if(trainIdField>=0){
 		model->setTrainId(query.value(trainIdField).toInt());
 	}
-	if(trainOrderField>=0){
-		model->setTrainOrder(query.value(trainOrderField).toInt());
+	if(orderField>=0){
+		model->setOrder(query.value(orderField).toInt());
 	}
 	if(descriptionExerciseIdField>=0){
 		model->setDescriptionExerciseId(query.value(descriptionExerciseIdField).toInt());

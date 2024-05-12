@@ -30,6 +30,7 @@
 #include "src/activity/training/sport/StrengthModel.h"
 #include "src/activity/training/sport/StrengthWorkModel.h"
 #include "src/database/DatabaseQuery.h"
+#include "src/tool/Utils.h"
 
 #include <QQmlApplicationEngine>
 extern QQmlApplicationEngine * gEngine;
@@ -66,6 +67,7 @@ TrainModel::TrainModel(QObject *parent)
 			for(auto model : mTargetProgramModel->getExercises()){
 				auto newExercise = model->cloneTraining(mTrainId, this);
 				connect(newExercise, &ExerciseModel::finished, this, &TrainModel::nextExercise);
+				connect(newExercise, &ExerciseModel::workStarted, this, &TrainModel::workStarted);
 				mExercises << newExercise;
 			}
 		}
@@ -160,32 +162,18 @@ void TrainModel::addExercise(Description::ExerciseModel *model, bool keepId) {
 	auto newTargetExercise = mTargetProgramModel->addExercise(model, keepId);
 	auto newExercise = newTargetExercise->cloneTraining(mTrainId, this);
 	connect(newExercise, &ExerciseModel::finished, this, &TrainModel::nextExercise);
+	connect(newExercise, &ExerciseModel::workStarted, this, &TrainModel::workStarted);
 	mExercises << newExercise;
-	newExercise->setTrainOrder(mExercises.size());
+	newExercise->setOrder(mExercises.size());
 	emit exercisesChanged();
 }
 
 void TrainModel::addExercise(ExerciseModel *model, bool keepId) {
-	int trainOrder = model->getTrainOrder();
-	ExerciseModel * insertedModel = nullptr;
-	if(trainOrder < 0) {
-		mExercises.push_back(model->clone(mTrainId, this));
-		insertedModel = mExercises.back();
-		insertedModel->setTrainOrder(mExercises.size());
-	}else{
-		if( mExercises.size() == 0){
-			mExercises.push_back(model->clone(mTrainId, this));
-			insertedModel = mExercises.back();
-		}else {
-			auto it = mExercises.begin();
-			while(it != mExercises.end() && (*it)->getTrainOrder() <= trainOrder)
-				++it;
-			insertedModel = *mExercises.insert(it, model->clone(mTrainId, this));
-		}
-	}
+	auto insertedModel = Utils::add<ExerciseModel>(model, mTrainId, this, mExercises);
 	if(keepId)
 		insertedModel->setExerciseId(model->getExerciseId());
 	emit exercisesChanged();
+
 }
 
 void TrainModel::removeExercise(ExerciseModel *model) {
@@ -199,6 +187,22 @@ void TrainModel::clearExercises(){
 		item->deleteLater();
 	mExercises.clear();
 	emit exercisesChanged();
+}
+
+void TrainModel::updateTrainOrder(){
+	for(size_t i = 0 ; i < mExercises.size() ; ++i)
+		mExercises[i]->setOrder(i);
+}
+
+void TrainModel::decrementExerciseOrder(ExerciseModel *model) {
+	if(Utils::decrementOrder<ExerciseModel>(model, mExercises)){
+		emit exercisesChanged();// Do not save because it is a training. Save is done at the end.
+	}
+}
+void TrainModel::incrementExerciseOrder(ExerciseModel *model){
+	if(Utils::incrementOrder<ExerciseModel>(model, mExercises)){
+		emit exercisesChanged();// Do not save because it is a training. Save is done at the end.
+	}
 }
 
 //-------------------------------------------------------------------------------------------------------------------
@@ -273,7 +277,7 @@ QList<TrainModel*> models;
 	if(models.size() == 0) return models;
 
 //----------------------		Strength
-	if(!query.exec("SELECT * FROM tr_ex_strength WHERE train_id IN(" + ids.join(",") + ") ORDER BY train_id ASC, id ASC"))
+	if(!query.exec("SELECT * FROM tr_ex_strength WHERE train_id IN(" + ids.join(",") + ") ORDER BY train_id ASC, train_order ASC"))
 		qCritical() << "Cannot request train strength :" << query.lastError().text();
 	auto trainIdField = query.record().indexOf("train_id");
 	auto currentModel = models.begin();
@@ -283,18 +287,19 @@ QList<TrainModel*> models;
 		(*currentModel)->addExercise(model, true);
 	}
 
-	if(!query.exec("SELECT * FROM tr_ex_strength_set WHERE train_id IN(" + ids.join(",") + ") ORDER BY train_id ASC, strength_id ASC"))
+	if(!query.exec("SELECT * FROM tr_ex_strength_set WHERE train_id IN(" + ids.join(",") + ") ORDER BY train_id ASC, set_order ASC"))
 		qCritical() << "Cannot request train strength set :" << query.lastError().text();
 	trainIdField = query.record().indexOf("train_id");
-	auto strengthId = query.record().indexOf("strength_id");
+	auto strengthIdField = query.record().indexOf("strength_id");
 	currentModel = models.begin();
 	auto currentExercise = (*currentModel)->getExercises().begin();
 	while (query.next()) {
-		while(query.value(trainIdField).toInt() != (*currentModel)->getTrainId()){
+		auto strengthId = query.value(strengthIdField).toInt();
+		auto trainId = query.value(trainIdField).toInt();
+		while( trainId != (*currentModel)->getTrainId())
 			++currentModel;
-			currentExercise = (*currentModel)->getExercises().begin();
-		}
-		while(query.value(strengthId).toInt() != (*currentExercise)->getExerciseId()) {
+		currentExercise = (*currentModel)->getExercises().begin();
+		while(strengthId!= (*currentExercise)->getExerciseId()) {
 			++currentExercise;
 		}
 		auto model = StrengthWorkModel::load(query, *currentExercise);

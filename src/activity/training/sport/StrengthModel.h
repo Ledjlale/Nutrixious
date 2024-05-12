@@ -51,6 +51,9 @@ public:
 	Q_INVOKABLE void addSet(StrengthWorkModel *model, bool keepId);
 	Q_INVOKABLE void removeSet(StrengthWorkModel *model);
 
+	Q_INVOKABLE void decrementWorkOrder(StrengthWorkModel *model);
+	Q_INVOKABLE void incrementWorkOrder(StrengthWorkModel *model);
+
 	void nextSet();
 	virtual void startWork();
 	virtual void endOfCurrentWork();
