@@ -61,10 +61,12 @@ Item{
 		anchors.fill: parent
 		visible: mainItem.isRunning || mainItem.isDone
 		color: exerciseModel.isResting
-					? Material.color(Material.Green, Material.Shade100)
-					: exerciseModel.isDone
-						? Material.color(Material.Blue, Material.Shade100)
-						: Material.color(Material.accent, Material.Shade100)
+					? Material.color(Material.Yellow, Material.Shade100)
+					: exerciseModel.isSaved
+						? Material.color(Material.Green, Material.Shade100)
+						: exerciseModel.isDone
+							? Material.color(Material.Blue, Material.Shade100)
+							: Material.color(Material.accent, Material.Shade100)
 	}
 	ColumnLayout{
 		id: mainLayout
@@ -173,10 +175,12 @@ Item{
 					anchors.fill: parent
 					visible: modelData.isRunning || modelData.isDone
 					color: modelData.isResting
-								? Material.color(Material.Green, Material.Shade100)
-								: modelData.isDone
-									? Material.color(Material.Blue, Material.Shade100)
-									: Material.color(Material.accent, Material.Shade100)
+								? Material.color(Material.Yellow, Material.Shade100)
+								: modelData.isSaved
+									? Material.color(Material.Green, Material.Shade100)
+									: modelData.isDone
+										? Material.color(Material.Blue, Material.Shade100)
+										: Material.color(Material.accent, Material.Shade100)
 				}
 				RowLayout{
 					anchors.fill: parent

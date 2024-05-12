@@ -33,6 +33,7 @@ Rectangle{
 	property bool resting: !!workModel.isResting
 	property bool isReadOnly: isLive
 	property bool showSaveButton: true
+	property bool showTitle: true
 	property bool trainingResultEdition: false
 	implicitHeight: contentLayout.implicitHeight
 	Rectangle{
@@ -58,8 +59,10 @@ Rectangle{
 			Layout.fillWidth: true
 			Layout.fillHeight: true
 			Layout.preferredWidth: mainItem.width / parent.visibleChildren.length
+			showTitle: mainItem.trainingResultEdition
 			readOnly: mainItem.isReadOnly
-			title: mainItem.trainingResultEdition ? 'Reps' : ''
+			inputMethodHints: Qt.ImhDigitsOnly
+			title: mainItem.showTitle ? 'Reps' : ''
 			textColor: !mainItem.isLive || workModel.repetitions <= workModel.targetWork.repetitions ? Material.foreground : Material.accent
 			text: mainItem.isLive
 							? workModel.targetWork.repetitions + (workModel.isDone ? ' / ' + workModel.repetitions : '')
@@ -71,8 +74,10 @@ Rectangle{
 			Layout.fillWidth: true
 			Layout.fillHeight: true
 			Layout.preferredWidth: mainItem.width / parent.visibleChildren.length
+			showTitle: mainItem.trainingResultEdition
 			readOnly: mainItem.isReadOnly
-			title: mainItem.trainingResultEdition ? 'Weight(kg)' : ''
+			inputMethodHints: Qt.ImhDigitsOnly
+			title: mainItem.showTitle ? 'Weight(kg)' : ''
 			textColor: !mainItem.isLive || workModel.weight <= workModel.targetWork.weight ? Material.foreground : Material.accent
 			text: mainItem.isLive
 							? ( workModel.targetWork.weight + (workModel.isDone ? ' / ' + workModel.weight : ''))
@@ -86,8 +91,10 @@ Rectangle{
 			Layout.fillHeight: true
 			Layout.preferredWidth: mainItem.width / parent.visibleChildren.length
 			visible: !mainItem.trainingResultEdition
+			showTitle: mainItem.trainingResultEdition
 			readOnly: mainItem.isLive
-			title: mainItem.trainingResultEdition ? 'RestTime(s)' : ''
+			inputMethodHints: Qt.ImhDigitsOnly
+			title: mainItem.showTitle ? 'RestTime(s)' : ''
 			textColor: !mainItem.isLive || workModel.restTime <= workModel.targetWork.restTime ? Material.foreground : Material.accent
 			text: mainItem.isLive
 							? workModel.targetWork.restTime + (workModel.isDone ? ' / ' + workModel.restTime : '')

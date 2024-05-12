@@ -29,7 +29,7 @@ class ExerciseListModel: public ProxyAbstractListModel<ExerciseModel*> {
 Q_OBJECT
 public:
 	ExerciseListModel(QObject * parent = nullptr);
-	ExerciseListModel(QVariantList exercises, QObject * parent = nullptr);
+	ExerciseListModel(QVariantList exercises, QObject * parent);
 
 	virtual QHash<int, QByteArray> roleNames () const override;
 	QVariant data (const QModelIndex &index, int role = Qt::DisplayRole) const override;

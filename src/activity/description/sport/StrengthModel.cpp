@@ -140,10 +140,12 @@ QList<ExerciseModel*> StrengthModel::load(QObject * parent){
 	while (query.next()) {
 		auto model = load(query, parent);
 		qint64 id = model->getExerciseId();
+		ids << QString::number(id);
 		models << model;
 	}
 
-	query.exec("SELECT * FROM ex_strength_set WHERE strength_id IN(" + ids.join(",") + ") ORDER BY strength_id ASC");
+	if(!query.exec("SELECT * FROM ex_strength_set WHERE strength_id IN(" + ids.join(",") + ") ORDER BY strength_id ASC"))
+		 qCritical() << "Cannot select  strength sets: "  << query.lastError().text();
 	auto idField = query.record().indexOf("strength_id");
 	auto currentModel = models.begin();
 	while (query.next()) {

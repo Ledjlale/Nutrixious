@@ -30,7 +30,7 @@ ExerciseProxyModel::ExerciseProxyModel(QObject *parent)
 
 void ExerciseProxyModel::update(){
 	if(sourceModel()) sourceModel()->deleteLater();
-	setSourceModel(new ExerciseListModel());
+	setSourceModel(new ExerciseListModel(this));
 }
 
 
@@ -41,7 +41,7 @@ QVariantList ExerciseProxyModel::getExercises() const {
 
 void ExerciseProxyModel::setExercises(QVariantList exercises){
 	if(sourceModel()) sourceModel()->deleteLater();
-	setSourceModel(new ExerciseListModel(exercises));
+	setSourceModel(new ExerciseListModel(exercises, this));
 }
 
 

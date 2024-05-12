@@ -55,38 +55,50 @@ Item{
 		TextField{
 			id: nameTextField
 			Layout.fillWidth: true
+			Layout.preferredWidth: mainLayout.width / parent.visibleChanged.length
 			visible: !mainItem.trainingResultEdition
+			showTitle: false
 			text: distanceModel ? distanceModel.name : ''
 			readOnly: isReadOnly
 		}
 		TextField{
 			id: descriptionTextField
 			Layout.fillWidth: true
+			Layout.preferredWidth: mainLayout.width / parent.visibleChanged.length
 			visible: !mainItem.trainingResultEdition
+			showTitle: false
 			text:distanceModel ?  distanceModel.description : ''
 			readOnly: isReadOnly
 		}
 		TextField{
 			id: distanceTextField
 			Layout.fillWidth: true
+			Layout.preferredWidth: mainLayout.width / parent.visibleChanged.length
 			inputMethodHints: Qt.ImhDigitsOnly
-			title: mainItem.trainingResultEdition ? 'Distance (m)' : ''
+			showTitle: mainItem.trainingResultEdition
+			title: 'Distance (m)'
 			text: distanceModel ? distanceModel.distance : ''
 			readOnly: isReadOnly
 		}
 		TextField{
 			id: restTextField
 			Layout.fillWidth: true
+			Layout.preferredWidth: mainLayout.width / parent.visibleChanged.length
 			visible: !mainItem.trainingResultEdition
 			inputMethodHints: Qt.ImhDigitsOnly
+			showTitle: mainItem.trainingResultEdition
+			title: 'Rest Time (s)'
 			text: distanceModel ? distanceModel.restTime : ''
 			readOnly: isReadOnly
 		}
 		TextField{
 			id: workTextField
 			Layout.fillWidth: true
+			Layout.preferredWidth: mainLayout.width / parent.visibleChanged.length
 			visible: !mainItem.trainingResultEdition && distanceModel && distanceModel.isSaved && distanceModel.workTime !== undefined
+			showTitle: false
 			inputMethodHints: Qt.ImhDigitsOnly
+			title: 'Work Time (s)'
 			text: visible ? distanceModel.workTime : ''
 			readOnly: isReadOnly
 		}

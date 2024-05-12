@@ -51,12 +51,14 @@ Item{
 			TextField{
 				id: nameTextField
 				Layout.fillWidth: true
+				showTitle: false
 				readOnly: isReadOnly
 				text: strengthModel.name
 			}
 			TextField{
 				id: descriptionTextField
 				Layout.fillWidth: true
+				showTitle: false
 				readOnly: isReadOnly
 				text: strengthModel.description
 			}

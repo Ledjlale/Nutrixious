@@ -120,7 +120,7 @@ Item {
 					}
 					delegate:ExerciseModelView{
 						width: programDetailsList.width
-						exerciseModel: modelData
+						exerciseModel: $modelData
 					}
 				}
 			}

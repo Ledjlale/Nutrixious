@@ -55,12 +55,15 @@ Item {
 				model: ProgramProxyModel{
 					id: programs
 				}
-				//onCurrentValueChanged: programExercises.setExercises(currentValue.exercises)
 				onCurrentValueChanged: mainItem.selectedProgramModel = currentValue
 			}
 			Button{
 				visible: programChoice.currentIndex >= 0
-				text: mainItem.isRunning ? 'Cancel' : 'Begin'
+				text: mainItem.isRunning
+						? stackView.depth == 2 && stackView.currentItem.trainingModel.trainModel.isSaved
+							? 'Back'
+							: 'Cancel'
+						: 'Begin'
 				onClicked: mainItem.isRunning = !mainItem.isRunning
 			}
 			Button{

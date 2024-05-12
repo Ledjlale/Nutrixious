@@ -41,6 +41,8 @@ Q_OBJECT
 	Q_PROPERTY(QVariantList exercises READ getVariantExercises NOTIFY exercisesChanged)
 	Q_PROPERTY(QString startDateTimeStr READ getStartDateTimeStr NOTIFY startDateTimeChanged)
 
+	Q_PROPERTY(bool isSaved READ getIsSaved WRITE setIsSaved NOTIFY isSavedChanged)
+
 	Q_PROPERTY(bool invalidName MEMBER mInvalidName NOTIFY invalidNameChanged)
 	Q_PROPERTY(bool invalidDescription MEMBER mInvalidDescription NOTIFY invalidDescriptionChanged)
 	Q_PROPERTY(bool invalidExercises MEMBER mInvalidExercises NOTIFY invalidExercisesChanged)
@@ -73,6 +75,9 @@ public:
 	qint64 getTrainId()const;
 	virtual void setTrainId(qint64 id);
 
+	bool getIsSaved() const;
+	void setIsSaved(bool data);
+
 	Q_INVOKABLE virtual bool save();
 	static QList<TrainModel*> load(QObject * parent);
 	static TrainModel *load(QSqlQuery &query, QObject * parent);
@@ -83,6 +88,7 @@ public:
 signals:
 	void targetProgramModelChanged();
 	void trainIdChanged();
+	void isSavedChanged();
 	void nameChanged();
 	void descriptionChanged();
 	void startDateTimeChanged();
@@ -96,6 +102,7 @@ signals:
 protected:
 	Description::ProgramModel *mTargetProgramModel;
 	qint64 mTrainId = 0;
+	bool mIsSaved = false;
 	QString mName;
 	QString mDescription;
 	QDateTime mStartDateTime;

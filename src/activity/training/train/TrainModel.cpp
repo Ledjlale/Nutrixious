@@ -57,6 +57,7 @@ TrainModel::TrainModel(QObject *parent)
 	});
 	connect(this, &TrainModel::trainIdChanged, [this](){
 		for(auto &i: mExercises) i->setTrainId(mTrainId);
+		setIsSaved(getTrainId() > 0);
 	});
 	connect(this, &TrainModel::targetProgramModelChanged, [this](){
 		mExercises.clear();
@@ -80,6 +81,17 @@ void TrainModel::setTrainId(qint64 id) {
 	if(mTrainId != id){
 		mTrainId = id;
 		emit trainIdChanged();
+	}
+}
+
+bool TrainModel::getIsSaved() const {
+	return mIsSaved;
+}
+
+void TrainModel::setIsSaved(bool data) {
+	if(mIsSaved != data){
+		mIsSaved = data;
+		emit isSavedChanged();
 	}
 }
 

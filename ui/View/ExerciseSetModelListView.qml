@@ -88,6 +88,7 @@ Item{
 				onRestingChanged: if(mainItem.isLive && resting) restingPopup.pause(modelData, modelData.targetWork.restTime)
 				width: setList.width
 				isReadOnly: mainItem.isReadOnly
+				showTitle: false
 			}
 		}
 	}

@@ -22,50 +22,113 @@ import QtQuick
 import QtQuick.Controls.Material as Control
 import QtQuick.Layouts
 
-Rectangle{
+Flipable {
 	id: mainItem
-	property alias title: titleText.text
+	property var title: ''
 	property var text: ''
 	property var newValue
+	property bool showTitle: true
 	property bool isEdited: !!newValue && newValue != text
-	property alias inputMethodHints: textField.inputMethodHints
-	property alias placeholderText: textField.placeholderText
-	property alias readOnly: textField.readOnly
+	property var inputMethodHints: Qt.ImhNone
+	property string placeholderText
+	property bool readOnly: false
 	property color textColor: Control.Material.foreground
-	//property alias focus: textField.focus
 
 	signal editingFinished()
 
 	function forceActiveFocus(){
-		textField.forceActiveFocus()
+		if(mainItem.flipped) frontItem.forceActiveFocus()
+		else backItem.forceActiveFocus()
 	}
 
-	radius: 15
-	width: mainLayout.implicitWidth
-	height: mainLayout.implicitHeight
+	width: flipped ? backItem.implicitWidth : frontItem.implicitWidth
+	implicitHeight: flipped ? backItem.implicitHeight: frontItem.implicitHeight
 
-	color: Control.Material.background
-	onEditingFinished: {
-		newValue = textField.text
+	property bool flipped: false
+
+	front: MouseArea{
+				id: frontItem
+				anchors.fill: parent
+				implicitHeight: readOnlyLayout.implicitHeight
+				onClicked: {
+					console.log("Flip!")
+					mainItem.flipped = true
+					backItem.forceActiveFocus()
+				}
+				ColumnLayout{
+					id: readOnlyLayout
+					anchors.fill: parent
+					spacing: 0
+					Text{
+						Layout.leftMargin: 10
+						color: mainItem.textColor
+						visible: mainItem.showTitle && text != ''
+						text: mainItem.title
+					}
+					Text{
+						id: originalTextField
+						Layout.fillHeight: true
+						Layout.fillWidth: true
+						Layout.margins: 10
+						color: mainItem.textColor
+						text: newValue ? newValue : mainItem.text === undefined ? '' : mainItem.text
+					}
+				}
+			}
+	back: ColumnLayout{
+				id: backItem
+				anchors.fill: parent
+				spacing: 0
+				function forceActiveFocus(){
+					textField.forceActiveFocus()
+				}
+				Text{
+					Layout.leftMargin: 10
+					color: mainItem.textColor
+					visible: text != ''
+					font.italic: true
+					font.pixelSize: textField.font.pixelSize - 2
+					text: mainItem.title
+
+				}
+				Control.TextField{
+					id: textField
+					Layout.fillHeight: true
+					Layout.fillWidth: true
+					Layout.leftMargin: 10
+					Layout.rightMargin: 10
+					Layout.bottomMargin: 10
+					inputMethodHints: mainItem.inputMethodHints
+					readOnly: mainItem.readOnly
+					color: mainItem.textColor
+					text: mainItem.text === undefined ? '' : mainItem.text
+					placeholderText: mainItem.placeholderText
+					onEditingFinished:  {
+						mainItem.newValue = textField.text
+						mainItem.editingFinished()
+					}
+					onActiveFocusChanged: {
+						if(!activeFocus) mainItem.flipped = false
+					}
+				}
+			}
+
+	transform: Rotation {
+		id: rotation
+		origin.x: mainItem.width/2
+		origin.y: mainItem.height/2
+		axis.x: 0; axis.y: 1; axis.z: 0     // set axis.y to 1 to rotate around y-axis
+		angle: 0    // the default angle
 	}
-	ColumnLayout{
-		id: mainLayout
-		anchors.fill: parent
-		spacing: 0
-		Text{
-			Layout.leftMargin: 10
-			id: titleText
-			color: mainItem.textColor
-			visible: text != ''
-		}
-		Control.TextField{
-			id: textField
-			Layout.fillHeight: true
-			Layout.fillWidth: true
-			Layout.margins: 10
-			color: mainItem.textColor
-			text: mainItem.text === undefined ? '' : mainItem.text
-			onEditingFinished: mainItem.editingFinished()
-		}
+
+	states: State {
+		name: "back"
+		PropertyChanges { target: rotation; angle: 180 }
+		when: mainItem.flipped
 	}
+
+	transitions: Transition {
+		NumberAnimation { target: rotation; property: "angle"; duration: 100 }
+	}
+
 }

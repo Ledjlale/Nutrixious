@@ -55,6 +55,7 @@ Item{
 			id: nameTextField
 			Layout.fillWidth: true
 			visible: !mainItem.trainingResultEdition
+			showTitle: false
 			readOnly: isReadOnly
 			text: visible ? stepsModel.name : ''
 		}
@@ -62,30 +63,36 @@ Item{
 			id: descriptionTextField
 			Layout.fillWidth: true
 			visible: !mainItem.trainingResultEdition
+			showTitle: false
 			readOnly: isReadOnly
 			text: visible ? stepsModel.description : ''
 		}
 		TextField{
 			id: stepsTextField
 			Layout.fillWidth: true
+			showTitle: mainItem.trainingResultEdition
 			readOnly: isReadOnly
 			inputMethodHints: Qt.ImhDigitsOnly
-			title: mainItem.trainingResultEdition ? 'Steps' : ''
+			title: 'Steps'
 			text: visible ? stepsModel.steps : ''
 		}
 		TextField{
 			id: restTextField
 			Layout.fillWidth: true
 			visible: !mainItem.trainingResultEdition
+			showTitle: false
 			readOnly: isReadOnly
 			inputMethodHints: Qt.ImhDigitsOnly
+			title: 'Rest Time (s)'
 			text: visible ? stepsModel.restTime : ''
 		}
 		TextField{
 			id: workTextField
 			Layout.fillWidth: true
 			visible: !mainItem.trainingResultEdition && stepsModel && stepsModel.isSaved && stepsModel.workTime !== undefined
+			showTitle: false
 			inputMethodHints: Qt.ImhDigitsOnly
+			title: 'Work Time (s)'
 			text: visible ? stepsModel.workTime : ''
 			readOnly: isReadOnly
 		}

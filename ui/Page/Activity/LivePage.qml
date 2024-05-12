@@ -59,6 +59,7 @@ Item {
 				Layout.fillWidth: true
 			}
 			Button{
+				visible: !trainingModel.trainModel.isSaved
 				text: mainItem.isRunning ? 'Stop' : 'Run'
 				onClicked: mainItem.isRunning = !mainItem.isRunning
 			}
@@ -72,7 +73,7 @@ Item {
 			model: Training.ExerciseProxyModel{
 				id: programExercises
 			}
-			spacing: 5
+			spacing: 0
 			delegate: TrainingExerciseModelView{
 				width: exercisesList.width
 				exerciseModel: modelData
