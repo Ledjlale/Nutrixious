@@ -126,6 +126,7 @@ Rectangle{
 			Layout.preferredHeight: 30
 			Layout.preferredWidth: 30
 			color: Material.primary
+			visible: !!mainItem.exerciseModel
 
 			radius: width / 2
 			Text{
@@ -144,6 +145,7 @@ Rectangle{
 			Layout.alignment: Qt.AlignCenter
 			Layout.preferredHeight: 30
 			Layout.preferredWidth: 30
+			visible: !!mainItem.exerciseModel
 			color: Material.primary
 			radius: width / 2
 			Text{

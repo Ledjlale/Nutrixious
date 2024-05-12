@@ -174,12 +174,12 @@ void StrengthWorkModel::save() {
 	query.begin(mWorkId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, isProgramLinked() ? "pgrm_ex_strength_set" : "ex_strength_set");
 	if(isProgramLinked()){
 		query.add("program_id", getProgramId());
+		query.add("set_order", getOrder());
 	}
 	query.add("strength_id", getStrengthId());
 	query.add("reps", getRepetitions());
 	query.add("weight", getWeight());
 	query.add("rest_time", getRestTime());
-	query.add("set_order", getOrder());
 
 	query.addConditionnal("id",mWorkId);
 	if(mWorkId == 0) {
@@ -212,6 +212,6 @@ StrengthWorkModel *StrengthWorkModel::load(QSqlQuery &query, QObject * parent) {
 	model->setRepetitions(query.value(repsField).toInt());
 	model->setWeight(query.value(weightField).toInt());
 	model->setRestTime(query.value(restTimeField).toInt());
-	model->setOrder(query.value(orderField).toInt());
+	if(orderField >= 0) model->setOrder(query.value(orderField).toInt());
 	return model;
 }

@@ -33,7 +33,7 @@ Item {
 	Component.onCompleted: Material.background = Qt.darker(Material.background, 1.02)
 
 	function save(){
-		return programModel.save()
+		return mainItem.programModel.save()
 	}
 	ColumnLayout{
 		anchors.fill: parent
@@ -41,12 +41,12 @@ Item {
 			TextField{
 				Layout.fillWidth: true
 				title: 'Name'
-				text: programModel.name
+				text: mainItem.programModel.name
 				focus: true
-				Material.background: programModel.invalidName ? Material.color(Material.Pink, Material.Shade50) : mainItem.Material.background
-				Material.foreground: programModel.invalidName ? Material.accent : mainItem.Material.foreground
+				Material.background: mainItem.programModel.invalidName ? Material.color(Material.Pink, Material.Shade50) : mainItem.Material.background
+				Material.foreground: mainItem.programModel.invalidName ? Material.accent : mainItem.Material.foreground
 				onEditingFinished: {
-					programModel.name = newValue
+					mainItem.programModel.name = newValue
 					descrtiptionField.forceActiveFocus()
 				}
 			}
@@ -55,9 +55,9 @@ Item {
 			id: descrtiptionField
 			Layout.fillWidth: true
 			title: 'Description'
-			text: programModel.description
+			text: mainItem.programModel.description
 			onEditingFinished: {
-				programModel.description = newValue
+				mainItem.programModel.description = newValue
 			}
 		}
 		Item{
@@ -76,7 +76,7 @@ Item {
 					exerciseModel: $modelData
 					showAddButton: true
 					showSaveButton: false
-					onAddClicked: programModel.addExercise($modelData)
+					onAddClicked: mainItem.programModel.addExercise($modelData)
 				}
 			}
 		}
@@ -87,7 +87,7 @@ Item {
 			visible: count > 0
 			spacing: 5
 			clip: true
-			model: programModel.exercises
+			model: mainItem.programModel.exercises
 
 			delegate:ExerciseModelView{
 				width: workList.width
