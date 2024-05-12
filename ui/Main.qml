@@ -43,15 +43,15 @@ ApplicationWindow {
 			Layout.fillHeight: true
 			Layout.fillWidth: true
 			currentIndex: 4
-			OverviewPage{}
-			DiaryPage{}
+			//OverviewPage{}
+			//DiaryPage{}
 			FoodPage{}
 			TrainingPage{}
 			ExercisesPage{}
 			ProgramsPage{}
 			TrainingsPage{}
 			StatisticsPage{}
-			SettingsPage{}
+			//SettingsPage{}
 		}
 	}
 	Item{
@@ -128,10 +128,12 @@ ApplicationWindow {
 					}
 				}
 				Repeater{
-					model:[{title: 'Overview'},{title: 'Diary'},{title: 'Food'},{title: 'Training'}, {title: 'Exercises'},{title: 'Programs'},{title: 'Trainings'},{title: 'Statistics'},{title: 'Settings'}]
+					id: menuItems
+					//model:[{title: 'Overview'},{title: 'Diary'},{title: 'Food'},{title: 'Training'}, {title: 'Exercises'},{title: 'Programs'},{title: 'Trainings'},{title: 'Statistics'},{title: 'Settings'}]
+					model:[{title: 'Food'},{title: 'Training'}, {title: 'Exercises'},{title: 'Programs'},{title: 'Trainings'},{title: 'Statistics'}]
 					delegate: MouseArea{
 						Layout.fillWidth: true
-						Layout.preferredHeight: 80
+						Layout.preferredHeight: (menuPanel.height - 150)/ menuItems.count
 						onClicked: {
 							mainView.currentIndex = index
 							menuPanel.show = false

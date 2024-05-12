@@ -12,6 +12,7 @@ It will allow you to follow your physical training and carry out calorie assessm
 
 Focus on Android only! (and Linux for debugging).
 
+- Pototype! (ugly interface and unstable)
 - Exercises and programs can be set.
 - A physical training on a program can be done.
 - Training can be saved after doing it.
