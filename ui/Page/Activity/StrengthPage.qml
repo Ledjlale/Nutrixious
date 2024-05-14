@@ -26,8 +26,12 @@ import App 1.0
 
 Item {
 	id: mainItem
-	property var exerciseModel: StrengthModel{}
-	property var workModel: StrengthWorkModel{}
+	property var exerciseModel: ExerciseModel{
+		type: 3
+	}
+	property var serieModel: SerieModel{
+		type: 1
+	}
 
 
 	Component.onCompleted: Material.background = Qt.darker(Material.background, 1.02)
@@ -37,6 +41,7 @@ Item {
 	}
 	ColumnLayout{
 		anchors.fill: parent
+		spacing: 0
 		RowLayout{
 			TextField{
 				Layout.fillWidth: true
@@ -58,19 +63,19 @@ Item {
 			text: exerciseModel.description
 			onEditingFinished: {
 				exerciseModel.description = newValue
-				repsField.forceActiveFocus()
+				//repsField.forceActiveFocus()
 			}
 		}
 
-		RowLayout{
+		RowLayout{/*
 			TextField{
 				id: repsField
 				Layout.fillWidth: true
 				inputMethodHints: Qt.ImhDigitsOnly
 				title: 'Reps'
-				text: workModel.repetitions
+				text: serieModel.repetitions
 				onEditingFinished: {
-					workModel.repetitions = newValue
+					serieModel.repetitions = newValue
 					weightField.forceActiveFocus()
 				}
 			}
@@ -79,51 +84,69 @@ Item {
 				Layout.fillWidth: true
 				inputMethodHints: Qt.ImhDigitsOnly
 				title: 'Weight (kg)'
-				text: workModel.weight
+				text: serieModel.weight
 				onEditingFinished: {
-					workModel.weight = newValue
+					serieModel.weight = newValue
 					restTimeField.forceActiveFocus()
 				}
-			}
+			}*/
 			TextField{
 				id: restTimeField
 				Layout.fillWidth: true
 				inputMethodHints: Qt.ImhDigitsOnly
 				title: 'Rest Time (s)'
-				text: workModel.restTime
+				text: serieModel.restTime
 				onEditingFinished: {
-					workModel.restTime = newValue
+					serieModel.restTime = newValue
 				}
 			}
 			TextField{
 				id: workTimeField
 				Layout.fillWidth: true
 				inputMethodHints: Qt.ImhDigitsOnly
-				visible: !!workModel.workTime
+				visible: !!serieModel.workTime
 				title: 'Work Time (s)'
-				text: visible ? workModel.workTime : ''
-				onEditingFinished: workModel.workTime = newValue
+				text: visible ? serieModel.workTime : ''
+				onEditingFinished: serieModel.workTime = newValue
+			}
+		}
+		ListView{
+			id: fieldList
+			Layout.fillWidth: true
+			Layout.preferredHeight: 80
+			orientation: ListView.Horizontal
+			model: serieModel.data
+			spacing: 0
+			delegate: TextField{
+				width: fieldList.width / fieldList.count
+				height: fieldList.height
+				inputMethodHints: Qt.ImhDigitsOnly
+				title: modelData.name
+				text: modelData.value
+				onEditingFinished: {
+					modelData.value = newValue
+				}
 			}
 		}
 		Button{
-			text: 'Add'
+			text: 'Add Serie'
 			Material.background: exerciseModel.invalidSets ? Material.color(Material.Pink, Material.Shade50) : mainItem.Material.background
 			Material.foreground: exerciseModel.invalidSets ? Material.accent : mainItem.Material.foreground
 
 			onClicked: {
-				exerciseModel.addSet(workModel)
+				exerciseModel.addSerie(serieModel, false)
 			}
 		}
 
 		ListView{
-			id: workList
+			id: serieList
 			Layout.fillWidth: true
 			Layout.fillHeight: true
 			clip: true
-			model: mainItem.exerciseModel.sets
-			delegate:ExerciseSetModelView{
-				workModel: modelData
-				width: workList.width
+			model: mainItem.exerciseModel.series
+			delegate:ExerciseSerieModelView{
+				serieModel: modelData
+				width: serieList.width
 				isReadOnly: false
 				showTitle: false
 				doSave: false
@@ -175,9 +198,9 @@ Item {
 					Layout.alignment: Qt.AlignCenter
 					text: 'Copy'
 					onClicked: {
-						workModel.repetitions = modelData.repetitions
-						workModel.weight = modelData.weight
-						workModel.restTime = modelData.restTime
+						serieModel.repetitions = modelData.repetitions
+						serieModel.weight = modelData.weight
+						serieModel.restTime = modelData.restTime
 					}
 				}
 				Button{

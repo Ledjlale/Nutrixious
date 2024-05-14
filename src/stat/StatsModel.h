@@ -23,7 +23,7 @@
 
 #include <QObject>
 
-#include "src/activity/description/exercise/ExerciseModel.h"
+#include "src/database/exercise/ExerciseModel.h"
 
 class StatsModel : public QObject {
 	Q_OBJECT
@@ -31,7 +31,7 @@ class StatsModel : public QObject {
 
 public:
 	StatsModel(QObject *parent = nullptr);
-	Q_INVOKABLE void setExercise(Description::ExerciseModel *exercise);
+	Q_INVOKABLE void setExercise(ExerciseModel *exercise);
 
 	Q_INVOKABLE QVariantList computeWeights() const;
 
@@ -39,7 +39,7 @@ signals:
 	void exerciseModelChanged();
 
 protected:
-	Description::ExerciseModel *mExerciseModel;
+	ExerciseModel *mExerciseModel;
 };
 
 #endif

@@ -55,29 +55,23 @@ Item {
 				id: exerciseCreation
 				Layout.rightMargin: 10
 				textRole: "key"
-				Component{
-					id: strengthComponent
-					StrengthPage{}
-				}
-				Component{
-					id: distanceComponent
-					DistancePage{}
-				}
-				Component{
-					id: stepsComponent
-					StepsPage{}
-				}
 
-				model: [{key: 'Create'},{key:'Strength', value:strengthComponent},{key:'Distance', value:distanceComponent},{key:'Steps', value:stepsComponent}]
+				Component{
+					id: exerciseEditorComponent
+					ExerciseEditorPage{
+						showSaveButton: false
+					}
+				}
+				model: [{key: 'Create'},{key:'Strength', value:3},{key:'Distance', value:1},{key:'Steps', value:2}]
 
 				onActivated: function(index){
 					if( index == 0){
 						while(stackView.depth > 1)
 							stackView.pop();
 					}else if(stackView.depth == 1)
-						stackView.push(model[index].value);
+						stackView.push(exerciseEditorComponent, {type:model[index].value, showSaveButton:false});
 					else
-						stackView.replace(model[index].value);
+						stackView.replace(exerciseEditorComponent, {type:model[index].value, showSaveButton:false});
 				}
 				onCurrentIndexChanged: if(currentIndex == 0) exercises.update()
 			}

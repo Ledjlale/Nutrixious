@@ -23,6 +23,7 @@
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlError>
+#include <QMapIterator>
 
 DatabaseQuery::DatabaseQuery(QObject *parent)
 	: QObject{parent}
@@ -54,6 +55,15 @@ void DatabaseQuery::addConditionnal(QString key, QVariant value ) {
 	mCondValue = value;
 }
 
+QString getLastExecutedQuery(const QSqlQuery& query) {
+	QString str = query.executedQuery();
+	const QVariantList list = query.boundValues();
+	for (qsizetype i = 0; i < list.size(); ++i){
+		str.replace(":"+QString::number(i),list.at(i).toString());
+	}
+	return str;
+}
+
 bool DatabaseQuery::exec(){
 	mQuery.exec("PRAGMA foreign_keys=ON");
 	switch(mType){
@@ -72,5 +82,8 @@ bool DatabaseQuery::exec(){
 	}
 	for(auto &i : mValues) mQuery.addBindValue(i);
 	if(mType == Update || mType == Delete) mQuery.addBindValue(mCondValue);
-	return mQuery.exec();
+	qDebug() <<getLastExecutedQuery(mQuery);
+	bool i =  mQuery.exec();
+	return i;
 }
+

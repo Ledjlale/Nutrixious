@@ -133,7 +133,7 @@ Item{
 				}
 			}
 		}
-		ExerciseSetModelListView{
+		ExerciseSerieModelListView{
 			id: setList
 			Layout.fillWidth: true
 			Layout.preferredHeight: implicitHeight

@@ -55,6 +55,7 @@ Item {
 							while(stackView.depth > 1)
 								stackView.pop();
 							programs.update()
+							exercises.update()
 						}
 						//stackView.replace(programEditorComponent);
 					}
@@ -114,7 +115,8 @@ Item {
 								MouseArea{
 									anchors.fill: parent
 									onClicked: {
-										programExercises.program = $modelData
+										programDetailsList.program = $modelData
+										exercises.update()
 										//programExercises.setExercises($modelData.exercises)
 									}
 								}
@@ -135,21 +137,52 @@ Item {
 					Layout.preferredHeight: 1
 					color: 'black'
 				}
+				RowLayout{
+					visible: !!programDetailsList.program
+					ComboBox{
+						id: exerciseChoice
+						Layout.fillWidth: true
+						textRole: "displayText"
+						valueRole: "$modelData"
+						model: ExerciseProxyModel{
+							id: exercises
+						}
+					}
+					Button{
+						text: 'Add'
+						onClicked: {
+							if(stackView.depth == 1) {
+								console.log(exerciseChoice.currentValue)
+								stackView.push(exerciseEditorComponent,{exerciseModel:exerciseChoice.currentValue});
+							}
+						}
+					}
+					Button{
+						Component{
+							id: exerciseEditorComponent
+							ExerciseEditorPage{
+								programModel: programDetailsList.program
+								showSaveButton: false
+							}
+						}
+						text: 'New'
+						visible: stackView.depth == 1
+						onClicked: if(stackView.depth == 1)
+										stackView.push(exerciseEditorComponent);
+					}
+				}
 				ListView{
 					id: programDetailsList
 					Layout.fillWidth: true
 					Layout.fillHeight: true
 					visible: count > 0
 					clip: true
-					model: ExerciseProxyModel{
-						id: programExercises
-						property var program
-						exercises: !!program ? program.exercises : []
-					}
+					property var program
+					model: program?.exercises
 					delegate:ExerciseModelView{
 						width: programDetailsList.width
-						exerciseModel: $modelData
-						programModel: programExercises.program
+						exerciseModel: modelData
+						programModel: programDetailsList.program
 						isDeletable: true
 					}
 				}

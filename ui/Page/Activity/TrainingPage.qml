@@ -28,10 +28,8 @@ import '../../Tool/Utils.js' as Utils
 Item {
 	id: mainItem
 	property bool isRunning : false
-	property ProgramModel selectedProgramModel
-	//onSelectedProgramModelChanged: programExercises.setExercises(selectedProgramModel.exercises)
+	property var selectedProgramModel
 	onIsRunningChanged: if(isRunning){
-			//stackView.push(livePage, {exercises: programExercises.getExercises()});
 			stackView.push(livePage, {targetProgramModel: mainItem.selectedProgramModel});
 		}else {
 			stackView.pop()
@@ -55,12 +53,14 @@ Item {
 				model: ProgramProxyModel{
 					id: programs
 				}
-				onCurrentValueChanged: mainItem.selectedProgramModel = currentValue
+				onCurrentValueChanged: {
+					mainItem.selectedProgramModel = currentValue
+				}
 			}
 			Button{
 				visible: programChoice.currentIndex >= 0
 				text: mainItem.isRunning
-						? stackView.depth == 2 && stackView.currentItem.trainingModel.trainModel.isSaved
+						? stackView.depth == 2 //&& stackView.currentItem.trainingModel.isSaved
 							? 'Back'
 							: 'Cancel'
 						: 'Begin'
@@ -83,14 +83,11 @@ Item {
 					id: exercisesList
 					anchors.fill: parent
 					clip: true
-					model: ExerciseProxyModel{
-						id: programExercises
-						exercises: !!mainItem.selectedProgramModel ? mainItem.selectedProgramModel.exercises : []
-					}
+					model: mainItem.selectedProgramModel?.exercises
 					spacing: 5
 					delegate:ExerciseModelView{
 						width: exercisesList.width
-						exerciseModel: $modelData
+						exerciseModel: modelData
 
 						isReadOnly: true
 					}

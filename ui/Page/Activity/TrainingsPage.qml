@@ -23,7 +23,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import App 1.0
-import App.Training 1.0 as Training
+
 
 Item {
 	id: mainItem
@@ -59,7 +59,7 @@ Item {
 					Layout.fillWidth: true
 					Layout.fillHeight: true
 					clip: true
-					model: Training.TrainProxyModel{
+					model: TrainingProxyModel{
 						id: trains
 					}
 					delegate:TrainModelView{
@@ -67,7 +67,7 @@ Item {
 						trainModel: $modelData
 						MouseArea{
 							anchors.fill: parent
-							onClicked: trainExercises.program = $modelData
+							onClicked: trainDetailsList.program = $modelData
 						}
 					}
 				}
@@ -82,15 +82,12 @@ Item {
 					Layout.fillHeight: true
 					visible: count > 0
 					clip: true
-					model: Training.ExerciseProxyModel{
-						id: trainExercises
-						property var program
-						exercises: !!program ? program.exercises : []
-					}
+					property var program
+					model: program?.exercises
 					delegate: ExerciseModelView{
 						width: trainDetailsList.width
-						exerciseModel: $modelData
-						programModel: trainExercises.program
+						exerciseModel: modelData
+						programModel: trainDetailsList.program
 						isReadOnly: true
 					}
 				}

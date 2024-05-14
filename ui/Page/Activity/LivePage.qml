@@ -23,31 +23,32 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import App 1.0
-import App.Training 1.0 as Training
 import '../../Tool/Utils.js' as Utils
 
 Item {
 	id: mainItem
 	property bool isRunning
 	property var lastExercise
-	property ProgramModel targetProgramModel
-	property TrainingModel trainingModel: TrainingModel{
-		id: trainingModel
-		trainModel.targetProgramModel: mainItem.targetProgramModel
-		onExercisesChanged: programExercises.setExercises(trainModel.exercises)
+	property var targetProgramModel
+	onTargetProgramModelChanged: workingModel.loadFromProgram(targetProgramModel)
+	property var workingModel: WorkingModel{
+		//onExercisesChanged: programExercises.setExercises(trainModel.exercises)
 		onWorkingNextExercise: function(index){
 			exercisesList.positionViewAtIndex(index,ListView.Beginning)
 		}
+		property bool isResting: currentWork?.isResting || false
+		onIsRestingChanged: if(isResting) restingPopup.pause(currentWork)
+
 		onFinished: {
 			finishPopup.open()
 			mainItem.isRunning = false
 		}
 	}
 	onIsRunningChanged: if(isRunning) {
-						trainingModel.start()
+						workingModel.start()
 						gShowMenuButton = false
 					}else {
-						trainingModel.stop()
+						workingModel.stop()
 						gShowMenuButton = true
 					}
 	ColumnLayout{
@@ -70,15 +71,15 @@ Item {
 				Component.onCompleted: exercises.update()
 			}
 			Button{
-				visible: !trainingModel.trainModel.isSaved
+				visible: !workingModel.targetModel.isSaved
 				text: 'Add Exo'
 				onClicked: {
-						trainingModel.trainModel.addExercise(exerciseChoice.currentValue, false)
+						workingModel.targetModel.addExercise(exerciseChoice.currentValue, false)
 				}
 			}
 
 			Button{
-				visible: !trainingModel.trainModel.isSaved
+				visible: !workingModel.targetModel.isSaved
 				text: mainItem.isRunning ? 'Stop' : 'Run'
 				onClicked: mainItem.isRunning = !mainItem.isRunning
 			}
@@ -89,18 +90,19 @@ Item {
 			Layout.fillWidth: true
 			Layout.fillHeight: true
 			clip: true
-			model: Training.ExerciseProxyModel{
-				id: programExercises
-			}
+			model: workingModel.exercises
 			spacing: 0
-			delegate: TrainingExerciseModelView{
+			delegate: ExerciseModelView{
 				width: exercisesList.width
-				exerciseModel: modelData
-				trainModel: trainingModel.trainModel
+				workingExerciseModel: modelData
+				///workingModel: mainItem.workingModel
 				showRunning: true
 				expandAll: true
-				autoRun: autoRunCheckBox.checked
-				lastExercise: mainItem.lastExercise
+				//autoRun: autoRunCheckBox.checked
+				//lastExercise: mainItem.lastExercise
+
+
+
 			}
 		}
 		RowLayout{
@@ -110,8 +112,8 @@ Item {
 				visible: mainItem.isRunning
 				text: 'End - Good'
 				onClicked: {
-					mainItem.lastExercise = trainingModel.getCurrentWork()
-					trainingModel.endOfCurrentWork()
+					mainItem.lastExercise = workingModel.getCurrentWork()
+					workingModel.endOfCurrentWork()
 				}
 			}
 			Button{
@@ -119,8 +121,8 @@ Item {
 				visible: mainItem.isRunning
 				text: 'End - Fail'
 				onClicked: {
-					mainItem.lastExercise = trainingModel.getCurrentWork()
-					trainingModel.endOfCurrentWork()
+					mainItem.lastExercise = workingModel.getCurrentWork()
+					workingModel.endOfCurrentWork()
 				}
 			}
 			Rectangle{
@@ -130,7 +132,7 @@ Item {
 				Layout.bottomMargin: 15
 				color: Material.primary
 				radius: 15
-				property var currentWork: trainingModel.currentWork
+				property var currentWork: workingModel.currentWork
 				visible: !!currentWork && !currentWork.isResting && !currentWork.isDone
 				Text{
 					anchors.centerIn: parent
@@ -159,10 +161,91 @@ Item {
 			Item{Layout.fillWidth: true}
 		}
 	}
+
+	Dialog{
+		id: restingPopup
+		contentWidth: 400
+		contentHeight: 200
+		property int restTime
+		property var target
+
+
+		function pause(target){
+			restingPopup.target = target
+			console.log(target)
+			restingPopup.restTime = target.targetExerciseModel ? target.targetExerciseModel.restTime : target.targetSerieModel.restTime
+			open()
+		}
+
+		ColumnLayout{
+			id: view
+				anchors.fill: parent
+			Text{
+				Layout.fillWidth: true
+				text: 'isResting for max: '+restingPopup.restTime +' s'
+			}
+			Text{
+				Layout.fillWidth: true
+				property int diff: restingPopup.restTime - restTimer.count
+				text: diff + " s left"
+				color: diff >= 0 ? Material.foreground : Material.accent
+			}
+			Loader{
+				Layout.fillWidth: true
+				Layout.fillHeight: true
+
+				Component {
+					id: serieComponent
+					ExerciseSerieModelView{
+						serieModel: restingPopup.target.resultSerieModel
+						trainingResultEdition: true
+						showSaveButton: false
+						isReadOnly: false
+						isLive: false
+						Component.onCompleted: console.log("Serie:"+exerciseModel)
+					}
+				}
+				Component {
+					id: exerciseComponent
+					ExerciseModelView{
+						exerciseModel: restingPopup.target.resultExerciseModel
+						showSaveButton: false
+						isReadOnly: false
+						Component.onCompleted: console.log("Ex:"+exerciseModel)
+					}
+				}
+				sourceComponent: !restingPopup.target ? null
+									: restingPopup.target.resultSerieModel
+										? serieComponent
+										: exerciseComponent
+				active: restingPopup.visible && !!restingPopup.target
+			}
+		}
+		onAccepted: target.isResting = false
+		onRejected: target.isResting = false
+		Timer{
+			id: restTimer
+			property int count: 0
+			interval: 1000
+			running: !!restingPopup.target && restingPopup.target.isResting
+			onRunningChanged: count = 0
+			repeat: true
+			onTriggered: ++count
+		}
+		Timer{
+			id: autoRunTimer
+			interval: restingPopup.restTime* 1000
+			running: mainItem.autoRun && !!restingPopup.target && restingPopup.target.isResting || false
+			onTriggered: {
+				restingPopup.target.isResting = false
+				restingPopup.close()
+			}
+		}
+	}
 	Dialog{
 		id: finishPopup
 		text: 'Program is over'
-		onAccepted: trainingModel.save()
-		onRejected: trainingModel.save()
+		onAccepted: workingModel.save()
+		onRejected: workingModel.save()
 	}
 }

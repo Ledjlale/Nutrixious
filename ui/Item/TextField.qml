@@ -25,10 +25,9 @@ import QtQuick.Layouts
 Flipable {
 	id: mainItem
 	property var title: ''
-	property var text: ''
+	property alias text: originalTextField.text
 	property var newValue
 	property bool showTitle: true
-	property bool isEdited: !!newValue && newValue != text
 	property var inputMethodHints: Qt.ImhNone
 	property string placeholderText
 	property bool readOnly: false
@@ -41,7 +40,7 @@ Flipable {
 		else backItem.forceActiveFocus()
 	}
 
-	width: flipped ? backItem.implicitWidth : frontItem.implicitWidth
+	implicitWidth: flipped ? backItem.implicitWidth : frontItem.implicitWidth
 	implicitHeight: flipped ? backItem.implicitHeight: frontItem.implicitHeight
 
 	property bool flipped: false
@@ -50,6 +49,7 @@ Flipable {
 				id: frontItem
 				anchors.fill: parent
 				implicitHeight: readOnlyLayout.implicitHeight
+				implicitWidth: readOnlyLayout.implicitWidth
 				propagateComposedEvents: true
 				preventStealing: true
 				onClicked: function(mouse){
@@ -74,8 +74,9 @@ Flipable {
 						Layout.fillHeight: true
 						Layout.fillWidth: true
 						Layout.margins: 10
+						elide: Text.ElideRight
 						color: mainItem.textColor
-						text: newValue ? newValue : mainItem.text === undefined ? '' : mainItem.text
+						text: mainItem.text
 					}
 				}
 			}

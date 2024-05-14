@@ -23,23 +23,22 @@ import QtQuick.Controls.Material
 import QtQuick.Layouts
 
 import App 1.0
-import App.Training 1.0 as Training
-
 import '../Tool/Utils.js' as Utils
 
 Item{
 	id: mainItem
-	property var exerciseModel
-	property var trainModel
+	property var workingExerciseModel
+	property var workingModel
 	property bool showAddButton: false
 	property bool showRunning: false
 	property bool expandAll: false
-	property bool isRunning : exerciseModel.isRunning
-	property bool isResting: exerciseModel.isResting
-	property bool isDone: exerciseModel.isDone
+	property bool isRunning : workingExerciseModel.isRunning
+	property bool isResting: workingExerciseModel.isResting
+	property bool isDone: workingExerciseModel.isDone
 	property bool autoRun: false
 	property var lastExercise
-	onIsRestingChanged: if(isResting) restingPopup.pause(exerciseModel, exerciseModel.targetExercise.restTime)
+	property var exerciseModel: workingExerciseModel.targetExerciseModel
+	onIsRestingChanged: if(isResting) restingPopup.pause(workingExerciseModel, workingExerciseModel.targetExerciseModel.restTime)
 
 	implicitHeight: mainLayout.implicitHeight
 	height: implicitHeight
@@ -61,11 +60,11 @@ Item{
 		id: mainLineBackground
 		anchors.fill: parent
 		visible: mainItem.isRunning || mainItem.isDone
-		color: exerciseModel.isResting
+		color: workingExerciseModel.isResting
 					? Material.color(Material.Yellow, Material.Shade100)
-					: exerciseModel.isSaved
+					: workingExerciseModel.isSaved
 						? Material.color(Material.Green, Material.Shade100)
-						: exerciseModel.isDone
+						: workingExerciseModel.isDone
 							? Material.color(Material.Blue, Material.Shade100)
 							: Material.color(Material.accent, Material.Shade100)
 	}
@@ -77,43 +76,43 @@ Item{
 		RowLayout{
 			id: mainLine
 			Text{
-				text: exerciseModel.name
+				text: exerciseModel?.name || ''
 			}
 			Text{
 				text: ' | '
 			}
 			Text{
-				text: exerciseModel.description
+				text: exerciseModel?.description  || ''
 			}
 			Text{
-				visible: exerciseModel.type == 1 || exerciseModel.type == 2
+				visible: exerciseModel?.type == 1 || exerciseModel?.type == 2
 				text: ' | '
 			}
 			Text{
-				visible: exerciseModel.type == 1 || exerciseModel.type == 2
-				text: visible ? exerciseModel.type == 1
-								? 'D:'+exerciseModel.targetExercise.distance + (exerciseModel.isDone ? ' / ' + exerciseModel.distance : '')
-								: 'S:'+exerciseModel.targetExercise.steps+ (exerciseModel.isDone ? ' / ' + exerciseModel.steps : '')
+				visible: exerciseModel?.type == 1 || exerciseModel?.type == 2
+				text: visible ? exerciseModel?.type == 1
+								? 'D:'+exerciseModel.targetExercise.distance + (workingExerciseModel.isDone ? ' / ' + exerciseModel.distance : '')
+								: 'S:'+exerciseModel.targetExercise.steps+ (workingExerciseModel.isDone ? ' / ' + exerciseModel.steps : '')
 							: ''
 			}
 			Text{
-				visible: exerciseModel.type == 1 || exerciseModel.type == 2
+				visible: exerciseModel?.type == 1 || exerciseModel?.type == 2
 				text: ' | '
 			}
 			Text{
-				visible: exerciseModel.type == 1 || exerciseModel.type == 2
-				text: visible ? 'Rest Time:' +(exerciseModel.isDone ? exerciseModel.restTime : exerciseModel.targetExercise.restTime) +'s': ''
+				visible: exerciseModel?.type == 1 || exerciseModel?.type == 2
+				text: visible ? 'Rest Time:' +(workingExerciseModel.isDone ? exerciseModel.restTime : exerciseModel.targetExercise.restTime) +'s': ''
 			}
 			Text{
-				visible: exerciseModel.type == 1 || exerciseModel.type == 2
+				visible: exerciseModel?.type == 1 || exerciseModel?.type == 2
 				text: visible ? 'Work Time:' + exerciseModel.workTime +'s' : ''
 			}
 			Item{
 				Layout.fillWidth: true
-			}
+			}/*
 			Button{
 				Layout.rightMargin: 15
-				visible: exerciseModel.type == 3	// Display only lists like sets (aka Strength at the moment)
+				visible: exerciseModel?.type == 3	// Display only lists like sets (aka Strength at the moment)
 				text: setList.visible ? '-' : '+'
 				onClicked: setList.visible = !setList.visible
 			}
@@ -127,7 +126,7 @@ Item{
 				Layout.alignment: Qt.AlignCenter
 				Layout.preferredHeight: 30
 				Layout.preferredWidth: 30
-				visible: !!mainItem.trainModel// && !mainItem.exerciseModel.isDone && !mainItem.exerciseModel.isRunning
+				visible: !!mainItem.workingModel// && !mainItem.workingExerciseModel.isDone && !mainItem.exerciseModel.isRunning
 				color: Material.primary
 
 				radius: width / 2
@@ -139,7 +138,7 @@ Item{
 				MouseArea{
 					anchors.fill: parent
 					onClicked:{
-						mainItem.trainModel.decrementExerciseOrder(mainItem.exerciseModel)
+						mainItem.workingModel.targetModel.decrementExerciseOrder(mainItem.exerciseModel)
 					}
 				}
 			}
@@ -147,7 +146,7 @@ Item{
 				Layout.alignment: Qt.AlignCenter
 				Layout.preferredHeight: 30
 				Layout.preferredWidth: 30
-				visible: !!mainItem.trainModel// && !mainItem.exerciseModel.isDone && !mainItem.exerciseModel.isRunning
+				visible: !!mainItem.workingModel// && !mainItem.workingExerciseModel.isDone && !mainItem.exerciseModel.isRunning
 				color: Material.primary
 				radius: width / 2
 				Text{
@@ -158,13 +157,14 @@ Item{
 				MouseArea{
 					anchors.fill: parent
 					onClicked:{
-						mainItem.trainModel.incrementExerciseOrder(mainItem.exerciseModel)
+						mainItem.workingModel.targetModel.incrementExerciseOrder(mainItem.exerciseModel)
 					}
 				}
-			}
+			}*/
 		}
 
 // Details
+/*
 		RowLayout{
 			visible: setList.visible && setList.count > 0
 			Text{
@@ -204,7 +204,7 @@ Item{
 			Layout.preferredHeight: contentHeight
 			visible: mainItem.expandAll
 			interactive: false
-			model: visible ? exerciseModel.sets : []
+			model: visible ? workingExerciseModel.series : []
 			delegate:Rectangle{
 				property bool isResting: modelData.isResting
 
@@ -312,8 +312,8 @@ Item{
 				}
 				Component {
 					id: strengthWorkComponent
-					ExerciseSetModelView{
-						workModel: mainItem.lastExercise
+					ExerciseSerieModelView{
+						exerciseModel: mainItem.lastExercise
 						trainingResultEdition: true
 						showSaveButton: true
 						isReadOnly: false
@@ -347,5 +347,6 @@ Item{
 				restingPopup.close()
 			}
 		}
+		*/
 	}
 }
