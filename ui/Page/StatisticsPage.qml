@@ -88,20 +88,31 @@ Item {
 						console.log('Add : ' +x + ", "+y)
 						series.append(x, y)
 					}
-					console.log(minX + " , " +minY + " / " +maxX + " , " +maxY)
-					chartView.axisX(series).min = minX-1;
 					chartView.axisY(series).min = minY-1;
-					chartView.axisX(series).max = maxX+1;
 					chartView.axisY(series).max = maxY+1 ;
+					console.log(minX + " , " +minY + " / " + maxX+ " , " +maxY)
+					chartView.axisX(series).min = minX;
+					chartView.axisX(series).max = maxX;
 				}
 			}
 			Layout.fillWidth: true
 			Layout.fillHeight: true
 			title: chartView.exerciseType == 3 ? 'Strength' : chartView.exerciseType==2 ? 'Steps' : chartView.exerciseType==1 ? 'Distance' : ''
 			antialiasing: true
+			ValueAxis {
+				id: vAxis
+			}
+			DateTimeAxis{
+				id: dAxis
+				format: 'yyyy-MM-dd'
+				//orientation: Qt.Vertical
+				labelsAngle: -60
+			}
 			LineSeries{
 				id: series
 				name: chartView.exerciseType == 3 ? 'Weights (kg)' : chartView.exerciseType==2 ? 'Nb of Steps' : chartView.exerciseType==1 ? 'Distance (m)' : ''
+				axisX: dAxis
+				axisY: vAxis
 			}
 		}
 

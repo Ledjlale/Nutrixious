@@ -40,7 +40,7 @@ void StatsModel::setExercise(Description::ExerciseModel *exercise) {
 	}
 }
 
-QVariantMap getPoint(double x, double y) {
+QVariantMap getPoint(QDate x, double y) {
 	QVariantMap m;
 	m["x"] = x;
 	m["y"] = y;
@@ -84,7 +84,8 @@ QVariantList StatsModel::computeWeights() const {
 	}
 
 	for(auto p = weights.begin() ; p != weights.end() ; ++p) {
-			points << getPoint(p.key().toJulianDay(), p.value() );
+			//points << getPoint(p.key().toJulianDay(), p.value() );
+			points << getPoint(p.key(), p.value() );
 		}
 	return points;
 }
