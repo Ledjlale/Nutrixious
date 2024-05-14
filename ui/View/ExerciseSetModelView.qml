@@ -39,7 +39,6 @@ Rectangle{
 	property bool doSave: true
 
 	implicitHeight: contentLayout.implicitHeight
-
 	Rectangle{
 		anchors.fill: parent
 		visible: mainItem.isLive && ( workModel.isRunning || workModel.isDone)
@@ -92,7 +91,7 @@ Rectangle{
 			Layout.preferredWidth: mainItem.width / parent._visibleChildren
 			visible: !mainItem.trainingResultEdition
 			showTitle: mainItem.trainingResultEdition
-			readOnly: mainItem.isLive
+			readOnly:  mainItem.isReadOnly || mainItem.isLive
 			inputMethodHints: Qt.ImhDigitsOnly
 			title: mainItem.showTitle ? 'RestTime(s)' : ''
 			textColor: !mainItem.isLive || workModel.restTime <= workModel.targetWork.restTime ? Material.foreground : Material.accent
@@ -126,7 +125,7 @@ Rectangle{
 			Layout.preferredHeight: 30
 			Layout.preferredWidth: 30
 			color: Material.primary
-			visible: !!mainItem.exerciseModel
+			visible: !!mainItem.exerciseModel && !mainItem.isReadOnly
 
 			radius: width / 2
 			Text{
@@ -145,7 +144,7 @@ Rectangle{
 			Layout.alignment: Qt.AlignCenter
 			Layout.preferredHeight: 30
 			Layout.preferredWidth: 30
-			visible: !!mainItem.exerciseModel
+			visible: !!mainItem.exerciseModel && !mainItem.isReadOnly
 			color: Material.primary
 			radius: width / 2
 			Text{

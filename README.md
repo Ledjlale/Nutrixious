@@ -1,5 +1,5 @@
 # Nutrixious
-This libre application help you to manage your foods and your physical training without the need of having an online account.
+This application help you to manage your foods and your physical training without the need of having an online account.
 There are no ads and no paid services.
 
 It will allow you to follow your physical training and carry out calorie assessments by integrating nutritional management.
@@ -12,7 +12,7 @@ It will allow you to follow your physical training and carry out calorie assessm
 
 Focus on Android only! (and Linux for debugging).
 
-- Pototype! (ugly interface and unstable)
+- Prototype! (ugly interface and unstable)
 - Exercises and programs can be set.
 - A physical training on a program can be done.
 - Training can be saved after doing it.

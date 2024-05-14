@@ -53,9 +53,10 @@ Flipable {
 				propagateComposedEvents: true
 				preventStealing: true
 				onClicked: function(mouse){
-					console.log("Flip!")
-					mainItem.flipped = true
-					backItem.forceActiveFocus()
+					if(!mainItem.readOnly) {
+						mainItem.flipped = true
+						backItem.forceActiveFocus()
+					}
 					mouse.accepted= false
 				}
 				ColumnLayout{

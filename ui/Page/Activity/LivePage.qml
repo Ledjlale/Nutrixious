@@ -43,10 +43,13 @@ Item {
 			mainItem.isRunning = false
 		}
 	}
-	onIsRunningChanged: if(isRunning)
+	onIsRunningChanged: if(isRunning) {
 						trainingModel.start()
-					else
+						gShowMenuButton = false
+					}else {
 						trainingModel.stop()
+						gShowMenuButton = true
+					}
 	ColumnLayout{
 		anchors.fill: parent
 		RowLayout{

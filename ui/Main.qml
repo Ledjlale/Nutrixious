@@ -32,31 +32,60 @@ ApplicationWindow {
 	title: qsTr("Nutrixious")
 
 	color: Material.background
+	property string titleText : 'Training'
+
+	property bool gShowMenuButton: true
 
 
-	ColumnLayout{
+	header: ToolBar{
+		id: toolBar
+		z: -1
+		showOptionsButton: false
+		showBackButton: mainView.depth > 1
+		showMenuButton: mainView.depth == 1 && gShowMenuButton
+		title: menuPanel.show ? '' : mainItem.titleText
+		onBack: {mainView.pop()}
+		onMenu:{menuPanel.show = true}
+	}
+
+
+	StackView{
+		id: mainView
 		anchors.fill: parent
-		spacing: 0
+		initialItem: TrainingPage{}
 
-		SwipeView{
-			id: mainView
-			Layout.fillHeight: true
-			Layout.fillWidth: true
-			currentIndex: 4
-			//OverviewPage{}
-			//DiaryPage{}
+		//OverviewPage{}
+		//DiaryPage{}
+		Component{
+			id: foodPage
 			FoodPage{}
-			TrainingPage{}
-			ExercisesPage{}
-			ProgramsPage{}
-			TrainingsPage{}
-			StatisticsPage{}
-			//SettingsPage{}
 		}
+		Component{
+			id: trainingPage
+			TrainingPage{}
+		}
+		Component{
+			id: exercisesPage
+			ExercisesPage{}
+		}
+		Component{
+			id: programsPage
+			ProgramsPage{}
+		}
+		Component{
+			id: trainingsPage
+			TrainingsPage{}
+		}
+		Component{
+			id: statisticsPage
+			StatisticsPage{}
+		}
+		//SettingsPage{}
 	}
 	Item{
 		id: menuPanel
 		anchors.fill: parent
+		anchors.topMargin: -toolBar.height
 		property bool show: false
 		visible: false
 
@@ -66,6 +95,7 @@ ApplicationWindow {
 			color: 'black'
 			MouseArea{
 				anchors.fill: parent
+				hoverEnabled: true
 				onClicked: menuPanel.show = false
 			}
 		}
@@ -130,12 +160,19 @@ ApplicationWindow {
 				Repeater{
 					id: menuItems
 					//model:[{title: 'Overview'},{title: 'Diary'},{title: 'Food'},{title: 'Training'}, {title: 'Exercises'},{title: 'Programs'},{title: 'Trainings'},{title: 'Statistics'},{title: 'Settings'}]
-					model:[{title: 'Food'},{title: 'Training'}, {title: 'Exercises'},{title: 'Programs'},{title: 'Trainings'},{title: 'Statistics'}]
+					model:[{title: 'Food', component:foodPage}
+						,{title: 'Training', component:trainingPage}
+						, {title: 'Exercises', component:exercisesPage}
+						,{title: 'Programs', component:programsPage}
+						,{title: 'Trainings', component:trainingsPage}
+						,{title: 'Statistics', component:statisticsPage}]
 					delegate: MouseArea{
 						Layout.fillWidth: true
 						Layout.preferredHeight: (menuPanel.height - 150)/ menuItems.count
 						onClicked: {
-							mainView.currentIndex = index
+							//mainView.currentIndex = index
+							mainView.replace(modelData.component)
+							mainItem.titleText = modelData.title
 							menuPanel.show = false
 						}
 						ColumnLayout{
@@ -173,14 +210,14 @@ ApplicationWindow {
 			}
 		}
 	}
-
-	Button{
-		anchors.bottom: parent.bottom
+	Item{
+		height: 100
+		width: Math.min(450, parent.width)
+		anchors.top: parent.top
 		anchors.left: parent.left
-		anchors.leftMargin: 20
-		anchors.bottomMargin: 20
-		visible: !menuPanel.visible
-		onClicked: menuPanel.show = true
-		text: 'Menu'
+		visible: toolBar.displayStopwatch
+		Stopwatch{
+			anchors.fill: parent
+		}
 	}
 }
