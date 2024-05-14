@@ -36,6 +36,8 @@ public:
 
 	QVariantList getExercises() const;
 
+	void handleRemoved(ExerciseModel *model);
+
 };
 }
 

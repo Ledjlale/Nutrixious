@@ -136,6 +136,18 @@ bool StrengthModel::save() {
 	return true;
 }
 
+void StrengthModel::remove(){
+	if(mExerciseId > 0){
+		DatabaseQuery query;
+		query.begin(DatabaseQuery::Delete, isProgramLinked() ? "pgrm_ex_strength" : "ex_strength");
+		query.addConditionnal("id",mExerciseId);
+		if(!query.exec()){
+			if(!query.exec()) qCritical() << "Cannot delete"<< (isProgramLinked() ? "program" : "") <<"strength : "  << query.mQuery.lastError().text();
+		}
+	}
+	emit removed(this);
+}
+
 QList<ExerciseModel*> StrengthModel::load(QObject * parent){
 	QList<ExerciseModel*> models;
 	QSqlQuery query( "SELECT * FROM ex_strength ORDER BY id ASC");
@@ -200,6 +212,7 @@ QList<StrengthWorkModel*> StrengthModel::getSets() const{
 
 void StrengthModel::addSet(StrengthWorkModel *model, bool keepId) {
 	auto insertedModel = Utils::add<StrengthWorkModel>(model, mExerciseId, this, mSets);
+	connect(insertedModel, &StrengthWorkModel::removed, this, &StrengthModel::handleRemoved);
 	insertedModel->setProgramId(getProgramId());
 	if(keepId) {
 		insertedModel->setWorkId(model->getWorkId());
@@ -211,6 +224,15 @@ void StrengthModel::removeSet(StrengthWorkModel *model) {
 	mSets.removeOne(model);
 	model->deleteLater();
 	emit setsChanged();
+}
+
+void StrengthModel::handleRemoved(StrengthWorkModel *model){
+	auto it = std::find(mSets.begin(), mSets.end(), model);
+	if( it != mSets.end()){
+		int row = it - mSets.begin();
+		mSets.erase(it);
+		emit setsChanged();
+	}
 }
 
 void StrengthModel::decrementWorkOrder(StrengthWorkModel *model) {

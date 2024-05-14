@@ -33,6 +33,8 @@ ProgramListModel::ProgramListModel(QObject *parent)
 	//mList << StrengthModel::load();
 	//mList << DistanceModel::load();
 	//mList << StepsModel::load();
+	for(auto p : mList)
+		connect(p, &ProgramModel::removed, this, &ProgramListModel::handleRemoved);
 }
 
 QHash<int, QByteArray> ProgramListModel::roleNames () const {
@@ -57,4 +59,15 @@ QVariant ProgramListModel::data (const QModelIndex &index, int role) const {
 	return QVariant();
 }
 
+
+
+void ProgramListModel::handleRemoved(ProgramModel * model){
+	auto it = std::find(mList.begin(), mList.end(), model);
+	if( it != mList.end()){
+		int row = it - mList.begin();
+		beginRemoveRows(QModelIndex(), row, row);
+		mList.erase(it);
+		endRemoveRows();
+	}
+}
 

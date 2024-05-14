@@ -195,6 +195,18 @@ void StrengthWorkModel::save() {
 	}
 }
 
+void StrengthWorkModel::remove(){
+	if(mWorkId > 0){
+		DatabaseQuery query;
+		query.begin(DatabaseQuery::Delete, isProgramLinked() ? "pgrm_ex_strength_set" : "ex_strength_set");
+		query.addConditionnal("id",mWorkId);
+		if(!query.exec()){
+			if(!query.exec()) qCritical() << "Cannot delete"<< (isProgramLinked() ? "program" : "") <<"strength set: "  << query.mQuery.lastError().text();
+		}
+	}
+	emit removed(this);
+}
+
 
 StrengthWorkModel *StrengthWorkModel::load(QSqlQuery &query, QObject * parent) {
 	StrengthWorkModel * model = new StrengthWorkModel(parent);

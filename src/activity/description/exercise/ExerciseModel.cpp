@@ -165,3 +165,7 @@ void ExerciseModel::setInvalidDescription(bool invalid){
 bool ExerciseModel::save(){
 	return !mInvalidName && !mInvalidDescription;
 }
+
+void ExerciseModel::remove(){
+
+}

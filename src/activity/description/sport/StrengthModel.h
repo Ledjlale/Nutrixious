@@ -45,6 +45,7 @@ public:
 	virtual int getType() const;
 
 	Q_INVOKABLE virtual bool save();
+	Q_INVOKABLE virtual void remove();
 	static QList<ExerciseModel*> load(QObject * parent);
 	static StrengthModel *load(QSqlQuery &query, QObject * parent);	// Create a model from the current query.
 
@@ -52,11 +53,14 @@ public:
 	QList<StrengthWorkModel*> getSets() const;
 	Q_INVOKABLE void addSet(StrengthWorkModel *model, bool keepId = false);
 	Q_INVOKABLE void removeSet(StrengthWorkModel *model);
+	void handleRemoved(StrengthWorkModel *model);
 
 	Q_INVOKABLE void decrementWorkOrder(StrengthWorkModel *model);
 	Q_INVOKABLE void incrementWorkOrder(StrengthWorkModel *model);
 
 	void setInvalidSets(bool invalid);
+
+
 
 signals:
 	void setsChanged();

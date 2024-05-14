@@ -76,6 +76,7 @@ public:
 	void setIsSaved(bool data);
 
 	Q_INVOKABLE void save();
+	Q_INVOKABLE void remove();
 signals:
 	void repetitionsChanged();
 	void weightChanged();
@@ -85,6 +86,7 @@ signals:
 	void strengthIdChanged();
 	void programIdChanged();
 	void isSavedChanged();
+	void removed(StrengthWorkModel*model);
 
 
 protected:

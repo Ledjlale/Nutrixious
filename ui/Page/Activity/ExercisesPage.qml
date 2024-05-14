@@ -115,6 +115,7 @@ Item {
 					delegate:ExerciseModelView{
 						width: exercisesList.width
 						exerciseModel: $modelData
+						isDeletable: true
 					}
 				}
 			}

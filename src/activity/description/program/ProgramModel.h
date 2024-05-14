@@ -65,6 +65,7 @@ public:
 	virtual void setProgramId(qint64 id);
 
 	Q_INVOKABLE virtual bool save();
+	Q_INVOKABLE virtual void remove();
 	static QList<ProgramModel*> load(QObject * parent);
 	static ProgramModel *load(QSqlQuery &query, QObject * parent);
 
@@ -73,6 +74,7 @@ signals:
 	void nameChanged();
 	void descriptionChanged();
 	void exercisesChanged();
+	void removed(ProgramModel *model);
 
 	void invalidNameChanged();
 	void invalidDescriptionChanged();

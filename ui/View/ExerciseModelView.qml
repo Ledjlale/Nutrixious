@@ -34,6 +34,7 @@ Item{
 	property bool isReadOnly: false
 	property bool expandAll: false
 	property bool isRunning : false
+	property bool isDeletable: false
 
 	implicitHeight: mainLayout.implicitHeight
 	height: implicitHeight
@@ -75,6 +76,7 @@ Item{
 					showAddButton: mainItem.showAddButton
 					showSaveButton: mainItem.showSaveButton
 					isReadOnly: mainItem.isReadOnly
+					isDeletable: mainItem.isDeletable
 					onAddClicked: function(exerciseModel) {mainItem.addClicked(exerciseModel) }
 				}
 			}
@@ -86,6 +88,7 @@ Item{
 					showAddButton: mainItem.showAddButton
 					showSaveButton: mainItem.showSaveButton
 					isReadOnly: mainItem.isReadOnly
+					isDeletable: mainItem.isDeletable
 					onAddClicked: function(exerciseModel) {mainItem.addClicked(exerciseModel) }
 				}
 			}
@@ -97,6 +100,7 @@ Item{
 					showAddButton: mainItem.showAddButton
 					showSaveButton: mainItem.showSaveButton
 					isReadOnly: mainItem.isReadOnly
+					isDeletable: mainItem.isDeletable
 					expandAll: mainItem.expandAll
 					onAddClicked: function(exerciseModel) {mainItem.addClicked(exerciseModel) }
 				}

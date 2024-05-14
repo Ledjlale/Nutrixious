@@ -83,31 +83,51 @@ Item {
 						}
 					delegate:Rectangle{
 						width: programList.width
-						height: 40
+						height: rowLayout.implicitHeight
 						RowLayout{
-							Item{
-								Layout.fillWidth: true
-							}
-							Text{
-								text: $modelData.name
-							}
-							Text{
-								text: ' | '
-							}
-							Text{
-								text: $modelData.description
-							}
-							Item{
-								Layout.fillWidth: true
-							}
-						}
-						MouseArea{
+							id: rowLayout
+							spacing: 0
 							anchors.fill: parent
-							onClicked: {
-								programExercises.program = $modelData
-								//programExercises.setExercises($modelData.exercises)
+							Item{
+								//implicitHeight: descLayout.implicitHeight
+								Layout.fillWidth: true
+								height: descLayout.implicitHeight
+								RowLayout{
+									id: descLayout
+									anchors.fill: parent
+									Item{
+										Layout.fillWidth: true
+									}
+									Text{
+										text: $modelData.name
+									}
+									Text{
+										text: ' | '
+									}
+									Text{
+										text: $modelData.description
+									}
+									Item{
+										Layout.fillWidth: true
+									}
+								}
+								MouseArea{
+									anchors.fill: parent
+									onClicked: {
+										programExercises.program = $modelData
+										//programExercises.setExercises($modelData.exercises)
+									}
+								}
+							}
+							Button{
+								text: 'D'
+								onClicked: {
+									console.log('Try to Delete : ' +$modelData)
+									$modelData.remove()
+								}
 							}
 						}
+
 					}
 				}
 				Rectangle{
@@ -130,6 +150,7 @@ Item {
 						width: programDetailsList.width
 						exerciseModel: $modelData
 						programModel: programExercises.program
+						isDeletable: true
 					}
 				}
 

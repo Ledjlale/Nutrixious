@@ -197,6 +197,19 @@ bool ProgramModel::save(){
 
 	return true;
 }
+
+void ProgramModel::remove(){
+	if(mProgramId > 0){
+		DatabaseQuery query;
+		query.begin(DatabaseQuery::Delete, "programs");
+		query.addConditionnal("id",mProgramId);
+		if(!query.exec()){
+			if(!query.exec()) qCritical() << "Cannot delete program  : "  << query.mQuery.lastError().text();
+		}
+	}
+	emit removed(this);
+}
+
 ProgramModel *ProgramModel::load(QSqlQuery &query, QObject * parent) {
 	ProgramModel * model = new ProgramModel(parent);
 // TODO optimize

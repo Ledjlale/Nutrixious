@@ -32,7 +32,8 @@ class DatabaseQuery : public QObject {
 public:
 	typedef enum{
 		Insert,
-		Update
+		Update,
+		Delete
 	}Type;
 	explicit DatabaseQuery(QObject *parent = nullptr);
 

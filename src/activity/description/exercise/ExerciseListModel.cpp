@@ -36,13 +36,17 @@ ExerciseListModel::ExerciseListModel(QObject *parent)
 	mList << StrengthModel::load(this);
 	mList << DistanceModel::load(this);
 	mList << StepsModel::load(this);
+	for(auto e : mList)
+		connect(e, &ExerciseModel::removed, this, &ExerciseListModel::handleRemoved);
 }
 
 ExerciseListModel::ExerciseListModel(QVariantList exercises, QObject *parent)
 	: ProxyAbstractListModel<ExerciseModel*>{parent}
 {
 	for(auto exercise : exercises){
-		mList << exercise.value<ExerciseModel*>();
+		auto e = exercise.value<ExerciseModel*>();
+		connect(e, &ExerciseModel::removed, this, &ExerciseListModel::handleRemoved);
+		mList << e;
 	}
 }
 
@@ -78,3 +82,13 @@ QVariantList ExerciseListModel::getExercises() const{
 	return models;
 }
 
+
+void ExerciseListModel::handleRemoved(ExerciseModel * model){
+	auto it = std::find(mList.begin(), mList.end(), model);
+	if( it != mList.end()){
+		int row = it - mList.begin();
+		beginRemoveRows(QModelIndex(), row, row);
+		mList.erase(it);
+		endRemoveRows();
+	}
+}

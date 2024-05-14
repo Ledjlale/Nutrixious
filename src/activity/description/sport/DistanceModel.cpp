@@ -101,6 +101,18 @@ bool DistanceModel::save() {
 	return true;
 }
 
+void DistanceModel::remove(){
+	if(mExerciseId > 0){
+		DatabaseQuery query;
+		query.begin(DatabaseQuery::Delete, isProgramLinked() ? "pgrm_ex_distance" : "ex_distance");
+		query.addConditionnal("id",mExerciseId);
+		if(!query.exec()){
+			if(!query.exec()) qCritical() << "Cannot delete"<< (isProgramLinked() ? "program" : "") <<"distance : "  << query.mQuery.lastError().text();
+		}
+	}
+	emit removed(this);
+}
+
 QList<ExerciseModel*> DistanceModel::load(QObject * parent){
 	QList<ExerciseModel*> models;
 	QSqlQuery query( "SELECT * FROM ex_distance ORDER BY id ASC");

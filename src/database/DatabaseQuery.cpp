@@ -44,6 +44,8 @@ void DatabaseQuery::add(QString key, QVariant value){
 			mKeys << key + "=?";
 			mValues << value;
 		break;
+		case Delete:
+		break;
 	}
 }
 
@@ -53,6 +55,7 @@ void DatabaseQuery::addConditionnal(QString key, QVariant value ) {
 }
 
 bool DatabaseQuery::exec(){
+	mQuery.exec("PRAGMA foreign_keys=ON");
 	switch(mType){
 		case Insert :{
 			QStringList placeHolders;
@@ -63,8 +66,11 @@ bool DatabaseQuery::exec(){
 		case Update :
 			mQuery.prepare("UPDATE " +mTable +" SET " +mKeys.join(',') +" WHERE "+mCondKey+"=?");
 		break;
+		case Delete:
+			mQuery.prepare("DELETE FROM " +mTable +" WHERE "+mCondKey+"=?");
+		break;
 	}
 	for(auto &i : mValues) mQuery.addBindValue(i);
-	if(mType == Update) mQuery.addBindValue(mCondValue);
+	if(mType == Update || mType == Delete) mQuery.addBindValue(mCondValue);
 	return mQuery.exec();
 }

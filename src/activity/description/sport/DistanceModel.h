@@ -42,9 +42,11 @@ public:
 	virtual int getType() const;
 
 	Q_INVOKABLE virtual bool save();
+	Q_INVOKABLE virtual void remove();
 	//virtual bool saveProgram(qint64 programId);
 	static QList<ExerciseModel*> load(QObject * parent);
 	static DistanceModel *load(QSqlQuery &query, QObject * parent);	// Create a model from the current query.
+
 
 	int getDistance() const;
 	void setDistance(int distance);

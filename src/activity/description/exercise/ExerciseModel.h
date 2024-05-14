@@ -74,6 +74,7 @@ public:
 	void setIsSaved(bool data);
 
 	Q_INVOKABLE virtual bool save();
+	Q_INVOKABLE virtual void remove();
 
 signals:
 	void exerciseIdChanged();
@@ -83,6 +84,7 @@ signals:
 	void descriptionChanged();
 	void orderChanged();
 	void isSavedChanged();
+	void removed(ExerciseModel * model);
 
 	void invalidNameChanged();
 	void invalidDescriptionChanged();

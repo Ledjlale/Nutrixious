@@ -34,6 +34,7 @@ Item{
 	property bool expandAll: false
 	property bool isRunning : false
 	property bool isReadOnly: false
+	property bool isDeletable: false
 
 	implicitHeight: mainLayout.implicitHeight
 
@@ -121,6 +122,14 @@ Item{
 					onClicked:{
 						mainItem.programModel.incrementExerciseOrder(mainItem.exerciseModel)
 					}
+				}
+			}
+			Button{
+				visible: mainItem.isDeletable
+				text: 'D'
+				onClicked: {
+					console.log('Try to Delete : ' +mainItem.exerciseModel + " in " +mainItem.programModel + ' at ' +mainItem.exerciseModel.order)
+					mainItem.exerciseModel.remove()
 				}
 			}
 		}

@@ -105,7 +105,6 @@ Item {
 			DateTimeAxis{
 				id: dAxis
 				format: 'yyyy-MM-dd'
-				//orientation: Qt.Vertical
 				labelsAngle: -60
 			}
 			LineSeries{

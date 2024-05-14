@@ -100,6 +100,18 @@ bool StepsModel::save() {
 	return true;
 }
 
+void StepsModel::remove(){
+	if(mExerciseId > 0){
+		DatabaseQuery query;
+		query.begin(DatabaseQuery::Delete, isProgramLinked() ? "pgrm_ex_steps" : "ex_steps");
+		query.addConditionnal("id",mExerciseId);
+		if(!query.exec()){
+			if(!query.exec()) qCritical() << "Cannot delete"<< (isProgramLinked() ? "program" : "") <<"steps : "  << query.mQuery.lastError().text();
+		}
+	}
+	emit removed(this);
+}
+
 QList<ExerciseModel*> StepsModel::load(QObject * parent){
 	QList<ExerciseModel*> models;
 	QSqlQuery query( "SELECT * FROM ex_steps ORDER BY id ASC");
