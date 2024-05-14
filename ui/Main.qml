@@ -52,25 +52,20 @@ ApplicationWindow {
 	StackView{
 		id: mainView
 		anchors.fill: parent
-		initialItem: TrainingPage{}
+		initialItem: trainingPage
+		//TrainingPage{}
 
 		//OverviewPage{}
 		//DiaryPage{}
+
+
 		Component{
-			id: foodPage
-			FoodPage{}
+			id: programsPage
+			ProgramsPage{}
 		}
 		Component{
 			id: trainingPage
 			TrainingPage{}
-		}
-		Component{
-			id: exercisesPage
-			ExercisesPage{}
-		}
-		Component{
-			id: programsPage
-			ProgramsPage{}
 		}
 		Component{
 			id: trainingsPage
@@ -80,7 +75,25 @@ ApplicationWindow {
 			id: statisticsPage
 			StatisticsPage{}
 		}
+		/*
+Component{
+			id: exercisesPage
+			ExercisesPage{}
+		}
+
+
+		Component{
+			id: programsPage
+			ProgramsPage{}
+		}
+
+
 		//SettingsPage{}
+		*/
+		Component{
+			id: foodPage
+			FoodPage{}
+		}
 	}
 	Item{
 		id: menuPanel
@@ -162,10 +175,11 @@ ApplicationWindow {
 					//model:[{title: 'Overview'},{title: 'Diary'},{title: 'Food'},{title: 'Training'}, {title: 'Exercises'},{title: 'Programs'},{title: 'Trainings'},{title: 'Statistics'},{title: 'Settings'}]
 					model:[{title: 'Food', component:foodPage}
 						,{title: 'Training', component:trainingPage}
-						, {title: 'Exercises', component:exercisesPage}
+						//, {title: 'Exercises', component:exercisesPage}
 						,{title: 'Programs', component:programsPage}
 						,{title: 'Trainings', component:trainingsPage}
-						,{title: 'Statistics', component:statisticsPage}]
+						,{title: 'Statistics', component:statisticsPage}
+						]
 					delegate: MouseArea{
 						Layout.fillWidth: true
 						Layout.preferredHeight: (menuPanel.height - 150)/ menuItems.count

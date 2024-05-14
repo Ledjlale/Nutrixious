@@ -26,7 +26,9 @@ import App 1.0
 
 Item {
 	id: mainItem
-	property var exerciseModel: DistanceModel{}
+	property var exerciseModel: ExerciseModel{
+		type: 1
+	}
 	function save(){
 		return exerciseModel.save()
 	}

@@ -31,6 +31,7 @@ public:
 
 	static void migrate();
 	static void insertDefaultData();
+	static void insertDefaultData_old();
 
 
 };

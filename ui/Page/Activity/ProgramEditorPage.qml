@@ -66,11 +66,11 @@ Item {
 			ListView{
 				id: exercisesList
 				anchors.fill: parent
-				clip: true
+				clip: true/*
 				model: ExerciseProxyModel{
 					id: exercises
 					Component.onCompleted: exercises.update()
-				}
+				}*/
 				delegate: ExerciseModelView{
 					width: exercisesList.width
 					exerciseModel: $modelData

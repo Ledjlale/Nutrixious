@@ -56,7 +56,7 @@ Item {
 				Component.onCompleted: exercises.update()
 				//onCurrentValueChanged: programExercises.setExercises(currentValue.exercises)
 				onCurrentValueChanged:{
-					chartView.exerciseType = currentValue.type
+					//chartView.exerciseType = currentValue.type
 					stats.setExercise(currentValue)
 				}
 			}
@@ -68,7 +68,7 @@ Item {
 		}
 		ChartView{
 			id: chartView
-			property int exerciseType: 0
+			property int exerciseType: 1
 			property var statsModel: StatsModel{
 				id: stats
 				onExerciseModelChanged: {

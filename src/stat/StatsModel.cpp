@@ -28,12 +28,15 @@
 #include <QSqlError>
 #include <QSqlRecord>
 
+#include "src/database/training/exercise/TrainingExerciseModel.h"
+#include "src/database/training/serie/TrainingSerieModel.h"
+
 StatsModel::StatsModel(QObject *parent)
 	: QObject{parent}
 {}
 
 
-void StatsModel::setExercise(Description::ExerciseModel *exercise) {
+void StatsModel::setExercise(ExerciseModel *exercise) {
 	if( mExerciseModel != exercise ){
 		mExerciseModel = exercise;
 		emit exerciseModelChanged();
@@ -53,6 +56,53 @@ QVariantList StatsModel::computeWeights() const {
 	QMap<QDate, double> weights;
 
 	auto id = mExerciseModel->getExerciseId();
+	//auto exercises = TrainingExerciseModel::loadAll(id);
+
+// Get exercises
+	if(!query.exec("SELECT start_date_time, tr_exercises.data, tr_exercises.type FROM trainings, tr_exercises WHERE trainings.training_id = tr_exercises.training_id AND tr_exercises.exercise_id="+QString::number(id))){
+		qCritical() << "Bad stats for exercises! "  << query.lastError().text();
+	}else{
+		auto tField = query.record().indexOf("start_date_time");
+		auto wField = query.record().indexOf("tr_exercises.data");
+		auto typeField = query.record().indexOf("tr_exercises.type");
+		while(query.next()){
+			switch(query.value(typeField).toInt()){
+				case 1 : {
+					QStringList fields = query.value(wField).toString().split(',');
+					weights[QDateTime::fromMSecsSinceEpoch(query.value(tField).toULongLong()).date()] += fields[0].toDouble();
+				}break;
+				case 2 : {
+					QStringList fields = query.value(wField).toString().split(',');
+					weights[QDateTime::fromMSecsSinceEpoch(query.value(tField).toULongLong()).date()] += fields[0].toDouble();
+				}break;
+			default:{}
+			}
+		}
+	}
+
+// Get series
+	if(!query.exec("SELECT start_date_time, tr_exercises.data, tr_exercise_series.data, tr_exercises.type, tr_exercise_series.type FROM trainings, tr_exercises,tr_exercise_series WHERE trainings.training_id = tr_exercises.training_id AND tr_exercise_series.tr_exercise_id=tr_exercises.tr_exercise_id AND tr_exercises.exercise_id="+QString::number(id))){
+		qCritical() << "Bad stats for series! "  << query.lastError().text();
+	}else{
+		auto tField = query.record().indexOf("start_date_time");
+		auto wField = query.record().indexOf("tr_exercise_series.data");
+		auto typeField = query.record().indexOf("tr_exercise_series.type");
+		while(query.next()){
+			switch(query.value(typeField).toInt()){
+				case 1 : {
+					QStringList fields = query.value(wField).toString().split(',');
+					weights[QDateTime::fromMSecsSinceEpoch(query.value(tField).toULongLong()).date()] += fields[1].toDouble();
+				}break;
+			default:{}
+			}
+		}
+	}
+
+/*
+	if(!query.exec("SELECT start_date_time, tr_exercise_series.data FROM trainings, tr_exercises, tr_exercise_series WHERE trainings.training_id = tr_exercises.training_id AND exercise_id="+QString::number(id) +" AND tr_exercise_series.tr_exercise_id = tr_exercises.tr_exercise_id"  )){
+			qCritical() << "Bad stats! "  << query.lastError().text();
+		}
+
 	if (mExerciseModel->getType() == 3 ){
 		if(!query.exec("SELECT start_date_time, weight FROM trains, tr_ex_strength, tr_ex_strength_set  WHERE trains.id = tr_ex_strength.train_id AND  exercise_id="+QString::number(id) +" AND tr_ex_strength_set.strength_id = tr_ex_strength.id"  )){
 			qCritical() << "Bad stats! "  << query.lastError().text();
@@ -82,7 +132,7 @@ QVariantList StatsModel::computeWeights() const {
 			weights[QDateTime::fromMSecsSinceEpoch(query.value(tField).toULongLong()).date()] += query.value(wField).toDouble();
 		}
 	}
-
+*/
 	for(auto p = weights.begin() ; p != weights.end() ; ++p) {
 			//points << getPoint(p.key().toJulianDay(), p.value() );
 			points << getPoint(p.key(), p.value() );

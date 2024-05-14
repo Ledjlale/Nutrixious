@@ -23,24 +23,27 @@ import QtQuick.Controls.Material
 import QtQuick.Layouts
 
 import App 1.0
-import App.Training 1.0 as Training
+//import App.Training 1.0 as Training
 
 import '../Tool/Utils.js' as Utils
 
 Item{
 	id: mainItem
-	property var exerciseModel
-	property bool isLive: exerciseModel && !!exerciseModel.targetExercise
+	property var workingExerciseModel
+	property var exerciseModel: workingExerciseModel?.targetExerciseModel
+	property bool isLive: !!workingExerciseModel
 	property bool showSaveButton: !isLive
 	property bool isReadOnly: false
 
-	implicitHeight: headersLayout.implicitHeight + setList.contentHeight
-
+	//implicitHeight: headersLayout.implicitHeight + setList.contentHeight
+	implicitHeight: setList.contentHeight
+/*
 	ColumnLayout{
 		id: mainLayout
 		anchors.fill: parent
 		spacing: 0
 // Details
+
 		RowLayout{
 			id: headersLayout
 			visible: setList.visible && setList.count > 0
@@ -67,7 +70,7 @@ Item{
 				Layout.fillWidth: true
 				Layout.fillHeight: true
 				Layout.preferredWidth: mainLayout.width / parent.visibleChildren.length
-				visible: mainItem.isLive || (mainItem.exerciseModel && mainItem.exerciseModel.isSaved && mainItem.exerciseModel.isTraining)
+				visible: mainItem.isLive || (mainItem.exerciseModel && mainItem.exerciseModel.isSaved )//&& mainItem.exerciseModel.isTraining)
 				text: 'Work Time (s)'
 			}
 			Item{// Actions
@@ -76,21 +79,27 @@ Item{
 				Layout.preferredWidth: mainLayout.width / parent.visibleChildren.length
 			}
 		}
+		*/
 		ListView{
 			id: setList
-			Layout.fillWidth: true
-			Layout.preferredHeight: contentHeight
+			anchors.fill: parent
 			interactive: false
 			clip: true
-			model: visible && mainItem.exerciseModel? mainItem.exerciseModel.sets : []
-			delegate:ExerciseSetModelView{
-				exerciseModel: mainItem.exerciseModel
-				workModel: modelData
-				onRestingChanged: if(mainItem.isLive && resting) restingPopup.pause(modelData, modelData.targetWork.restTime)
+			model: visible
+						? mainItem.workingExerciseModel
+							? mainItem.workingExerciseModel.series
+							: mainItem.exerciseModel
+								? mainItem.exerciseModel.series
+								: []
+						: []
+			delegate:ExerciseSerieModelView{
+				exerciseModel: mainItem.workingExerciseModel ? mainItem.workingExerciseModel : mainItem.exerciseModel
+				serieModel: modelData
+				//onRestingChanged: if(mainItem.isLive && resting) restingPopup.pause(modelData, modelData.targetWork.restTime)
 				width: setList.width
 				isReadOnly: mainItem.isReadOnly
-				showTitle: false
+				showTitle: index == 0
 			}
 		}
-	}
+	//}
 }

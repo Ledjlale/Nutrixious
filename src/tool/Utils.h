@@ -26,25 +26,25 @@
 class Utils{
 public:
 	template<class Model>
-	static Model* add(Model * model, qint64 parentId, QObject * parent, QList<Model*> &list){
+	static Model* add(Model * model, QObject * parent, QList<Model*> &list){
 		int order = model->getOrder();
 		Model * insertedModel = nullptr;
-		if(order < 0) {
-			list.push_back(model->clone(parentId, parent));
+		if(order <= 0) {
+			list.push_back(model->clone(parent));
 			insertedModel = list.back();
 			insertedModel->setOrder(list.size());
 		}else{
 			if( list.size() == 0){
-				list.push_back(model->clone(parentId, parent));
-			insertedModel = list.back();
-		}else {
-			auto it = list.begin();
-			while(it != list.end() && (*it)->getOrder() <= order)
-				++it;
-			insertedModel = *list.insert(it, model->clone(parentId, parent));
+				list.push_back(model->clone(parent));
+				insertedModel = list.back();
+			}else {
+				auto it = list.begin();
+				while(it != list.end() && (*it)->getOrder() <= order)
+					++it;
+				insertedModel = *list.insert(it, model->clone(parent));
+			}
 		}
-	}
-	return insertedModel;
+		return insertedModel;
 	}
 
 	template<class Model>
