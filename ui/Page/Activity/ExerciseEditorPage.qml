@@ -57,6 +57,7 @@ Item {
 		RowLayout{
 			TextField{
 				Layout.fillWidth: true
+				Layout.leftMargin: 10
 				title: 'Name'
 				text: exerciseModel.name
 				focus: true
@@ -71,6 +72,7 @@ Item {
 		TextField{
 			id: descrtiptionField
 			Layout.fillWidth: true
+			Layout.leftMargin: 10
 			title: 'Description'
 			text: exerciseModel.description
 			onEditingFinished: {
@@ -84,6 +86,7 @@ Item {
 			color: 'black'
 		}
 		RowLayout{
+			Layout.leftMargin: 10
 			Text{
 				Layout.fillWidth: true
 				horizontalAlignment: Text.AlignHCenter
@@ -105,6 +108,7 @@ Item {
 		}
 
 		RowLayout{
+			Layout.leftMargin: 10
 			visible: mainItem.type > 0
 			TextField{
 				id: exerciseRestTimeField
@@ -130,7 +134,8 @@ Item {
 		ListView{
 			id: exerciseFieldList
 			Layout.fillWidth: true
-			Layout.preferredHeight: 80
+			Layout.leftMargin: 10
+			Layout.preferredHeight: model.length * 40
 
 			visible: mainItem.type > 0
 			orientation: ListView.Horizontal
@@ -147,57 +152,13 @@ Item {
 				}
 			}
 		}
-		Text{
-			Layout.fillWidth: true
-			visible: mainItem.type > 0 && programExerciseModelId.canHaveSeries
-			horizontalAlignment: Text.AlignHCenter
-			text: 'Series'
-		}
+
 //---------------------------------------------------------------------------------
 //							SERIE
-		RowLayout{
-			visible: mainItem.type > 0 && programExerciseModelId.canHaveSeries
-			TextField{
-				id: restTimeField
-				Layout.fillWidth: true
-				visible: mainItem.type > 0
-				inputMethodHints: Qt.ImhDigitsOnly
-				title: 'Rest Time (s)'
-				text: serieModel.restTime
-				onEditingFinished: {
-					serieModel.restTime = newValue
-				}
-			}
-			TextField{
-				id: workTimeField
-				Layout.fillWidth: true
-				inputMethodHints: Qt.ImhDigitsOnly
-				visible: !!serieModel.workTime
-				title: 'Work Time (s)'
-				text: visible ? serieModel.workTime : ''
-				onEditingFinished: serieModel.workTime = newValue
-			}
-		}
-		ListView{
-			id: fieldList
-			Layout.fillWidth: true
-			Layout.preferredHeight: 80
-			visible: mainItem.type > 0 && programExerciseModelId.canHaveSeries
-			orientation: ListView.Horizontal
-			model: serieModel.data
-			spacing: 0
-			delegate: TextField{
-				width: fieldList.width / fieldList.count
-				height: fieldList.height
-				inputMethodHints: Qt.ImhDigitsOnly
-				title: modelData.name
-				text: modelData.value
-				onEditingFinished: {
-					modelData.value = newValue
-				}
-			}
-		}
 		Button{
+			Layout.fillWidth: true
+			Layout.preferredWidth: implicitWidth
+			Layout.alignment: Qt.AlignCenter
 			visible: mainItem.type > 0 && programExerciseModelId.canHaveSeries
 			text: 'Add Serie'
 			//Material.background: programExerciseModelId.invalidSets ? Material.color(Material.Pink, Material.Shade50) : mainItem.Material.background
@@ -216,6 +177,7 @@ Item {
 			clip: true
 			model: programExerciseModelId.series
 			delegate:ExerciseSerieModelView{
+				leftMargin: 10
 				serieModel: modelData
 				width: serieList.width
 				isReadOnly: false

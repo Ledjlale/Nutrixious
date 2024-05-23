@@ -149,12 +149,16 @@ Item{
 							}
 
 							Button{
-								Layout.rightMargin: 15
+								Layout.fillWidth: true
+								Layout.preferredWidth: implicitWidth
+								Layout.maximumWidth: implicitWidth
 								visible: exerciseItem.exerciseModel.canHaveSeries
 								text: seriesList.visible ? '-' : '+'
 								onClicked: seriesList.visible = !seriesList.visible
 							}
 							Button{
+								Layout.fillWidth: true
+								Layout.preferredWidth: implicitWidth
 								visible: !exerciseItem.isReadOnly && exerciseItem.showSaveButton && ( workingExerciseModel && mainItem.resultModel.isEdited && mainItem.resultModel.isSaved
 									|| !workingExerciseModel && exerciseItem.exerciseModel.isEdited)
 								text: 'Save'
@@ -166,7 +170,9 @@ Item{
 								}
 							}
 							Button{
-								Layout.rightMargin: 15
+								Layout.fillWidth: true
+								Layout.preferredWidth: implicitWidth
+								//Layout.preferredWidth: 40
 								visible: exerciseItem.showAddButton
 								text: 'Add'
 								onClicked: {
@@ -225,6 +231,7 @@ Item{
 						ExerciseSerieModelListView{
 							id: seriesList
 							Layout.fillWidth: true
+							Layout.rightMargin: 5
 							Layout.preferredHeight: implicitHeight
 							visible: exerciseItem.expandAll && exerciseItem.exerciseModel.canHaveSeries
 							exerciseModel: visible ? exerciseItem.exerciseModel : null

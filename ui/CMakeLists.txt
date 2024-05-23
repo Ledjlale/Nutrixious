@@ -28,7 +28,9 @@
 	ui/Page/ActivitiesPage.qml
 	ui/Page/StatisticsPage.qml
 
+	ui/Item/Button.qml
 	ui/Item/Dialog.qml
+	ui/Item/EffectImage.qml
 	ui/Item/ScannerOverlay.qml
 	ui/Item/TextField.qml
 	ui/Item/Stopwatch.qml

@@ -37,6 +37,7 @@ Rectangle{
 	property bool showTitle: true
 	property bool trainingResultEdition: false
 	property bool doSave: true
+	property int leftMargin: 0
 
 	implicitHeight: contentLayout.implicitHeight
 	Rectangle{
@@ -51,6 +52,7 @@ Rectangle{
 	RowLayout{
 		id: contentLayout
 		anchors.fill: parent
+		anchors.leftMargin: mainItem.leftMargin
 		property int _visibleChildren : visibleChildren.length - 1
 		spacing: 0
 		implicitHeight: Math.max( (saveButton.visible ? saveButton.implicitHeight: 0), fieldsList.implicitHeight, restTextField.implicitHeight, workTextField.implicitHeight)
@@ -97,6 +99,7 @@ Rectangle{
 			id: restTextField
 			Layout.fillHeight: true
 			Layout.preferredWidth: implicitWidth
+			Layout.rightMargin: 10
 			visible: !mainItem.trainingResultEdition
 			showTitle: mainItem.showTitle || mainItem.trainingResultEdition
 			readOnly:  mainItem.isReadOnly || mainItem.isLive
@@ -111,6 +114,7 @@ Rectangle{
 		TextField{
 			id: workTextField
 			Layout.fillHeight: true
+			Layout.rightMargin: 10
 			Layout.preferredWidth: implicitWidth
 			visible: serieModel?.isSaved || serieModel?.isDone || false//&& serieModel.isTraining
 			showTitle: mainItem.trainingResultEdition

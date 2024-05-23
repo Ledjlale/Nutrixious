@@ -47,6 +47,8 @@ Item {
 				ProgramEditorPage{}
 			}
 			Button{
+				Layout.fillWidth: true
+				Layout.preferredWidth: implicitWidth
 				text: stackView.depth == 1 ? 'New' : 'Create'
 				onClicked: if(stackView.depth == 1)
 						stackView.push(programEditorComponent);
@@ -61,6 +63,8 @@ Item {
 					}
 			}
 			Button{
+				Layout.fillWidth: true
+				Layout.preferredWidth: implicitWidth
 				text: 'Reload'
 				visible: stackView.depth == 1
 				onClicked: programs.update()
@@ -70,8 +74,6 @@ Item {
 			id: stackView
 			Layout.fillWidth: true
 			Layout.fillHeight: true
-
-
 
 			initialItem: ColumnLayout{
 				ListView{
@@ -122,6 +124,10 @@ Item {
 								}
 							}
 							Button{
+								Layout.fillWidth: true
+								Layout.preferredWidth: implicitWidth
+								Layout.minimumWidth: implicitWidth
+								Layout.maximumWidth: implicitWidth
 								text: 'D'
 								onClicked: {
 									console.log('Try to Delete : ' +$modelData)
@@ -149,6 +155,8 @@ Item {
 						}
 					}
 					Button{
+						Layout.fillWidth: true
+						Layout.preferredWidth: implicitWidth
 						text: 'Add'
 						onClicked: {
 							if(stackView.depth == 1) {
@@ -158,6 +166,8 @@ Item {
 						}
 					}
 					Button{
+						Layout.fillWidth: true
+						Layout.preferredWidth: implicitWidth
 						Component{
 							id: exerciseEditorComponent
 							ExerciseEditorPage{

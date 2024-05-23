@@ -45,6 +45,7 @@ ProgramExerciseModel::ProgramExerciseModel(QObject *parent)
 		for(auto &i: mSeries) i->setProgramExerciseId(mProgramExerciseId);
 		updateIsSaved();
 	});
+	setExerciseModel(new ExerciseModel(this));
 }
 
 ProgramExerciseModel::ProgramExerciseModel(int type, QObject * parent)
@@ -107,9 +108,11 @@ ExerciseModel * ProgramExerciseModel::getExerciseModel()const{
 
 void ProgramExerciseModel::setExerciseModel(ExerciseModel *model) {
 	if(mExercise.second != model){
+		if(mExercise.second) mExercise.second->deleteLater();
 		mExercise.second = model;
-		connect(mExercise.second, &ExerciseModel::exerciseIdChanged, [this](){setExerciseId(mExercise.second->getExerciseId());});
-		setExerciseId(model->getExerciseId());
+		if( mExercise.second) connect(mExercise.second, &ExerciseModel::exerciseIdChanged, [this](){setExerciseId(mExercise.second->getExerciseId());});
+		if(model)
+			setExerciseId(model->getExerciseId());
 		emit exerciseModelChanged();
 	}
 }

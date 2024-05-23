@@ -26,8 +26,8 @@ import App 1.0
 
 ApplicationWindow {
 	id: mainItem
-	width: 640
-	height: 960
+	width: 360
+	height: 740
 	visible: true
 	title: qsTr("Nutrixious")
 
@@ -52,7 +52,7 @@ ApplicationWindow {
 	StackView{
 		id: mainView
 		anchors.fill: parent
-		initialItem: trainingPage
+		initialItem: programsPage
 		//TrainingPage{}
 
 		//OverviewPage{}
@@ -116,7 +116,7 @@ Component{
 			id: menuLayout
 			anchors.top: parent.top
 			anchors.bottom: parent.bottom
-			width: 2 * mainItem.width / 3
+			width: Math.max(2 * mainItem.width / 3, logoLayout.implicitWidth + 50)
 			x: -width
 			color: Material.primary
 

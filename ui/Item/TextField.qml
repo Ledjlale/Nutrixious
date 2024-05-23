@@ -64,7 +64,7 @@ Flipable {
 					anchors.fill: parent
 					spacing: 0
 					Text{
-						Layout.leftMargin: 10
+						Layout.fillWidth: true
 						color: mainItem.textColor
 						visible: mainItem.showTitle && text != ''
 						text: mainItem.title
@@ -88,7 +88,7 @@ Flipable {
 					textField.forceActiveFocus()
 				}
 				Text{
-					Layout.leftMargin: 10
+					Layout.fillWidth: true
 					color: mainItem.textColor
 					visible: text != ''
 					font.italic: true
