@@ -52,6 +52,11 @@
 
 	src/database/DatabaseQuery.cpp
 	src/database/DatabaseModel.cpp
+
+	src/database/personal/PersonalDataModel.cpp
+	src/database/personal/PersonalDataListModel.cpp
+	src/database/personal/PersonalDataProxyModel.cpp
+
 	src/food/FoodModel.cpp
 
 	src/stat/StatsModel.cpp

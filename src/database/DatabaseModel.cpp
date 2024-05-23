@@ -127,7 +127,18 @@ if(!query.exec("CREATE TABLE tr_exercises (tr_exercise_id INTEGER PRIMARY KEY"
 
 			")")) qCritical() << "Cannot create training series table : " << query.lastError().text();
 
+//-----------------------------------------------------------------------------------------------------------------------
 
+//					PERSONAL DATA
+
+	if(!query.exec("CREATE TABLE personal_data (personal_data_id INTEGER PRIMARY KEY"
+			", date_time INTEGER"
+			", weight REAL"
+			", sex INTEGER"
+			", height INTEGER"
+			")")) qCritical() << "Cannot create personal database : " << query.lastError().text();
+
+//					EXERCISES STATS
 
 		insertDefaultData();
 

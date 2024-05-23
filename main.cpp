@@ -85,6 +85,11 @@
 #include "src/database/training/TrainingProxyModel.h"
 #include "src/database/training/TrainingListModel.h"
 
+#include "src/database/personal/PersonalDataModel.h"
+#include "src/database/personal/PersonalDataProxyModel.h"
+#include "src/database/personal/PersonalDataListModel.h"
+
+
 #include "src/activity/working/WorkingModel.h"
 #include "src/activity/working/WorkingExerciseModel.h"
 #include "src/activity/working/WorkingSerieModel.h"
@@ -131,6 +136,11 @@ void registerTypes(){
 	qRegisterMetaType<WorkingExerciseModel*>("WorkingExerciseModel*");
 	qmlRegisterType<WorkingSerieModel>("App", 1, 0, "WorkingSerieModel");
 	qRegisterMetaType<WorkingSerieModel*>("WorkingSerieModel*");
+
+	qmlRegisterType<PersonalDataModel>("App", 1, 0, "PersonalDataModel");
+	qRegisterMetaType<PersonalDataModel*>("PersonalDataModel*");
+	qmlRegisterType<PersonalDataListModel>("App", 1, 0, "PersonalDataListModel");
+	qmlRegisterType<PersonalDataProxyModel>("App", 1, 0, "PersonalDataProxyModel");
 
 	qmlRegisterType<StatsModel>("App", 1, 0, "StatsModel");
 

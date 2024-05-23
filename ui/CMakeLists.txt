@@ -27,6 +27,7 @@
 	ui/Page/FoodPage.qml
 	ui/Page/ActivitiesPage.qml
 	ui/Page/StatisticsPage.qml
+	ui/Page/PersonalDataPage.qml
 
 	ui/Item/Button.qml
 	ui/Item/Dialog.qml

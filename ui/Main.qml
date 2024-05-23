@@ -75,6 +75,10 @@ ApplicationWindow {
 			id: statisticsPage
 			StatisticsPage{}
 		}
+		Component{
+			id: personalDataPage
+			PersonalDataPage{}
+		}
 		/*
 Component{
 			id: exercisesPage
@@ -88,7 +92,7 @@ Component{
 		}
 
 
-		//SettingsPage{}
+		//
 		*/
 		Component{
 			id: foodPage
@@ -179,6 +183,7 @@ Component{
 						,{title: 'Programs', component:programsPage}
 						,{title: 'Trainings', component:trainingsPage}
 						,{title: 'Statistics', component:statisticsPage}
+						,{title: 'Personal Data', component:personalDataPage}
 						]
 					delegate: MouseArea{
 						Layout.fillWidth: true
