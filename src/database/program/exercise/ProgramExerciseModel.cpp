@@ -66,7 +66,7 @@ ProgramExerciseModel::ProgramExerciseModel(const ProgramExerciseModel * model, Q
 		mExercise = model->mExercise;
 	for(auto i : model->getSeries())
 		mSeries << i->clone(this);
-	connect(this, &ProgramExerciseModel::exerciseIdChanged, [this](){
+	connect(this, &ProgramExerciseModel::programExerciseIdChanged, [this](){
 		for(auto &i: mSeries) i->setProgramExerciseId(mProgramExerciseId);
 		updateIsSaved();
 	});
@@ -87,7 +87,7 @@ qint64 ProgramExerciseModel::getProgramExerciseId()const{
 void ProgramExerciseModel::setProgramExerciseId(qint64 id) {
 	if(mProgramExerciseId != id){
 		mProgramExerciseId = id;
-		emit exerciseIdChanged();
+		emit programExerciseIdChanged();
 	}
 }
 
@@ -454,6 +454,7 @@ void ProgramExerciseModel::remove(){
 		if(!query.exec()){
 			if(!query.exec()) qCritical() << "Cannot delete exercise : "  << query.mQuery.lastError().text();
 		}
-	}
+	}else
+		qDebug() << "Cannot delete an exercise because id is not positive : " << mProgramExerciseId;
 	emit removed(this);
 }

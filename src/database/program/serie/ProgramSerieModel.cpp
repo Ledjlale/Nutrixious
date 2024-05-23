@@ -181,8 +181,8 @@ void ProgramSerieModel::buildData() {
 			d = new QmlData("Weight (kg)",50, this);
 			mData << d;
 			connect(d, &QmlData::valueChanged, this, [this, d](){
-				addBackup(&mData[0], mData[0]->getValue(), d->getValue());
-				mData[0]->setValue(d->getValue());
+				addBackup(&mData[1], mData[1]->getValue(), d->getValue());
+				mData[1]->setValue(d->getValue());
 			});
 
 		}break;

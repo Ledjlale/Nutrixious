@@ -216,7 +216,7 @@ QList<ProgramModel*> ProgramModel::load(QObject * parent){
 		model->setExerciseModel(exercises[model->getExerciseId()]);
 		if( series.contains(model->getProgramExerciseId())){
 			for(auto it : series[model->getProgramExerciseId()])
-				model->addSerie(it->clone(model), true);
+				model->addSerie(it, true);
 		}
 		exerciseModels[model->getProgramId()] << model;
 	}
@@ -227,8 +227,9 @@ QList<ProgramModel*> ProgramModel::load(QObject * parent){
 	while (query.next()) {
 		auto model = load(query, parent);
 		if(exerciseModels.contains(model->getProgramId())){
-			for(auto it : exerciseModels[model->getProgramId()])
-				model->addExercise(it->clone(model), true);
+			for(auto it : exerciseModels[model->getProgramId()]){
+				model->addExercise(it, true);
+			}
 		}
 		models << model;
 	}

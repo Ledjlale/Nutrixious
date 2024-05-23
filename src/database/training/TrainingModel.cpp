@@ -303,7 +303,7 @@ QList<TrainingModel*> TrainingModel::load(QObject * parent){
 		model->setExerciseModel(exercises[model->getExerciseId()]);
 		if( series.contains(model->getTrainingExerciseId())){
 			for(auto it : series[model->getTrainingExerciseId()])
-				model->addSerie(it->clone(model), true);
+				model->addSerie(it, true);
 		}
 		exerciseModels[model->getTrainingId()] << model;
 	}
@@ -315,7 +315,7 @@ QList<TrainingModel*> TrainingModel::load(QObject * parent){
 		auto model = load(query, parent);
 		if(exerciseModels.contains(model->getTrainingId())){
 			for(auto it : exerciseModels[model->getTrainingId()])
-				model->addExercise(it->clone(model), true);
+				model->addExercise(it, true);
 		}
 		models << model;
 	}

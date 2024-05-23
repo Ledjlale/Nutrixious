@@ -138,7 +138,7 @@ protected:
 	QString mDescription;
 	int mType = 0;
 	int mWorkTime = 0;
-	int mRestTime = 0;
+	int mRestTime = 60;
 	QList<QmlData *> mData;
 	int mOrder = 0;
 

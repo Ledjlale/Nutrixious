@@ -32,7 +32,7 @@ ApplicationWindow {
 	title: qsTr("Nutrixious")
 
 	color: Material.background
-	property string titleText : 'Training'
+	property string titleText : 'Programs'
 
 	property bool gShowMenuButton: true
 

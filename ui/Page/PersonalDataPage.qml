@@ -32,23 +32,32 @@ Item {
 	ColumnLayout{
 		anchors.fill: parent
 		RowLayout {
+			Layout.fillWidth: true
 			TextField{
+				Layout.fillWidth: true
+				flipped: true
 				title: 'Weight'
 				text: lastDataModel.weight
 				onEditingFinished:lastDataModel.weight = newValue
 			}
 			TextField{
+				Layout.fillWidth: true
+				flipped: true
 				title: 'Height'
 				text: lastDataModel.height
 				onEditingFinished:lastDataModel.height = newValue
 			}
 			TextField{
+				Layout.fillWidth: true
+				flipped: true
 				title: 'Sex'
 				text: lastDataModel.sex
 				onEditingFinished:lastDataModel.sex = newValue
 			}
 		}
 		Button{
+			Layout.alignment: Qt.AlignCenter
+			Layout.preferredWidth: 60
 			text: 'Add'
 			onClicked:{
 				if(lastDataModel.add())allModels.update()
@@ -87,6 +96,7 @@ Item {
 					onEditingFinished:$modelData.sex = newValue
 				}
 				Button{
+
 					visible: $modelData.isEdited
 					text: 'S'
 					onClicked: $modelData.save()

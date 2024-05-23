@@ -157,12 +157,24 @@ Item {
 					Button{
 						Layout.fillWidth: true
 						Layout.preferredWidth: implicitWidth
+						visible: !!exerciseChoice.currentValue
 						text: 'Add'
 						onClicked: {
 							if(stackView.depth == 1) {
-								console.log(exerciseChoice.currentValue)
 								stackView.push(exerciseEditorComponent,{exerciseModel:exerciseChoice.currentValue});
 							}
+						}
+					}
+					Button{
+						Layout.fillWidth: true
+						Layout.preferredWidth: implicitWidth
+						Layout.minimumWidth: implicitWidth
+						Layout.maximumWidth: implicitWidth
+						visible: !!exerciseChoice.currentValue
+						text: 'D'
+						onClicked: {
+							exerciseChoice.currentValue.remove()
+
 						}
 					}
 					Button{

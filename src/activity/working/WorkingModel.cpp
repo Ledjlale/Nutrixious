@@ -82,9 +82,10 @@ void WorkingModel::loadFromProgram(ProgramModel *data) {
 }
 
 void WorkingModel::addExercise(ExerciseModel * data){
-	auto targetExercise = mTargetModel->addExercise(mTargetModel->buildExercise(data), false);
+	auto build = mTargetModel->buildExercise(data);
+	auto targetExercise = mTargetModel->addExercise(build, false);
 	auto resultExercise = mResultModel->addExercise(targetExercise);
-
+	build->deleteLater();
 	mExercises << new WorkingExerciseModel(targetExercise, resultExercise, this);
 	connect(mExercises.back(), &WorkingExerciseModel::finished, this, &WorkingModel::nextExercise);
 	connect(mExercises.back(), &WorkingExerciseModel::workStarted, this, &WorkingModel::currentWorkChanged);

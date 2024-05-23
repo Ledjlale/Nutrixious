@@ -56,12 +56,14 @@ Rectangle{
 		property int _visibleChildren : visibleChildren.length - 1
 		spacing: 0
 		implicitHeight: Math.max( (saveButton.visible ? saveButton.implicitHeight: 0), fieldsList.implicitHeight, restTextField.implicitHeight, workTextField.implicitHeight)
+		property int itemCount: fieldsList.count + (restTextField.visible ?  1 :0) + (workTextField.visible ? 1 :0)
 		ListView{
 			id: fieldsList
 			Layout.fillHeight: true
-			Layout.preferredWidth: contentLayout.width
-										- (restTextField.visible ?  restTextField.implicitWidth :0)
-										- (workTextField.visible ? workTextField.implicitWidth :0)
+			Layout.preferredWidth: contentLayout.width * ( contentLayout.itemCount - (restTextField.visible ?  1 :0)
+																- (workTextField.visible ? 1 :0)) / contentLayout.itemCount
+										//- (restTextField.visible ?  restTextField.implicitWidth :0)
+										//- (workTextField.visible ? workTextField.implicitWidth :0)
 										- (saveButton.visible ? saveButton.implicitWidth : 0)
 			spacing: 0
 			clip: true
@@ -98,7 +100,7 @@ Rectangle{
 		TextField{
 			id: restTextField
 			Layout.fillHeight: true
-			Layout.preferredWidth: implicitWidth
+			Layout.preferredWidth: Math.max(implicitWidth,fieldsList.width / fieldsList.count)
 			Layout.rightMargin: 10
 			visible: !mainItem.trainingResultEdition
 			showTitle: mainItem.showTitle || mainItem.trainingResultEdition
@@ -107,15 +109,16 @@ Rectangle{
 			title: mainItem.showTitle ? 'RestTime(s)' : ''
 			textColor: !mainItem.isLive || !serieModel?.isDone || (serieModel.resultSerieModel.restTime <= serieModel.targetSerieModel.restTime) ? Material.foreground : Material.accent
 			text: mainItem.isLive
-							? serieModel.targetSerieModel.restTime + (serieModel?.isDone ? ' / ' + serieModel.resultSerieModel.restTime : '')
-							: serieModel?.restTime || ''
+							? mainItem.serieModel.targetSerieModel.restTime + (serieModel?.isDone ? ' / ' + serieModel.resultSerieModel.restTime : '')
+							: mainItem.serieModel.restTime
 			onEditingFinished: if(!mainItem.showSaveButton) serieModel.restTime = newValue
+
 		}
 		TextField{
 			id: workTextField
 			Layout.fillHeight: true
 			Layout.rightMargin: 10
-			Layout.preferredWidth: implicitWidth
+			Layout.preferredWidth: Math.max(implicitWidth,fieldsList.width / fieldsList.count)
 			visible: serieModel?.isSaved || serieModel?.isDone || false//&& serieModel.isTraining
 			showTitle: mainItem.trainingResultEdition
 			readOnly:  true
