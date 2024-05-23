@@ -20,33 +20,7 @@
 
  list(APPEND _APP_SOURCE_FILES
 
-	#src/activity/description/sport/StrengthModel.cpp
-	#src/activity/description/sport/StrengthWorkModel.cpp
-	#src/activity/description/sport/DistanceModel.cpp
-	#src/activity/description/sport/StepsModel.cpp
 
-	#src/activity/description/exercise/ExerciseModel.cpp
-	#src/activity/description/exercise/ExerciseListModel.cpp
-	#src/activity/description/exercise/ExerciseProxyModel.cpp
-
-	#src/activity/description/program/ProgramModel.cpp
-	#src/activity/description/program/ProgramListModel.cpp
-	#src/activity/description/program/ProgramProxyModel.cpp
-
-	#src/activity/training/sport/StrengthModel.cpp
-	#src/activity/training/sport/StrengthWorkModel.cpp
-	#src/activity/training/sport/DistanceModel.cpp
-	#src/activity/training/sport/StepsModel.cpp
-
-	#src/activity/training/exercise/ExerciseModel.cpp
-	#src/activity/training/exercise/ExerciseListModel.cpp
-	#src/activity/training/exercise/ExerciseProxyModel.cpp
-
-	#src/activity/training/train/TrainModel.cpp
-	#src/activity/training/train/TrainListModel.cpp
-	#src/activity/training/train/TrainProxyModel.cpp
-
-	#src/activity/training/TrainingModel.cpp
 
 #	src/activity/base/exercise/ExerciseModel.cpp
 #	src/activity/base/exercise/ExerciseListModel.cpp
@@ -55,13 +29,6 @@
 #	src/activity/base/serie/SerieModel.cpp
 #	src/activity/base/serie/SerieListModel.cpp
 #	src/activity/base/serie/SerieProxyModel.cpp
-
-#	src/activity/program/ProgramModel.cpp
-#	src/activity/program/ProgramListModel.cpp
-#	src/activity/program/ProgramProxyModel.cpp
-
-#	src/activity/program/exercise/ExerciseModel.cpp
-#	src/activity/program/serie/SerieModel.cpp
 
 
 	src/database/program/ProgramModel.cpp
