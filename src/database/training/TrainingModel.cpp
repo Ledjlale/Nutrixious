@@ -133,6 +133,51 @@ TrainingExerciseModel* TrainingModel::addExercise(TrainingExerciseModel *model, 
 	return insertedModel;
 }
 
+TrainingExerciseModel* TrainingModel::buildExercise(ExerciseModel *model) {
+	QSqlQuery query;
+
+	TrainingExerciseModel* exerciseModel = nullptr;
+	// Build from last training
+	if(!query.exec("SELECT * FROM trainings, tr_exercises WHERE trainings.training_id=tr_exercises.training_id AND exercise_id=" +QString::number(model->getExerciseId()) + " ORDER BY start_date_time DESC LIMIT 1" ))
+		qCritical() << "Cannot request training exercises to build exercise : " << query.lastError().text();
+	else{
+		if(query.next()){
+			exerciseModel = TrainingExerciseModel::load(query,this);
+			exerciseModel->setExerciseModel(model);
+			if(!query.exec("SELECT * FROM tr_exercise_series WHERE tr_exercise_id = "+QString::number(exerciseModel->getTrainingExerciseId())))
+				qCritical() << "Cannot request training series to build series : "  << query.lastError().text();
+			else{
+				while (query.next()) {
+					exerciseModel->addSerie(TrainingSerieModel::load(query, exerciseModel), false);
+				}
+			}
+		}
+	}
+	//Build from Program
+	if( !exerciseModel){
+		if(!query.exec("SELECT * FROM prgm_exercises WHERE exercise_id=" +QString::number(model->getExerciseId()) + " ORDER BY prgm_exercise_id DESC LIMIT 1" ))
+			qCritical() << "Cannot request program exercises to build exercise : " << query.lastError().text();
+		else{
+			if(query.next()){
+				auto programModel = ProgramExerciseModel::load(query,nullptr);
+				programModel->setExerciseModel(model);
+				if(!query.exec("SELECT * FROM prgm_exercise_series WHERE prgm_exercise_id = "+QString::number(programModel->getProgramExerciseId())))
+					qCritical() << "Cannot request training series to build series : "  << query.lastError().text();
+				else{
+					while (query.next()) {
+						programModel->addSerie(ProgramSerieModel::load(query, programModel), false);
+					}
+				}
+				exerciseModel = new TrainingExerciseModel(programModel, this);
+				programModel->deleteLater();
+			}
+		}
+	}
+
+
+	return exerciseModel;
+}
+
 void TrainingModel::removeExercise(TrainingExerciseModel *model) {
 	mExercises.removeOne(model);
 	model->deleteLater();

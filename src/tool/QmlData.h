@@ -38,7 +38,7 @@ public:
 
 signals:
 	void nameChanged();
-	void valueChanged();
+	void valueChanged(QVariant data);
 protected:
 	QVariant mValue;
 	QString mName;

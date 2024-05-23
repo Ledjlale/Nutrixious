@@ -34,6 +34,7 @@ public:
 	Q_INVOKABLE QVariantList getExercises() const;
 	Q_INVOKABLE void setExercises(QVariantList exercises);
 
+
 signals:
 	void exercisesChanged();
 

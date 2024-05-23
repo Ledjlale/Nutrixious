@@ -81,6 +81,16 @@ void WorkingModel::loadFromProgram(ProgramModel *data) {
 	setTargetModel(new TrainingModel(data, this));
 }
 
+void WorkingModel::addExercise(ExerciseModel * data){
+	auto targetExercise = mTargetModel->addExercise(mTargetModel->buildExercise(data), false);
+	auto resultExercise = mResultModel->addExercise(targetExercise);
+
+	mExercises << new WorkingExerciseModel(targetExercise, resultExercise, this);
+	connect(mExercises.back(), &WorkingExerciseModel::finished, this, &WorkingModel::nextExercise);
+	connect(mExercises.back(), &WorkingExerciseModel::workStarted, this, &WorkingModel::currentWorkChanged);
+	emit exercisesChanged();
+}
+
 QVariantList WorkingModel::getVariantExercises() const {
 	QVariantList exercises;
 	for(auto exercise: mExercises){

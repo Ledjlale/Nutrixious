@@ -26,10 +26,17 @@ TrainingProxyModel::TrainingProxyModel(QObject *parent)
 	: SortFilterProxyModel{parent}
 {
 	setSourceModel(new TrainingListModel());
+	sort(0);
 }
 
 void TrainingProxyModel::update(){
 	sourceModel()->deleteLater();
 	setSourceModel(new TrainingListModel());
+	sort(0);
 }
 
+bool TrainingProxyModel::lessThan (const QModelIndex &left, const QModelIndex &right) const{
+	auto l = sourceModel()->data(left);
+	auto r = sourceModel()->data(right);
+	return l.value<TrainingModel*>()->getStartDateTime() > r.value<TrainingModel*>()->getStartDateTime();
+}

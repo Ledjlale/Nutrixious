@@ -132,7 +132,7 @@ Item{
 								visible: count > 0
 								orientation: ListView.Horizontal
 								model: workingExerciseModel?.isDone
-												? resultModel?.data
+												? mainItem.resultModel.data
 												: exerciseModel?.data
 								spacing: 0
 								delegate: TextField{
@@ -155,10 +155,14 @@ Item{
 								onClicked: seriesList.visible = !seriesList.visible
 							}
 							Button{
-								visible: !exerciseItem.isReadOnly && exerciseItem.showSaveButton & exerciseItem.exerciseModel.isEdited //&& (nameTextField.isEdited || descriptionTextField.isEdited)
+								visible: !exerciseItem.isReadOnly && exerciseItem.showSaveButton && ( workingExerciseModel && mainItem.resultModel.isEdited && mainItem.resultModel.isSaved
+									|| !workingExerciseModel && exerciseItem.exerciseModel.isEdited)
 								text: 'Save'
 								onClicked: {
-									exerciseModel.save()
+									if( workingExerciseModel && workingExerciseModel.isDone)
+										resultModel.save()
+									else
+										exerciseModel.save()
 								}
 							}
 							Button{

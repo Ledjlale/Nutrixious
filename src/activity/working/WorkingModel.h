@@ -53,6 +53,7 @@ public:
 	void setResultModel(TrainingModel *data);
 
 	Q_INVOKABLE void loadFromProgram(ProgramModel *data);	// Build a TrainingModel
+	Q_INVOKABLE void addExercise(ExerciseModel * data);
 
 	QVariantList getVariantExercises() const;
 

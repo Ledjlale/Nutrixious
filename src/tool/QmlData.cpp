@@ -43,6 +43,6 @@ QVariant QmlData::getValue()const{
 void QmlData::setValue(QVariant data){
 	if(mValue != data){
 		mValue = data;
-		emit valueChanged();
+		emit valueChanged(mValue);
 	}
 }

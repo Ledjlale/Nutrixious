@@ -41,6 +41,9 @@ WorkingExerciseModel::WorkingExerciseModel(QObject *parent)
 WorkingExerciseModel::WorkingExerciseModel(TrainingExerciseModel * target, TrainingExerciseModel * result, QObject *parent) : WorkingExerciseModel(parent){
 	setResultExerciseModel(result);
 	setTargetExerciseModel(target);
+
+	for(int i = 0; i < target->getData().size() ; ++i)
+		connect(target->getData()[i], &QmlData::valueChanged, result->getData()[i], &QmlData::setValue);
 }
 
 WorkingExerciseModel::~WorkingExerciseModel(){

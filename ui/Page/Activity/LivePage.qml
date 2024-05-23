@@ -74,7 +74,7 @@ Item {
 				visible: !workingModel.targetModel.isSaved
 				text: 'Add Exo'
 				onClicked: {
-						workingModel.targetModel.addExercise(exerciseChoice.currentValue, false)
+						workingModel.addExercise(exerciseChoice.currentValue)
 				}
 			}
 
