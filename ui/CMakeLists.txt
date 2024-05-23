@@ -37,22 +37,16 @@
 
 	ui/View/ExerciseModelView.qml
 
-	ui/View/DistanceModelView.qml
-	ui/View/StepsModelView.qml
-	ui/View/StrengthModelView.qml
 	ui/View/ExerciseSerieModelView.qml
 	ui/View/ExerciseSerieModelListView.qml
 	ui/View/TrainModelView.qml
 	ui/View/TrainingExerciseModelView.qml
 	ui/View/ScannerView.qml
 
-	ui/Page/Activity/DistancePage.qml
 	ui/Page/Activity/ExerciseEditorPage.qml
 	ui/Page/Activity/ExercisesPage.qml
 	ui/Page/Activity/ProgramsPage.qml
 	ui/Page/Activity/ProgramEditorPage.qml
-	ui/Page/Activity/StepsPage.qml
-	ui/Page/Activity/StrengthPage.qml
 
 	ui/Page/Activity/TrainingPage.qml
 	ui/Page/Activity/TrainingsPage.qml
