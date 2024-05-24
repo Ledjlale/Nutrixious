@@ -239,4 +239,5 @@ Component{
 			anchors.fill: parent
 		}
 	}
+
 }

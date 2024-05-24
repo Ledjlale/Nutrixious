@@ -55,7 +55,16 @@ Item{
 			Layout.fillWidth: true
 			inputMethodHints: Qt.ImhDigitsOnly
 			text: trainModel ? trainModel.startDateTimeStr: ''
-			readOnly: true
+			readOnly: false
+			onEditingFinished: trainModel.startDateTimeStr = newValue
+		}
+		Button{
+			visible: trainModel.isEdited
+			text: 'Save'
+			onClicked: {
+				console.log("save")
+				trainModel.save()
+			}
 		}
 	}
 }

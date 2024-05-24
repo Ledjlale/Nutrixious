@@ -30,6 +30,7 @@
 	ui/Page/PersonalDataPage.qml
 
 	ui/Item/Button.qml
+	ui/Item/DatePicker.qml
 	ui/Item/Dialog.qml
 	ui/Item/EffectImage.qml
 	ui/Item/ScannerOverlay.qml
@@ -37,6 +38,11 @@
 	ui/Item/Stopwatch.qml
 	ui/Item/TimeDisplay.qml
 	ui/Item/ToolBar.qml
+
+	ui/Item/TimePicker/TimeComponentLabel.qml
+	ui/Item/TimePicker/TimePicker.qml
+	ui/Item/TimePicker/TimePickerDialog.qml
+	ui/Item/TimePicker/TimePickerLabel.qml
 
 	ui/View/ExerciseModelView.qml
 
@@ -60,4 +66,10 @@
 	ui/Tool/Utils.js
 )
 
+
+list(APPEND _APP_QML_SINGLETONS
+	ui/Style/DefaultStyle.qml
+)
+
 set(_APP_QML_FILES ${_APP_QML_FILES} PARENT_SCOPE)
+set(_APP_QML_SINGLETONS ${_APP_QML_SINGLETONS} PARENT_SCOPE)

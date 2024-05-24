@@ -36,7 +36,7 @@ Q_OBJECT
 // DB
 	Q_PROPERTY(QString name MEMBER mName NOTIFY nameChanged)
 	Q_PROPERTY(QString description MEMBER mDescription NOTIFY descriptionChanged)
-	Q_PROPERTY(QString startDateTimeStr READ getStartDateTimeStr NOTIFY startDateTimeChanged)
+	Q_PROPERTY(QString startDateTimeStr READ getStartDateTimeStr WRITE setStartDateTimeStr NOTIFY startDateTimeChanged)
 	Q_PROPERTY(QVariantList exercises READ getVariantExercises NOTIFY exercisesChanged)
 
 public:
@@ -59,6 +59,7 @@ public:
 	void setStartDateTime(const time_t& data_ms);	// ms
 	void setStartDateTime(const QDateTime& data);
 	QString getStartDateTimeStr()const;
+	void setStartDateTimeStr(QString data);
 
 	QVariantList getVariantExercises() const;
 	const QList<TrainingExerciseModel*>& getExercises() const;

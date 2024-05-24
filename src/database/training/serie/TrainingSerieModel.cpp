@@ -218,6 +218,7 @@ void TrainingSerieModel::undo(){
 
 bool TrainingSerieModel::save(){
 	DatabaseQuery query;
+	if( mTrainingSerieId > 0 && !getIsEdited()) return false;
 	query.begin(mTrainingSerieId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "tr_exercise_series");
 	query.add("type", mType);
 	query.add("rest_time", mRestTime);

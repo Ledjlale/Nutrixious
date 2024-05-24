@@ -357,6 +357,13 @@ bool TrainingExerciseModel::save(){
 	if(!mExercise.second) return false;
 	mExercise.second->save();
 
+	if( mTrainingExerciseId > 0 && !getIsEdited()){
+		bool saved = false;
+		for(auto serie : mSeries) {
+			saved = saved || serie->save();
+		}
+		return saved;
+	}
 	query.begin(mTrainingExerciseId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "tr_exercises");
 	query.add("description", mDescription);
 	query.add("type", mType);

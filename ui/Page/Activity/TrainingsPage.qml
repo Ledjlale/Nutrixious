@@ -62,14 +62,23 @@ Item {
 					model: TrainingProxyModel{
 						id: trains
 					}
-					delegate:TrainModelView{
-						width: trainList.width
-						trainModel: $modelData
+					delegate:
 						MouseArea{
-							anchors.fill: parent
-							onClicked: trainDetailsList.program = $modelData
+							width: trainList.width
+							height: trainView.implicitHeight
+							//anchors.fill: parent
+							propagateComposedEvents: true
+							preventStealing: true
+							onClicked: function(mouse){
+								trainDetailsList.program = $modelData
+								mouse.accepted = false
+							}
+							TrainModelView{
+								id: trainView
+								width: parent.width
+								trainModel: $modelData
+							}
 						}
-					}
 				}
 				Rectangle{
 					Layout.fillWidth: true

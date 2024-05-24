@@ -107,9 +107,19 @@ void TrainingModel::setStartDateTime(const QDateTime& data){
 
 QString TrainingModel::getStartDateTimeStr()const{
 	if(mStartDateTime.isValid())
-		return QLocale().toString(mStartDateTime, QLocale().dateTimeFormat(QLocale::FormatType::ShortFormat));
+		//return QLocale().toString(mStartDateTime, QLocale().dateTimeFormat(QLocale::FormatType::ShortFormat));
+		return QLocale().toString(mStartDateTime, "yyyy/MM/dd hh:mm:ss");
 	else
 		return "";
+}
+
+void TrainingModel::setStartDateTimeStr(QString data) {
+	QDateTime dateTime = QDateTime::fromString(data, "yyyy/MM/dd hh:mm:ss");
+	if( dateTime.isValid() && dateTime != mStartDateTime){
+		addBackup(&mStartDateTime, mStartDateTime, dateTime);
+		mStartDateTime = dateTime;
+		startDateTimeChanged();
+	}
 }
 
 QVariantList TrainingModel::getVariantExercises() const {
@@ -217,6 +227,13 @@ void TrainingModel::incrementExerciseOrder(TrainingExerciseModel *model){
 bool TrainingModel::save(){
 	qDebug() << "Saving Training " << mName << mDescription;
 	DatabaseQuery query;
+	if( mTrainingId > 0 && !getIsEdited()){
+		bool saved = false;
+		for(auto e : mExercises) {
+			saved = saved || e->save();
+		}
+		return saved;
+	}
 
 	query.begin(mTrainingId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "trainings" );
 
@@ -234,13 +251,15 @@ bool TrainingModel::save(){
 		for(auto exercise : mExercises){
 			exercise->save();
 		}
+		clearBackupValues();
 	}else{
 		if(!query.exec()) qCritical() << "Cannot update training: "  << query.mQuery.lastError().text();
 		else {
 			qDebug() << "Update training: " << mTrainingId;
 			for(auto exercise : mExercises){
-			exercise->save();
-		}
+				exercise->save();
+			}
+			clearBackupValues();
 		}
 	}
 
