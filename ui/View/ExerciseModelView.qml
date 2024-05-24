@@ -33,6 +33,8 @@ Item{
 	property bool showAddButton: false
 	property bool showSaveButton: !isReadOnly
 	property bool showRunning: false
+	property bool showTitle: false
+	property bool showWorkTime: true
 	property bool isReadOnly: false
 	property bool expandAll: false
 	property bool isRunning : false
@@ -86,13 +88,6 @@ Item{
 					id: exerciseItem
 					property var exerciseModel: mainItem.exerciseModel
 					property var programModel: mainItem.programModel
-					property bool showAddButton: mainItem.showAddButton
-					property bool showSaveButton: mainItem.showSaveButton
-					property bool showRunning: false
-					property bool expandAll: mainItem.expandAll
-					property bool isRunning : false
-					property bool isReadOnly: mainItem.isReadOnly
-					property bool isDeletable: mainItem.isDeletable
 
 					implicitHeight: mainLayout.implicitHeight
 					signal addClicked(var exerciseModel)
@@ -103,30 +98,49 @@ Item{
 						id: mainLayout
 						anchors.fill: parent
 						RowLayout{
+							id: rowlayout
 							spacing: 0
 							TextField{
 								id: nameTextField
-								Layout.preferredWidth: mainItem.width / (3 + fieldList.count)
+								Layout.preferredWidth: mainItem.width / rowlayout.visibleChildren.length
 								showTitle: false
 								readOnly: true
 								text: exerciseModel.exerciseModel.name
 								//onEditingFinished: {
 								//		exerciseModel.exerciseModel.name = newValue
 								//}
-							}
+							}/*
 							TextField{
 								id: descriptionTextField
-								Layout.preferredWidth: mainItem.width / (3 + fieldList.count)
+								Layout.preferredWidth: visible ? mainItem.width / rowlayout.itemCount : 0
+								visible: !readOnly || text != ''
 								showTitle: false
 								readOnly: isReadOnly
 								text: exerciseModel.description ? exerciseModel.description : exerciseModel.exerciseModel.description
 								onEditingFinished: {
 										exerciseModel.description = newValue
 								}
+							}*/
+							TextField{
+								id: workTextField
+								Layout.preferredWidth: visible ? mainItem.width / rowlayout.visibleChildren.length : 0
+								visible: mainItem.showWorkTime && (!!exerciseModel || !!exerciseModel.exerciseModel)
+								showTitle: mainItem.showTitle
+								readOnly: mainItem.isReadOnly
+								title: 'Work Time (s)'
+								text: workingExerciseModel?.isDone
+												? mainItem.resultModel.workTime
+												: exerciseModel?.workTime
+								onEditingFinished: {
+									if(workingExerciseModel?.isDone)
+										mainItem.resultModel.workTime = newValue
+									else
+										exerciseModel.workTime = newValue
+								}
 							}
 							ListView{
 								id: fieldList
-								Layout.preferredWidth: mainItem.width / (3 + fieldList.count)
+								Layout.preferredWidth: count * mainItem.width / rowlayout.visibleChildren.length
 								Layout.preferredHeight: contentHeight
 								contentHeight: contentItem.childrenRect.height
 								visible: count > 0
@@ -139,7 +153,7 @@ Item{
 									width: fieldList.width / fieldList.count
 									height: implicitHeight
 									inputMethodHints: Qt.ImhDigitsOnly
-									readOnly: exerciseItem.isReadOnly
+									readOnly: mainItem.isReadOnly
 									title: modelData.name
 									text: modelData.value
 									onEditingFinished: {
@@ -159,7 +173,7 @@ Item{
 							Button{
 								Layout.fillWidth: true
 								Layout.preferredWidth: implicitWidth
-								visible: !exerciseItem.isReadOnly && exerciseItem.showSaveButton && ( workingExerciseModel && mainItem.resultModel.isEdited && mainItem.resultModel.isSaved
+								visible: !mainItem.isReadOnly && mainItem.showSaveButton && ( workingExerciseModel && mainItem.resultModel.isEdited && mainItem.resultModel.isSaved
 									|| !workingExerciseModel && exerciseItem.exerciseModel.isEdited)
 								text: 'Save'
 								onClicked: {
@@ -173,7 +187,7 @@ Item{
 								Layout.fillWidth: true
 								Layout.preferredWidth: implicitWidth
 								//Layout.preferredWidth: 40
-								visible: exerciseItem.showAddButton
+								visible: mainItem.showAddButton
 								text: 'Add'
 								onClicked: {
 									exerciseItem.saveValues()
@@ -220,7 +234,7 @@ Item{
 								}
 							}*/
 							Button{
-								visible: exerciseItem.isDeletable
+								visible: mainItem.isDeletable
 								text: 'D'
 								onClicked: {
 									console.log('Try to Delete : ' +exerciseItem.exerciseModel + " in " +exerciseItem.programModel + ' at ' +exerciseItem.exerciseModel.order)
@@ -233,11 +247,11 @@ Item{
 							Layout.fillWidth: true
 							Layout.rightMargin: 5
 							Layout.preferredHeight: implicitHeight
-							visible: exerciseItem.expandAll && exerciseItem.exerciseModel.canHaveSeries
+							visible: mainItem.expandAll && exerciseItem.exerciseModel.canHaveSeries
 							exerciseModel: visible ? exerciseItem.exerciseModel : null
 							workingExerciseModel: mainItem.workingExerciseModel
-							showSaveButton: exerciseItem.showSaveButton
-							isReadOnly: exerciseItem.isReadOnly
+							showSaveButton: mainItem.showSaveButton
+							isReadOnly: mainItem.isReadOnly
 						}
 					}
 				}

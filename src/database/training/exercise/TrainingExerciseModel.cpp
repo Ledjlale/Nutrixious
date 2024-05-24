@@ -82,6 +82,7 @@ TrainingExerciseModel::TrainingExerciseModel(const ProgramExerciseModel * model,
 	else mExercise.first = model->getExerciseId();
 	for(auto i : model->getSeries())
 		mSeries << new TrainingSerieModel(i, this);
+	setData(model->getData());
 	connect(this, &TrainingExerciseModel::exerciseIdChanged, [this](){
 		for(auto &i: mSeries) i->setTrainingExerciseId(mTrainingExerciseId);
 		updateIsSaved();

@@ -88,7 +88,8 @@ Item {
 						width: trainDetailsList.width
 						exerciseModel: modelData
 						programModel: trainDetailsList.program
-						isReadOnly: true
+						showTitle: index == 0
+						showWorkTime: true
 					}
 				}
 			}

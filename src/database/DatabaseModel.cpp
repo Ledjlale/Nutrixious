@@ -146,6 +146,24 @@ if(!query.exec("CREATE TABLE tr_exercises (tr_exercise_id INTEGER PRIMARY KEY"
 		query.exec("INSERT INTO version (version) VALUES(1)");
 
 		query.exec("PRAGMA user_version=1");
+	}else{// Migration
+	/*
+		if( version < 2){
+			QList<QPair<qint64, QStringList>> data;
+			if(!query.exec("SELECT data, prgm_exercise_id FROM prgm_exercises")) {
+				qCritical() << "Cannot update database on prgm_exercise_id : "<< query.lastError().text();
+				return;
+			}
+			auto dataField = query.record().indexOf("data");
+			auto idField = query.record().indexOf("prgm_exercise_id");
+			while(query.next()){
+				data << QPair<qint64, QStringList>(query.value(dataField).toInt(),query.value(dataField).toString().split(","));
+			}
+			for(auto i : data){
+				i.second << "
+				query.exec("");
+			}
+		}*/
 	}
 	query.exec("PRAGMA user_version");
 	fieldNo = query.record().indexOf("user_version");
