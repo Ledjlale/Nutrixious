@@ -36,6 +36,7 @@ Control.Dialog {
 		Text{
 			id: textItem
 			Layout.topMargin: 20
+			color: Control.Material.foreground
 		}
 	}
 }

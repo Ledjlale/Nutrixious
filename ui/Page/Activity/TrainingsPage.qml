@@ -41,6 +41,7 @@ Item {
 			}
 			Text{
 				Layout.fillWidth: true
+				color: Material.foreground
 				text: 'All training done'
 			}
 			Button{

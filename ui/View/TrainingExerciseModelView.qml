@@ -76,12 +76,15 @@ Item{
 		RowLayout{
 			id: mainLine
 			Text{
+				color: Material.foreground
 				text: exerciseModel?.name || ''
 			}
 			Text{
+				color: Material.foreground
 				text: ' | '
 			}
 			Text{
+				color: Material.foreground
 				text: exerciseModel?.description  || ''
 			}
 			Text{
@@ -90,6 +93,7 @@ Item{
 			}
 			Text{
 				visible: exerciseModel?.type == 1 || exerciseModel?.type == 2
+				color: Material.foreground
 				text: visible ? exerciseModel?.type == 1
 								? 'D:'+exerciseModel.targetExercise.distance + (workingExerciseModel.isDone ? ' / ' + exerciseModel.distance : '')
 								: 'S:'+exerciseModel.targetExercise.steps+ (workingExerciseModel.isDone ? ' / ' + exerciseModel.steps : '')
@@ -97,14 +101,17 @@ Item{
 			}
 			Text{
 				visible: exerciseModel?.type == 1 || exerciseModel?.type == 2
+				color: Material.foreground
 				text: ' | '
 			}
 			Text{
 				visible: exerciseModel?.type == 1 || exerciseModel?.type == 2
+				color: Material.foreground
 				text: visible ? 'Rest Time:' +(workingExerciseModel.isDone ? exerciseModel.restTime : exerciseModel.targetExercise.restTime) +'s': ''
 			}
 			Text{
 				visible: exerciseModel?.type == 1 || exerciseModel?.type == 2
+				color: Material.foreground
 				text: visible ? 'Work Time:' + exerciseModel.workTime +'s' : ''
 			}
 			Item{

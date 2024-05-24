@@ -19,6 +19,7 @@
  */
 
 import QtQuick
+import QtQuick.Controls.Material
 import QtQuick.Layouts
 
 import App 1.0
@@ -75,6 +76,7 @@ Item {
 				width: personalDataList.width
 				Text{
 					Layout.rightMargin: 20
+					color: Material.foreground
 					text: $modelData.dateTimeStr
 				}
 				TextField{

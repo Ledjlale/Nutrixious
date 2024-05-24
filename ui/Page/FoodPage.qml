@@ -19,7 +19,7 @@
  */
 
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Material
 import QtQuick.Layouts
 import QtCore
 import QtMultimedia
@@ -37,6 +37,7 @@ Item {
 		Text{
 			Layout.fillWidth: true
 			horizontalAlignment: Text.AlignHCenter
+			color: Material.foreground
 			text: qsTr('Create your meals')
 		}
 		RowLayout{
@@ -71,6 +72,7 @@ Item {
 			Text{
 				id: debugText
 				anchors.centerIn: parent
+				color: Material.foreground
 
 			}
 			FoodModel{

@@ -26,7 +26,7 @@ import App 1.0
 //import App.Training 1.0 as Training
 
 import '../Tool/Utils.js' as Utils
-Rectangle{
+Item{
 	id: mainItem
 	property var serieModel
 	property var exerciseModel

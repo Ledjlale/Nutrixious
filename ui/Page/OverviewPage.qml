@@ -19,6 +19,7 @@
  */
 
 import QtQuick
+import QtQuick.Controls.Material
 import QtQuick.Layouts
 
 Item {
@@ -27,6 +28,7 @@ Item {
 		anchors.fill: parent
 		
 		Text{
+			color: Material.foreground
 			text: qsTr('Average stats for today')
 		}
 	}

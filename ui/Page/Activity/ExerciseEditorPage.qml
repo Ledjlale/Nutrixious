@@ -53,6 +53,7 @@ Item {
 			Layout.fillWidth: true
 			horizontalAlignment: Text.AlignHCenter
 			text: 'Exercise description'
+			color: Material.foreground
 		}
 		RowLayout{
 			TextField{
@@ -91,6 +92,7 @@ Item {
 				Layout.fillWidth: true
 				horizontalAlignment: Text.AlignHCenter
 				text: 'Definition'
+				color: Material.foreground
 			}
 			ComboBox{
 				id: exerciseCreation

@@ -19,7 +19,7 @@
  */
 
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Material
 import QtQuick.Layouts
 
 import App 1.0
@@ -41,6 +41,7 @@ Item {
 			Text{
 				Layout.fillWidth: true
 				text: 'All default programs'
+				color: Material.foreground
 			}
 			Component{
 				id: programEditorComponent
@@ -87,6 +88,7 @@ Item {
 					delegate:Rectangle{
 						width: programList.width
 						height: rowLayout.implicitHeight
+						color: Material.background
 						RowLayout{
 							id: rowLayout
 							spacing: 0
@@ -102,12 +104,15 @@ Item {
 										Layout.fillWidth: true
 									}
 									Text{
+										color: Material.foreground
 										text: $modelData.name
 									}
 									Text{
+										color: Material.foreground
 										text: ' | '
 									}
 									Text{
+										color: Material.foreground
 										text: $modelData.description
 									}
 									Item{

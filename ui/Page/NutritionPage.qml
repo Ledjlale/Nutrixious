@@ -19,10 +19,12 @@
  */
 
 import QtQuick
+import QtQuick.Controls.Material
 import QtQuick.Layouts
 
 Item {
 	Text{
+		color: Material.foreground
 		text: 'Nutrition'
 	}
 }

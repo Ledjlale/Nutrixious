@@ -4,6 +4,7 @@ import QtQuick.Controls.Material
 
 
 QtObject {
+	property int theme: Material.theme
 	//property color primary: Material.primary
 	property color primary: "#00BCD4"
 	property color primary_dark: "#0097A7"

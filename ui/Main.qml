@@ -32,6 +32,7 @@ ApplicationWindow {
 	title: qsTr("Nutrixious")
 
 	color: Material.background
+	Material.theme: DefaultStyle.theme
 	property string titleText : 'Programs'
 
 	property bool gShowMenuButton: true
@@ -78,6 +79,10 @@ ApplicationWindow {
 		Component{
 			id: personalDataPage
 			PersonalDataPage{}
+		}
+		Component{
+			id: settingsPage
+			SettingsPage{}
 		}
 		/*
 Component{
@@ -184,6 +189,7 @@ Component{
 						,{title: 'Trainings', component:trainingsPage}
 						,{title: 'Statistics', component:statisticsPage}
 						,{title: 'Personal Data', component:personalDataPage}
+						,{title: 'Settings', component:settingsPage}
 						]
 					delegate: MouseArea{
 						Layout.fillWidth: true

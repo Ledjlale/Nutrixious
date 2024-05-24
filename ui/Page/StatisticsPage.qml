@@ -19,7 +19,7 @@
  */
 
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Material
 import QtQuick.Layouts
 import QtCharts
 
@@ -43,6 +43,7 @@ Item {
 				}
 			}*/
 			Text{
+				color: Material.foreground
 				text: 'Choose and exercise'
 			}
 			ComboBox{

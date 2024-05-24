@@ -19,15 +19,21 @@
  */
 
 import QtQuick
+import QtQuick.Controls.Material
 import QtQuick.Layouts
+
+import App 1.0
 
 Item {
 	id: mainItem
 	ColumnLayout{
 		anchors.fill: parent
 		
-		Text{
-			text: qsTr('This is the settings')
+		Switch {
+			id: darkThemeSwitch
+			Layout.alignment: Qt.AlignCenter
+			text: qsTr("Dark")
+			onCheckedChanged: DefaultStyle.theme= darkThemeSwitch.checked ? Material.Dark : Material.Light
 		}
 	}
 }

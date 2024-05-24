@@ -19,7 +19,7 @@
  */
 
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Material
 import QtQuick.Layouts
 
 import App 1.0
@@ -42,6 +42,7 @@ Item {
 			Text{
 				Layout.fillWidth: true
 				text: 'All default exercises'
+				color: Material.foreground
 			}
 			Item{
 				Layout.fillWidth: true
