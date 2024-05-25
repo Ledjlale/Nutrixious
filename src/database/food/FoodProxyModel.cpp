@@ -18,42 +18,28 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick
-import QtQuick.Controls.Material
-import QtQuick.Layouts
-import QtCore
-import QtMultimedia
+#include "FoodProxyModel.h"
+#include "FoodListModel.h"
 
-import QtQml.XmlListModel
-
-import App 1.0
-
-
-Item {
-	id: mainItem
-	ColumnLayout{
-		anchors.fill: parent
-		spacing: 0
-		Text{
-			Layout.fillWidth: true
-			horizontalAlignment: Text.AlignHCenter
-			color: Material.foreground
-			text: qsTr('Create your meals')
-		}
-		RowLayout{
-			spacing: 15
-			TextField{
-				Layout.fillWidth: true
-				Layout.leftMargin: 5
-				placeholderText: 'Search for a saved meal'
-			}
-
-		}
-
-		FoodModel{
-			id: foodModel
-		}
-
-
-	}
+FoodProxyModel::FoodProxyModel(QObject *parent)
+	: SortFilterProxyModel{parent}
+{
 }
+
+void FoodProxyModel::update(){
+	if(sourceModel()) sourceModel()->deleteLater();
+	setSourceModel(new FoodListModel(this));
+}
+
+
+QVariantList FoodProxyModel::getExercises() const {
+	if(sourceModel()) return dynamic_cast<FoodListModel*>(sourceModel())->getExercises();
+	else return QVariantList();
+}
+
+void FoodProxyModel::setExercises(QVariantList exercises){
+	if(sourceModel()) sourceModel()->deleteLater();
+	setSourceModel(new FoodListModel(exercises, this));
+}
+
+

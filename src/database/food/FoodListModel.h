@@ -18,42 +18,25 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick
-import QtQuick.Controls.Material
-import QtQuick.Layouts
-import QtCore
-import QtMultimedia
+#ifndef DATABASE_FOOD_LIST_MODEL_H
+#define DATABASE_FOOD_LIST_MODEL_H
 
-import QtQml.XmlListModel
+#include "src/tool/proxyModel/ProxyAbstractListModel.hpp"
+#include "FoodModel.h"
 
-import App 1.0
+class FoodListModel: public ProxyAbstractListModel<FoodModel*> {
+Q_OBJECT
+public:
+	FoodListModel(QObject * parent = nullptr);
+	FoodListModel(QVariantList exercises, QObject * parent);
 
+	virtual QHash<int, QByteArray> roleNames () const override;
+	QVariant data (const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-Item {
-	id: mainItem
-	ColumnLayout{
-		anchors.fill: parent
-		spacing: 0
-		Text{
-			Layout.fillWidth: true
-			horizontalAlignment: Text.AlignHCenter
-			color: Material.foreground
-			text: qsTr('Create your meals')
-		}
-		RowLayout{
-			spacing: 15
-			TextField{
-				Layout.fillWidth: true
-				Layout.leftMargin: 5
-				placeholderText: 'Search for a saved meal'
-			}
+	QVariantList getExercises() const;
 
-		}
+	void handleRemoved(FoodModel *model);
 
-		FoodModel{
-			id: foodModel
-		}
+};
 
-
-	}
-}
+#endif

@@ -21,39 +21,33 @@
 import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
-import QtCore
-import QtMultimedia
-
-import QtQml.XmlListModel
 
 import App 1.0
 
-
-Item {
+Item{
 	id: mainItem
-	ColumnLayout{
+	property var foodModel
+	property bool showAddButton: false
+	property bool showSaveButton: !isReadOnly
+	property bool showTitle: false
+	property bool isReadOnly: false
+	property bool expandAll: false
+	property bool isDeletable: false
+	property bool doSave: true
+
+	implicitHeight: mainLayout.implicitHeight
+	height: implicitHeight
+
+	signal addClicked(var foodModel)
+
+	Rectangle{
+		id: mainLineBackground
 		anchors.fill: parent
-		spacing: 0
-		Text{
-			Layout.fillWidth: true
-			horizontalAlignment: Text.AlignHCenter
-			color: Material.foreground
-			text: qsTr('Create your meals')
-		}
-		RowLayout{
-			spacing: 15
-			TextField{
-				Layout.fillWidth: true
-				Layout.leftMargin: 5
-				placeholderText: 'Search for a saved meal'
-			}
+		color: Material.background
 
-		}
-
-		FoodModel{
-			id: foodModel
-		}
-
-
+	}
+	ColumnLayout{
+		id: mainLayout
+		anchors.fill: parent
 	}
 }

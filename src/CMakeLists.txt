@@ -50,6 +50,10 @@
 	src/activity/working/WorkingExerciseModel.cpp
 	src/activity/working/WorkingSerieModel.cpp
 
+	#src/database/food/FoodModel.cpp
+	#src/database/food/FoodListModel.cpp
+	#src/database/food/FoodProxyModel.cpp
+
 	src/database/DatabaseQuery.cpp
 	src/database/DatabaseModel.cpp
 

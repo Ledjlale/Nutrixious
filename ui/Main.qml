@@ -89,19 +89,14 @@ Component{
 			id: exercisesPage
 			ExercisesPage{}
 		}
-
-
-		Component{
-			id: programsPage
-			ProgramsPage{}
-		}
-
-
-		//
 		*/
+		//Component{
+		//	id: foodsPage
+		//	FoodsPage{}
+		//}
 		Component{
-			id: foodPage
-			FoodPage{}
+			id: scannerPage
+			ScannerPage{}
 		}
 	}
 	Item{
@@ -182,7 +177,8 @@ Component{
 				Repeater{
 					id: menuItems
 					//model:[{title: 'Overview'},{title: 'Diary'},{title: 'Food'},{title: 'Training'}, {title: 'Exercises'},{title: 'Programs'},{title: 'Trainings'},{title: 'Statistics'},{title: 'Settings'}]
-					model:[{title: 'Food', component:foodPage}
+					model:[//{title: 'Foods', component:foodsPage}
+						{title: 'Scanner', component:scannerPage}
 						,{title: 'Training', component:trainingPage}
 						//, {title: 'Exercises', component:exercisesPage}
 						,{title: 'Programs', component:programsPage}

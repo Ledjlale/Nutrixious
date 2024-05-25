@@ -34,26 +34,12 @@ Item {
 	ColumnLayout{
 		anchors.fill: parent
 		spacing: 0
-		Text{
-			Layout.fillWidth: true
-			horizontalAlignment: Text.AlignHCenter
-			color: Material.foreground
-			text: qsTr('Create your meals')
-		}
-		RowLayout{
-			spacing: 15
-			TextField{
-				Layout.fillWidth: true
-				Layout.leftMargin: 5
-				placeholderText: 'Search for a saved meal'
+
+		ListView{
+			model: FoodProxyModel{}
+			delegate: FoodModelView{
+				foodModel: $modelData
 			}
-
 		}
-
-		FoodModel{
-			id: foodModel
-		}
-
-
 	}
 }

@@ -18,42 +18,26 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick
-import QtQuick.Controls.Material
-import QtQuick.Layouts
-import QtCore
-import QtMultimedia
+#ifndef DATABASE_FOOD_PROXY_MODEL_H
+#define DATABASE_FOOD_PROXY_MODEL_H
 
-import QtQml.XmlListModel
+#include "src/tool/proxyModel/SortFilterProxyModel.hpp"
 
-import App 1.0
+class FoodProxyModel: public SortFilterProxyModel {
+Q_OBJECT
+	Q_PROPERTY(QVariantList exercises READ getExercises WRITE setExercises NOTIFY exercisesChanged)
+public:
+	FoodProxyModel(QObject * parent = nullptr);
 
+	Q_INVOKABLE void update();
 
-Item {
-	id: mainItem
-	ColumnLayout{
-		anchors.fill: parent
-		spacing: 0
-		Text{
-			Layout.fillWidth: true
-			horizontalAlignment: Text.AlignHCenter
-			color: Material.foreground
-			text: qsTr('Create your meals')
-		}
-		RowLayout{
-			spacing: 15
-			TextField{
-				Layout.fillWidth: true
-				Layout.leftMargin: 5
-				placeholderText: 'Search for a saved meal'
-			}
-
-		}
-
-		FoodModel{
-			id: foodModel
-		}
+	Q_INVOKABLE QVariantList getExercises() const;
+	Q_INVOKABLE void setExercises(QVariantList exercises);
 
 
-	}
-}
+signals:
+	void exercisesChanged();
+
+};
+
+#endif

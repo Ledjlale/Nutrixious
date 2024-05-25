@@ -27,6 +27,7 @@
 	ui/Page/FoodPage.qml
 	ui/Page/ActivitiesPage.qml
 	ui/Page/StatisticsPage.qml
+	ui/Page/ScannerPage.qml
 	ui/Page/PersonalDataPage.qml
 
 	ui/Item/Button.qml
@@ -45,6 +46,7 @@
 	ui/Item/TimePicker/TimePickerLabel.qml
 
 	ui/View/ExerciseModelView.qml
+	ui/View/FoodModelView.qml
 
 	ui/View/ExerciseSerieModelView.qml
 	ui/View/ExerciseSerieModelListView.qml
@@ -60,6 +62,10 @@
 	ui/Page/Activity/TrainingPage.qml
 	ui/Page/Activity/TrainingsPage.qml
 	ui/Page/Activity/LivePage.qml
+
+	ui/Page/Nutrition/NutritionPage.qml
+	ui/Page/Nutrition/FoodEditorPage.qml
+	ui/Page/Nutrition/FoodsPage.qml
 
 
 	ui/Tool/DragDropTool.qml
