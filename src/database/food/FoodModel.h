@@ -57,8 +57,8 @@ public:
 	Q_INVOKABLE virtual bool save();
 	Q_INVOKABLE virtual void remove();
 
-	static QList<FoodModel*> loadAll(QObject * parent);
-	static FoodModel *load(QSqlQuery &query, QObject * parent);
+	static QList<FoodModel*> buildAll(QObject * parent);
+	static FoodModel *build(QSqlQuery &query, QObject * parent);
 
 signals:
 	void exerciseIdChanged();

@@ -29,7 +29,7 @@
 ExerciseListModel::ExerciseListModel(QObject *parent)
 	: ProxyAbstractListModel<ExerciseModel*>{parent}
 {
-	mList << ExerciseModel::loadAll(this);
+	mList << ExerciseModel::buildAll(this);
 	for(auto e : mList)
 		connect(e, &ExerciseModel::removed, this, &ExerciseListModel::handleRemoved);
 }

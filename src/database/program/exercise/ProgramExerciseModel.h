@@ -25,26 +25,15 @@
 #include <QVector>
 #include <QSqlQuery>
 
-#include "src/tool/QmlModel.h"
-#include "src/tool/QmlData.h"
 #include "src/database/DatabaseQuery.h"
 
 #include "../../exercise/ExerciseModel.h"
+#include "../../exerciseUnit/ExerciseUnitModel.h"
 #include "../serie/ProgramSerieModel.h"
 
-class ProgramExerciseModel : public QmlModel{
+class ProgramExerciseModel : public ExerciseUnitModel{
 Q_OBJECT
 // DB
-	Q_PROPERTY(QString description READ getDescription WRITE setDescription NOTIFY descriptionChanged)
-	Q_PROPERTY(int type READ getType WRITE setType NOTIFY typeChanged)
-	Q_PROPERTY(int restTime READ getRestTime WRITE setRestTime NOTIFY restTimeChanged)
-	Q_PROPERTY(int workTime READ getWorkTime WRITE setWorkTime NOTIFY workTimeChanged)
-	Q_PROPERTY(QVariantList data READ getQmlVariantData NOTIFY dataChanged)
-	Q_PROPERTY(int order READ getOrder WRITE setOrder NOTIFY orderChanged)
-
-	Q_PROPERTY(ExerciseModel *exerciseModel READ getExerciseModel WRITE setExerciseModel NOTIFY exerciseModelChanged);
-	Q_PROPERTY(QVariantList series READ getVariantSeries NOTIFY seriesChanged)
-	Q_PROPERTY(bool canHaveSeries READ getCanHaveSeries WRITE setCanHaveSeries NOTIFY canHaveSeriesChanged)
 
 public:
 	ProgramExerciseModel();
@@ -52,100 +41,13 @@ public:
 	ProgramExerciseModel(int type, QObject *parent);
 	ProgramExerciseModel(const ProgramExerciseModel * model, QObject *parent);
 	virtual ProgramExerciseModel * clone(QObject *parent)const;
-	//virtual Training::ProgramExerciseModel * cloneTraining(qint64, QObject *){return nullptr;}
 
-	qint64 getProgramExerciseId()const;
-	virtual void setProgramExerciseId(qint64 id);
-
-	qint64 getExerciseId()const;
-	virtual void setExerciseId(qint64 id);
-
-	ExerciseModel *getExerciseModel()const;
-	virtual void setExerciseModel(ExerciseModel *model);
-
-
-	Q_INVOKABLE qint64 getProgramId()const;
-	Q_INVOKABLE virtual void setProgramId(qint64 id);
-
-	QString getDescription() const;
-	void setDescription(QString description);
-
-	virtual int getType() const;
-	virtual void setType(int data);
-
-	int  getRestTime() const;
-	void setRestTime(int restTime);
-
-	int  getWorkTime() const;
-	void setWorkTime(int workTime);
-
-	virtual void setDbData(QVariant data); // Coming from DB
-	QVariantList getQmlVariantData()const;
-	const QList<QmlData *>& getData()const;
-	void setData(const QList<QmlData *>);
-	virtual void buildData();
-
-	int getOrder() const;
-	void setOrder(int data);
-
-	virtual void updateIsSaved();
-	virtual void undo();
-
-// Serie
-	QVariantList getVariantSeries() const;
 	QList<ProgramSerieModel*> getSeries() const;
-	Q_INVOKABLE void addSerie(ProgramSerieModel *model, bool keepId);
-	Q_INVOKABLE void removeSerie(ProgramSerieModel *model);
-	void handleRemoved(ProgramSerieModel *model);
+	Q_INVOKABLE void addSerie();
 
-	Q_INVOKABLE void decrementSerieOrder(ProgramSerieModel *model);
-	Q_INVOKABLE void incrementSerieOrder(ProgramSerieModel *model);
+	static QList<ProgramExerciseModel*> buildAll(QObject * parent);
+	static ProgramExerciseModel *build(QSqlQuery &query, QObject * parent);
 
-	bool getCanHaveSeries() const;
-	void setCanHaveSeries(bool data);
-
-// ----------------------
-
-	Q_INVOKABLE virtual bool save();
-	virtual void saveValues(DatabaseQuery &query);
-	static QList<ProgramExerciseModel*> loadAll(QObject * parent);
-	static ProgramExerciseModel *load(QSqlQuery &query, QObject * parent);
-	static void load(ProgramExerciseModel * model, QSqlQuery &query);
-	Q_INVOKABLE virtual void remove();
-
-signals:
-	void programExerciseIdChanged();
-	void exerciseIdChanged();
-	void exerciseModelChanged();
-	void programIdChanged();
-	void descriptionChanged();
-	void typeChanged();
-	void restTimeChanged();
-	void workTimeChanged();
-	void dataChanged();
-	void orderChanged();
-	void isSavedChanged();
-	void isEditedChanged();
-	void removed(ProgramExerciseModel * model);
-	void seriesChanged();
-	void canHaveSeriesChanged();
-
-
-protected:
-	qint64 mProgramExerciseId = 0;
-	qint64 mProgramId = 0;
-	QPair<qint64, ExerciseModel*> mExercise = {-1,nullptr};
-	QString mDescription;
-	int mType = 0;
-	int mWorkTime = 0;
-	int mRestTime = 60;
-	QList<QmlData *> mData;
-	int mOrder = 0;
-
-	QList<ProgramSerieModel*> mSeries;
-	bool mCanHaveSeries = false;
-
-	QMap<void*, QVariant> mBackupValues;
 };
 
 

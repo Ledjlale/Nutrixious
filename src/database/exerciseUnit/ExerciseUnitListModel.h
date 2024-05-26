@@ -18,33 +18,25 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DATABASE_TRAINING_EXERCISE_MODEL_H
-#define DATABASE_TRAINING_EXERCISE_MODEL_H
+#ifndef DATABASE_EXERCISE_UNIT_LIST_MODEL_H
+#define DATABASE_EXERCISE_UNIT_LIST_MODEL_H
 
-#include <QObject>
-#include <QVector>
-#include <QSqlQuery>
+#include "src/tool/proxyModel/ProxyAbstractListModel.hpp"
+#include "ExerciseUnitModel.h"
 
-#include "../../program/exercise/ProgramExerciseModel.h"
-#include "../serie/TrainingSerieModel.h"
-
-class TrainingExerciseModel : public ProgramExerciseModel{
+class ExerciseUnitListModel: public ProxyAbstractListModel<ExerciseUnitModel*> {
 Q_OBJECT
-
 public:
-	TrainingExerciseModel();
-	TrainingExerciseModel(QObject *parent);
-	TrainingExerciseModel(const TrainingExerciseModel * model, QObject *parent);
-	TrainingExerciseModel(const ProgramExerciseModel * model, QObject *parent);
+	ExerciseUnitListModel(QObject * parent = nullptr);
+	ExerciseUnitListModel(QVariantList exercises, QObject * parent);
 
-	virtual TrainingExerciseModel * clone(QObject *parent)const;
+	virtual QHash<int, QByteArray> roleNames () const override;
+	QVariant data (const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-	Q_INVOKABLE void addSerie();
-	QList<TrainingSerieModel*> getSeries() const;
+	QVariantList getExercises() const;
 
-	static TrainingExerciseModel *build(QSqlQuery &query, QObject * parent);
+	void handleRemoved(ExerciseUnitModel *model);
 
 };
-
 
 #endif

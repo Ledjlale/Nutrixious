@@ -127,7 +127,6 @@ int main(int argc, char *argv[]) {
 	QSurfaceFormat::setDefaultFormat(ignoreVSync);
 	DatabaseModel::migrate();
 
-
 	QStringList selectors("custom");
 	gEngine = new QQmlApplicationEngine();
 	auto selector = new QQmlFileSelector(gEngine, gEngine);

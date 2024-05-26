@@ -25,18 +25,10 @@
 #include <QVector>
 #include <QSqlQuery>
 
-#include "src/tool/QmlModel.h"
-#include "src/tool/QmlData.h"
+#include "../../exerciseSerie/ExerciseSerieModel.h"
 
-class ProgramSerieModel : public QmlModel{
+class ProgramSerieModel : public ExerciseSerieModel{
 Q_OBJECT
-// DB
-	Q_PROPERTY(int type READ getType WRITE setType NOTIFY typeChanged)
-	Q_PROPERTY(int restTime READ getRestTime WRITE setRestTime NOTIFY restTimeChanged)
-	Q_PROPERTY(int workTime READ getWorkTime WRITE setWorkTime NOTIFY workTimeChanged)
-	Q_PROPERTY(QVariantList data READ getQmlVariantData NOTIFY dataChanged)
-	Q_PROPERTY(int order READ getOrder WRITE setOrder NOTIFY orderChanged)
-
 public:
 	ProgramSerieModel();
 	ProgramSerieModel(QObject *parent);
@@ -44,56 +36,7 @@ public:
 	ProgramSerieModel(const ProgramSerieModel * model, QObject *parent);
 	virtual ProgramSerieModel * clone( QObject *parent)const;
 
-	qint64 getProgramSerieId() const;
-	void setProgramSerieId(qint64 data);
-
-	qint64 getProgramExerciseId() const;
-	void setProgramExerciseId(qint64 data);
-
-	int getType() const;
-	void setType(int data);
-
-	int  getRestTime() const;
-	void setRestTime(int restTime);
-
-	int  getWorkTime() const;
-	void setWorkTime(int workTime);
-
-	virtual void setDbData(QVariant data); // Coming from DB
-	virtual void buildData();
-	QVariantList getQmlVariantData()const;
-	const QList<QmlData *>& getData()const;
-	void setData(const QList<QmlData *>);
-
-	int getOrder() const;
-	void setOrder(int data);
-
-	virtual void updateIsSaved();
-	virtual void undo();
-
-	Q_INVOKABLE virtual bool save();
-	static ProgramSerieModel *load(QSqlQuery &query, QObject * parent);
-	Q_INVOKABLE virtual void remove();
-
-signals:
-	void serieIdChanged();
-	void programExerciseIdChanged();
-	void orderChanged();
-	void typeChanged();
-	void restTimeChanged();
-	void workTimeChanged();
-	void dataChanged();
-
-	void removed(ProgramSerieModel * model);
-
-protected:
-	qint64 mProgramSerieId = 0;
-	qint64 mProgramExerciseId = 0;
-	int mType = 0;
-	int mWorkTime = 0;
-	int mRestTime = 60;
-	QList<QmlData *> mData;
-	int mOrder = 0;
+	static ProgramSerieModel *build(QSqlQuery &query, QObject * parent);
 };
 
 #endif

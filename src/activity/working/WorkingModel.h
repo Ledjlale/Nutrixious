@@ -35,6 +35,7 @@ class WorkingModel : public QObject {
 	Q_PROPERTY(bool pause MEMBER mPause NOTIFY pauseChanged)
 	Q_PROPERTY(bool resting READ isResting NOTIFY isRestingChanged)
 	Q_PROPERTY(bool working READ isWorking NOTIFY isWorkingChanged)
+	Q_PROPERTY(QVariant currentExercise READ getCurrentExercise NOTIFY currentExerciseChanged)
 	Q_PROPERTY(QVariant currentWork READ getCurrentWork NOTIFY currentWorkChanged)
 
 	Q_PROPERTY(TrainingModel *targetModel READ getTargetModel WRITE setTargetModel NOTIFY targetModelChanged)
@@ -69,6 +70,7 @@ public:
 
 	Q_INVOKABLE void endOfCurrentWork();
 	Q_INVOKABLE void endOfCurrentRest();
+	Q_INVOKABLE QVariant getCurrentExercise();
 	Q_INVOKABLE QVariant getCurrentWork();
 
 	void refresh();
@@ -85,6 +87,7 @@ signals:
 
 	void exercisesChanged();
 	void workingNextExercise(int index);
+	void currentExerciseChanged();
 	void currentWorkChanged();
 	void finished();
 

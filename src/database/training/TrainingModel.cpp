@@ -28,6 +28,7 @@
 
 #include "src/tool/Utils.h"
 
+#include "serie/TrainingSerieModel.h"
 
 extern QQmlApplicationEngine * gEngine;
 
@@ -35,60 +36,24 @@ TrainingModel::TrainingModel() : TrainingModel(nullptr){	// QML
 	gEngine->setObjectOwnership(this, QQmlEngine::JavaScriptOwnership);
 }
 TrainingModel::TrainingModel(QObject *parent)
-	: QmlModel{parent}
+	: ProgramModel{parent}
 {
 	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	mName = "Training";
-	connect(this, &TrainingModel::trainingIdChanged, [this](){
-		for(auto &i: mExercises) i->setTrainingId(mTrainingId);
-	});
+	mTablePrefix = "training";
 }
-TrainingModel::TrainingModel(ProgramModel * program, QObject *parent) : TrainingModel(parent) {
+TrainingModel::TrainingModel(ProgramModel * model, QObject *parent) : ProgramModel(parent) {
+	mTablePrefix = "training";
 	mName = "Training";
-	mDescription = program->getName();
-	for(auto i : program->getExercises()){
+	mDescription = model->getName();
+	for(auto i : model->getExercises()){
 		mExercises << new TrainingExerciseModel(i, this);
+		for(auto i : i->getSeries())
+			mExercises.back()->ExerciseUnitModel::insertSerie(new TrainingSerieModel(i, mExercises.back()));
 	}
 }
-TrainingModel::TrainingModel(TrainingModel * training, QObject *parent) : TrainingModel(parent) {
-	mName = training->getName();
-	mDescription = training->getDescription();
-	for(auto i : training->getExercises()){
-		mExercises << new TrainingExerciseModel(i, this);
-	}
-}
-qint64 TrainingModel::getTrainingId()const{
-	return mTrainingId;
-}
-
-void TrainingModel::setTrainingId(qint64 id) {
-	if(mTrainingId != id) {
-		mTrainingId = id;
-		emit trainingIdChanged();
-	}
-
-}
-
-QString TrainingModel::getName() const{
-	return mName;
-}
-
-void TrainingModel::setName(QString name) {
-	if(mName != name){
-		mName = name;
-		emit nameChanged();
-	}
-}
-
-QString TrainingModel::getDescription() const{
-	return mDescription;
-}
-
-void TrainingModel::setDescription(QString description) {
-	if(mDescription != description){
-		mDescription = description;
-		emit descriptionChanged();
-	}
+TrainingModel::TrainingModel(TrainingModel *model, QObject *parent) : TrainingModel((ProgramModel*)model, parent) {
+	mStartDateTime = model->getStartDateTime();
 }
 
 QDateTime TrainingModel::getStartDateTime() const{
@@ -122,60 +87,43 @@ void TrainingModel::setStartDateTimeStr(QString data) {
 	}
 }
 
-QVariantList TrainingModel::getVariantExercises() const {
-	QVariantList exercises;
-	for(auto exercise: mExercises){
-		exercises << QVariant::fromValue(exercise);
-	 }
-	return exercises;
-}
-
-const QList<TrainingExerciseModel*>& TrainingModel::getExercises()const {
-	return mExercises;
-}
-
-TrainingExerciseModel* TrainingModel::addExercise(TrainingExerciseModel *model, bool keepId) {
-	auto insertedModel = Utils::add<TrainingExerciseModel>(model, this, mExercises);
-	insertedModel->setTrainingId(mTrainingId);
-	if(keepId)
-		insertedModel->setTrainingExerciseId(model->getTrainingExerciseId());
-	emit exercisesChanged();
-	return insertedModel;
-}
 
 TrainingExerciseModel* TrainingModel::buildExercise(ExerciseModel *model) {
 	QSqlQuery query;
-
+	QString trainingTablePrefix = "training";
 	TrainingExerciseModel* exerciseModel = nullptr;
 	// Build from last training
-	if(!query.exec("SELECT * FROM trainings, tr_exercises WHERE trainings.training_id=tr_exercises.training_id AND exercise_id=" +QString::number(model->getExerciseId()) + " ORDER BY start_date_time DESC LIMIT 1" ))
+	if(!query.exec("SELECT * FROM "+trainingTablePrefix+"s, "+trainingTablePrefix+"_exercise_units WHERE "+trainingTablePrefix+"."+trainingTablePrefix+"_id="+trainingTablePrefix+"_exercise_units."+trainingTablePrefix+"_id AND exercise_id=" +QString::number(model->getExerciseId()) + " ORDER BY start_date_time DESC LIMIT 1" ))
 		qCritical() << "Cannot request training exercises to build exercise : " << query.lastError().text();
 	else{
 		if(query.next()){
-			exerciseModel = TrainingExerciseModel::load(query,this);
+			exerciseModel = new TrainingExerciseModel(this);
+			exerciseModel->ProgramExerciseModel::load(query);
 			exerciseModel->setExerciseModel(model);
-			if(!query.exec("SELECT * FROM tr_exercise_series WHERE tr_exercise_id = "+QString::number(exerciseModel->getTrainingExerciseId())))
+			if(!query.exec("SELECT * FROM "+trainingTablePrefix+"_exercise_series WHERE "+trainingTablePrefix+"_exercise_id = "+QString::number(exerciseModel->getExerciseId())))
 				qCritical() << "Cannot request training series to build series : "  << query.lastError().text();
 			else{
 				while (query.next()) {
-					exerciseModel->addSerie(TrainingSerieModel::load(query, exerciseModel), false);
+					auto serie = new TrainingSerieModel(exerciseModel);
+					serie->load(query);
+					exerciseModel->ExerciseUnitModel::insertSerie(serie);
 				}
 			}
 		}
 	}
 	//Build from Program
 	if( !exerciseModel){
-		if(!query.exec("SELECT * FROM prgm_exercises WHERE exercise_id=" +QString::number(model->getExerciseId()) + " ORDER BY prgm_exercise_id DESC LIMIT 1" ))
-			qCritical() << "Cannot request program exercises to build exercise : " << query.lastError().text();
+		if(!query.exec("SELECT * FROM "+trainingTablePrefix+"_exercise_units WHERE exercise_id=" +QString::number(model->getExerciseId()) + " ORDER BY "+trainingTablePrefix+"_exercise_unit_id DESC LIMIT 1" ))
+			qCritical() << "Cannot request "+trainingTablePrefix+" exercises to build exercise : " << query.lastError().text();
 		else{
 			if(query.next()){
-				auto programModel = ProgramExerciseModel::load(query,nullptr);
+				auto programModel = ProgramExerciseModel::build(query,nullptr);
 				programModel->setExerciseModel(model);
-				if(!query.exec("SELECT * FROM prgm_exercise_series WHERE prgm_exercise_id = "+QString::number(programModel->getProgramExerciseId())))
-					qCritical() << "Cannot request training series to build series : "  << query.lastError().text();
+				if(!query.exec("SELECT * FROM "+trainingTablePrefix+"_exercise_series WHERE "+trainingTablePrefix+"_exercise_unit_id = "+QString::number(programModel->getExerciseUnitId())))
+					qCritical() << "Cannot request "+trainingTablePrefix+" series to build series : "  << query.lastError().text();
 				else{
 					while (query.next()) {
-						programModel->addSerie(ProgramSerieModel::load(query, programModel), false);
+						programModel->ExerciseUnitModel::insertSerie(ProgramSerieModel::build(query, programModel));
 					}
 				}
 				exerciseModel = new TrainingExerciseModel(programModel, this);
@@ -188,156 +136,76 @@ TrainingExerciseModel* TrainingModel::buildExercise(ExerciseModel *model) {
 	return exerciseModel;
 }
 
-void TrainingModel::removeExercise(TrainingExerciseModel *model) {
-	mExercises.removeOne(model);
-	model->deleteLater();
-	emit exercisesChanged();
-}
-
-void TrainingModel::clearExercises(){
-	for(auto item : mExercises)
-		item->deleteLater();
-	mExercises.clear();
-	emit exercisesChanged();
-}
-
-void TrainingModel::updateTrainingOrder(){
-	for(size_t i = 0 ; i < mExercises.size() ; ++i)
-		mExercises[i]->setOrder(i);
-}
-
-
-void TrainingModel::decrementExerciseOrder(TrainingExerciseModel *model) {
-	if(Utils::decrementOrder<TrainingExerciseModel>(model, mExercises)){
-		emit exercisesChanged();
-		save();
-	}
-}
-void TrainingModel::incrementExerciseOrder(TrainingExerciseModel *model){
-	if(Utils::incrementOrder<TrainingExerciseModel>(model, mExercises)){
-		emit exercisesChanged();
-		save();
-	}
-}
-
-
 //-------------------------------------------------------------------------------------------------------------------
 
-
-bool TrainingModel::save(){
-	qDebug() << "Saving Training " << mName << mDescription;
-	DatabaseQuery query;
-	if( mTrainingId > 0 && !getIsEdited()){
-		bool saved = false;
-		for(auto e : mExercises) {
-			saved = saved || e->save();
-		}
-		return saved;
-	}
-
-	query.begin(mTrainingId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "trainings" );
-
-	query.add("name", mName);
-	query.add("description", mDescription);
+void TrainingModel::addQueryValues(DatabaseQuery &query){
 	query.add("start_date_time", mStartDateTime.toMSecsSinceEpoch());
-	query.addConditionnal("training_id",mTrainingId);
-	if(mTrainingId == 0){
-		if(!query.exec()) qCritical() << "Cannot save training: "  << query.mQuery.lastError().text();
-		auto fieldNo = query.mQuery.record().indexOf("training_id");
-		while (query.mQuery.next()) {
-			setTrainingId(query.mQuery.value(fieldNo).toInt());
-			qDebug() << "Insert training: " << mTrainingId;
-		}
-		for(auto exercise : mExercises){
-			exercise->save();
-		}
-		clearBackupValues();
-	}else{
-		if(!query.exec()) qCritical() << "Cannot update training: "  << query.mQuery.lastError().text();
-		else {
-			qDebug() << "Update training: " << mTrainingId;
-			for(auto exercise : mExercises){
-				exercise->save();
-			}
-			clearBackupValues();
-		}
-	}
-
-	return true;
 }
 
-void TrainingModel::remove(){
-	if(mTrainingId > 0){
-		DatabaseQuery query;
-		query.begin(DatabaseQuery::Delete, "trainings");
-		query.addConditionnal("training_id",mTrainingId);
-		if(!query.exec()){
-			if(!query.exec()) qCritical() << "Cannot delete training  : "  << query.mQuery.lastError().text();
-		}
-	}
-	emit removed(this);
+
+void TrainingModel::load(QSqlQuery &query) {
+// TODO optimize
+	ProgramModel::load(query);
+	auto startDateTimeField = query.record().indexOf("start_date_time");
+	setStartDateTime(query.value(startDateTimeField).toULongLong());
+	clearBackupValues();
 }
 
-TrainingModel *TrainingModel::load(QSqlQuery &query, QObject * parent) {
+TrainingModel *TrainingModel::build(QSqlQuery &query, QObject * parent) {
 	TrainingModel * model = new TrainingModel(parent);
 // TODO optimize
-	auto idField = query.record().indexOf("training_id");
-	auto nameField = query.record().indexOf("name");
-	auto descriptionField = query.record().indexOf("description");
-	auto startDateTimeField = query.record().indexOf("start_date_time");
-	model->setTrainingId(query.value(idField).toInt());
-	model->setName(query.value(nameField).toString());
-	model->setDescription(query.value(descriptionField).toString());
-	model->setStartDateTime(query.value(startDateTimeField).toULongLong());
+	model->load(query);
 	return model;
 }
 
-QList<TrainingModel*> TrainingModel::load(QObject * parent){
-	QList<TrainingModel*> models;
 
+QList<TrainingModel*> TrainingModel::buildAll(QObject * parent){
+	QList<TrainingModel*> models;
+	QString tablePrefix = "training";
 	QMap<qint64, ExerciseModel*> exercises;
 	QSqlQuery query;
 	if(!query.exec("SELECT * FROM exercises"))
 		 qCritical() << "Cannot select exercises: "  << query.lastError().text();
 	while (query.next()) {
-		auto model = ExerciseModel::load(query, nullptr);
+		auto model = ExerciseModel::build(query, nullptr);
 		exercises[model->getExerciseId()] = model;
 	}
 
 
 	QMap<qint64, QList<TrainingSerieModel*>> series;
-	if(!query.exec("SELECT * FROM tr_exercise_series"))
-		 qCritical() << "Cannot select training series: "  << query.lastError().text();
+	if(!query.exec("SELECT * FROM "+tablePrefix+"_exercise_series"))
+		 qCritical() << "Cannot select series: "  << query.lastError().text();
 	while (query.next()) {
-		auto model = TrainingSerieModel::load(query, nullptr);
-		series[model->getTrainingExerciseId()] << model;
+		auto model = TrainingSerieModel::build(query, nullptr);
+		series[model->getExerciseUnitId()] << model;
 	}
 
 
 	QMap<qint64, QList<TrainingExerciseModel*>> exerciseModels;
-	if(!query.exec("SELECT * FROM tr_exercises"))
+	if(!query.exec("SELECT * FROM "+tablePrefix+"_exercise_units"))
 		 qCritical() << "Cannot select series: "  << query.lastError().text();
 	while (query.next()) {
-		auto model = TrainingExerciseModel::load(query, nullptr);
-		model->setExerciseModel(exercises[model->getExerciseId()]);
-		if( series.contains(model->getTrainingExerciseId())){
-			for(auto it : series[model->getTrainingExerciseId()])
-				model->addSerie(it, true);
+		auto model = TrainingExerciseModel::build(query, nullptr);
+		model->setExerciseModel(exercises[model->getExerciseId()]->clone(model));
+		if( series.contains(model->getExerciseUnitId())){
+			for(auto it : series[model->getExerciseUnitId()])
+				model->ExerciseUnitModel::insertSerie(it->clone(model));
 		}
-		exerciseModels[model->getTrainingId()] << model;
+		exerciseModels[model->getParentId()] << model;
 	}
 
-	query.exec( "SELECT * FROM trainings ORDER BY training_id ASC");
-	QStringList ids, trainingExerciseIds;
+	query.exec( "SELECT * FROM "+tablePrefix+"s ORDER BY "+tablePrefix+"_id ASC");
 
 	while (query.next()) {
-		auto model = load(query, parent);
-		if(exerciseModels.contains(model->getTrainingId())){
-			for(auto it : exerciseModels[model->getTrainingId()])
-				model->addExercise(it, true);
+		auto model = build(query, parent);
+		if(exerciseModels.contains(model->getId())){
+			for(auto it : exerciseModels[model->getId()]){
+				model->insertExercise(it->clone(model));
+			}
 		}
 		models << model;
 	}
+
 	for(auto i : exerciseModels)
 		for(auto j : i)
 			j->deleteLater();

@@ -130,3 +130,5 @@ bool WorkingSerieModel::save(){
 
 void WorkingSerieModel::fillRandomValues(){
 }
+
+

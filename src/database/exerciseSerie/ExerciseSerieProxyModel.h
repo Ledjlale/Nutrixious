@@ -18,33 +18,26 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DATABASE_TRAINING_EXERCISE_MODEL_H
-#define DATABASE_TRAINING_EXERCISE_MODEL_H
+#ifndef DATABASE_EXERCISE_SERIE_PROXY_MODEL_H
+#define DATABASE_EXERCISE_SERIE_PROXY_MODEL_H
 
-#include <QObject>
-#include <QVector>
-#include <QSqlQuery>
+#include "src/tool/proxyModel/SortFilterProxyModel.hpp"
 
-#include "../../program/exercise/ProgramExerciseModel.h"
-#include "../serie/TrainingSerieModel.h"
-
-class TrainingExerciseModel : public ProgramExerciseModel{
+class ExerciseSerieProxyModel: public SortFilterProxyModel {
 Q_OBJECT
-
+	Q_PROPERTY(QVariantList exercises READ getExercises WRITE setExercises NOTIFY exercisesChanged)
 public:
-	TrainingExerciseModel();
-	TrainingExerciseModel(QObject *parent);
-	TrainingExerciseModel(const TrainingExerciseModel * model, QObject *parent);
-	TrainingExerciseModel(const ProgramExerciseModel * model, QObject *parent);
+	ExerciseSerieProxyModel(QObject * parent = nullptr);
 
-	virtual TrainingExerciseModel * clone(QObject *parent)const;
+	Q_INVOKABLE void update();
 
-	Q_INVOKABLE void addSerie();
-	QList<TrainingSerieModel*> getSeries() const;
+	Q_INVOKABLE QVariantList getExercises() const;
+	Q_INVOKABLE void setExercises(QVariantList exercises);
 
-	static TrainingExerciseModel *build(QSqlQuery &query, QObject * parent);
+
+signals:
+	void exercisesChanged();
 
 };
-
 
 #endif

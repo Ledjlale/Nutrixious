@@ -34,72 +34,25 @@ Item{
 	property bool isLive: !!workingExerciseModel
 	property bool showSaveButton: !isLive
 	property bool isReadOnly: false
-
-	//implicitHeight: headersLayout.implicitHeight + setList.contentHeight
 	implicitHeight: setList.contentHeight
-/*
-	ColumnLayout{
-		id: mainLayout
+	ListView{
+		id: setList
 		anchors.fill: parent
-		spacing: 0
-// Details
-
-		RowLayout{
-			id: headersLayout
-			visible: setList.visible && setList.count > 0
-			spacing: 0
-			Text{
-				Layout.fillWidth: true
-				Layout.fillHeight: true
-				Layout.preferredWidth: mainLayout.width / parent.visibleChildren.length
-				text: 'Reps'
-			}
-			Text{
-				Layout.fillWidth: true
-				Layout.fillHeight: true
-				Layout.preferredWidth: mainLayout.width / parent.visibleChildren.length
-				text: 'Weight (kg)'
-			}
-			Text{
-				Layout.fillWidth: true
-				Layout.fillHeight: true
-				Layout.preferredWidth: mainLayout.width / parent.visibleChildren.length
-				text: 'Rest Time (s)'
-			}
-			Text{
-				Layout.fillWidth: true
-				Layout.fillHeight: true
-				Layout.preferredWidth: mainLayout.width / parent.visibleChildren.length
-				visible: mainItem.isLive || (mainItem.exerciseModel && mainItem.exerciseModel.isSaved )//&& mainItem.exerciseModel.isTraining)
-				text: 'Work Time (s)'
-			}
-			Item{// Actions
-				Layout.fillWidth: true
-				Layout.fillHeight: true
-				Layout.preferredWidth: mainLayout.width / parent.visibleChildren.length
-			}
+		interactive: false
+		clip: true
+		model: visible
+					? mainItem.workingExerciseModel
+						? mainItem.workingExerciseModel.series
+						: mainItem.exerciseModel
+							? mainItem.exerciseModel.series
+							: []
+					: []
+		delegate:ExerciseSerieModelView{
+			exerciseUnitModel: mainItem.workingExerciseModel ? mainItem.workingExerciseModel : mainItem.exerciseModel
+			serieModel: modelData
+			width: setList.width
+			isReadOnly: mainItem.isReadOnly
+			showTitle: index == 0
 		}
-		*/
-		ListView{
-			id: setList
-			anchors.fill: parent
-			interactive: false
-			clip: true
-			model: visible
-						? mainItem.workingExerciseModel
-							? mainItem.workingExerciseModel.series
-							: mainItem.exerciseModel
-								? mainItem.exerciseModel.series
-								: []
-						: []
-			delegate:ExerciseSerieModelView{
-				exerciseModel: mainItem.workingExerciseModel ? mainItem.workingExerciseModel : mainItem.exerciseModel
-				serieModel: modelData
-				//onRestingChanged: if(mainItem.isLive && resting) restingPopup.pause(modelData, modelData.targetWork.restTime)
-				width: setList.width
-				isReadOnly: mainItem.isReadOnly
-				showTitle: index == 0
-			}
-		}
-	//}
+	}
 }

@@ -28,7 +28,7 @@
 TrainingListModel::TrainingListModel(QObject *parent)
 	: ProxyAbstractListModel<TrainingModel*>{parent}
 {
-	mList << TrainingModel::load(parent);
+	mList << TrainingModel::buildAll(parent);
 	//mList << StrengthModel::load();
 	//mList << DistanceModel::load();
 	//mList << StepsModel::load();

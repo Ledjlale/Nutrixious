@@ -329,8 +329,12 @@ QList<SerieModel*> ExerciseModel::getSeries() const{
 	return mSeries;
 }
 
+void ExerciseModel::addSerie(SerieModel *model) {
+	addSerie(model->clone(this), false);
+}
+
 void ExerciseModel::addSerie(SerieModel *model, bool keepId) {
-	auto insertedModel = Utils::add<SerieModel>(model, this, mSeries);
+	auto insertedModel = Utils::add<SerieModel>(model, mSeries);
 	insertedModel->setExerciseId(mExerciseId);
 	connect(insertedModel, &SerieModel::removed, this, &ExerciseModel::handleRemoved);
 	if(keepId) {

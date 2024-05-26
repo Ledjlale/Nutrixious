@@ -39,19 +39,28 @@ ProgramModel::ProgramModel(QObject *parent)
 {
 	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	mName = "Program";
-	connect(this, &ProgramModel::programIdChanged, [this](){
-		for(auto &i: mExercises) i->setProgramId(mProgramId);
+	connect(this, &ProgramModel::idChanged, [this](){
+		for(auto &i: mExercises) i->setParentId(mId);
 	});
 }
-
-qint64 ProgramModel::getProgramId()const{
-	return mProgramId;
+ProgramModel::ProgramModel(ProgramModel * model, QObject *parent) : ProgramModel(parent) {
+	mId = model->getId();
+	mName = model->getName();
+	mDescription = model->getDescription();
+	for(auto i : model->getExercises()){
+		insertExercise(new ProgramExerciseModel(i, this));
+	}
 }
 
-void ProgramModel::setProgramId(qint64 id) {
-	if(mProgramId != id) {
-		mProgramId = id;
-		emit programIdChanged();
+qint64 ProgramModel::getId()const{
+	return mId;
+}
+
+void ProgramModel::setId(qint64 id) {
+	if(mId != id) {
+		mId = id;
+		setIsSaved(mId > 0);
+		emit idChanged();
 	}
 
 }
@@ -66,6 +75,11 @@ void ProgramModel::setName(QString name) {
 		emit nameChanged();
 	}
 }
+
+QString ProgramModel::getDescription() const{
+	return mDescription;
+}
+
 void ProgramModel::setDescription(QString description) {
 	if(mDescription != description){
 		mDescription = description;
@@ -85,11 +99,20 @@ const QList<ProgramExerciseModel*>& ProgramModel::getExercises()const {
 	return mExercises;
 }
 
-ProgramExerciseModel* ProgramModel::addExercise(ProgramExerciseModel *model, bool keepId) {
-	auto insertedModel = Utils::add<ProgramExerciseModel>(model, this, mExercises);
-	insertedModel->setProgramId(mProgramId);
-	if(keepId)
-		insertedModel->setProgramExerciseId(model->getProgramExerciseId());
+void ProgramModel::addNewExercise(ProgramExerciseModel *model) {
+	insertExercise(model->clone(this))->makeNew();
+}
+
+ProgramExerciseModel* ProgramModel::insertNewExercise(ProgramExerciseModel *model) {
+	auto newModel = insertExercise(model->clone(this));
+	newModel->makeNew();
+	return newModel;
+}
+
+ProgramExerciseModel* ProgramModel::insertExercise(ProgramExerciseModel *model) {
+	auto insertedModel = Utils::add<ProgramExerciseModel>(model, mExercises);
+	insertedModel->setParentId(mId);
+	connect(insertedModel, &ExerciseUnitModel::removed, this, &ProgramModel::handleRemoved);
 	emit exercisesChanged();
 	return insertedModel;
 }
@@ -100,11 +123,26 @@ void ProgramModel::removeExercise(ProgramExerciseModel *model) {
 	emit exercisesChanged();
 }
 
+void ProgramModel::handleRemoved(ExerciseUnitModel *model){
+	auto it = std::find(mExercises.begin(), mExercises.end(), model);
+	if( it != mExercises.end()){
+		int row = it - mExercises.begin();
+		mExercises.erase(it);
+		emit exercisesChanged();
+	}
+}
+
 void ProgramModel::clearExercises(){
 	for(auto item : mExercises)
 		item->deleteLater();
 	mExercises.clear();
 	emit exercisesChanged();
+}
+
+void ProgramModel::makeNew(){
+	setId(0);
+	for(auto i : mExercises)
+		i->makeNew();
 }
 
 void ProgramModel::updateProgramOrder(){
@@ -131,31 +169,40 @@ void ProgramModel::incrementExerciseOrder(ProgramExerciseModel *model){
 
 
 bool ProgramModel::save(){
-	qDebug() << "Saving Program " << mName << mDescription;
+	qDebug() << "Saving " << mTablePrefix << mName << mDescription;
 	DatabaseQuery query;
-
-	query.begin(mProgramId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "programs" );
+	if( mId > 0 && !getIsEdited()){
+		bool saved = false;
+		for(auto e : mExercises) {
+			saved = saved || e->save();
+		}
+		return saved;
+	}
+	query.begin(mId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, mTablePrefix +"s");
 
 	query.add("name", mName);
 	query.add("description", mDescription);
-	query.addConditionnal("program_id",mProgramId);
-	if(mProgramId == 0){
+	addQueryValues(query);
+	query.addConditionnal(mTablePrefix+"_id",mId);
+	if(mId == 0){
 		if(!query.exec()) qCritical() << "Cannot save program: "  << query.mQuery.lastError().text();
-		auto fieldNo = query.mQuery.record().indexOf("program_id");
+		auto fieldNo = query.mQuery.record().indexOf(mTablePrefix+"_id");
 		while (query.mQuery.next()) {
-			setProgramId(query.mQuery.value(fieldNo).toInt());
-			qDebug() << "Insert program: " << mProgramId;
+			setId(query.mQuery.value(fieldNo).toInt());
+			qDebug() << "Insert " + mTablePrefix +": " << mId;
 		}
 		for(auto exercise : mExercises){
 			exercise->save();
 		}
+		clearBackupValues();
 	}else{
-		if(!query.exec()) qCritical() << "Cannot update program: "  << query.mQuery.lastError().text();
+		if(!query.exec()) qCritical() << "Cannot update "+mTablePrefix+": "  << query.mQuery.lastError().text();
 		else {
-			qDebug() << "Update program: " << mProgramId;
+			qDebug() << "Update "+mTablePrefix+": " << mId;
 			for(auto exercise : mExercises){
-			exercise->save();
-		}
+				exercise->save();
+			}
+		clearBackupValues();
 		}
 	}
 
@@ -163,72 +210,77 @@ bool ProgramModel::save(){
 }
 
 void ProgramModel::remove(){
-	if(mProgramId > 0){
+	if(mId > 0){
 		DatabaseQuery query;
-		query.begin(DatabaseQuery::Delete, "programs");
-		query.addConditionnal("program_id",mProgramId);
+		query.begin(DatabaseQuery::Delete, mTablePrefix);
+		query.addConditionnal(mTablePrefix+"_id",mId);
 		if(!query.exec()){
-			if(!query.exec()) qCritical() << "Cannot delete program  : "  << query.mQuery.lastError().text();
+			if(!query.exec()) qCritical() << "Cannot delete "+mTablePrefix+"  : "  << query.mQuery.lastError().text();
 		}
 	}
 	emit removed(this);
 }
 
-ProgramModel *ProgramModel::load(QSqlQuery &query, QObject * parent) {
+ProgramModel *ProgramModel::build(QSqlQuery &query, QObject * parent) {
 	ProgramModel * model = new ProgramModel(parent);
 // TODO optimize
-	auto idField = query.record().indexOf("program_id");
-	auto nameField = query.record().indexOf("name");
-	auto descriptionField = query.record().indexOf("description");
-	model->setProgramId(query.value(idField).toInt());
-	model->setName(query.value(nameField).toString());
-	model->setDescription(query.value(descriptionField).toString());
+	model->load(query);
 	return model;
 }
 
-QList<ProgramModel*> ProgramModel::load(QObject * parent){
-	QList<ProgramModel*> models;
+void ProgramModel::load(QSqlQuery &query){
+	auto idField = query.record().indexOf(mTablePrefix+"_id");
+	auto nameField = query.record().indexOf("name");
+	auto descriptionField = query.record().indexOf("description");
+	setId(query.value(idField).toInt());
+	setName(query.value(nameField).toString());
+	setDescription(query.value(descriptionField).toString());
+	clearBackupValues();
+}
 
+QList<ProgramModel*> ProgramModel::buildAll(QObject * parent){
+	QList<ProgramModel*> models;
+	QString tablePrefix = "program";
 	QMap<qint64, ExerciseModel*> exercises;
 	QSqlQuery query;
 	if(!query.exec("SELECT * FROM exercises"))
 		 qCritical() << "Cannot select exercises: "  << query.lastError().text();
 	while (query.next()) {
-		auto model = ExerciseModel::load(query, nullptr);
+		auto model = ExerciseModel::build(query, nullptr);
 		exercises[model->getExerciseId()] = model;
 	}
 
 
 	QMap<qint64, QList<ProgramSerieModel*>> series;
-	if(!query.exec("SELECT * FROM prgm_exercise_series"))
+	if(!query.exec("SELECT * FROM "+tablePrefix+"_exercise_series"))
 		 qCritical() << "Cannot select series: "  << query.lastError().text();
 	while (query.next()) {
-		auto model = ProgramSerieModel::load(query, nullptr);
-		series[model->getProgramExerciseId()] << model;
+		auto model = ProgramSerieModel::build(query, nullptr);
+		series[model->getExerciseUnitId()] << model;
 	}
 
 
 	QMap<qint64, QList<ProgramExerciseModel*>> exerciseModels;
-	if(!query.exec("SELECT * FROM prgm_exercises"))
+	if(!query.exec("SELECT * FROM "+tablePrefix+"_exercise_units"))
 		 qCritical() << "Cannot select series: "  << query.lastError().text();
 	while (query.next()) {
-		auto model = ProgramExerciseModel::load(query, nullptr);
+		auto model = ProgramExerciseModel::build(query, nullptr);
 		model->setExerciseModel(exercises[model->getExerciseId()]);
-		if( series.contains(model->getProgramExerciseId())){
-			for(auto it : series[model->getProgramExerciseId()])
-				model->addSerie(it, true);
+		if( series.contains(model->getExerciseUnitId())){
+			for(auto it : series[model->getExerciseUnitId()])
+				model->ExerciseUnitModel::insertSerie(it->clone(model));
 		}
-		exerciseModels[model->getProgramId()] << model;
+		exerciseModels[model->getParentId()] << model;
 	}
 
-	query.exec( "SELECT * FROM programs ORDER BY program_id ASC");
+	query.exec( "SELECT * FROM "+tablePrefix+"s ORDER BY "+tablePrefix+"_id ASC");
 	QStringList ids, programExerciseIds;
 
 	while (query.next()) {
-		auto model = load(query, parent);
-		if(exerciseModels.contains(model->getProgramId())){
-			for(auto it : exerciseModels[model->getProgramId()]){
-				model->addExercise(it, true);
+		auto model = build(query, parent);
+		if(exerciseModels.contains(model->getId())){
+			for(auto it : exerciseModels[model->getId()]){
+				model->insertExercise(it->clone(model));
 			}
 		}
 		models << model;

@@ -36,6 +36,7 @@
 	ui/Item/EffectImage.qml
 	ui/Item/ScannerOverlay.qml
 	ui/Item/TextField.qml
+	ui/Item/SerieFieldPicker.qml
 	ui/Item/Stopwatch.qml
 	ui/Item/TimeDisplay.qml
 	ui/Item/ToolBar.qml

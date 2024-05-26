@@ -28,6 +28,7 @@ Flipable {
 	property alias text: originalTextField.text
 	property var newValue
 	property bool showTitle: true
+	property bool keepEditView: false
 	property var inputMethodHints: Qt.ImhNone
 	property string placeholderText
 	property bool readOnly: false
@@ -43,7 +44,7 @@ Flipable {
 	implicitWidth: flipped ? backItem.implicitWidth : frontItem.implicitWidth
 	implicitHeight: flipped ? backItem.implicitHeight: frontItem.implicitHeight
 
-	property bool flipped: false
+	property bool flipped: keepEditView
 
 	front: MouseArea{
 				id: frontItem
@@ -83,7 +84,7 @@ Flipable {
 	back: ColumnLayout{
 				id: backItem
 				anchors.fill: parent
-				spacing: 0
+				spacing: 5
 				function forceActiveFocus(){
 					textField.forceActiveFocus()
 				}
@@ -100,9 +101,10 @@ Flipable {
 					id: textField
 					Layout.fillHeight: true
 					Layout.fillWidth: true
-					Layout.leftMargin: 10
-					Layout.rightMargin: 10
+					//Layout.leftMargin: 10
+					//Layout.rightMargin: 10
 					Layout.bottomMargin: 10
+
 					inputMethodHints: mainItem.inputMethodHints
 					readOnly: mainItem.readOnly
 					color: mainItem.textColor
@@ -111,10 +113,11 @@ Flipable {
 					onEditingFinished:  {
 						mainItem.newValue = textField.text
 						mainItem.editingFinished()
-						mainItem.flipped = false
+						if(!mainItem.keepEditView)
+							mainItem.flipped = false
 					}
 					onActiveFocusChanged: {
-						if(!activeFocus) mainItem.flipped = false
+						if(!activeFocus && !mainItem.keepEditView) mainItem.flipped = false
 					}
 				}
 			}

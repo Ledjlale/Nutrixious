@@ -76,7 +76,7 @@ Item {
 					exerciseModel: $modelData
 					showAddButton: true
 					showSaveButton: false
-					onAddClicked: mainItem.programModel.addExercise($modelData)
+					onAddClicked: mainItem.programModel.addNewExercise($modelData)
 				}
 			}
 		}

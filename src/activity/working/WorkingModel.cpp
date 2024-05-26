@@ -41,9 +41,13 @@ WorkingModel::WorkingModel(QObject *parent)
 	connect(this, &WorkingModel::targetModelChanged, [this](){
 		for(auto i : mExercises) i->deleteLater();
 		mExercises.clear();
-		setResultModel(new TrainingModel(mTargetModel, this));
+		auto t = new TrainingModel(mTargetModel, this);
+		t->makeNew();
+		setResultModel(t);
 		for(int count = 0 ;  count < mTargetModel->getExercises().size() ; ++count) {
-			mExercises << new WorkingExerciseModel(mTargetModel->getExercises()[count], mResultModel->getExercises()[count], this);
+			mExercises << new WorkingExerciseModel(dynamic_cast<TrainingExerciseModel*>(mTargetModel->getExercises()[count])
+							, dynamic_cast<TrainingExerciseModel*>(mResultModel->getExercises()[count])
+							, this);
 			connect(mExercises.back(), &WorkingExerciseModel::finished, this, &WorkingModel::nextExercise);
 			connect(mExercises.back(), &WorkingExerciseModel::workStarted, this, &WorkingModel::currentWorkChanged);
 		}
@@ -83,9 +87,8 @@ void WorkingModel::loadFromProgram(ProgramModel *data) {
 
 void WorkingModel::addExercise(ExerciseModel * data){
 	auto build = mTargetModel->buildExercise(data);
-	auto targetExercise = mTargetModel->addExercise(build, false);
-	auto resultExercise = mResultModel->addExercise(targetExercise);
-	build->deleteLater();
+	auto targetExercise = dynamic_cast<TrainingExerciseModel*>(mTargetModel->insertExercise(build));
+	auto resultExercise = dynamic_cast<TrainingExerciseModel*>(mResultModel->insertNewExercise(targetExercise));
 	mExercises << new WorkingExerciseModel(targetExercise, resultExercise, this);
 	connect(mExercises.back(), &WorkingExerciseModel::finished, this, &WorkingModel::nextExercise);
 	connect(mExercises.back(), &WorkingExerciseModel::workStarted, this, &WorkingModel::currentWorkChanged);
@@ -122,6 +125,10 @@ void WorkingModel::setIsResting(bool data){
 
 void WorkingModel::start(){
 	mResultModel->setStartDateTime(QDateTime::currentDateTime());
+	if(mExercises.size() == 0){
+		qCritical() << "Cannot start : no exercises in working model";
+		return;
+	}
 	mCurrentExercise = mExercises.begin();
 	(*mCurrentExercise)->startWork();
 	emit workingNextExercise(0);
@@ -145,6 +152,14 @@ void WorkingModel::endOfCurrentWork(){
 void WorkingModel::endOfCurrentRest(){
 	(*mCurrentExercise)->endOfCurrentRest();
 }
+
+QVariant WorkingModel::getCurrentExercise() {
+	if(mTargetModel && mCurrentExercise != mExercises.end())
+		return QVariant::fromValue(*mCurrentExercise);
+	else
+		return QVariant();
+}
+
 QVariant WorkingModel::getCurrentWork() {
 	if(mTargetModel && mCurrentExercise != mExercises.end())
 		return (*mCurrentExercise)->getCurrentWork();
@@ -165,4 +180,5 @@ void WorkingModel::nextExercise(){
 		emit workingNextExercise(mCurrentExercise - mExercises.begin());
 		emit currentWorkChanged();
 	}
+	emit currentExerciseChanged();
 }

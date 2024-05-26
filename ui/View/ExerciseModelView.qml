@@ -71,8 +71,7 @@ Item{
 						? Material.color(Material.Green, Material.Shade100)
 						: workingExerciseModel?.isDone
 							? Material.color(Material.Blue, Material.Shade100)
-							: Material.color(Material.accent, Material.Shade100)
-
+							: Material.color(Material.Amber, Material.Shade100)
 	}
 	ColumnLayout{
 		id: mainLayout
@@ -121,52 +120,11 @@ Item{
 										exerciseModel.description = newValue
 								}
 							}*/
-							TextField{
-								id: workTextField
-								Layout.preferredWidth: visible ? mainItem.width / rowlayout.visibleChildren.length : 0
-								visible: mainItem.showWorkTime && (!!exerciseModel || !!exerciseModel.exerciseModel)
-								showTitle: mainItem.showTitle
-								readOnly: mainItem.isReadOnly
-								title: 'Work Time (s)'
-								text: workingExerciseModel?.isDone
-												? mainItem.resultModel.workTime
-												: exerciseModel?.workTime
-								onEditingFinished: {
-									if(workingExerciseModel?.isDone)
-										mainItem.resultModel.workTime = newValue
-									else
-										exerciseModel.workTime = newValue
-								}
-							}
-							ListView{
-								id: fieldList
-								Layout.preferredWidth: count * mainItem.width / rowlayout.visibleChildren.length
-								Layout.preferredHeight: contentHeight
-								contentHeight: contentItem.childrenRect.height
-								visible: count > 0
-								orientation: ListView.Horizontal
-								model: workingExerciseModel?.isDone
-												? mainItem.resultModel.data
-												: exerciseModel?.data
-								spacing: 0
-								delegate: TextField{
-									width: fieldList.width / fieldList.count
-									height: implicitHeight
-									inputMethodHints: Qt.ImhDigitsOnly
-									readOnly: mainItem.isReadOnly
-									title: modelData.name
-									text: modelData.value
-									onEditingFinished: {
-										modelData.value = newValue
-									}
-								}
-							}
 
 							Button{
 								Layout.fillWidth: true
 								Layout.preferredWidth: implicitWidth
 								Layout.maximumWidth: implicitWidth
-								visible: exerciseItem.exerciseModel.canHaveSeries
 								text: seriesList.visible ? '-' : '+'
 								onClicked: seriesList.visible = !seriesList.visible
 							}
@@ -247,7 +205,7 @@ Item{
 							Layout.fillWidth: true
 							Layout.rightMargin: 5
 							Layout.preferredHeight: implicitHeight
-							visible: mainItem.expandAll && exerciseItem.exerciseModel.canHaveSeries
+							visible: mainItem.expandAll
 							exerciseModel: visible ? exerciseItem.exerciseModel : null
 							workingExerciseModel: mainItem.workingExerciseModel
 							showSaveButton: mainItem.showSaveButton

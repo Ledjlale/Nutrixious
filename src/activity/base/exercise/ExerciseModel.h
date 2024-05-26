@@ -100,7 +100,8 @@ public:
 // Serie
 	QVariantList getVariantSeries() const;
 	QList<SerieModel*> getSeries() const;
-	Q_INVOKABLE void addSerie(SerieModel *model, bool keepId);
+	Q_INVOKABLE void addSerie(SerieModel *model);	// Clone
+	void addSerie(SerieModel *model, bool keepId);
 	Q_INVOKABLE void removeSerie(SerieModel *model);
 	void handleRemoved(SerieModel *model);
 

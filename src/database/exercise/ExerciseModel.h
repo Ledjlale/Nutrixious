@@ -32,7 +32,7 @@ class ExerciseModel : public QmlModel{
 Q_OBJECT
 // DB
 	Q_PROPERTY(QString name MEMBER mName NOTIFY nameChanged)
-	Q_PROPERTY(QString description MEMBER mDescription NOTIFY descriptionChanged)
+	Q_PROPERTY(double met MEMBER mMet NOTIFY metChanged)
 
 public:
 	ExerciseModel();	// QML
@@ -46,26 +46,26 @@ public:
 	QString getName() const;
 	void setName(QString name);
 
-	QString getDescription() const;
-	void setDescription(QString description);
+	double getMet() const;
+	void setMet(double data);
 
 
 	Q_INVOKABLE virtual bool save();
 	Q_INVOKABLE virtual void remove();
 
-	static QList<ExerciseModel*> loadAll(QObject * parent);
-	static ExerciseModel *load(QSqlQuery &query, QObject * parent);
+	static QList<ExerciseModel*> buildAll(QObject * parent);
+	static ExerciseModel *build(QSqlQuery &query, QObject * parent);
 
 signals:
 	void exerciseIdChanged();
 	void nameChanged();
-	void descriptionChanged();
+	void metChanged();
 	void removed(ExerciseModel *model);
 
 protected:
 	qint64 mExerciseId = 0;
 	QString mName;
-	QString mDescription;
+	double mMet = 1.0;
 };
 
 #endif

@@ -31,7 +31,9 @@ WorkingExerciseModel::WorkingExerciseModel(QObject *parent)
 		for(auto i : mSeries) i->deleteLater();
 		mSeries.clear();
 		for(int count = 0 ; count < mTargetExerciseModel->getSeries().size() ; ++count) {
-			mSeries << new WorkingSerieModel(mTargetExerciseModel->getSeries()[count], mResultExerciseModel->getSeries()[count], this);
+			mSeries << new WorkingSerieModel(dynamic_cast<TrainingSerieModel*>(mTargetExerciseModel->getSeries()[count])
+								, dynamic_cast<TrainingSerieModel*>(mResultExerciseModel->getSeries()[count])
+								, this);
 			connect(mSeries.back(), &WorkingSerieModel::finished, this, &WorkingExerciseModel::nextSerie);
 		}
 		emit seriesChanged();
@@ -42,8 +44,8 @@ WorkingExerciseModel::WorkingExerciseModel(TrainingExerciseModel * target, Train
 	setResultExerciseModel(result);
 	setTargetExerciseModel(target);
 
-	for(int i = 0; i < target->getData().size() ; ++i)
-		connect(target->getData()[i], &QmlData::valueChanged, result->getData()[i], &QmlData::setValue);
+	//for(int i = 0; i < target->getData().size() ; ++i)
+	//	connect(target->getData()[i], &QmlData::valueChanged, result->getData()[i], &QmlData::setValue);
 }
 
 WorkingExerciseModel::~WorkingExerciseModel(){
@@ -149,7 +151,7 @@ void WorkingExerciseModel::endOfCurrentWork(){
 	if(mSeries.size() > 0){
 		(*mCurrentSerie)->endOfCurrentWork();
 	}else{
-		mResultExerciseModel->setWorkTime(mStart.secsTo(QDateTime::currentDateTime()));
+		//mResultExerciseModel->setWorkTime(mStart.secsTo(QDateTime::currentDateTime()));
 		setIsResting(true);
 	}
 }
@@ -158,7 +160,7 @@ void WorkingExerciseModel::endOfCurrentRest() {
 	if(mSeries.size() > 0){
 		(*mCurrentSerie)->endOfCurrentRest();
 	}else{
-		mResultExerciseModel->setRestTime(mStart.secsTo(QDateTime::currentDateTime()));
+		//mResultExerciseModel->setRestTime(mStart.secsTo(QDateTime::currentDateTime()));
 		emit finished();
 	}
 }

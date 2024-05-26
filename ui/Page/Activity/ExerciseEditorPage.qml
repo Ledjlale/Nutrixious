@@ -26,22 +26,21 @@ import App 1.0
 
 Item {
 	id: mainItem
-	property alias type: programExerciseModelId.type
 	property bool showSaveButton: true
 	property alias exerciseModel: programExerciseModelId.exerciseModel
 	property var programExerciseModel: ProgramExerciseModel {
 		id: programExerciseModelId
+		Component.onCompleted: addSerie()
 	}
 	property var serieModel: ProgramSerieModel{
 		id: serieModelId
-		type: 1
 	}
 	property var programModel
 
 	Component.onCompleted: Material.background = Qt.darker(Material.background, 1.02)
 
 	function save(){
-		mainItem.programModel.addExercise(mainItem.programExerciseModel, false)
+		mainItem.programModel.addNewExercise(mainItem.programExerciseModel)
 		return mainItem.programModel.save()
 	}
 	ColumnLayout{
@@ -49,36 +48,56 @@ Item {
 		spacing: 0
 //---------------------------------------------------------------------------------
 //							EXERCISE
-		Text{
-			Layout.fillWidth: true
-			horizontalAlignment: Text.AlignHCenter
-			text: 'Exercise description'
-			color: Material.foreground
-		}
 		RowLayout{
-			TextField{
-				Layout.fillWidth: true
-				Layout.leftMargin: 10
-				title: 'Name'
-				text: exerciseModel.name
-				focus: true
-				//Material.background: exerciseModel.invalidName ? Material.color(Material.Pink, Material.Shade50) : mainItem.Material.background
-				//Material.foreground: exerciseModel.invalidName ? Material.accent : mainItem.Material.foreground
-				onEditingFinished: {
-					exerciseModel.name = newValue
-					descrtiptionField.forceActiveFocus()
+			ColumnLayout{
+				Text{
+					Layout.fillWidth: true
+					horizontalAlignment: Text.AlignHCenter
+					text: 'Exercise description'
+					color: Material.foreground
+				}
+				TextField{
+					Layout.fillWidth: true
+					Layout.leftMargin: 10
+					title: 'Name'
+					text: exerciseModel.name
+					focus: true
+					//Material.background: exerciseModel.invalidName ? Material.color(Material.Pink, Material.Shade50) : mainItem.Material.background
+					//Material.foreground: exerciseModel.invalidName ? Material.accent : mainItem.Material.foreground
+					onEditingFinished: {
+						exerciseModel.name = newValue
+						descrtiptionField.forceActiveFocus()
+					}
+				}
+				TextField{
+					id: descrtiptionField
+					Layout.fillWidth: true
+					Layout.leftMargin: 10
+					title: 'Description'
+					text: programExerciseModelId.description
+					onEditingFinished: {
+						programExerciseModelId.description = newValue
+						metField.forceActiveFocus()
+					}
+				}
+				TextField{
+					id: metField
+					Layout.fillWidth: true
+					Layout.leftMargin: 10
+					inputMethodHints: Qt.ImhDigitsOnly
+					title: 'MET'
+					text: exerciseModel.met
+					onEditingFinished: {
+						exerciseModel.met = newValue
+						//repsField.forceActiveFocus()
+					}
 				}
 			}
-		}
-		TextField{
-			id: descrtiptionField
-			Layout.fillWidth: true
-			Layout.leftMargin: 10
-			title: 'Description'
-			text: exerciseModel.description
-			onEditingFinished: {
-				exerciseModel.description = newValue
-				//repsField.forceActiveFocus()
+			SerieFieldPicker{
+				//Layout.fillHeight: true
+				Layout.preferredHeight: implicitHeight
+				Layout.preferredWidth: implicitWidth
+				exerciseUnitModel: mainItem.programExerciseModel
 			}
 		}
 		Rectangle{
@@ -93,55 +112,23 @@ Item {
 				horizontalAlignment: Text.AlignHCenter
 				text: 'Definition'
 				color: Material.foreground
-			}
-			ComboBox{
-				id: exerciseCreation
-				Layout.rightMargin: 10
-				Layout.fillWidth: true
-				textRole: "key"
+			}/*
+			SerieFieldPicker{
 
-				model: [{key: 'Select a type'},{key:'Strength', value:3},{key:'Distance', value:1},{key:'Steps', value:2}]
-
-				onActivated: function(index){
-					if( index > 0)
-						mainItem.type = model[index].value
-				}
-			}
+			}*/
 		}
-
-		RowLayout{
-			Layout.leftMargin: 10
-			visible: mainItem.type > 0
-			TextField{
-				id: exerciseRestTimeField
-				Layout.fillWidth: true
-				visible: mainItem.type > 0
-				inputMethodHints: Qt.ImhDigitsOnly
-				title: 'Rest Time (s)'
-				text: programExerciseModelId.restTime
-				onEditingFinished: {
-					programExerciseModelId.restTime = newValue
-				}
-			}
-			TextField{
-				id: exerciseWorkTimeField
-				Layout.fillWidth: true
-				inputMethodHints: Qt.ImhDigitsOnly
-				visible: !!programExerciseModelId.workTime
-				title: 'Work Time (s)'
-				text: visible ? programExerciseModelId.workTime : ''
-				onEditingFinished: programExerciseModelId.workTime = newValue
-			}
-		}
+/*
 		ListView{
 			id: exerciseFieldList
 			Layout.fillWidth: true
 			Layout.leftMargin: 10
-			Layout.preferredHeight: model.length * 40
+			Layout.preferredHeight: !!model ? model.length * 40 : 0
 
 			visible: mainItem.type > 0
 			orientation: ListView.Horizontal
-			model: programExerciseModelId.data
+			model: ExerciseUnitProxyModel{
+				exercises: mainItem.programExerciseModel.exercises
+			}
 			spacing: 0
 			delegate: TextField{
 				width: exerciseFieldList.width / exerciseFieldList.count
@@ -154,20 +141,19 @@ Item {
 				}
 			}
 		}
-
+*/
 //---------------------------------------------------------------------------------
 //							SERIE
 		Button{
 			Layout.fillWidth: true
 			Layout.preferredWidth: implicitWidth
 			Layout.alignment: Qt.AlignCenter
-			visible: mainItem.type > 0 && programExerciseModelId.canHaveSeries
 			text: 'Add Serie'
 			//Material.background: programExerciseModelId.invalidSets ? Material.color(Material.Pink, Material.Shade50) : mainItem.Material.background
 			//Material.foreground: programExerciseModelId.invalidSets ? Material.accent : mainItem.Material.foreground
 
 			onClicked: {
-				programExerciseModelId.addSerie(serieModel, false)
+				programExerciseModelId.addSerie()
 			}
 		}
 
@@ -175,23 +161,23 @@ Item {
 			id: serieList
 			Layout.fillWidth: true
 			Layout.fillHeight: true
-			visible:mainItem.type > 0 &&  programExerciseModelId.canHaveSeries
+			Layout.leftMargin: 10
+			Layout.rightMargin: 10
+			Layout.topMargin: 10
 			clip: true
 			model: programExerciseModelId.series
 			delegate:ExerciseSerieModelView{
-				leftMargin: 10
 				serieModel: modelData
+				exerciseUnitModel: mainItem.programExerciseModel
 				width: serieList.width
 				isReadOnly: false
 				showTitle: index == 0
 				doSave: false
 				showSaveButton: mainItem.showSaveButton
+				keepEditView: true
 			}
 		}
 //---------------------------------------------------------------------------------
-	Item{
-		Layout.fillHeight: true
-		visible: !programExerciseModelId.canHaveSeries
-	}
+
 	}
 }

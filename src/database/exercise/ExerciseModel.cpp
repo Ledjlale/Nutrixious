@@ -46,7 +46,7 @@ ExerciseModel::ExerciseModel(ExerciseModel * model, QObject *parent)
 {
 	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	mName = model->getName();
-	mDescription = model->getDescription();
+	mMet = model->getMet();
 	mExerciseId = model->getExerciseId();
 }
 
@@ -71,22 +71,24 @@ QString ExerciseModel::getName() const{
 	return mName;
 }
 
-void ExerciseModel::setName(QString name) {
-	if(mName != name){
-		mName = name;
+void ExerciseModel::setName(QString data) {
+	if(mName != data){
+		addBackup(&mName, mName, data);
+		mName = data;
 		emit nameChanged();
 	}
 }
 
 
-QString ExerciseModel::getDescription() const {
-	return mDescription;
+double ExerciseModel::getMet() const {
+	return mMet;
 }
 
-void ExerciseModel::setDescription(QString description) {
-	if(mDescription != description){
-		mDescription = description;
-		emit descriptionChanged();
+void ExerciseModel::setMet(double data) {
+	if(mMet != data){
+		addBackup(&mMet, mMet, data);
+		mMet = data;
+		emit metChanged();
 	}
 }
 
@@ -96,13 +98,13 @@ void ExerciseModel::setDescription(QString description) {
 
 bool ExerciseModel::save(){
 	if(mExerciseId>0 && !mIsEdited) return true;// Avoid update for nothing
-	qDebug() << "Saving exercise " << mName << mDescription;
+	qDebug() << "Saving exercise " << mName;
 	DatabaseQuery query;
 
 	query.begin(mExerciseId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "exercises" );
 
 	query.add("name", mName);
-	query.add("description", mDescription);
+	query.add("met", mMet);
 	query.addConditionnal("exercise_id",mExerciseId);
 	if(mExerciseId == 0){
 		if(!query.exec()) qCritical() << "Cannot save exercise: "  << query.mQuery.lastError().text();
@@ -132,28 +134,28 @@ void ExerciseModel::remove(){
 	emit removed(this);
 }
 
-ExerciseModel *ExerciseModel::load(QSqlQuery &query, QObject * parent) {
+ExerciseModel *ExerciseModel::build(QSqlQuery &query, QObject * parent) {
 	auto idField = query.record().indexOf("exercises.exercise_id");
 	auto nameField = query.record().indexOf("exercises.name");
-	auto descriptionField = query.record().indexOf("exercises.description");
-	if( idField>= 0 && nameField >= 0 && descriptionField >= 0){
+	auto metField = query.record().indexOf("exercises.met");
+	if( idField>= 0 && nameField >= 0 && metField >= 0){
 		ExerciseModel * model = new ExerciseModel(parent);
 	// TODO optimize
-
 		model->setExerciseId(query.value(idField).toInt());
 		model->setName(query.value(nameField).toString());
-		model->setDescription(query.value(descriptionField).toString());
+		model->setMet(query.value(metField).toDouble());
+		model->clearBackupValues();
 		return model;
 	}else return nullptr;
 }
 
-QList<ExerciseModel*> ExerciseModel::loadAll(QObject * parent){
+QList<ExerciseModel*> ExerciseModel::buildAll(QObject * parent){
 	QList<ExerciseModel*> models;
 	QSqlQuery query;
 	if(!query.exec( "SELECT * FROM exercises ORDER BY exercise_id DESC")) qCritical() << "Cannot select all exercises  : "  << query.lastError().text();
 
 	while (query.next()) {
-		auto model = load(query, parent);
+		auto model = build(query, parent);
 		models << model;
 	}
 

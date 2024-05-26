@@ -40,21 +40,26 @@ Q_OBJECT
 public:
 	ProgramModel();	// QML
 	ProgramModel(QObject *parent);
+	ProgramModel(ProgramModel * model, QObject *parent);
 
-
-	Q_INVOKABLE qint64 getProgramId()const;
-	virtual void setProgramId(qint64 id);
+	Q_INVOKABLE qint64 getId()const;
+	virtual void setId(qint64 id);
 
 	QString getName() const;
 	void setName(QString name);
 
+	QString getDescription() const;
 	void setDescription(QString description);
 
 	QVariantList getVariantExercises() const;
 	const QList<ProgramExerciseModel*>& getExercises() const;
-	Q_INVOKABLE ProgramExerciseModel* addExercise(ProgramExerciseModel *model, bool keepId = false);
+	Q_INVOKABLE void addNewExercise(ProgramExerciseModel *model);	// Clone and make new
+	ProgramExerciseModel* insertNewExercise(ProgramExerciseModel *model); // clone and make new
+	ProgramExerciseModel* insertExercise(ProgramExerciseModel *model);// Insert and set parent ID
 	Q_INVOKABLE void removeExercise(ProgramExerciseModel *model);
+	void handleRemoved(ExerciseUnitModel *model);
 	void clearExercises();
+	Q_INVOKABLE void makeNew();
 
 	Q_INVOKABLE void decrementExerciseOrder(ProgramExerciseModel *model);
 	Q_INVOKABLE void incrementExerciseOrder(ProgramExerciseModel *model);
@@ -65,22 +70,25 @@ public:
 
 	Q_INVOKABLE virtual bool save();
 	Q_INVOKABLE virtual void remove();
-	static QList<ProgramModel*> load(QObject * parent);
-	static ProgramModel *load(QSqlQuery &query, QObject * parent);
+	virtual void load(QSqlQuery &query);
+	static QList<ProgramModel*> buildAll(QObject * parent);
+	static ProgramModel *build(QSqlQuery &query, QObject * parent);
+	virtual void addQueryValues(DatabaseQuery &query){}
 
 signals:
-	void programIdChanged();
+	void idChanged();
 	void nameChanged();
 	void descriptionChanged();
 	void exercisesChanged();
 	void removed(ProgramModel *model);
 
 protected:
-	qint64 mProgramId = 0;
+	qint64 mId = 0;
 	QString mName;
 	QString mDescription;
 	QList<ProgramExerciseModel*> mExercises;
 
+	QString mTablePrefix = "program";
 };
 
 #endif

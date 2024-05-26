@@ -61,7 +61,8 @@ void DatabaseModel::migrate(){
 //----------------------------------------------------------------------------------------------------------------------
 	if(!query.exec("CREATE TABLE exercises (exercise_id INTEGER PRIMARY KEY"
 				", name TEXT"
-				", description TEXT)")) qCritical() << "Cannot create a  : " << query.lastError().text();
+				", met REAL"
+				")")) qCritical() << "Cannot create an exercise table  : " << query.lastError().text();
 
 // Programs : List of exercises
 	if(!query.exec("CREATE TABLE programs (program_id INTEGER PRIMARY KEY"
@@ -69,28 +70,30 @@ void DatabaseModel::migrate(){
 				", description TEXT)")) qCritical() << "Cannot create programs : " << query.lastError().text();
 
 // Program Exercise = Exercise + program_id + exercise_order
-	if(!query.exec("CREATE TABLE prgm_exercises (prgm_exercise_id INTEGER PRIMARY KEY"
+	if(!query.exec("CREATE TABLE program_exercise_units (program_exercise_unit_id INTEGER PRIMARY KEY"
 			", description TEXT"
-			", type INTEGER"
-			", rest_time INTEGER"
-			", work_time INTEGER"
-			", data BLOB"
 			", exercise_order INTEGER"
 			", program_id INTEGER NOT NULL"
 			", exercise_id INTEGER"
+			", use_distance INTEGER"
+			", use_speed INTEGER"
+			", use_weight INTEGER"
+			", use_repetitions INTEGER"
 			", FOREIGN KEY (program_id) REFERENCES programs (program_id) ON UPDATE CASCADE ON DELETE CASCADE"
 			", FOREIGN KEY (exercise_id) REFERENCES exercises (exercise_id) ON UPDATE CASCADE ON DELETE SET NULL"
 			")")) qCritical() << "Cannot create program exercises table : " << query.lastError().text();
 
 // // Program Serie = Serie
-	if(!query.exec("CREATE TABLE prgm_exercise_series (prgm_serie_id INTEGER PRIMARY KEY"
-			", prgm_exercise_id INTEGER NOT NULL"
-			", type INTEGER"
+	if(!query.exec("CREATE TABLE program_exercise_series (program_serie_id INTEGER PRIMARY KEY"
+			", program_exercise_unit_id INTEGER NOT NULL"
+			", serie_order INTEGER"
 			", rest_time INTEGER"
 			", work_time INTEGER"
-			", data BLOB"
-			", serie_order INTEGER"
-			", FOREIGN KEY (prgm_exercise_id) REFERENCES prgm_exercises (prgm_exercise_id) ON UPDATE CASCADE ON DELETE CASCADE"
+			", distance INTEGER"
+			", speed REAL"
+			", weight REAL"
+			", repetitions INTEGER"
+			", FOREIGN KEY (program_exercise_unit_id) REFERENCES program_exercise_units (program_exercise_unit_id) ON UPDATE CASCADE ON DELETE CASCADE"
 
 			")")) qCritical() << "Cannot create exercise series table : " << query.lastError().text();
 
@@ -102,28 +105,30 @@ void DatabaseModel::migrate(){
 				", start_date_time INTERGER)")) qCritical() << "Cannot create trainings: " << query.lastError().text();
 
 // Training Exercise = Exercise + training_id + exercise_order
-if(!query.exec("CREATE TABLE tr_exercises (tr_exercise_id INTEGER PRIMARY KEY"
+if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id INTEGER PRIMARY KEY"
 			", description TEXT"
-			", type INTEGER"
-			", rest_time INTEGER"
-			", work_time INTEGER"
-			", data BLOB"
 			", exercise_order INTEGER"
 			", training_id INTEGER NOT NULL"
 			", exercise_id INTEGER"
+			", use_distance INTEGER"
+			", use_speed INTEGER"
+			", use_weight INTEGER"
+			", use_repetitions INTEGER"
 			", FOREIGN KEY (training_id) REFERENCES trainings (training_id) ON UPDATE CASCADE ON DELETE CASCADE"
 			", FOREIGN KEY (exercise_id) REFERENCES exercises (exercise_id) ON UPDATE CASCADE ON DELETE SET NULL"
 			")")) qCritical() << "Cannot create training exercises table : " << query.lastError().text();
 
 // Training Serie = Serie
-	if(!query.exec("CREATE TABLE tr_exercise_series (tr_serie_id INTEGER PRIMARY KEY"
-			", tr_exercise_id INTEGER NOT NULL"
-			", type INTEGER"
+	if(!query.exec("CREATE TABLE training_exercise_series (training_serie_id INTEGER PRIMARY KEY"
+			", training_exercise_unit_id INTEGER NOT NULL"
+			", serie_order INTEGER"
 			", rest_time INTEGER"
 			", work_time INTEGER"
-			", data BLOB"
-			", serie_order INTEGER"
-			", FOREIGN KEY (tr_exercise_id) REFERENCES tr_exercises (tr_exercise_id) ON UPDATE CASCADE ON DELETE CASCADE"
+			", distance INTEGER"
+			", speed REAL"
+			", weight INTEGER"
+			", repetitions INTEGER"
+			", FOREIGN KEY (training_exercise_unit_id) REFERENCES training_exercise_units (training_exercise_unit_id) ON UPDATE CASCADE ON DELETE CASCADE"
 
 			")")) qCritical() << "Cannot create training series table : " << query.lastError().text();
 
@@ -150,12 +155,12 @@ if(!query.exec("CREATE TABLE tr_exercises (tr_exercise_id INTEGER PRIMARY KEY"
 	/*
 		if( version < 2){
 			QList<QPair<qint64, QStringList>> data;
-			if(!query.exec("SELECT data, prgm_exercise_id FROM prgm_exercises")) {
-				qCritical() << "Cannot update database on prgm_exercise_id : "<< query.lastError().text();
+			if(!query.exec("SELECT data, program_exercise_id FROM program_exercises")) {
+				qCritical() << "Cannot update database on program_exercise_id : "<< query.lastError().text();
 				return;
 			}
 			auto dataField = query.record().indexOf("data");
-			auto idField = query.record().indexOf("prgm_exercise_id");
+			auto idField = query.record().indexOf("program_exercise_id");
 			while(query.next()){
 				data << QPair<qint64, QStringList>(query.value(dataField).toInt(),query.value(dataField).toString().split(","));
 			}
@@ -174,6 +179,7 @@ if(!query.exec("CREATE TABLE tr_exercises (tr_exercise_id INTEGER PRIMARY KEY"
 }
 
 void DatabaseModel::insertDefaultData() {
+/*
 	QVector<ExerciseModel *> exercises;
 	QVector<ProgramExerciseModel *> programExercises;
 	QVector<ProgramSerieModel *> series;
@@ -257,6 +263,7 @@ void DatabaseModel::insertDefaultData() {
 	for(auto i : series) i->deleteLater();
 	for(auto i : programExercises) i->deleteLater();
 	for(auto i : programs) i->deleteLater();
+	*/
 }
 
 

@@ -37,6 +37,13 @@
 	src/database/exercise/ExerciseModel.cpp
 	src/database/exercise/ExerciseListModel.cpp
 	src/database/exercise/ExerciseProxyModel.cpp
+	src/database/exerciseUnit/ExerciseUnitModel.cpp
+	src/database/exerciseUnit/ExerciseUnitListModel.cpp
+	src/database/exerciseUnit/ExerciseUnitProxyModel.cpp
+	src/database/exerciseSerie/ExerciseSerieModel.cpp
+	src/database/exerciseSerie/ExerciseSerieListModel.cpp
+	src/database/exerciseSerie/ExerciseSerieProxyModel.cpp
+
 	src/database/program/serie/ProgramSerieModel.cpp
 	src/database/program/exercise/ProgramExerciseModel.cpp
 

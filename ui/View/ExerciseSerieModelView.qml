@@ -29,7 +29,7 @@ import '../Tool/Utils.js' as Utils
 Item{
 	id: mainItem
 	property var serieModel
-	property var exerciseModel
+	property var exerciseUnitModel
 	property bool isLive: !!serieModel?.targetSerieModel
 	property bool resting: !!serieModel?.isResting
 	property bool isReadOnly: isLive
@@ -38,16 +38,20 @@ Item{
 	property bool trainingResultEdition: false
 	property bool doSave: true
 	property int leftMargin: 0
+	property bool keepEditView: false
 
 	implicitHeight: contentLayout.implicitHeight
 	Rectangle{
 		anchors.fill: parent
 		visible: mainItem.isLive && ( serieModel?.isRunning || serieModel?.isDone)
-		color: serieModel?.isResting || serieModel?.resultSerieModel?.isSaved
-					? Material.color(Material.Green, Material.Shade100)
-					: serieModel?.isDone
-						? Material.color(Material.Blue, Material.Shade100)
-						: Material.color(Material.accent, Material.Shade100)
+		color: serieModel?.isResting
+					? Material.color(Material.Yellow, Material.Shade100)
+					: serieModel?.resultSerieModel?.isSaved
+						? Material.color(Material.Green, Material.Shade100)
+						: serieModel?.isDone
+							? Material.color(Material.Blue, Material.Shade100)
+							: Material.color(Material.Amber, Material.Shade100)
+
 	}
 	RowLayout{
 		id: contentLayout
@@ -55,58 +59,103 @@ Item{
 		anchors.leftMargin: mainItem.leftMargin
 		property int _visibleChildren : visibleChildren.length - 1
 		spacing: 0
-		implicitHeight: Math.max( (saveButton.visible ? saveButton.implicitHeight: 0), fieldsList.implicitHeight, restTextField.implicitHeight, workTextField.implicitHeight)
-		property int itemCount: fieldsList.count + (restTextField.visible ?  1 :0) + (workTextField.visible ? 1 :0)
-		ListView{
-			id: fieldsList
-			Layout.fillHeight: true
-			Layout.preferredWidth: contentLayout.width * ( contentLayout.itemCount - (restTextField.visible ?  1 :0)
-																- (workTextField.visible ? 1 :0)) / contentLayout.itemCount
-										//- (restTextField.visible ?  restTextField.implicitWidth :0)
-										//- (workTextField.visible ? workTextField.implicitWidth :0)
-										- (saveButton.visible ? saveButton.implicitWidth : 0)
-			spacing: 0
-			clip: true
-			orientation: ListView.Horizontal
-			model: mainItem.serieModel?.isDone
-						? mainItem.serieModel?.resultSerieModel?.data
-						: mainItem.serieModel?.targetSerieModel?.data || mainItem.serieModel?.data
-			function updateImplicit(){
-				var h = 0
-				for(var i in contentItem.children){
-					if( h < contentItem.children[i].implicitHeight)
-						h = contentItem.children[i].implicitHeight
-				}
-				fieldsList.implicitHeight = h
+		TextField{
+			height: implicitHeight
+			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
+			visible: mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useRepetitions : exerciseUnitModel.useRepetitions
+			keepEditView: mainItem.keepEditView
+			showTitle: mainItem.showTitle
+			readOnly: mainItem.isReadOnly
+			inputMethodHints: Qt.ImhDigitsOnly
+			title: mainItem.showTitle ? 'Reps' : ''
+			text: mainItem.isLive
+						? mainItem.serieModel.isDone
+							? mainItem.serieModel.resultSerieModel.repetitions
+							: mainItem.serieModel.targetSerieModel.repetitions
+						: mainItem.serieModel.repetitions <0 ? '' : mainItem.serieModel.repetitions
+			//text: mainItem.isLive
+			onEditingFinished: {
+				mainItem.serieModel.repetitions = newValue
 			}
-			delegate: TextField{
-				width: fieldsList.width / fieldsList.count
-				height: implicitHeight
-				showTitle: mainItem.showTitle
-				readOnly: mainItem.isReadOnly
-				inputMethodHints: Qt.ImhDigitsOnly
-				title: mainItem.showTitle ? modelData.name : ''
-				//textColor: !mainItem.isLive || serieModel.repetitions <= serieModel.targetWork.repetitions ? Material.foreground : Material.accent
-				text: modelData.value
-				//text: mainItem.isLive
-					//			? serieModel.targetWork.repetitions + (serieModel.isDone ? ' / ' + serieModel.repetitions : '')
-						//		: serieModel.repetitions
-				onEditingFinished: {
-					modelData.value = newValue
-				}
-				onImplicitHeightChanged: fieldsList.updateImplicit()
-			}
+			//onImplicitHeightChanged: fieldsList.updateImplicit()
 		}
 		TextField{
+			height: implicitHeight
+			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
+			visible: mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useWeight :exerciseUnitModel.useWeight
+			keepEditView: mainItem.keepEditView
+			showTitle: mainItem.showTitle
+			readOnly: mainItem.isReadOnly
+			inputMethodHints: Qt.ImhDigitsOnly
+			title: mainItem.showTitle ? 'Weight' : ''
+			text: mainItem.isLive
+						? mainItem.serieModel.isDone
+							? mainItem.serieModel.resultSerieModel.weight
+							: mainItem.serieModel.targetSerieModel.weight
+						: mainItem.serieModel.weight <0 ? '' : mainItem.serieModel.weight
+			placeholderText: 'kg'
+			//text: mainItem.isLive
+			onEditingFinished: {
+				mainItem.serieModel.weight = newValue
+			}
+			//onImplicitHeightChanged: fieldsList.updateImplicit()
+		}
+		TextField{
+			height: implicitHeight
+			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
+			visible: mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useDistance :exerciseUnitModel.useDistance
+			keepEditView: mainItem.keepEditView
+			showTitle: mainItem.showTitle
+			readOnly: mainItem.isReadOnly
+			inputMethodHints: Qt.ImhDigitsOnly
+			title: mainItem.showTitle ? 'Distance' : ''
+			text: mainItem.isLive
+						? mainItem.serieModel.isDone
+							? mainItem.serieModel.resultSerieModel.distance
+							: mainItem.serieModel.targetSerieModel.distance
+						: mainItem.serieModel.distance <0 ? '' : mainItem.serieModel.distance
+			placeholderText: 'm'
+			//text: mainItem.isLive
+			onEditingFinished: {
+				mainItem.serieModel.distance = newValue
+			}
+			//onImplicitHeightChanged: fieldsList.updateImplicit()
+		}
+
+		TextField{
+			height: implicitHeight
+			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
+			visible: mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useSpeed :exerciseUnitModel.useSpeed
+			keepEditView: mainItem.keepEditView
+			showTitle: mainItem.showTitle
+			readOnly: mainItem.isReadOnly
+			inputMethodHints: Qt.ImhDigitsOnly
+			title: mainItem.showTitle ? 'Speed' : ''
+			text: mainItem.isLive
+						? mainItem.serieModel.isDone
+							? mainItem.serieModel.resultSerieModel.speed
+							: mainItem.serieModel.targetSerieModel.speed
+						: mainItem.serieModel.speed <0 ? '' : mainItem.serieModel.speed
+			placeholderText: 'km/h'
+			//text: mainItem.isLive
+			onEditingFinished: {
+				mainItem.serieModel.speed = newValue
+			}
+			//onImplicitHeightChanged: fieldsList.updateImplicit()
+		}
+
+		TextField{
 			id: restTextField
+			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 			Layout.fillHeight: true
-			Layout.preferredWidth: Math.max(implicitWidth,fieldsList.width / fieldsList.count)
 			Layout.rightMargin: 10
 			visible: !mainItem.trainingResultEdition
+			keepEditView: mainItem.keepEditView
 			showTitle: mainItem.showTitle || mainItem.trainingResultEdition
 			readOnly:  mainItem.isReadOnly || mainItem.isLive
 			inputMethodHints: Qt.ImhDigitsOnly
 			title: mainItem.showTitle ? 'RestTime(s)' : ''
+			placeholderText: 's'
 			textColor: !mainItem.isLive || !serieModel?.isDone || (serieModel.resultSerieModel.restTime <= serieModel.targetSerieModel.restTime) ? Material.foreground : Material.accent
 			text: mainItem.isLive
 							? mainItem.serieModel.targetSerieModel.restTime + (serieModel?.isDone ? ' / ' + serieModel.resultSerieModel.restTime : '')
@@ -118,7 +167,8 @@ Item{
 			id: workTextField
 			Layout.fillHeight: true
 			Layout.rightMargin: 10
-			Layout.preferredWidth: Math.max(implicitWidth,fieldsList.width / fieldsList.count)
+			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
+
 			visible: serieModel?.isSaved || serieModel?.isDone || false//&& serieModel.isTraining
 			showTitle: mainItem.trainingResultEdition
 			readOnly:  true
@@ -136,7 +186,8 @@ Item{
 		}
 		Button{
 			id: saveButton
-			Layout.preferredWidth: implicitWidth
+			//Layout.preferredWidth: implicitWidth
+			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 			visible: !mainItem.isReadOnly && mainItem.showSaveButton && serieModel?.isEdited || false
 			// (repsTextField.isEdited || weightTextField.isEdited || restTextField.isEdited)
 			text: 'Save'

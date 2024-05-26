@@ -37,7 +37,7 @@ Item {
 			exercisesList.positionViewAtIndex(index,ListView.Beginning)
 		}
 		property bool isResting: currentWork?.isResting || false
-		onIsRestingChanged: if(isResting) restingPopup.pause(currentWork)
+		onIsRestingChanged: if(isResting) restingPopup.pause(currentExercise, currentWork)
 
 		onFinished: {
 			finishPopup.open()
@@ -168,11 +168,12 @@ Item {
 		contentHeight: 200
 		property int restTime
 		property var target
+		property var exercise
 
 
-		function pause(target){
+		function pause(exercise, target){
 			restingPopup.target = target
-			console.log(target)
+			restingPopup.exercise = exercise
 			restingPopup.restTime = target.targetExerciseModel ? target.targetExerciseModel.restTime : target.targetSerieModel.restTime
 			open()
 		}
@@ -199,11 +200,11 @@ Item {
 					id: serieComponent
 					ExerciseSerieModelView{
 						serieModel: restingPopup.target.resultSerieModel
+						exerciseUnitModel: restingPopup.exercise
 						trainingResultEdition: true
 						showSaveButton: false
 						isReadOnly: false
 						isLive: false
-						Component.onCompleted: console.log("Serie:"+exerciseModel)
 					}
 				}
 				Component {
@@ -212,7 +213,6 @@ Item {
 						exerciseModel: restingPopup.target.resultExerciseModel
 						showSaveButton: false
 						isReadOnly: false
-						Component.onCompleted: console.log("Ex:"+exerciseModel)
 					}
 				}
 				sourceComponent: !restingPopup.target ? null

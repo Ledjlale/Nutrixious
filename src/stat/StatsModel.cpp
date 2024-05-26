@@ -57,14 +57,14 @@ QVariantList StatsModel::computeWeights() const {
 
 	auto id = mExerciseModel->getExerciseId();
 	//auto exercises = TrainingExerciseModel::loadAll(id);
-
+/*
 // Get exercises
-	if(!query.exec("SELECT start_date_time, tr_exercises.data, tr_exercises.type FROM trainings, tr_exercises WHERE trainings.training_id = tr_exercises.training_id AND tr_exercises.exercise_id="+QString::number(id))){
+	if(!query.exec("SELECT start_date_time, training_exercise_units.data, training_exercise_units.type FROM trainings, training_exercise_units WHERE trainings.training_id = training_exercise_units.training_id AND training_exercise_units.exercise_id="+QString::number(id))){
 		qCritical() << "Bad stats for exercises! "  << query.lastError().text();
 	}else{
 		auto tField = query.record().indexOf("start_date_time");
-		auto wField = query.record().indexOf("tr_exercises.data");
-		auto typeField = query.record().indexOf("tr_exercises.type");
+		auto wField = query.record().indexOf("training_exercise_units.data");
+		auto typeField = query.record().indexOf("training_exercise_units.type");
 		while(query.next()){
 			switch(query.value(typeField).toInt()){
 				case 1 : {
@@ -81,7 +81,7 @@ QVariantList StatsModel::computeWeights() const {
 	}
 
 // Get series
-	if(!query.exec("SELECT start_date_time, tr_exercises.data, tr_exercise_series.data, tr_exercises.type, tr_exercise_series.type FROM trainings, tr_exercises,tr_exercise_series WHERE trainings.training_id = tr_exercises.training_id AND tr_exercise_series.tr_exercise_id=tr_exercises.tr_exercise_id AND tr_exercises.exercise_id="+QString::number(id))){
+	if(!query.exec("SELECT start_date_time, training_exercise_units.data, training_exercise_series.data, training_exercise_series.type FROM trainings, tr_exercises,tr_exercise_series WHERE trainings.training_id = tr_exercises.training_id AND tr_exercise_series.tr_exercise_id=tr_exercises.tr_exercise_id AND tr_exercises.exercise_id="+QString::number(id))){
 		qCritical() << "Bad stats for series! "  << query.lastError().text();
 	}else{
 		auto tField = query.record().indexOf("start_date_time");
@@ -97,7 +97,7 @@ QVariantList StatsModel::computeWeights() const {
 			}
 		}
 	}
-
+*/
 /*
 	if(!query.exec("SELECT start_date_time, tr_exercise_series.data FROM trainings, tr_exercises, tr_exercise_series WHERE trainings.training_id = tr_exercises.training_id AND exercise_id="+QString::number(id) +" AND tr_exercise_series.tr_exercise_id = tr_exercises.tr_exercise_id"  )){
 			qCritical() << "Bad stats! "  << query.lastError().text();

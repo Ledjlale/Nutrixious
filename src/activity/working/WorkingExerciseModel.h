@@ -76,7 +76,6 @@ public:
 
 	virtual void fillRandomValues(); // Debug
 
-
 signals:
 	void targetExerciseModelChanged();
 	void resultExerciseModelChanged();

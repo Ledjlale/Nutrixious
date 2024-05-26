@@ -18,33 +18,28 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DATABASE_TRAINING_EXERCISE_MODEL_H
-#define DATABASE_TRAINING_EXERCISE_MODEL_H
+#include "ExerciseSerieProxyModel.h"
+#include "ExerciseSerieListModel.h"
 
-#include <QObject>
-#include <QVector>
-#include <QSqlQuery>
+ExerciseSerieProxyModel::ExerciseSerieProxyModel(QObject *parent)
+	: SortFilterProxyModel{parent}
+{
+}
 
-#include "../../program/exercise/ProgramExerciseModel.h"
-#include "../serie/TrainingSerieModel.h"
-
-class TrainingExerciseModel : public ProgramExerciseModel{
-Q_OBJECT
-
-public:
-	TrainingExerciseModel();
-	TrainingExerciseModel(QObject *parent);
-	TrainingExerciseModel(const TrainingExerciseModel * model, QObject *parent);
-	TrainingExerciseModel(const ProgramExerciseModel * model, QObject *parent);
-
-	virtual TrainingExerciseModel * clone(QObject *parent)const;
-
-	Q_INVOKABLE void addSerie();
-	QList<TrainingSerieModel*> getSeries() const;
-
-	static TrainingExerciseModel *build(QSqlQuery &query, QObject * parent);
-
-};
+void ExerciseSerieProxyModel::update(){
+	if(sourceModel()) sourceModel()->deleteLater();
+	setSourceModel(new ExerciseSerieListModel(this));
+}
 
 
-#endif
+QVariantList ExerciseSerieProxyModel::getExercises() const {
+	if(sourceModel()) return dynamic_cast<ExerciseSerieListModel*>(sourceModel())->getExercises();
+	else return QVariantList();
+}
+
+void ExerciseSerieProxyModel::setExercises(QVariantList exercises){
+	if(sourceModel()) sourceModel()->deleteLater();
+	setSourceModel(new ExerciseSerieListModel(exercises, this));
+}
+
+

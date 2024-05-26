@@ -27,17 +27,12 @@
 #include <QSqlQuery>
 #include <QDateTime>
 
-#include "src/tool/QmlModel.h"
 #include "exercise/TrainingExerciseModel.h"
 #include "../program/ProgramModel.h"
 
-class TrainingModel : public QmlModel{
+class TrainingModel : public ProgramModel{
 Q_OBJECT
-// DB
-	Q_PROPERTY(QString name MEMBER mName NOTIFY nameChanged)
-	Q_PROPERTY(QString description MEMBER mDescription NOTIFY descriptionChanged)
 	Q_PROPERTY(QString startDateTimeStr READ getStartDateTimeStr WRITE setStartDateTimeStr NOTIFY startDateTimeChanged)
-	Q_PROPERTY(QVariantList exercises READ getVariantExercises NOTIFY exercisesChanged)
 
 public:
 	TrainingModel();	// QML
@@ -45,56 +40,34 @@ public:
 	TrainingModel(ProgramModel * program, QObject *parent);
 	TrainingModel(TrainingModel * program, QObject *parent);
 
-
-	Q_INVOKABLE qint64 getTrainingId()const;
-	virtual void setTrainingId(qint64 id);
-
-	QString getName() const;
-	void setName(QString name);
-
-	QString getDescription() const;
-	void setDescription(QString description);
-
 	QDateTime getStartDateTime() const;
 	void setStartDateTime(const time_t& data_ms);	// ms
 	void setStartDateTime(const QDateTime& data);
 	QString getStartDateTimeStr()const;
 	void setStartDateTimeStr(QString data);
-
+/*
 	QVariantList getVariantExercises() const;
 	const QList<TrainingExerciseModel*>& getExercises() const;
 	Q_INVOKABLE TrainingExerciseModel* addExercise(TrainingExerciseModel *model, bool keepId = false);
-	Q_INVOKABLE TrainingExerciseModel* buildExercise(ExerciseModel *model);
+
 	Q_INVOKABLE void removeExercise(TrainingExerciseModel *model);
 	void clearExercises();
+*/
 
-	Q_INVOKABLE void decrementExerciseOrder(TrainingExerciseModel *model);
-	Q_INVOKABLE void incrementExerciseOrder(TrainingExerciseModel *model);
+	Q_INVOKABLE TrainingExerciseModel* buildExercise(ExerciseModel *model);
 
-	Q_INVOKABLE void updateTrainingOrder();
+	virtual void addQueryValues(DatabaseQuery &query);
 
-
-
-	Q_INVOKABLE virtual bool save();
-	Q_INVOKABLE virtual void remove();
-	static QList<TrainingModel*> load(QObject * parent);
-	static TrainingModel *load(QSqlQuery &query, QObject * parent);
+	virtual void load(QSqlQuery &query);
+	static TrainingModel *build(QSqlQuery &query, QObject * parent);
+	static QList<TrainingModel*> buildAll(QObject * parent);
 
 signals:
-	void trainingIdChanged();
-	void nameChanged();
-	void descriptionChanged();
 	void startDateTimeChanged();
-	void exercisesChanged();
 	void removed(TrainingModel *model);
 
 protected:
-	qint64 mTrainingId = 0;
-	QString mName;
-	QString mDescription;
 	QDateTime mStartDateTime;
-	QList<TrainingExerciseModel*> mExercises;
-
 };
 
 #endif

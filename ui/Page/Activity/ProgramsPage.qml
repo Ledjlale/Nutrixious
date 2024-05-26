@@ -38,10 +38,8 @@ Item {
 						stackView.pop();
 				}
 			}
-			Text{
+			Item{
 				Layout.fillWidth: true
-				text: 'All default programs'
-				color: Material.foreground
 			}
 			Component{
 				id: programEditorComponent
@@ -211,6 +209,7 @@ Item {
 						exerciseModel: modelData
 						programModel: programDetailsList.program
 						isDeletable: true
+						showWorkTime: false
 					}
 				}
 

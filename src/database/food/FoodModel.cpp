@@ -132,7 +132,7 @@ void FoodModel::remove(){
 	emit removed(this);
 }
 
-FoodModel *FoodModel::load(QSqlQuery &query, QObject * parent) {
+FoodModel *FoodModel::build(QSqlQuery &query, QObject * parent) {
 	auto idField = query.record().indexOf("exercises.exercise_id");
 	auto nameField = query.record().indexOf("exercises.name");
 	auto descriptionField = query.record().indexOf("exercises.description");
@@ -147,13 +147,13 @@ FoodModel *FoodModel::load(QSqlQuery &query, QObject * parent) {
 	}else return nullptr;
 }
 
-QList<FoodModel*> FoodModel::loadAll(QObject * parent){
+QList<FoodModel*> FoodModel::buildAll(QObject * parent){
 	QList<FoodModel*> models;
 	QSqlQuery query;
 	if(!query.exec( "SELECT * FROM exercises ORDER BY exercise_id DESC")) qCritical() << "Cannot select all exercises  : "  << query.lastError().text();
 
 	while (query.next()) {
-		auto model = load(query, parent);
+		auto model = build(query, parent);
 		models << model;
 	}
 
