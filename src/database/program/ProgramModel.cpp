@@ -212,13 +212,13 @@ bool ProgramModel::save(){
 void ProgramModel::remove(){
 	if(mId > 0){
 		DatabaseQuery query;
-		query.begin(DatabaseQuery::Delete, mTablePrefix);
+		query.begin(DatabaseQuery::Delete, mTablePrefix+"s");
 		query.addConditionnal(mTablePrefix+"_id",mId);
 		if(!query.exec()){
 			if(!query.exec()) qCritical() << "Cannot delete "+mTablePrefix+"  : "  << query.mQuery.lastError().text();
 		}
 	}
-	emit removed(this);
+	emit removed();
 }
 
 ProgramModel *ProgramModel::build(QSqlQuery &query, QObject * parent) {
@@ -265,7 +265,10 @@ QList<ProgramModel*> ProgramModel::buildAll(QObject * parent){
 		 qCritical() << "Cannot select series: "  << query.lastError().text();
 	while (query.next()) {
 		auto model = ProgramExerciseModel::build(query, nullptr);
-		model->setExerciseModel(exercises[model->getExerciseId()]);
+		if(exercises.contains(model->getExerciseId()))
+			model->setExerciseModel(exercises[model->getExerciseId()]);
+		else
+			model->setExerciseModel(nullptr);
 		if( series.contains(model->getExerciseUnitId())){
 			for(auto it : series[model->getExerciseUnitId()])
 				model->ExerciseUnitModel::insertSerie(it->clone(model));

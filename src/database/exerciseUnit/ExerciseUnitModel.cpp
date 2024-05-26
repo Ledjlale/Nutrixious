@@ -51,14 +51,19 @@ ExerciseUnitModel::ExerciseUnitModel(QObject *parent)
 
 ExerciseUnitModel::ExerciseUnitModel(const ExerciseUnitModel * model, QObject *parent) : ExerciseUnitModel( parent){
 	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
-	setParentId(model->getParentId());
-	setExerciseUnitId(model->getExerciseUnitId());
-	mDescription = model->getDescription();
-	mUseDistance = model->getUseDistance();
-	mUseSpeed = model->getUseSpeed();
-	mUseWeight = model->getUseWeight();
-	mUseRepetitions = model->getUseRepetitions();
-	mOrder = model->getOrder();
+	mParentId = initiBackup(model, &model->mParentId, model->mParentId, &mParentId).toLongLong();
+	mExerciseUnitId = initiBackup(model, &model->mExerciseUnitId, model->mExerciseUnitId, &mExerciseUnitId).toLongLong();
+
+	mDescription = initiBackup(model, &model->mDescription, model->mDescription, &mDescription).toString();
+
+	mUseDistance = initiBackup(model, &model->mUseDistance, model->mUseDistance, &mUseDistance).toBool();
+	mUseSpeed = initiBackup(model, &model->mUseSpeed, model->mUseSpeed, &mUseSpeed).toBool();
+	mUseWeight = initiBackup(model, &model->mUseWeight, model->mUseWeight, &mUseWeight).toBool();
+	mUseRepetitions = initiBackup(model, &model->mUseRepetitions, model->mUseRepetitions, &mUseRepetitions).toBool();
+
+	mOrder = initiBackup(model, &model->mOrder, model->mOrder, &mOrder).toInt();
+	mExercise.first = initiBackup(model, &model->mExercise.first, model->mExercise.first, &mExercise.first).toLongLong();
+
 	if( model->getExerciseModel())
 		setExerciseModel(model->getExerciseModel()->clone(this));
 	else
@@ -67,7 +72,7 @@ ExerciseUnitModel::ExerciseUnitModel(const ExerciseUnitModel * model, QObject *p
 		for(auto &i: mSeries) i->setExerciseUnitId(mExerciseUnitId);
 		updateIsSaved();
 	});
-	clearBackupValues();
+
 	updateIsSaved();
 }
 
@@ -101,6 +106,7 @@ qint64 ExerciseUnitModel::getExerciseId()const{
 
 void ExerciseUnitModel::setExerciseId(qint64 id) {
 	if(mExercise.first != id){
+		addBackup(&mExercise.first, mExercise.first, id);
 		mExercise.first = id;
 		emit exerciseIdChanged();
 	}

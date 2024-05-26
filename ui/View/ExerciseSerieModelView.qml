@@ -33,6 +33,7 @@ Item{
 	property bool isLive: !!serieModel?.targetSerieModel
 	property bool resting: !!serieModel?.isResting
 	property bool isReadOnly: isLive
+	property bool isDeletable: true
 	property bool showSaveButton: true
 	property bool showTitle: true
 	property bool trainingResultEdition: false
@@ -186,18 +187,22 @@ Item{
 		}
 		Button{
 			id: saveButton
-			//Layout.preferredWidth: implicitWidth
 			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 			visible: !mainItem.isReadOnly && mainItem.showSaveButton && serieModel?.isEdited || false
-			// (repsTextField.isEdited || weightTextField.isEdited || restTextField.isEdited)
 			text: 'Save'
 			onClicked: {
-				//if(repsTextField.isEdited) serieModel.repetitions = repsTextField.newValue
-				//if(weightTextField.isEdited) serieModel.weight = weightTextField.newValue
-				//if(restTextField.isEdited) serieModel.restTime = restTextField.newValue
 				if(!mainItem.trainingResultEdition && mainItem.doSave) {
 					serieModel.save()
 				}
+			}
+		}
+		Button{
+			id: deleteButton
+			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
+			visible: !mainItem.isReadOnly && mainItem.isDeletable && !!mainItem.exerciseUnitModel
+			text: 'D'
+			onClicked: {
+				mainItem.exerciseUnitModel.removeSerie(serieModel)
 			}
 		}
 /*

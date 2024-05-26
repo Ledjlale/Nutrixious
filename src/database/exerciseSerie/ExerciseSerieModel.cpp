@@ -39,16 +39,18 @@ ExerciseSerieModel::ExerciseSerieModel(QObject *parent)
 
 ExerciseSerieModel::ExerciseSerieModel(const ExerciseSerieModel * model, QObject *parent) : ExerciseSerieModel(parent){
 	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
-	setSerieId(model->getSerieId());
-	setExerciseUnitId(model->getExerciseUnitId());
-	setOrder(model->getOrder());
-	setRestTime(model->getRestTime());
-	setWorkTime(model->getWorkTime());
+	mSerieId = initiBackup(model, &model->mSerieId, model->mSerieId, &mSerieId).toLongLong();
+	mExerciseUnitId = initiBackup(model, &model->mExerciseUnitId, model->mExerciseUnitId, &mExerciseUnitId).toLongLong();
 
-	setDistance(model->getDistance());
-	setSpeed(model->getSpeed());
-	setWeight(model->getWeight());
-	setRepetitions(model->getRepetitions());
+	mOrder = initiBackup(model, &model->mOrder, model->mOrder, &mOrder).toInt();
+	mRestTime = initiBackup(model, &model->mRestTime, model->mRestTime, &mRestTime).toInt();
+	mWorkTime = initiBackup(model, &model->mWorkTime, model->mWorkTime, &mWorkTime).toInt();
+	mDistance = initiBackup(model, &model->mDistance, model->mDistance, &mDistance).toInt();
+	mRepetitions = initiBackup(model, &model->mRepetitions, model->mRepetitions, &mRepetitions).toInt();
+
+	mWeight = initiBackup(model, &model->mWeight, model->mWeight, &mWeight).toDouble();
+	mSpeed = initiBackup(model, &model->mSpeed, model->mSpeed, &mSpeed).toDouble();
+
 }
 
 ExerciseSerieModel::~ExerciseSerieModel(){

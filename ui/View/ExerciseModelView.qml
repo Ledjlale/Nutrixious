@@ -104,10 +104,24 @@ Item{
 								Layout.preferredWidth: mainItem.width / rowlayout.visibleChildren.length
 								showTitle: false
 								readOnly: true
-								text: exerciseModel.exerciseModel.name
-								//onEditingFinished: {
-								//		exerciseModel.exerciseModel.name = newValue
-								//}
+								text: !!exerciseModel.exerciseModel ? exerciseModel.exerciseModel.name : ''
+								ComboBox{
+									id: exerciseChoice
+									Layout.fillWidth: true
+									visible: !exerciseModel.exerciseModel
+									textRole: "displayText"
+									valueRole: "$modelData"
+									displayText: currentIndex === -1 ? "Link" : currentText
+									model: ExerciseProxyModel{
+										id: exercises
+									}
+									onActivated:{
+										exerciseModel.exerciseModel = currentValue
+										exerciseModel.save()
+									}
+									onVisibleChanged: if(visible) exercises.update()
+								}
+
 							}/*
 							TextField{
 								id: descriptionTextField

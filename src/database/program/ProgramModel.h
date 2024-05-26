@@ -80,7 +80,7 @@ signals:
 	void nameChanged();
 	void descriptionChanged();
 	void exercisesChanged();
-	void removed(ProgramModel *model);
+	virtual void removed();
 
 protected:
 	qint64 mId = 0;

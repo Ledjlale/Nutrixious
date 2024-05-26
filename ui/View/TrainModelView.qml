@@ -66,5 +66,11 @@ Item{
 				trainModel.save()
 			}
 		}
+		Button{
+			text: 'D'
+			onClicked: {
+				trainModel.remove()
+			}
+		}
 	}
 }

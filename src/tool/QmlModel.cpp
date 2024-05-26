@@ -54,6 +54,12 @@ void QmlModel::setIsEdited(bool data) {
 	}
 }
 
+QVariant QmlModel::initiBackup(const QmlModel *fromModel, const void *from, const QVariant fromValue, void *to){
+	if(fromModel->mBackupValues.contains(from))
+		addBackup(&to, fromValue, fromValue);
+	return fromValue;
+}
+
 void QmlModel::addBackup(void *key, QVariant keyValue, QVariant newValue){
 	if(mBackupValues.contains(key)) {
 		if(mBackupValues[key]  == newValue) {
@@ -65,7 +71,6 @@ void QmlModel::addBackup(void *key, QVariant keyValue, QVariant newValue){
 		setIsEdited(true);
 	}
 }
-
 
 void QmlModel::clearBackupValues(){
 	mBackupValues.clear();

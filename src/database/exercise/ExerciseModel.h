@@ -31,8 +31,8 @@
 class ExerciseModel : public QmlModel{
 Q_OBJECT
 // DB
-	Q_PROPERTY(QString name MEMBER mName NOTIFY nameChanged)
-	Q_PROPERTY(double met MEMBER mMet NOTIFY metChanged)
+	Q_PROPERTY(QString name MEMBER mName WRITE setName NOTIFY nameChanged)
+	Q_PROPERTY(double met MEMBER mMet WRITE setMet NOTIFY metChanged)
 
 public:
 	ExerciseModel();	// QML

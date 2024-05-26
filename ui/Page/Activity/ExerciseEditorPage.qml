@@ -65,7 +65,7 @@ Item {
 					//Material.background: exerciseModel.invalidName ? Material.color(Material.Pink, Material.Shade50) : mainItem.Material.background
 					//Material.foreground: exerciseModel.invalidName ? Material.accent : mainItem.Material.foreground
 					onEditingFinished: {
-						exerciseModel.name = newValue
+						mainItem.exerciseModel.name = newValue
 						descrtiptionField.forceActiveFocus()
 					}
 				}
@@ -171,6 +171,7 @@ Item {
 				exerciseUnitModel: mainItem.programExerciseModel
 				width: serieList.width
 				isReadOnly: false
+				isDeletable: serieList.count > 1
 				showTitle: index == 0
 				doSave: false
 				showSaveButton: mainItem.showSaveButton

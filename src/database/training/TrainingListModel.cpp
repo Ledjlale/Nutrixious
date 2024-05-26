@@ -33,7 +33,7 @@ TrainingListModel::TrainingListModel(QObject *parent)
 	//mList << DistanceModel::load();
 	//mList << StepsModel::load();
 	for(auto p : mList)
-		connect(p, &TrainingModel::removed, this, &TrainingListModel::handleRemoved);
+		connect((ProgramModel*)p, &ProgramModel::removed, this, &TrainingListModel::handleRemoved);
 }
 
 QHash<int, QByteArray> TrainingListModel::roleNames () const {
@@ -60,7 +60,8 @@ QVariant TrainingListModel::data (const QModelIndex &index, int role) const {
 
 
 
-void TrainingListModel::handleRemoved(TrainingModel * model){
+void TrainingListModel::handleRemoved(){
+	auto model = dynamic_cast<TrainingModel*>(sender());
 	auto it = std::find(mList.begin(), mList.end(), model);
 	if( it != mList.end()){
 		int row = it - mList.begin();

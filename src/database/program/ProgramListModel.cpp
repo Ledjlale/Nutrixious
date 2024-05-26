@@ -60,7 +60,8 @@ QVariant ProgramListModel::data (const QModelIndex &index, int role) const {
 
 
 
-void ProgramListModel::handleRemoved(ProgramModel * model){
+void ProgramListModel::handleRemoved(){
+	auto model = dynamic_cast<ProgramModel*>(sender());
 	auto it = std::find(mList.begin(), mList.end(), model);
 	if( it != mList.end()){
 		int row = it - mList.begin();

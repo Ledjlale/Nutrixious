@@ -45,9 +45,10 @@ ExerciseModel::ExerciseModel(ExerciseModel * model, QObject *parent)
 	: QmlModel{parent}
 {
 	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
-	mName = model->getName();
-	mMet = model->getMet();
-	mExerciseId = model->getExerciseId();
+
+	mName = initiBackup(model, &model->mName, model->mName, &mName).toString();
+	mMet = initiBackup(model, &model->mMet, model->mMet, &mMet).toDouble();
+	mExerciseId = initiBackup(model, &model->mExerciseId, model->mExerciseId, &mExerciseId).toLongLong();
 }
 
 ExerciseModel* ExerciseModel::clone(QObject*parent) {

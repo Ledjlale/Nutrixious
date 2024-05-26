@@ -52,6 +52,7 @@ Item{
 			serieModel: modelData
 			width: setList.width
 			isReadOnly: mainItem.isReadOnly
+			isDeletable: setList.count > 1
 			showTitle: index == 0
 		}
 	}

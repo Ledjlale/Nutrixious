@@ -186,7 +186,10 @@ QList<TrainingModel*> TrainingModel::buildAll(QObject * parent){
 		 qCritical() << "Cannot select series: "  << query.lastError().text();
 	while (query.next()) {
 		auto model = TrainingExerciseModel::build(query, nullptr);
-		model->setExerciseModel(exercises[model->getExerciseId()]->clone(model));
+		if(exercises.contains(model->getExerciseId()))
+			model->setExerciseModel(exercises[model->getExerciseId()]->clone(model));
+		else
+			model->setExerciseModel(nullptr);
 		if( series.contains(model->getExerciseUnitId())){
 			for(auto it : series[model->getExerciseUnitId()])
 				model->ExerciseUnitModel::insertSerie(it->clone(model));

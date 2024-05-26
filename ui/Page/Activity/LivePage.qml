@@ -205,6 +205,7 @@ Item {
 						showSaveButton: false
 						isReadOnly: false
 						isLive: false
+						isDeletable: false
 					}
 				}
 				Component {

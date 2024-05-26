@@ -41,6 +41,7 @@ public:
 
 	bool getIsEdited() const;
 	void setIsEdited(bool data);
+	QVariant initiBackup(const QmlModel *fromModel, const void *from, const QVariant fromValue, void *to);
 	void addBackup(void *key, QVariant keyValue, QVariant newValue);
 	void clearBackupValues();
 
@@ -49,7 +50,7 @@ signals:
 	void isEditedChanged();
 
 protected:
-	QMap<void*, QVariant> mBackupValues;
+	QMap<const void*, QVariant> mBackupValues;
 
 	bool mIsSaved = false;
 	bool mIsEdited = false;
