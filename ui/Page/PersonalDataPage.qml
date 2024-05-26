@@ -74,10 +74,12 @@ Item {
 			}
 			delegate:RowLayout{
 				width: personalDataList.width
-				Text{
-					Layout.rightMargin: 20
-					color: Material.foreground
+				TextField{
+					Layout.fillWidth: true
+					inputMethodHints: Qt.ImhDigitsOnly
 					text: $modelData.dateTimeStr
+					readOnly: false
+					onEditingFinished: $modelData.dateTimeStr = newValue
 				}
 				TextField{
 					title: 'Weight'

@@ -33,7 +33,7 @@ class PersonalDataModel : public QmlModel{
 Q_OBJECT
 // DB
 	Q_PROPERTY(double weight READ getWeight WRITE setWeight NOTIFY weightChanged)
-	Q_PROPERTY(QString dateTimeStr READ getDateTimeStr NOTIFY dateTimeChanged)
+	Q_PROPERTY(QString dateTimeStr READ getDateTimeStr WRITE setDateTimeStr NOTIFY dateTimeChanged)
 	Q_PROPERTY(int sex READ getSex WRITE setSex NOTIFY sexChanged)
 	Q_PROPERTY(int height READ getHeight WRITE setHeight NOTIFY heightChanged)
 
@@ -50,6 +50,7 @@ public:
 	void setDateTime(const time_t& data_ms);	//Description ms
 	void setDateTime(const QDateTime& data);
 	QString getDateTimeStr()const;
+	void setDateTimeStr(QString data);
 
 	double getWeight()const;
 	void setWeight(double data);

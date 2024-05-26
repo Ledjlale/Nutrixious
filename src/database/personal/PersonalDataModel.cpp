@@ -87,10 +87,21 @@ void PersonalDataModel::setDateTime(const QDateTime& data){
 
 QString PersonalDataModel::getDateTimeStr()const{
 	if(mDateTime.isValid())
-		return QLocale().toString(mDateTime, QLocale().dateTimeFormat(QLocale::FormatType::ShortFormat));
+		return QLocale().toString(mDateTime, "yyyy/MM/dd hh:mm:ss");
 	else
 		return "";
 }
+
+
+void PersonalDataModel::setDateTimeStr(QString data) {
+	QDateTime dateTime = QDateTime::fromString(data, "yyyy/MM/dd hh:mm:ss");
+	if( dateTime.isValid() && dateTime != mDateTime){
+		addBackup(&mDateTime, mDateTime, dateTime);
+		mDateTime = dateTime;
+		dateTimeChanged();
+	}
+}
+
 
 double PersonalDataModel::getWeight() const{
 	return mWeight;
@@ -186,13 +197,15 @@ PersonalDataModel *PersonalDataModel::load(QSqlQuery &query, QObject * parent) {
 	auto weightField = query.record().indexOf("personal_data.weight");
 	auto heightField = query.record().indexOf("personal_data.height");
 	auto sexField = query.record().indexOf("personal_data.sex");
-	if( idField>= 0 && weightField >= 0 && heightField >= 0 && sexField>=0){
+	auto dateTimeField = query.record().indexOf("personal_data.date_time");
+	if( idField>= 0 && weightField >= 0 && heightField >= 0 && sexField>=0 && dateTimeField>=0){
 		PersonalDataModel * model = new PersonalDataModel(parent);
 	// TODO optimize
 		model->setPersonalDataId(query.value(idField).toInt());
 		model->setWeight(query.value(weightField).toDouble());
 		model->setHeight(query.value(heightField).toInt());
 		model->setSex(query.value(sexField).toInt());
+		model->setDateTime(query.value(dateTimeField).toULongLong());
 		model->clearBackupValues();
 		return model;
 	}else return nullptr;
