@@ -36,7 +36,6 @@ TrainingSerieModel::TrainingSerieModel(QObject *parent)
 	: ProgramSerieModel{parent}
 {
 	mTablePrefix = "training";
-	clearBackupValues();
 }
 
 TrainingSerieModel::TrainingSerieModel(const ProgramSerieModel * model, QObject *parent) : ProgramSerieModel(model, parent) {

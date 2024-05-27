@@ -32,6 +32,8 @@ Q_OBJECT
 // DB
 	Q_PROPERTY(int restTime READ getRestTime WRITE setRestTime NOTIFY restTimeChanged)
 	Q_PROPERTY(int workTime READ getWorkTime WRITE setWorkTime NOTIFY workTimeChanged)
+	Q_PROPERTY(QString restTimeStr READ getRestTimeStr WRITE setRestTimeStr NOTIFY restTimeChanged)
+	Q_PROPERTY(QString workTimeStr READ getWorkTimeStr WRITE setWorkTimeStr NOTIFY workTimeChanged)
 	Q_PROPERTY(int order READ getOrder WRITE setOrder NOTIFY orderChanged)
 
 	Q_PROPERTY(int distance READ getDistance WRITE setDistance NOTIFY distanceChanged)
@@ -58,6 +60,12 @@ public:
 
 	int  getWorkTime() const;
 	void setWorkTime(int workTime);
+
+	QString  getRestTimeStr() const;
+	void setRestTimeStr(QString data);
+
+	QString getWorkTimeStr() const;
+	void setWorkTimeStr(QString data);
 
 	int getOrder() const;
 	void setOrder(int data);

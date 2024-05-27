@@ -52,7 +52,6 @@
 	ui/View/ExerciseSerieModelView.qml
 	ui/View/ExerciseSerieModelListView.qml
 	ui/View/TrainModelView.qml
-	ui/View/TrainingExerciseModelView.qml
 	ui/View/ScannerView.qml
 
 	ui/Page/Activity/ExerciseEditorPage.qml

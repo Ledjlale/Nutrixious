@@ -54,6 +54,7 @@ TrainingModel::TrainingModel(ProgramModel * model, QObject *parent) : ProgramMod
 }
 TrainingModel::TrainingModel(TrainingModel *model, QObject *parent) : TrainingModel((ProgramModel*)model, parent) {
 	mStartDateTime = model->getStartDateTime();
+	mDescription = model->getDescription();
 }
 
 QDateTime TrainingModel::getStartDateTime() const{

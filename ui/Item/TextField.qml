@@ -33,6 +33,7 @@ Flipable {
 	property string placeholderText
 	property bool readOnly: false
 	property color textColor: Control.Material.foreground
+	property int elide: Text.ElideRight
 
 	signal editingFinished()
 
@@ -75,7 +76,7 @@ Flipable {
 						Layout.fillHeight: true
 						Layout.fillWidth: true
 						Layout.margins: 10
-						elide: Text.ElideRight
+						elide: mainItem.elide
 						color: mainItem.textColor
 						text: mainItem.text
 					}

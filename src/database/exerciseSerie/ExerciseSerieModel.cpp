@@ -50,7 +50,7 @@ ExerciseSerieModel::ExerciseSerieModel(const ExerciseSerieModel * model, QObject
 
 	mWeight = initiBackup(model, &model->mWeight, model->mWeight, &mWeight).toDouble();
 	mSpeed = initiBackup(model, &model->mSpeed, model->mSpeed, &mSpeed).toDouble();
-
+	updateIsSaved();
 }
 
 ExerciseSerieModel::~ExerciseSerieModel(){
@@ -119,6 +119,20 @@ void ExerciseSerieModel::setRestTime(int data){
 		mRestTime = data;
 		emit restTimeChanged();
 	}
+}
+
+QString ExerciseSerieModel::getRestTimeStr() const {
+	return QLocale().toString(QTime::fromMSecsSinceStartOfDay(mRestTime*1000), "hh:mm:ss");
+}
+void ExerciseSerieModel::setRestTimeStr(QString data){
+	setRestTime(QTime::fromString(data, "hh:mm:ss").msecsSinceStartOfDay() / 1000);
+}
+
+QString ExerciseSerieModel::getWorkTimeStr() const{
+	return QLocale().toString(QTime::fromMSecsSinceStartOfDay(mWorkTime*1000), "hh:mm:ss");
+}
+void ExerciseSerieModel::setWorkTimeStr(QString data){
+	setWorkTime(QTime::fromString(data, "hh:mm:ss").msecsSinceStartOfDay() / 1000);
 }
 
 //-------------------------------------------------------------------------------------------------------------------

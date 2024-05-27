@@ -154,14 +154,17 @@ Item{
 			keepEditView: mainItem.keepEditView
 			showTitle: mainItem.showTitle || mainItem.trainingResultEdition
 			readOnly:  mainItem.isReadOnly || mainItem.isLive
-			inputMethodHints: Qt.ImhDigitsOnly
-			title: mainItem.showTitle ? 'RestTime(s)' : ''
-			placeholderText: 's'
+			inputMethodHints: Qt.ImhTime
+			elide: Text.ElideLeft
+			title: mainItem.showTitle ? 'RestTime' : ''
+			placeholderText: 'hh:mm:ss'
 			textColor: !mainItem.isLive || !serieModel?.isDone || (serieModel.resultSerieModel.restTime <= serieModel.targetSerieModel.restTime) ? Material.foreground : Material.accent
 			text: mainItem.isLive
-							? mainItem.serieModel.targetSerieModel.restTime + (serieModel?.isDone ? ' / ' + serieModel.resultSerieModel.restTime : '')
-							: mainItem.serieModel.restTime
-			onEditingFinished: if(!mainItem.showSaveButton) serieModel.restTime = newValue
+							? mainItem.serieModel.targetSerieModel.restTimeStr + (serieModel?.isDone ? ' / ' + serieModel.resultSerieModel.restTimeStr : '')
+							: mainItem.serieModel.restTimeStr
+			onEditingFinished: {
+				mainItem.serieModel.restTimeStr = newValue
+			}
 
 		}
 		TextField{
@@ -170,19 +173,22 @@ Item{
 			Layout.rightMargin: 10
 			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 
-			visible: serieModel?.isSaved || serieModel?.isDone || false//&& serieModel.isTraining
-			showTitle: mainItem.trainingResultEdition
-			readOnly:  true
-			inputMethodHints: Qt.ImhDigitsOnly
-			title: mainItem.showTitle ? 'WorkTime(s)' : ''
+			visible: !!serieModel?.isSaved || !!serieModel?.isDone //&& serieModel.isTraining
+			showTitle: mainItem.showTitle || mainItem.trainingResultEdition
+			readOnly:  mainItem.isReadOnly
+			inputMethodHints: Qt.ImhTime
+			elide: Text.ElideLeft
+			title: mainItem.showTitle ? 'WorkTime' : ''
+			placeholderText: 'hh:mm:ss'
 			//textColor: !mainItem.isLive || serieModel.restTime <= serieModel.targetWork.restTime ? Material.foreground : Material.accent
 			text: visible
 					? mainItem.isLive
 						? serieModel?.isDone
-							? serieModel.resultSerieModel.workTime
-							: serieModel.targetSerieModel.workTime
-						: serieModel?.workTime || ''
+							? serieModel.resultSerieModel.workTimeStr
+							: serieModel.targetSerieModel.workTimeStr
+						: serieModel?.workTimeStr || ''
 					: ''
+			onEditingFinished: mainItem.serieModel.workTimeStr = newValue
 			//onEditingFinished: if(!mainItem.showSaveButton) serieModel.restTime = newValue
 		}
 		Button{
