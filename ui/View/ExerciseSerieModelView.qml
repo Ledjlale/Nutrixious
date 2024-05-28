@@ -38,6 +38,7 @@ Item{
 	property bool showTitle: true
 	property bool showWorkTime: true
 	property bool showCalories: true
+	property bool showOrderChange: false
 	property bool trainingResultEdition: false
 	property bool doSave: true
 	property int leftMargin: 0
@@ -238,6 +239,45 @@ Item{
 					serieModel.computeCalories()
 			}
 		}
+		Rectangle{
+			Layout.alignment: Qt.AlignCenter
+			Layout.preferredHeight: 30
+			Layout.preferredWidth: 30
+			color: Material.primary
+			visible: mainItem.showOrderChange && !serieModel?.isSaved && !serieModel?.isDone
+
+			radius: width / 2
+			Text{
+				anchors.centerIn: parent
+				color: 'white'
+				text: '+'
+			}
+			MouseArea{
+				anchors.fill: parent
+				onClicked:{
+					mainItem.exerciseUnitModel.decrementSerieOrder(mainItem.serieModel)
+				}
+			}
+		}
+		Rectangle{
+			Layout.alignment: Qt.AlignCenter
+			Layout.preferredHeight: 30
+			Layout.preferredWidth: 30
+			visible: mainItem.showOrderChange && !serieModel?.isSaved && !serieModel?.isDone
+			color: Material.primary
+			radius: width / 2
+			Text{
+				anchors.centerIn: parent
+				color: 'white'
+				text: '-'
+			}
+			MouseArea{
+				anchors.fill: parent
+				onClicked:{
+					mainItem.exerciseUnitModel.incrementSerieOrder(mainItem.serieModel)
+				}
+			}
+		}
 		Button{
 			id: saveButton
 			Layout.fillWidth: true
@@ -260,46 +300,8 @@ Item{
 				mainItem.exerciseUnitModel.removeSerie(serieModel)
 			}
 		}
-/*
-		Rectangle{
-			Layout.alignment: Qt.AlignCenter
-			Layout.preferredHeight: 30
-			Layout.preferredWidth: 30
-			color: Material.primary
-			visible: !!mainItem.exerciseModel && !mainItem.isReadOnly
 
-			radius: width / 2
-			Text{
-				anchors.centerIn: parent
-				color: 'white'
-				text: '+'
-			}
-			MouseArea{
-				anchors.fill: parent
-				onClicked:{
-					exerciseModel.decrementWorkOrder(mainItem.serieModel)
-				}
-			}
-		}
-		Rectangle{
-			Layout.alignment: Qt.AlignCenter
-			Layout.preferredHeight: 30
-			Layout.preferredWidth: 30
-			visible: !!mainItem.exerciseModel && !mainItem.isReadOnly
-			color: Material.primary
-			radius: width / 2
-			Text{
-				anchors.centerIn: parent
-				color: 'white'
-				text: '-'
-			}
-			MouseArea{
-				anchors.fill: parent
-				onClicked:{
-					exerciseModel.incrementWorkOrder(mainItem.serieModel)
-				}
-			}
-		}*/
+
 	}
 }
 

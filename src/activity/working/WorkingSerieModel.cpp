@@ -101,6 +101,17 @@ void WorkingSerieModel::setIsDone(bool data) {
 }
 
 
+int WorkingSerieModel::getOrder()const{
+	return mTargetSerieModel->getOrder();
+}
+
+void WorkingSerieModel::setOrder(int data){
+	mTargetSerieModel->setOrder(data);
+	mResultSerieModel->setOrder(data);
+	emit orderChanged();
+}
+
+
 void WorkingSerieModel::startWork(){
 	mStart = QDateTime::currentDateTime();
 	setIsRunning(true);

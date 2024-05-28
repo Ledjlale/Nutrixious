@@ -71,7 +71,7 @@ Item {
 				Component.onCompleted: exercises.update()
 			}
 			Button{
-				visible: !workingModel.targetModel.isSaved
+				visible: !workingModel.targetModel.isSaved && exerciseChoice.currentIndex >= 0
 				text: 'Add Exo'
 				onClicked: {
 						workingModel.addExercise(exerciseChoice.currentValue)
@@ -98,6 +98,7 @@ Item {
 				///workingModel: mainItem.workingModel
 				showRunning: true
 				expandAll: true
+				showOrderChange: true
 				//autoRun: autoRunCheckBox.checked
 				//lastExercise: mainItem.lastExercise
 

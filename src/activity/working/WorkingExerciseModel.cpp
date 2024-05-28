@@ -19,6 +19,7 @@
  */
 
 #include "WorkingExerciseModel.h"
+#include "src/tool/Utils.h"
 
 WorkingExerciseModel::WorkingExerciseModel(QObject *parent)
 	: QObject{parent}
@@ -86,6 +87,18 @@ QVariantList WorkingExerciseModel::getVariantSeries() const {
 QList<WorkingSerieModel*> WorkingExerciseModel::getSeries()const{
 	return mSeries;
 }
+
+void WorkingExerciseModel::decrementSerieOrder(WorkingSerieModel *model) {
+	if(Utils::decrementOrder<WorkingSerieModel>(model, mSeries)){
+		emit seriesChanged();
+	}
+}
+void WorkingExerciseModel::incrementSerieOrder(WorkingSerieModel *model){
+	if(Utils::incrementOrder<WorkingSerieModel>(model, mSeries)){
+		emit seriesChanged();
+	}
+}
+
 
 bool WorkingExerciseModel::getIsRunning() const {
 	return mIsRunning;

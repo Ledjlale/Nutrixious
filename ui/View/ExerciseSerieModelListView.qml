@@ -35,6 +35,7 @@ Item{
 	property bool showSaveButton: !isLive
 	property bool showWorkTime: true
 	property bool showCalories: true
+	property bool showOrderChange: false
 	property bool isReadOnly: false
 	implicitHeight: setList.contentHeight
 	ListView{
@@ -55,6 +56,7 @@ Item{
 			width: setList.width
 			showWorkTime: mainItem.showWorkTime
 			showCalories: mainItem.showCalories
+			showOrderChange: mainItem.showOrderChange
 			isReadOnly: mainItem.isReadOnly
 			isDeletable: setList.count > 1
 			showTitle: index == 0

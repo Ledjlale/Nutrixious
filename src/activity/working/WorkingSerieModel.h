@@ -57,8 +57,8 @@ public:
 	bool getIsDone() const;
 	void setIsDone(bool data);
 
-	bool getIsSaved() const;
-	void setIsSaved(bool data);
+	int getOrder()const;	// use for reordering Utils.
+	void setOrder(int data);
 
 	virtual void startWork();
 
@@ -78,8 +78,10 @@ signals:
 	void isRunningChanged();
 	void isRestingChanged();
 	void isDoneChanged();
+	void orderChanged();
 	void finished();
 	void workStarted();
+
 
 protected:
 	TrainingSerieModel *mTargetSerieModel = nullptr;

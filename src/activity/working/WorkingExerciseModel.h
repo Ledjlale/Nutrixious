@@ -54,6 +54,9 @@ public:
 	QVariantList getVariantSeries() const;
 	QList<WorkingSerieModel*> getSeries()const;
 
+	Q_INVOKABLE void decrementSerieOrder(WorkingSerieModel *model);
+	Q_INVOKABLE void incrementSerieOrder(WorkingSerieModel *model);
+
 	bool getIsRunning() const;
 	void setIsRunning(bool data);
 
