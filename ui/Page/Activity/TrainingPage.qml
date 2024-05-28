@@ -64,7 +64,10 @@ Item {
 							? 'Back'
 							: 'Cancel'
 						: 'Begin'
-				onClicked: mainItem.isRunning = !mainItem.isRunning
+				onClicked: {
+					mainItem.isRunning = !mainItem.isRunning
+					if(!mainItem.isRunning) gShowMenuButton = true
+				}
 			}
 			Button{
 				text: 'Reload'

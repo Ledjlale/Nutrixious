@@ -188,9 +188,9 @@ Item {
 			}
 			Text{
 				Layout.fillWidth: true
-				property int diff: restingPopup.restTime - restTimer.count
-				text: diff + " s left"
-				color: diff >= 0 ? Material.foreground : Material.accent
+
+				text: restTimer.diff + " s left"
+				color: restTimer.diff >= 0 ? Material.foreground : Material.accent
 			}
 			Loader{
 				Layout.fillWidth: true
@@ -230,19 +230,17 @@ Item {
 		Timer{
 			id: restTimer
 			property int count: 0
+			property int diff: restingPopup.restTime - count
 			interval: 1000
 			running: !!restingPopup.target && restingPopup.target.isResting
 			onRunningChanged: count = 0
 			repeat: true
-			onTriggered: ++count
-		}
-		Timer{
-			id: autoRunTimer
-			interval: restingPopup.restTime* 1000
-			running: mainItem.autoRun && !!restingPopup.target && restingPopup.target.isResting || false
-			onTriggered: {
-				restingPopup.target.isResting = false
-				restingPopup.close()
+			onTriggered:{
+				++count
+				if( autoRunCheckBox.checked && diff <= 0 ) {
+					restingPopup.target.isResting = false
+					restingPopup.close()
+				}
 			}
 		}
 	}
