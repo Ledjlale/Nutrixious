@@ -105,18 +105,21 @@ ProgramExerciseModel* TrainingModel::insertExercise(ProgramExerciseModel *model)
 TrainingExerciseModel* TrainingModel::buildExercise(ExerciseModel *model) {
 	QSqlQuery query;
 	QString trainingTablePrefix = "training";
+	QString programTablePrefix = "program";
 	TrainingExerciseModel* exerciseModel = nullptr;
 	// Build from last training
-	if(!query.exec("SELECT * FROM "+trainingTablePrefix+"s, "+trainingTablePrefix+"_exercise_units WHERE "+trainingTablePrefix+"."+trainingTablePrefix+"_id="+trainingTablePrefix+"_exercise_units."+trainingTablePrefix+"_id AND exercise_id=" +QString::number(model->getExerciseId()) + " ORDER BY start_date_time DESC LIMIT 1" ))
+	if(!query.exec("SELECT * FROM "+trainingTablePrefix+"s, "+trainingTablePrefix+"_exercise_units WHERE "+trainingTablePrefix+"s."+trainingTablePrefix+"_id="+trainingTablePrefix+"_exercise_units."+trainingTablePrefix+"_id AND exercise_id=" +QString::number(model->getExerciseId()) + " ORDER BY start_date_time DESC LIMIT 1" ))
 		qCritical() << "Cannot request training exercises to build exercise : " << query.lastError().text();
 	else{
 		if(query.next()){
 			exerciseModel = new TrainingExerciseModel(this);
 			exerciseModel->ProgramExerciseModel::load(query);
 			exerciseModel->setExerciseModel(model);
-			if(!query.exec("SELECT * FROM "+trainingTablePrefix+"_exercise_series WHERE "+trainingTablePrefix+"_exercise_id = "+QString::number(exerciseModel->getExerciseId())))
+			if(!query.exec("SELECT * FROM "+trainingTablePrefix+"_exercise_series WHERE "+trainingTablePrefix+"_exercise_unit_id = "+QString::number(exerciseModel->getExerciseUnitId()))) {
+				exerciseModel->deleteLater();
+				exerciseModel = nullptr;
 				qCritical() << "Cannot request training series to build series : "  << query.lastError().text();
-			else{
+			}else{
 				while (query.next()) {
 					auto serie = new TrainingSerieModel(exerciseModel);
 					serie->load(query);
@@ -127,20 +130,22 @@ TrainingExerciseModel* TrainingModel::buildExercise(ExerciseModel *model) {
 	}
 	//Build from Program
 	if( !exerciseModel){
-		if(!query.exec("SELECT * FROM "+trainingTablePrefix+"_exercise_units WHERE exercise_id=" +QString::number(model->getExerciseId()) + " ORDER BY "+trainingTablePrefix+"_exercise_unit_id DESC LIMIT 1" ))
-			qCritical() << "Cannot request "+trainingTablePrefix+" exercises to build exercise : " << query.lastError().text();
+		if(!query.exec("SELECT * FROM "+programTablePrefix+"_exercise_units WHERE exercise_id=" +QString::number(model->getExerciseId()) + " ORDER BY "+programTablePrefix+"_exercise_unit_id DESC LIMIT 1" ))
+			qCritical() << "Cannot request "+programTablePrefix+" exercises to build exercise : " << query.lastError().text();
 		else{
 			if(query.next()){
 				auto programModel = ProgramExerciseModel::build(query,nullptr);
 				programModel->setExerciseModel(model);
-				if(!query.exec("SELECT * FROM "+trainingTablePrefix+"_exercise_series WHERE "+trainingTablePrefix+"_exercise_unit_id = "+QString::number(programModel->getExerciseUnitId())))
-					qCritical() << "Cannot request "+trainingTablePrefix+" series to build series : "  << query.lastError().text();
+				if(!query.exec("SELECT * FROM "+programTablePrefix+"_exercise_series WHERE "+programTablePrefix+"_exercise_unit_id = "+QString::number(programModel->getExerciseUnitId())))
+					qCritical() << "Cannot request "+programTablePrefix+" series to build series : "  << query.lastError().text();
 				else{
 					while (query.next()) {
 						programModel->ExerciseUnitModel::insertSerie(ProgramSerieModel::build(query, programModel));
 					}
 				}
 				exerciseModel = new TrainingExerciseModel(programModel, this);
+				for(auto i : programModel->getSeries())
+					exerciseModel->insertSerie(new TrainingSerieModel(i, exerciseModel));
 				programModel->deleteLater();
 			}
 		}

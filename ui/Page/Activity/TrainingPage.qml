@@ -88,6 +88,7 @@ Item {
 					delegate:ExerciseModelView{
 						width: exercisesList.width
 						exerciseModel: modelData
+						showWorkTime: false
 						showCalories: false
 						isReadOnly: true
 					}

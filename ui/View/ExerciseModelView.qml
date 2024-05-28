@@ -221,6 +221,7 @@ Item{
 							Layout.rightMargin: 5
 							Layout.preferredHeight: implicitHeight
 							visible: mainItem.expandAll
+							showWorkTime: mainItem.showWorkTime
 							showCalories: mainItem.showCalories
 							exerciseModel: visible ? exerciseItem.exerciseModel : null
 							workingExerciseModel: mainItem.workingExerciseModel

@@ -36,6 +36,7 @@ Item{
 	property bool isDeletable: true
 	property bool showSaveButton: true
 	property bool showTitle: true
+	property bool showWorkTime: true
 	property bool showCalories: true
 	property bool trainingResultEdition: false
 	property bool doSave: true
@@ -59,9 +60,9 @@ Item{
 		id: contentLayout
 		anchors.fill: parent
 		anchors.leftMargin: mainItem.leftMargin
-		property int _visibleChildren : visibleChildren.length - 1
 		spacing: 0
 		TextField{
+			property bool isGood: !mainItem.isLive || !serieModel?.isDone || (serieModel.resultSerieModel.repetitions >= serieModel.targetSerieModel.repetitions)
 			height: implicitHeight
 			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 			visible: mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useRepetitions : exerciseUnitModel.useRepetitions
@@ -69,10 +70,11 @@ Item{
 			showTitle: mainItem.showTitle
 			readOnly: mainItem.isReadOnly
 			inputMethodHints: Qt.ImhDigitsOnly
+			textColor: isGood ? Material.foreground : Material.accent
 			title: mainItem.showTitle ? 'Reps' : ''
 			text: mainItem.isLive
 						? mainItem.serieModel.isDone
-							? mainItem.serieModel.resultSerieModel.repetitions
+							? (isGood ? '' : mainItem.serieModel.targetSerieModel.repetitions+'/') + mainItem.serieModel.resultSerieModel.repetitions
 							: mainItem.serieModel.targetSerieModel.repetitions
 						: mainItem.serieModel.repetitions <0 ? '' : mainItem.serieModel.repetitions
 			//text: mainItem.isLive
@@ -82,6 +84,7 @@ Item{
 			//onImplicitHeightChanged: fieldsList.updateImplicit()
 		}
 		TextField{
+			property bool isGood: !mainItem.isLive || !serieModel?.isDone || (serieModel.resultSerieModel.weight >= serieModel.targetSerieModel.weight)
 			height: implicitHeight
 			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 			visible: mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useWeight :exerciseUnitModel.useWeight
@@ -90,19 +93,26 @@ Item{
 			readOnly: mainItem.isReadOnly
 			inputMethodHints: Qt.ImhDigitsOnly
 			title: mainItem.showTitle ? 'Weight' : ''
+			textColor: isGood ? Material.foreground : Material.accent
 			text: mainItem.isLive
 						? mainItem.serieModel.isDone
-							? mainItem.serieModel.resultSerieModel.weight
+							?  (isGood ? '' : mainItem.serieModel.targetSerieModel.weight+'/') + mainItem.serieModel.resultSerieModel.weight
 							: mainItem.serieModel.targetSerieModel.weight
 						: mainItem.serieModel.weight <0 ? '' : mainItem.serieModel.weight
 			placeholderText: 'kg'
 			//text: mainItem.isLive
 			onEditingFinished: {
-				mainItem.serieModel.weight = newValue
+				if(mainItem.isLive) {
+					if(!mainItem.serieModel.isDone)
+						mainItem.serieModel.targetSerieModel.weight = newValue
+					mainItem.serieModel.resultSerieModel.weight = newValue
+				}else
+					mainItem.serieModel.weight = newValue
 			}
 			//onImplicitHeightChanged: fieldsList.updateImplicit()
 		}
 		TextField{
+			property bool isGood: !mainItem.isLive || !serieModel?.isDone || (serieModel.resultSerieModel.distance >= serieModel.targetSerieModel.distance)
 			height: implicitHeight
 			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 			visible: mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useDistance :exerciseUnitModel.useDistance
@@ -110,10 +120,11 @@ Item{
 			showTitle: mainItem.showTitle
 			readOnly: mainItem.isReadOnly
 			inputMethodHints: Qt.ImhDigitsOnly
+			textColor: isGood ? Material.foreground : Material.accent
 			title: mainItem.showTitle ? 'Distance' : ''
 			text: mainItem.isLive
 						? mainItem.serieModel.isDone
-							? mainItem.serieModel.resultSerieModel.distance
+							?  (isGood ? '' : mainItem.serieModel.targetSerieModel.distance+'/') + mainItem.serieModel.resultSerieModel.distance
 							: mainItem.serieModel.targetSerieModel.distance
 						: mainItem.serieModel.distance <0 ? '' : mainItem.serieModel.distance
 			placeholderText: 'm'
@@ -125,6 +136,7 @@ Item{
 		}
 
 		TextField{
+			property bool isGood: !mainItem.isLive || !serieModel?.isDone || (serieModel.resultSerieModel.speed >= serieModel.targetSerieModel.speed)
 			height: implicitHeight
 			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 			visible: mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useSpeed :exerciseUnitModel.useSpeed
@@ -132,10 +144,11 @@ Item{
 			showTitle: mainItem.showTitle
 			readOnly: mainItem.isReadOnly
 			inputMethodHints: Qt.ImhDigitsOnly
+			textColor: isGood ? Material.foreground : Material.accent
 			title: mainItem.showTitle ? 'Speed' : ''
 			text: mainItem.isLive
 						? mainItem.serieModel.isDone
-							? mainItem.serieModel.resultSerieModel.speed
+							? (isGood ? '' : mainItem.serieModel.targetSerieModel.speed+'/') + mainItem.serieModel.resultSerieModel.speed
 							: mainItem.serieModel.targetSerieModel.speed
 						: mainItem.serieModel.speed <0 ? '' : mainItem.serieModel.speed
 			placeholderText: 'km/h'
@@ -159,9 +172,11 @@ Item{
 			elide: Text.ElideLeft
 			title: mainItem.showTitle ? 'RestTime' : ''
 			placeholderText: 'hh:mm:ss'
-			textColor: !mainItem.isLive || !serieModel?.isDone || (serieModel.resultSerieModel.restTime <= serieModel.targetSerieModel.restTime) ? Material.foreground : Material.accent
+
 			text: mainItem.isLive
-							? mainItem.serieModel.targetSerieModel.restTimeStr + (serieModel?.isDone ? ' / ' + serieModel.resultSerieModel.restTimeStr : '')
+							? mainItem.serieModel.isDone
+								? mainItem.serieModel.resultSerieModel.restTimeStr
+								: mainItem.serieModel.targetSerieModel.restTimeStr
 							: mainItem.serieModel.restTimeStr
 			onEditingFinished: {
 				mainItem.serieModel.restTimeStr = newValue
@@ -174,7 +189,7 @@ Item{
 			Layout.rightMargin: 10
 			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 
-			visible: !!serieModel?.isSaved || !!serieModel?.isDone //&& serieModel.isTraining
+			visible: mainItem.showWorkTime && ( !!serieModel?.isSaved || !!serieModel?.isDone)
 			showTitle: mainItem.showTitle || mainItem.trainingResultEdition
 			readOnly:  mainItem.isReadOnly
 			inputMethodHints: Qt.ImhTime
@@ -215,8 +230,9 @@ Item{
 			onEditingFinished: mainItem.serieModel.calories = newValue
 		}
 		Button{
+			Layout.fillWidth: true
 			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
-			visible: !mainItem.isReadOnly && calorieTextField.visible
+			visible: !mainItem.isReadOnly && calorieTextField.visible && !mainItem.isLive
 			text: 'Cal'
 			onClicked:{
 					serieModel.computeCalories()
@@ -224,6 +240,7 @@ Item{
 		}
 		Button{
 			id: saveButton
+			Layout.fillWidth: true
 			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 			visible: !mainItem.isReadOnly && mainItem.showSaveButton && serieModel?.isEdited || false
 			text: 'Save'
@@ -235,6 +252,7 @@ Item{
 		}
 		Button{
 			id: deleteButton
+			Layout.fillWidth: true
 			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 			visible: !mainItem.isReadOnly && mainItem.isDeletable && !!mainItem.exerciseUnitModel
 			text: 'D'

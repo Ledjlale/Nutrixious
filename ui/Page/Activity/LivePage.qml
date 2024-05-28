@@ -207,6 +207,7 @@ Item {
 						isReadOnly: false
 						isLive: false
 						isDeletable: false
+						Component.onCompleted: restingPopup.target.resultSerieModel.computeCalories()
 					}
 				}
 				Component {

@@ -210,6 +210,7 @@ Item {
 						programModel: programDetailsList.program
 						isDeletable: true
 						showWorkTime: false
+						showCalories: false
 					}
 				}
 
