@@ -36,6 +36,7 @@ Item{
 	property bool isDeletable: true
 	property bool showSaveButton: true
 	property bool showTitle: true
+	property bool showCalories: true
 	property bool trainingResultEdition: false
 	property bool doSave: true
 	property int leftMargin: 0
@@ -190,6 +191,36 @@ Item{
 					: ''
 			onEditingFinished: mainItem.serieModel.workTimeStr = newValue
 			//onEditingFinished: if(!mainItem.showSaveButton) serieModel.restTime = newValue
+		}
+		TextField{
+			id: calorieTextField
+			Layout.fillHeight: true
+			Layout.rightMargin: 10
+			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
+
+			visible: mainItem.showCalories && (!!serieModel?.isSaved || !!serieModel?.isDone) ||  mainItem.trainingResultEdition
+			showTitle: mainItem.showTitle || mainItem.trainingResultEdition
+			readOnly:  mainItem.isReadOnly
+			inputMethodHints: Qt.ImhDigitsOnly
+			elide: Text.ElideRight
+			title: mainItem.showTitle ? 'Calories' : ''
+			placeholderText: 'kcal'
+			text: visible
+					? mainItem.isLive
+						? serieModel?.isDone
+							? serieModel.resultSerieModel.calories
+							: serieModel.targetSerieModel.calories
+						: serieModel?.calories || ''
+					: ''
+			onEditingFinished: mainItem.serieModel.calories = newValue
+		}
+		Button{
+			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
+			visible: !mainItem.isReadOnly && calorieTextField.visible
+			text: 'Cal'
+			onClicked:{
+					serieModel.computeCalories()
+			}
 		}
 		Button{
 			id: saveButton

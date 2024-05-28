@@ -43,15 +43,49 @@ TrainingSerieModel::TrainingSerieModel(const ProgramSerieModel * model, QObject 
 	clearBackupValues();
 }
 
+TrainingSerieModel::TrainingSerieModel(const TrainingSerieModel * model, QObject *parent) : ProgramSerieModel(model, parent) {
+	mTablePrefix = "training";
+	mCalories = model->mCalories;
+	clearBackupValues();
+}
+
 TrainingSerieModel * TrainingSerieModel::clone(QObject *parent)const{
 	TrainingSerieModel *model = new TrainingSerieModel(this, parent);
+	model->setCalories(model->getCalories());
+	model->clearBackupValues();
 	return model;
 }
 
 //-------------------------------------------------------------------------------------------------------------------
 
+void TrainingSerieModel::addQueryValues(DatabaseQuery &query){
+	query.add("calories", mCalories);
+}
+
+void TrainingSerieModel::load(QSqlQuery &query) {
+// TODO optimize
+	ProgramSerieModel::load(query);
+	auto caloriesField = query.record().indexOf("calories");
+	setCalories(query.value(caloriesField).toDouble());
+	clearBackupValues();
+}
 TrainingSerieModel *TrainingSerieModel::build(QSqlQuery &query, QObject * parent) {
 	TrainingSerieModel * model = new TrainingSerieModel(parent);
-	model->ProgramSerieModel::load(query);
+	model->load(query);
 	return model;
+}
+
+double TrainingSerieModel::getCalories() const{
+	return mCalories;
+}
+void TrainingSerieModel::setCalories(double data){
+	if(mCalories != data){
+		addBackup(&mCalories, mCalories, data);
+		mCalories = data;
+		emit caloriesChanged();
+	}
+}
+
+void TrainingSerieModel::computeCalories(){
+	emit requestComputeCalories(this);
 }

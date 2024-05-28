@@ -33,6 +33,7 @@ Item{
 	property var exerciseModel: workingExerciseModel?.targetExerciseModel
 	property bool isLive: !!workingExerciseModel
 	property bool showSaveButton: !isLive
+	property bool showCalories: true
 	property bool isReadOnly: false
 	implicitHeight: setList.contentHeight
 	ListView{
@@ -51,6 +52,7 @@ Item{
 			exerciseUnitModel: mainItem.workingExerciseModel ? mainItem.workingExerciseModel : mainItem.exerciseModel
 			serieModel: modelData
 			width: setList.width
+			showCalories: mainItem.showCalories
 			isReadOnly: mainItem.isReadOnly
 			isDeletable: setList.count > 1
 			showTitle: index == 0

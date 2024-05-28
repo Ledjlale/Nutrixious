@@ -47,9 +47,11 @@ TrainingModel::TrainingModel(ProgramModel * model, QObject *parent) : ProgramMod
 	mName = "Training";
 	mDescription = model->getName();
 	for(auto i : model->getExercises()){
-		mExercises << new TrainingExerciseModel(i, this);
-		for(auto i : i->getSeries())
-			mExercises.back()->ExerciseUnitModel::insertSerie(new TrainingSerieModel(i, mExercises.back()));
+		auto exercise = new TrainingExerciseModel(i, this);
+		for(auto j : i->getSeries())
+			exercise->insertSerie(new TrainingSerieModel(j, exercise));
+		connect(exercise, &TrainingExerciseModel::requestComputeCalories, this, &TrainingModel::computeCalorie);
+		mExercises << exercise;
 	}
 }
 TrainingModel::TrainingModel(TrainingModel *model, QObject *parent) : TrainingModel((ProgramModel*)model, parent) {
@@ -88,6 +90,17 @@ void TrainingModel::setStartDateTimeStr(QString data) {
 	}
 }
 
+ProgramExerciseModel* TrainingModel::insertNewExercise(ProgramExerciseModel *model){
+	auto insertedModel = dynamic_cast<TrainingExerciseModel*>(ProgramModel::insertNewExercise(model));
+	connect(insertedModel, &TrainingExerciseModel::requestComputeCalories, this, &TrainingModel::computeCalorie);
+	return insertedModel;
+}
+
+ProgramExerciseModel* TrainingModel::insertExercise(ProgramExerciseModel *model){
+	auto insertedModel = dynamic_cast<TrainingExerciseModel*>(ProgramModel::insertExercise(model));
+	connect(insertedModel, &TrainingExerciseModel::requestComputeCalories, this, &TrainingModel::computeCalorie);
+	return insertedModel;
+}
 
 TrainingExerciseModel* TrainingModel::buildExercise(ExerciseModel *model) {
 	QSqlQuery query;
@@ -107,7 +120,7 @@ TrainingExerciseModel* TrainingModel::buildExercise(ExerciseModel *model) {
 				while (query.next()) {
 					auto serie = new TrainingSerieModel(exerciseModel);
 					serie->load(query);
-					exerciseModel->ExerciseUnitModel::insertSerie(serie);
+					exerciseModel->insertSerie(serie);
 				}
 			}
 		}
@@ -193,7 +206,7 @@ QList<TrainingModel*> TrainingModel::buildAll(QObject * parent){
 			model->setExerciseModel(nullptr);
 		if( series.contains(model->getExerciseUnitId())){
 			for(auto it : series[model->getExerciseUnitId()])
-				model->ExerciseUnitModel::insertSerie(it->clone(model));
+				model->insertSerie(it->clone(model));
 		}
 		exerciseModels[model->getParentId()] << model;
 	}
@@ -220,4 +233,27 @@ QList<TrainingModel*> TrainingModel::buildAll(QObject * parent){
 
 //--------------------------------
 	return models;
+}
+
+void TrainingModel::computeCalorie(TrainingExerciseModel * exercise, TrainingSerieModel * serie) {
+	QSqlQuery query;
+
+	if(serie){
+		double met = exercise->getExerciseModel()->getMet();
+		query.prepare("SELECT weight FROM personal_data ORDER BY ABS(? - date_time) LIMIT 1");
+		query.addBindValue(mStartDateTime.toMSecsSinceEpoch());
+		if(query.exec()){
+			if(query.next()){
+				auto weightField = query.record().indexOf("weight");
+				double weight = query.value(weightField).toDouble();
+				double factor = met * 3.5 * weight / 200.0;
+				int workTime = serie->getWorkTime();
+				double calories = factor * workTime / 60.0;
+				serie->setCalories(calories);
+			}else
+			qCritical() << "Cannot compute calorie because of empty personal data ";
+		}else{
+			qCritical() << "Cannot compute calorie because of personal data : "  << query.lastError().text();
+		}
+	}
 }

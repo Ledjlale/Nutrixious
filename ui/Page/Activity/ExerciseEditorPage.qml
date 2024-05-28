@@ -173,6 +173,7 @@ Item {
 				isReadOnly: false
 				isDeletable: serieList.count > 1
 				showTitle: index == 0
+				showCalories: false
 				doSave: false
 				showSaveButton: mainItem.showSaveButton
 				keepEditView: true

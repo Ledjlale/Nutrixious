@@ -26,16 +26,33 @@
 #include <QSqlQuery>
 
 #include "src/database/program/serie/ProgramSerieModel.h"
+#include "src/database/DatabaseQuery.h"
 
 class TrainingSerieModel : public ProgramSerieModel{
 Q_OBJECT
+	Q_PROPERTY(double calories READ getCalories WRITE setCalories NOTIFY caloriesChanged)
 public:
 	TrainingSerieModel();
 	TrainingSerieModel(QObject *parent);
 	TrainingSerieModel(const ProgramSerieModel * model, QObject *parent);
+	TrainingSerieModel(const TrainingSerieModel * model, QObject *parent);
 	virtual TrainingSerieModel * clone( QObject *parent)const;
 
+	virtual void addQueryValues(DatabaseQuery &query);
+	virtual void load(QSqlQuery &query);
 	static TrainingSerieModel *build(QSqlQuery &query, QObject * parent);
+
+	double getCalories() const;
+	void setCalories(double data);
+	Q_INVOKABLE void computeCalories();
+
+signals:
+	void caloriesChanged();
+	void requestComputeCalories(TrainingSerieModel *serie);
+
+protected:
+	double mCalories = 0.0;
+
 };
 
 #endif

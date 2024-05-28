@@ -202,6 +202,7 @@ Item {
 						serieModel: restingPopup.target.resultSerieModel
 						exerciseUnitModel: restingPopup.exercise
 						trainingResultEdition: true
+						showCalories: true
 						showSaveButton: false
 						isReadOnly: false
 						isLive: false

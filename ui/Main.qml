@@ -84,12 +84,10 @@ ApplicationWindow {
 			id: settingsPage
 			SettingsPage{}
 		}
-		/*
-Component{
+		Component{
 			id: exercisesPage
 			ExercisesPage{}
 		}
-		*/
 		//Component{
 		//	id: foodsPage
 		//	FoodsPage{}
@@ -180,7 +178,7 @@ Component{
 					model:[//{title: 'Foods', component:foodsPage}
 						{title: 'Scanner', component:scannerPage}
 						,{title: 'Training', component:trainingPage}
-						//, {title: 'Exercises', component:exercisesPage}
+						, {title: 'Exercises', component:exercisesPage}
 						,{title: 'Programs', component:programsPage}
 						,{title: 'Trainings', component:trainingsPage}
 						,{title: 'Statistics', component:statisticsPage}

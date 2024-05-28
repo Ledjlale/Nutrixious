@@ -52,7 +52,7 @@ TrainingExerciseModel::TrainingExerciseModel(const ProgramExerciseModel * model,
 TrainingExerciseModel * TrainingExerciseModel::clone(QObject *parent)const{
 	TrainingExerciseModel *model = new TrainingExerciseModel((ProgramExerciseModel*)this, parent);
 	for(auto i : mSeries)
-		model->ExerciseUnitModel::insertSerie(i->clone(model));
+		model->insertSerie(i->clone(model));
 
 	model->clearBackupValues();
 	return model;
@@ -60,7 +60,13 @@ TrainingExerciseModel * TrainingExerciseModel::clone(QObject *parent)const{
 
 void TrainingExerciseModel::addSerie(){
 	auto model = new TrainingSerieModel(nullptr);
+	insertSerie(model);
+}
+
+ExerciseSerieModel* TrainingExerciseModel::insertSerie(ExerciseSerieModel *model){
+	connect(dynamic_cast<TrainingSerieModel*>(model), &TrainingSerieModel::requestComputeCalories, this, &TrainingExerciseModel::computeCalories);
 	ExerciseUnitModel::insertSerie(model);
+	return model;
 }
 
 QList<TrainingSerieModel*> TrainingExerciseModel::getSeries() const {
@@ -68,6 +74,10 @@ QList<TrainingSerieModel*> TrainingExerciseModel::getSeries() const {
 	for(auto i : mSeries)
 		l << dynamic_cast<TrainingSerieModel*>(i);
 	return l;
+}
+
+void TrainingExerciseModel::computeCalories(TrainingSerieModel * serie){
+	emit requestComputeCalories(this, serie);
 }
 
 TrainingExerciseModel *TrainingExerciseModel::build(QSqlQuery &query, QObject * parent) {

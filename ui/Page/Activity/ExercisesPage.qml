@@ -27,93 +27,81 @@ import '../../Tool/Utils.js' as Utils
 
 Item {
 	id: mainItem
+	property var exerciseModel
 	ColumnLayout{
 		anchors.fill: parent
 		RowLayout{
-			Button{
-				text: 'Back'
-				visible: exerciseCreation.currentIndex != 0
-				onClicked: {
-					exerciseCreation.currentIndex = 0
-					while(stackView.depth > 1)
-						stackView.pop();
+			ComboBox{
+				id: exerciseChoice
+				Layout.fillWidth: true
+				textRole: "displayText"
+				valueRole: "$modelData"
+				model: ExerciseProxyModel{
+					id: exercises
 				}
-			}
-			Text{
-				Layout.fillWidth: true
-				text: 'All default exercises'
-				color: Material.foreground
-			}
-			Item{
-				Layout.fillWidth: true
+				Component.onCompleted: {
+					exercises.update()
+					currentIndex = 0
+				}
+				onCurrentValueChanged:{
+					//chartView.exerciseType = currentValue.type
+					mainItem.exerciseModel = currentValue
+				}
 			}
 			Button{
 				text: 'Reload'
-				visible: stackView.depth == 1
+				//visible: stackView.depth == 1
 				onClicked: exercises.update()
 			}
-			ComboBox{
-				id: exerciseCreation
-				Layout.rightMargin: 10
-				textRole: "key"
-
-				Component{
-					id: exerciseEditorComponent
-					ExerciseEditorPage{
-						showSaveButton: false
-					}
-				}
-				model: [{key: 'Create'},{key:'Strength', value:3},{key:'Distance', value:1},{key:'Steps', value:2}]
-
-				onActivated: function(index){
-					if( index == 0){
-						while(stackView.depth > 1)
-							stackView.pop();
-					}else if(stackView.depth == 1)
-						stackView.push(exerciseEditorComponent, {type:model[index].value, showSaveButton:false});
-					else
-						stackView.replace(exerciseEditorComponent, {type:model[index].value, showSaveButton:false});
-				}
-				onCurrentIndexChanged: if(currentIndex == 0) exercises.update()
+		}
+		ColumnLayout{
+			visible: !!mainItem.exerciseModel
+			Text{
+				Layout.fillWidth: true
+				horizontalAlignment: Text.AlignHCenter
+				text: 'Exercise description'
+				color: Material.foreground
 			}
-			RoundButton{
-				Layout.rightMargin: 10
-				visible: exerciseCreation.currentIndex != 0
-				text: '+'
-				onClicked: {
-					if(stackView.currentItem.save()){
-						exerciseCreation.currentIndex = 0
-						while(stackView.depth > 1)
-							stackView.pop();
-					}else{
-						error.text = 'Some fields are not correctly set'
-						error.open()
+			TextField{
+				Layout.fillWidth: true
+				Layout.leftMargin: 10
+				title: 'Name'
+				text: mainItem.exerciseModel?.name || ''
+				onEditingFinished: {
+					mainItem.exerciseModel.name = newValue
+				}
+			}
+			RowLayout{
+				TextField{
+					id: metField
+					Layout.fillWidth: true
+					Layout.leftMargin: 10
+					inputMethodHints: Qt.ImhDigitsOnly
+					title: 'MET'
+					text: mainItem.exerciseModel?.met || ''
+					onEditingFinished: {
+						mainItem.exerciseModel.met = newValue
+						//repsField.forceActiveFocus()
 					}
+				}
+				Button{
+					text: 'Compute from trainings'
+					onClicked:{
+						mainItem.exerciseModel.computeMet()
+					}
+				}
+			}
+			Button{
+				visible: mainItem.exerciseModel?.isEdited || false
+				text: 'Save'
+				onClicked:{
+					mainItem.exerciseModel.save()
 				}
 			}
 		}
-		StackView{
-			id: stackView
+		Item{
 			Layout.fillHeight: true
-			Layout.fillWidth: true
-			initialItem: Item{
-				height: stackView.height
-				width: stackView.width
-				ListView{
-					id: exercisesList
-					anchors.fill: parent
-					clip: true
-					model: ExerciseProxyModel{
-						id: exercises
-					}
-					spacing: 5
-					delegate:ExerciseModelView{
-						width: exercisesList.width
-						exerciseModel: $modelData
-						isDeletable: true
-					}
-				}
-			}
+
 		}
 	}
 

@@ -28,6 +28,7 @@
 #include <QDateTime>
 
 #include "exercise/TrainingExerciseModel.h"
+#include "serie/TrainingSerieModel.h"
 #include "../program/ProgramModel.h"
 
 class TrainingModel : public ProgramModel{
@@ -45,6 +46,11 @@ public:
 	void setStartDateTime(const QDateTime& data);
 	QString getStartDateTimeStr()const;
 	void setStartDateTimeStr(QString data);
+
+
+	virtual ProgramExerciseModel* insertNewExercise(ProgramExerciseModel *model); // clone and make new
+	virtual ProgramExerciseModel* insertExercise(ProgramExerciseModel *model);// Insert and set parent ID
+
 /*
 	QVariantList getVariantExercises() const;
 	const QList<TrainingExerciseModel*>& getExercises() const;
@@ -57,6 +63,8 @@ public:
 	Q_INVOKABLE TrainingExerciseModel* buildExercise(ExerciseModel *model);
 
 	virtual void addQueryValues(DatabaseQuery &query);
+
+	void computeCalorie(TrainingExerciseModel * exercise, TrainingSerieModel * serie);
 
 	virtual void load(QSqlQuery &query);
 	static TrainingModel *build(QSqlQuery &query, QObject * parent);

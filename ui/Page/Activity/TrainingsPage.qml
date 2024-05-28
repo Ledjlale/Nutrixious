@@ -100,6 +100,7 @@ Item {
 						programModel: trainDetailsList.program
 						showTitle: index == 0
 						showWorkTime: true
+						showCalories: false
 					}
 				}
 			}

@@ -170,6 +170,15 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 			}
 		}*/
 	}
+	if(!query.exec("SELECT calories FROM training_exercise_series LIMIT 1")){
+		if(!query.exec("ALTER TABLE training_exercise_series ADD COLUMN calories REAL DEFAULT 0")){
+			qCritical() << "Cannot Add calories column into training_exercise_series: " << query.lastError().text();
+		}else{
+
+		}
+	}
+
+
 	query.exec("PRAGMA user_version");
 	fieldNo = query.record().indexOf("user_version");
 	while (query.next()) {

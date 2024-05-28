@@ -93,6 +93,56 @@ void ExerciseModel::setMet(double data) {
 	}
 }
 
+void ExerciseModel::computeMet(){
+	QSqlQuery query;
+	if(!query.exec("SELECT date_time, weight FROM personal_data ORDER by date_time ASC")){
+		qCritical() << "Cannot compute MET from personal data:" << query.lastError().text();
+		return;
+	}
+	auto dateTimeField = query.record().indexOf("date_time");
+	auto weightField = query.record().indexOf("weight");
+
+	QVector<QPair<qulonglong, double>> weights;
+	while(query.next()){
+		weights.push_back(QPair<int, double>(query.value(dateTimeField).toULongLong(), query.value(weightField).toDouble()));
+	}
+	if(weights.size() == 0){
+		qCritical() << "Cannot compute MET : no personal data";
+	}
+	query.prepare("SELECT calories, work_time, start_date_time FROM training_exercise_series,training_exercise_units, trainings  WHERE "
+					"training_exercise_series.training_exercise_unit_id=training_exercise_units.training_exercise_unit_id"
+					" AND trainings.training_id=training_exercise_units.training_id"
+					" AND exercise_id=? AND calories > 0"
+					" ORDER BY start_date_time ASC");
+	query.addBindValue(mExerciseId);
+	if(!query.exec()){
+		qCritical() << "Cannot compute MET from trainings:" << query.lastError().text();
+		return;
+	}
+	auto caloriesField = query.record().indexOf("calories");
+	auto workField = query.record().indexOf("work_time");
+	auto startField = query.record().indexOf("start_date_time");
+	double mets = 0.0;
+	int weightIndex = 0;
+	int bestWeightIndex = 0;
+	int count = 0;
+	while(query.next()){
+		double calories = query.value(caloriesField).toDouble();
+		qulonglong trainingDate = query.value(startField).toULongLong();
+		int workTime = query.value(workField).toInt();
+		if( weights.size() > 1){
+			while(weightIndex < weights.size() - 1 && trainingDate > weights[weightIndex+1].first)
+				++weightIndex;
+			bestWeightIndex = trainingDate - weights[weightIndex].first < weights[weightIndex+1].first - trainingDate ? weightIndex : weightIndex +1;
+		}
+		mets += calories * 60.0/(workTime * 3.5 * weights[bestWeightIndex].second / 200.0);
+		++count;
+	}
+	if(count > 0){
+		setMet(mets / count);
+	}
+}
+
 
 //-------------------------------------------------------------------------------------------------------------------
 
@@ -108,18 +158,24 @@ bool ExerciseModel::save(){
 	query.add("met", mMet);
 	query.addConditionnal("exercise_id",mExerciseId);
 	if(mExerciseId == 0){
-		if(!query.exec()) qCritical() << "Cannot save exercise: "  << query.mQuery.lastError().text();
+		if(!query.exec()){
+			qCritical() << "Cannot save exercise: "  << query.mQuery.lastError().text();
+			return false;
+		}
 		auto fieldNo = query.mQuery.record().indexOf("exercise_id");
 		while (query.mQuery.next()) {
 			setExerciseId(query.mQuery.value(fieldNo).toInt());
 			qDebug() << "Insert exercise: " << mExerciseId;
 		}
 	}else{
-		if(!query.exec()) qCritical() << "Cannot update exercise: "  << query.mQuery.lastError().text();
-		else {
+		if(!query.exec()){
+			qCritical() << "Cannot update exercise: "  << query.mQuery.lastError().text();
+			return false;
+		} else {
 			qDebug() << "Update exercise: " << mExerciseId;
 		}
 	}
+	clearBackupValues();
 	return true;
 }
 

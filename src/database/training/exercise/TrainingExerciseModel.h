@@ -40,9 +40,15 @@ public:
 	virtual TrainingExerciseModel * clone(QObject *parent)const;
 
 	Q_INVOKABLE void addSerie();
+	virtual ExerciseSerieModel* insertSerie(ExerciseSerieModel *model) override;
 	QList<TrainingSerieModel*> getSeries() const;
 
+	void computeCalories(TrainingSerieModel * serie);
+
 	static TrainingExerciseModel *build(QSqlQuery &query, QObject * parent);
+
+signals:
+	void requestComputeCalories(TrainingExerciseModel* exercise, TrainingSerieModel *serie);
 
 };
 

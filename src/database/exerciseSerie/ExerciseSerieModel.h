@@ -26,6 +26,7 @@
 #include <QSqlQuery>
 
 #include "src/tool/QmlModel.h"
+#include "src/database/DatabaseQuery.h"
 
 class ExerciseSerieModel : public QmlModel{
 Q_OBJECT
@@ -88,6 +89,7 @@ public:
 
 	Q_INVOKABLE void makeNew();
 
+	virtual void addQueryValues(DatabaseQuery &query){}
 	Q_INVOKABLE virtual bool save();
 	virtual void load(QSqlQuery &query);
 	Q_INVOKABLE virtual void remove();

@@ -107,6 +107,7 @@ public:
 
 // ----------------------
 
+	virtual void addQueryValues(DatabaseQuery &query){}
 	Q_INVOKABLE virtual bool save();
 	virtual void saveValues(DatabaseQuery &query);
 	virtual void load(QSqlQuery &query);

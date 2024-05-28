@@ -227,7 +227,7 @@ bool ExerciseSerieModel::save(){
 	query.add("speed", mSpeed);
 	query.add("weight", mWeight);
 	query.add("repetitions", mRepetitions);
-
+	addQueryValues(query);
 	query.addConditionnal(mTablePrefix+"_serie_id", mSerieId);
 	bool result = query.exec();
 	if(!result) qCritical() << "Cannot " << (mSerieId == 0 ? "save" : "update") << " series: " << query.mQuery.lastError().text();

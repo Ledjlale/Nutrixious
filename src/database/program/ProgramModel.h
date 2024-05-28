@@ -53,9 +53,9 @@ public:
 
 	QVariantList getVariantExercises() const;
 	const QList<ProgramExerciseModel*>& getExercises() const;
-	Q_INVOKABLE void addNewExercise(ProgramExerciseModel *model);	// Clone and make new
-	ProgramExerciseModel* insertNewExercise(ProgramExerciseModel *model); // clone and make new
-	ProgramExerciseModel* insertExercise(ProgramExerciseModel *model);// Insert and set parent ID
+	Q_INVOKABLE virtual void addNewExercise(ProgramExerciseModel *model);	// Clone and make new
+	virtual ProgramExerciseModel* insertNewExercise(ProgramExerciseModel *model); // clone and make new
+	virtual ProgramExerciseModel* insertExercise(ProgramExerciseModel *model);// Insert and set parent ID
 	Q_INVOKABLE void removeExercise(ProgramExerciseModel *model);
 	void handleRemoved(ExerciseUnitModel *model);
 	void clearExercises();

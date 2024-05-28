@@ -319,6 +319,7 @@ bool ExerciseUnitModel::save(){
 	query.add("exercise_order", mOrder);
 	query.add(mTablePrefix+"_id", mParentId);
 	query.add("exercise_id", mExercise.second->getExerciseId());
+	addQueryValues(query);
 	query.addConditionnal(mTablePrefix+"_exercise_unit_id", mExerciseUnitId);
 
 	bool result = query.exec();
