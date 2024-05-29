@@ -83,10 +83,27 @@ Item {
 					model:  ProgramProxyModel{
 							id: programs
 						}
-					delegate:Rectangle{
-						width: programList.width
-						height: rowLayout.implicitHeight
-						color: Material.background
+					delegate:MouseArea{
+								width: programList.width
+								height: modelView.implicitHeight
+
+								onClicked: {
+									programDetailsList.program = $modelData
+									exercises.update()
+									//programExercises.setExercises($modelData.exercises)
+								}
+								Rectangle{
+									anchors.fill: parent
+									color: Material.background
+								}
+								TrainModelView{
+									id: modelView
+									anchors.fill: parent
+									trainModel: $modelData
+
+								}
+
+						/*
 						RowLayout{
 							id: rowLayout
 							spacing: 0
@@ -137,7 +154,7 @@ Item {
 									$modelData.remove()
 								}
 							}
-						}
+						}*/
 
 					}
 				}

@@ -42,19 +42,23 @@ Item{
 			id: nameTextField
 			Layout.fillWidth: true
 			text: trainModel ? trainModel.name : ''
-			readOnly: true
+			onEditingFinished: trainModel.name = newValue
 		}
 		TextField{
 			id: descriptionTextField
 			Layout.fillWidth: true
 			text: trainModel ?  trainModel.description : ''
-			readOnly: true
+			onEditingFinished: {
+				trainModel.description = newValue
+
+				}
 		}
 		TextField{
 			id: startTimeTextField
 			Layout.fillWidth: true
+			visible: trainModel.startDateTimeStr !== undefined
 			inputMethodHints: Qt.ImhDigitsOnly
-			text: trainModel ? trainModel.startDateTimeStr: ''
+			text: visible && trainModel ? trainModel.startDateTimeStr: ''
 			readOnly: false
 			onEditingFinished: trainModel.startDateTimeStr = newValue
 		}
@@ -62,7 +66,6 @@ Item{
 			visible: trainModel.isEdited
 			text: 'Save'
 			onClicked: {
-				console.log("save")
 				trainModel.save()
 			}
 		}

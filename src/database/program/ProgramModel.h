@@ -32,8 +32,8 @@
 class ProgramModel : public QmlModel{
 Q_OBJECT
 // DB
-	Q_PROPERTY(QString name MEMBER mName NOTIFY nameChanged)
-	Q_PROPERTY(QString description MEMBER mDescription NOTIFY descriptionChanged)
+	Q_PROPERTY(QString name READ getName WRITE setName NOTIFY nameChanged)
+	Q_PROPERTY(QString description READ getDescription WRITE setDescription NOTIFY descriptionChanged)
 
 	Q_PROPERTY(QVariantList exercises READ getVariantExercises NOTIFY exercisesChanged)
 

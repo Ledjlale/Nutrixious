@@ -31,6 +31,7 @@ Item{
 	id: mainItem
 	property var workingExerciseModel
 	property var exerciseModel: workingExerciseModel?.targetExerciseModel
+	property int margin: 0
 	property bool isLive: !!workingExerciseModel
 	property bool showSaveButton: !isLive
 	property bool showWorkTime: true
@@ -54,6 +55,7 @@ Item{
 			exerciseUnitModel: mainItem.workingExerciseModel ? mainItem.workingExerciseModel : mainItem.exerciseModel
 			serieModel: modelData
 			width: setList.width
+			margin: mainItem.margin
 			showWorkTime: mainItem.showWorkTime
 			showCalories: mainItem.showCalories
 			showOrderChange: mainItem.showOrderChange

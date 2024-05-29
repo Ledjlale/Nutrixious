@@ -34,6 +34,7 @@ Flipable {
 	property bool readOnly: false
 	property color textColor: Control.Material.foreground
 	property int elide: Text.ElideRight
+	property alias font: originalTextField.font
 
 	signal editingFinished()
 

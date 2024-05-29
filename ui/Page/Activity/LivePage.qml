@@ -106,145 +106,156 @@ Item {
 
 			}
 		}
-		RowLayout{
-			Item{Layout.fillWidth: true}
-			Button{
-				Layout.bottomMargin: 15
-				visible: mainItem.isRunning
-				text: 'End - Good'
-				onClicked: {
-					mainItem.lastExercise = workingModel.getCurrentWork()
-					workingModel.endOfCurrentWork()
-				}
-			}
-			Button{
-				Layout.bottomMargin: 15
-				visible: mainItem.isRunning
-				text: 'End - Fail'
-				onClicked: {
-					mainItem.lastExercise = workingModel.getCurrentWork()
-					workingModel.endOfCurrentWork()
-				}
-			}
-			Rectangle{
-				id: timerArea
-				Layout.preferredHeight: 30
-				Layout.preferredWidth: 140
-				Layout.bottomMargin: 15
-				color: Material.primary
-				radius: 15
-				property var currentWork: workingModel.currentWork
-				visible: !!currentWork && !currentWork.isResting && !currentWork.isDone
-				Text{
-					anchors.centerIn: parent
-					text: timer.count + ' s'
-					color: 'white'
-					Timer{
-						id: timer
-						property int count:0
-						interval: 1000
-						repeat: true
-						running: timerArea.visible
-						onRunningChanged: count = 0
-						onTriggered: {++count}
-					}
-				}
-			}
+		Flipable{
+			id: restingPopup
+			property int restTime
+			property var target
+			property var exercise
+			property bool flipped: target?.isResting || false
+			Layout.fillWidth: true
+			Layout.preferredHeight: flipped ? backItem.implicitHeight: frontItem.implicitHeight
 
-			//Button{
-			//	Layout.bottomMargin: 15
-			//	visible: mainItem.isRunning
-			//	text: 'End - All'
-			//	onClicked: {
-			//		trainingModel.save()
-			//	}
-			//}
-			Item{Layout.fillWidth: true}
-		}
-	}
-
-	Dialog{
-		id: restingPopup
-		contentWidth: 400
-		contentHeight: 200
-		property int restTime
-		property var target
-		property var exercise
-
-
-		function pause(exercise, target){
+			function pause(exercise, target){
 			restingPopup.target = target
 			restingPopup.exercise = exercise
 			restingPopup.restTime = target.targetExerciseModel ? target.targetExerciseModel.restTime : target.targetSerieModel.restTime
-			open()
+			//open()
+			//flippableItem.flipped = true
 		}
 
-		ColumnLayout{
-			id: view
+			front: RowLayout{
+				id: frontItem
 				anchors.fill: parent
-			Text{
-				Layout.fillWidth: true
-				text: 'isResting for max: '+restingPopup.restTime +' s'
-				color: Material.foreground
-			}
-			Text{
-				Layout.fillWidth: true
-
-				text: restTimer.diff + " s left"
-				color: restTimer.diff >= 0 ? Material.foreground : Material.accent
-			}
-			Loader{
-				Layout.fillWidth: true
-				Layout.fillHeight: true
-
-				Component {
-					id: serieComponent
-					ExerciseSerieModelView{
-						serieModel: restingPopup.target.resultSerieModel
-						exerciseUnitModel: restingPopup.exercise
-						trainingResultEdition: true
-						showCalories: true
-						showSaveButton: false
-						isReadOnly: false
-						isLive: false
-						isDeletable: false
-						Component.onCompleted: restingPopup.target.resultSerieModel.computeCalories()
+				Item{Layout.fillWidth: true}
+				Button{
+					Layout.preferredWidth: 80
+					Layout.bottomMargin: 15
+					visible: mainItem.isRunning
+					text: 'End'
+					onClicked: {
+						mainItem.lastExercise = workingModel.getCurrentWork()
+						workingModel.endOfCurrentWork()
 					}
 				}
-				Component {
-					id: exerciseComponent
-					ExerciseModelView{
-						exerciseModel: restingPopup.target.resultExerciseModel
-						showSaveButton: false
-						isReadOnly: false
+				Rectangle{
+					id: timerArea
+					Layout.preferredHeight: 30
+					Layout.preferredWidth: 140
+					Layout.bottomMargin: 15
+					color: Material.primary
+					radius: 15
+					property var currentWork: workingModel.currentWork
+					visible: !!currentWork && !currentWork.isResting && !currentWork.isDone
+					Text{
+						anchors.centerIn: parent
+						text: timer.count + ' s'
+						color: 'white'
+						Timer{
+							id: timer
+							property int count:0
+							interval: 1000
+							repeat: true
+							running: timerArea.visible
+							onRunningChanged: count = 0
+							onTriggered: {++count}
+						}
 					}
 				}
-				sourceComponent: !restingPopup.target ? null
-									: restingPopup.target.resultSerieModel
-										? serieComponent
-										: exerciseComponent
-				active: restingPopup.visible && !!restingPopup.target
+				Item{Layout.fillWidth: true}
 			}
-		}
-		onAccepted: target.isResting = false
-		onRejected: target.isResting = false
-		Timer{
-			id: restTimer
-			property int count: 0
-			property int diff: restingPopup.restTime - count
-			interval: 1000
-			running: !!restingPopup.target && restingPopup.target.isResting
-			onRunningChanged: count = 0
-			repeat: true
-			onTriggered:{
-				++count
-				if( autoRunCheckBox.checked && diff <= 0 ) {
-					restingPopup.target.isResting = false
-					restingPopup.close()
+			back:ColumnLayout{
+				id: backItem
+				anchors.fill: parent
+				Timer{
+					id: restTimer
+					property int count: 0
+					property int diff: restingPopup.restTime - count
+					interval: 1000
+					running: !!restingPopup.target && restingPopup.target.isResting
+					onRunningChanged: count = 0
+					repeat: true
+					onTriggered:{
+						++count
+						if( autoRunCheckBox.checked && diff <= 0 ) {
+							restingPopup.target.isResting = false
+							restingPopup.close()
+						}
+					}
+				}
+				RowLayout{
+					Text{
+						Layout.alignment: Qt.AlignCenter
+						Layout.fillWidth: true
+						horizontalAlignment: Text.AlignHCenter
+						text: 'Resting : '+restTimer.diff + " s " +(restTimer.diff > 0 ? 'left' : '')
+						color: restTimer.diff >= 0 ? Material.foreground : Material.accent
+						font.weight: Font.Bold
+					}
+					Button{
+						Layout.preferredWidth: 60
+						Layout.rightMargin: 5
+						text: 'Unpause'
+						onClicked: restingPopup.target.isResting = false
+					}
+				}
+				Loader{
+					Layout.fillWidth: true
+					Layout.fillHeight: true
+					Layout.leftMargin: 5
+					Layout.rightMargin: 5
+
+					Component {
+						id: serieComponent
+						ExerciseSerieModelView{
+							serieModel: restingPopup.target.resultSerieModel
+							exerciseUnitModel: restingPopup.exercise
+							trainingResultEdition: true
+							showCalories: true
+							showSaveButton: false
+							keepEditView: true
+							isReadOnly: false
+							isLive: false
+							isDeletable: false
+							Component.onCompleted: restingPopup.target.resultSerieModel.computeCalories()
+						}
+					}
+					Component {
+						id: exerciseComponent
+						ExerciseModelView{
+							exerciseModel: restingPopup.target.resultExerciseModel
+							showSaveButton: false
+							isReadOnly: false
+						}
+					}
+					sourceComponent: !restingPopup.target ? null
+										: restingPopup.target.resultSerieModel
+											? serieComponent
+											: exerciseComponent
+					active: restingPopup.flipped && !!restingPopup.target
 				}
 			}
+
+			transform: Rotation {
+				id: rotation
+				origin.x: restingPopup.width/2
+				origin.y: restingPopup.height/2
+				axis.x: 0; axis.y: 1; axis.z: 0     // set axis.y to 1 to rotate around y-axis
+				angle: 0    // the default angle
+			}
+
+			states: State {
+				name: "back"
+				PropertyChanges { target: rotation; angle: 180 }
+				when: restingPopup.flipped
+			}
+
+			transitions: Transition {
+				NumberAnimation { target: rotation; property: "angle"; duration: 100 }
+			}
+
 		}
 	}
+
 	Dialog{
 		id: finishPopup
 		text: 'Program is over'

@@ -100,6 +100,7 @@ Item{
 						anchors.fill: parent
 						RowLayout{
 							id: rowlayout
+							Layout.rightMargin: 5
 							spacing: 0
 							TextField{
 								id: nameTextField
@@ -107,6 +108,7 @@ Item{
 								showTitle: false
 								readOnly: true
 								text: !!exerciseModel.exerciseModel ? exerciseModel.exerciseModel.name : ''
+								font.weight: Font.Bold
 								ComboBox{
 									id: exerciseChoice
 									Layout.fillWidth: true
@@ -123,19 +125,22 @@ Item{
 									}
 									onVisibleChanged: if(visible) exercises.update()
 								}
-
-							}/*
+							}
 							TextField{
 								id: descriptionTextField
-								Layout.preferredWidth: visible ? mainItem.width / rowlayout.itemCount : 0
-								visible: !readOnly || text != ''
+								Layout.preferredWidth: mainItem.width / rowlayout.visibleChildren.length
+								visible: !readOnly || text != ''// && !!mainItem.workingExerciseModel
 								showTitle: false
-								readOnly: isReadOnly
-								text: exerciseModel.description ? exerciseModel.description : exerciseModel.exerciseModel.description
+								readOnly: mainItem.isReadOnly
+								text: mainItem.resultModel ? mainItem.resultModel.description
+														: mainItem.exerciseModel ? mainItem.exerciseModel.description : ''
 								onEditingFinished: {
-										exerciseModel.description = newValue
+									if( mainItem.resultModel)
+										resultModel.description = newValue
+									else if(mainItem.exerciseModel)
+										mainItem.exerciseModel.description = newValue
 								}
-							}*/
+							}
 
 							Button{
 								Layout.fillWidth: true
@@ -219,8 +224,8 @@ Item{
 						ExerciseSerieModelListView{
 							id: seriesList
 							Layout.fillWidth: true
-							Layout.rightMargin: 5
 							Layout.preferredHeight: implicitHeight
+							margin: 5
 							visible: mainItem.expandAll
 							showWorkTime: mainItem.showWorkTime
 							showCalories: mainItem.showCalories

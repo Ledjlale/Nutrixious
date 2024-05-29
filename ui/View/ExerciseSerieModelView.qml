@@ -41,7 +41,7 @@ Item{
 	property bool showOrderChange: false
 	property bool trainingResultEdition: false
 	property bool doSave: true
-	property int leftMargin: 0
+	property int margin: 0
 	property bool keepEditView: false
 
 	implicitHeight: contentLayout.implicitHeight
@@ -60,13 +60,14 @@ Item{
 	RowLayout{
 		id: contentLayout
 		anchors.fill: parent
-		anchors.leftMargin: mainItem.leftMargin
+		anchors.leftMargin: mainItem.margin
+		anchors.rightMargin: mainItem.margin
 		spacing: 0
 		TextField{
 			property bool isGood: !mainItem.isLive || !serieModel?.isDone || (serieModel.resultSerieModel.repetitions >= serieModel.targetSerieModel.repetitions)
 			height: implicitHeight
 			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
-			visible: mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useRepetitions : exerciseUnitModel.useRepetitions
+			visible: !!exerciseUnitModel && (mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useRepetitions : exerciseUnitModel.useRepetitions)
 			keepEditView: mainItem.keepEditView
 			showTitle: mainItem.showTitle
 			readOnly: mainItem.isReadOnly
@@ -88,7 +89,7 @@ Item{
 			property bool isGood: !mainItem.isLive || !serieModel?.isDone || (serieModel.resultSerieModel.weight >= serieModel.targetSerieModel.weight)
 			height: implicitHeight
 			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
-			visible: mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useWeight :exerciseUnitModel.useWeight
+			visible: !!exerciseUnitModel && (mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useWeight :exerciseUnitModel.useWeight)
 			keepEditView: mainItem.keepEditView
 			showTitle: mainItem.showTitle
 			readOnly: mainItem.isReadOnly
@@ -116,7 +117,7 @@ Item{
 			property bool isGood: !mainItem.isLive || !serieModel?.isDone || (serieModel.resultSerieModel.distance >= serieModel.targetSerieModel.distance)
 			height: implicitHeight
 			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
-			visible: mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useDistance :exerciseUnitModel.useDistance
+			visible: !!exerciseUnitModel && (mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useDistance :exerciseUnitModel.useDistance)
 			keepEditView: mainItem.keepEditView
 			showTitle: mainItem.showTitle
 			readOnly: mainItem.isReadOnly
@@ -140,7 +141,7 @@ Item{
 			property bool isGood: !mainItem.isLive || !serieModel?.isDone || (serieModel.resultSerieModel.speed >= serieModel.targetSerieModel.speed)
 			height: implicitHeight
 			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
-			visible: mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useSpeed :exerciseUnitModel.useSpeed
+			visible: !!exerciseUnitModel && (mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useSpeed :exerciseUnitModel.useSpeed)
 			keepEditView: mainItem.keepEditView
 			showTitle: mainItem.showTitle
 			readOnly: mainItem.isReadOnly

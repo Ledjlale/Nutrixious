@@ -69,9 +69,10 @@ QString ProgramModel::getName() const{
 	return mName;
 }
 
-void ProgramModel::setName(QString name) {
-	if(mName != name){
-		mName = name;
+void ProgramModel::setName(QString data) {
+	if(mName != data){
+		addBackup(&mName, mName, data);
+		mName = data;
 		emit nameChanged();
 	}
 }
@@ -80,9 +81,10 @@ QString ProgramModel::getDescription() const{
 	return mDescription;
 }
 
-void ProgramModel::setDescription(QString description) {
-	if(mDescription != description){
-		mDescription = description;
+void ProgramModel::setDescription(QString data) {
+	if(mDescription != data){
+		addBackup(&mDescription, mDescription, data);
+		mDescription = data;
 		emit descriptionChanged();
 	}
 }
