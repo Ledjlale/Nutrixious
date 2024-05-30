@@ -35,6 +35,7 @@ Flipable {
 	property color textColor: Control.Material.foreground
 	property int elide: Text.ElideRight
 	property alias font: originalTextField.font
+	property int horizontalAlignment: Text.AlignLeft
 
 	signal editingFinished()
 
@@ -96,6 +97,7 @@ Flipable {
 						Layout.fillHeight: true
 						Layout.fillWidth: true
 						Layout.margins: 10
+						horizontalAlignment: mainItem.horizontalAlignment
 						elide: mainItem.elide
 						color: mainItem.textColor
 						text: mainItem.text
@@ -125,6 +127,8 @@ Flipable {
 					//Layout.leftMargin: 10
 					//Layout.rightMargin: 10
 					Layout.bottomMargin: 10
+
+					horizontalAlignment: mainItem.horizontalAlignment
 
 					inputMethodHints: mainItem.inputMethodHints
 					readOnly: mainItem.readOnly

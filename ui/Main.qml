@@ -88,10 +88,10 @@ ApplicationWindow {
 			id: exercisesPage
 			ExercisesPage{}
 		}
-		//Component{
-		//	id: foodsPage
-		//	FoodsPage{}
-		//}
+		Component{
+			id: foodsPage
+			FoodsPage{}
+		}
 		Component{
 			id: scannerPage
 			ScannerPage{}
@@ -175,8 +175,8 @@ ApplicationWindow {
 				Repeater{
 					id: menuItems
 					//model:[{title: 'Overview'},{title: 'Diary'},{title: 'Food'},{title: 'Training'}, {title: 'Exercises'},{title: 'Programs'},{title: 'Trainings'},{title: 'Statistics'},{title: 'Settings'}]
-					model:[//{title: 'Foods', component:foodsPage}
-						{title: 'Scanner', component:scannerPage}
+					model:[{title: 'Foods', component:foodsPage}
+						,{title: 'Scanner', component:scannerPage}
 						,{title: 'Training', component:trainingPage}
 						, {title: 'Exercises', component:exercisesPage}
 						,{title: 'Programs', component:programsPage}

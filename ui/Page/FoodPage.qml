@@ -53,7 +53,7 @@ Item {
 		FoodModel{
 			id: foodModel
 		}
-
+		FoodEditorPage{}
 
 	}
 }

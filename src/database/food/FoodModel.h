@@ -28,15 +28,40 @@
 
 #include "src/tool/QmlModel.h"
 
+#define DECLARE_GETSET(type, x, X) public:\
+	Q_PROPERTY(type x MEMBER m##X WRITE set##X NOTIFY x##Changed)\
+	type get##X() const; \
+	void set##X(type data);\
+	Q_SIGNAL void x##Changed();
+
 class FoodModel : public QmlModel{
 Q_OBJECT
 // DB
-	Q_PROPERTY(QString name MEMBER mName NOTIFY nameChanged)
-	Q_PROPERTY(QString description MEMBER mDescription NOTIFY descriptionChanged)
-	Q_PROPERTY(QString imageUrl MEMBER mImageUrl NOTIFY imageUrlChanged)
-
-	Q_PROPERTY(double calories MEMBER mCalories NOTIFY caloriesChanged)
-
+	DECLARE_GETSET(qint64,foodId,FoodId)
+	DECLARE_GETSET(QString,openFoodFactsCode,OpenFoodFactsCode)
+	DECLARE_GETSET(QString,brand,Brand)
+	DECLARE_GETSET(QString,imageUrl,ImageUrl)
+	DECLARE_GETSET(QString,description,Description)
+	DECLARE_GETSET(QString,servingUnit,ServingUnit)
+	DECLARE_GETSET(double,servingSize,ServingSize)
+	DECLARE_GETSET(double,servingsPerContainer,ServingsPerContainer)
+	DECLARE_GETSET(double,calories,Calories)
+	DECLARE_GETSET(double,totalFat,TotalFat)
+	DECLARE_GETSET(double,saturatedFat,SaturatedFat)
+	DECLARE_GETSET(double,transFat,TransFat)
+	DECLARE_GETSET(double,polyUnsaturatedFat,PolyUnsaturatedFat)
+	DECLARE_GETSET(double,monoUnsaturatedFat,MonoUnsaturatedFat)
+	DECLARE_GETSET(double,cholesterol,Cholesterol)
+	DECLARE_GETSET(double,sodium,Sodium)
+	DECLARE_GETSET(double,totalCarbohydrate,TotalCarbohydrate)
+	DECLARE_GETSET(double,dietaryFiber,DietaryFiber)
+	DECLARE_GETSET(double,sugar,Sugar)
+	DECLARE_GETSET(double,protein,Protein)
+	DECLARE_GETSET(double,calcium,Calcium)
+	DECLARE_GETSET(double,iron,Iron)
+	DECLARE_GETSET(double,potassium,Potassium)
+	DECLARE_GETSET(double,vitaminA,VitaminA)
+	DECLARE_GETSET(double,vitaminC,VitaminC)
 
 public:
 	FoodModel();	// QML
@@ -44,32 +69,47 @@ public:
 	FoodModel(FoodModel * model, QObject *parent);
 	FoodModel* clone(QObject*parent);
 
-	qint64 getFoodId()const;
-	virtual void setFoodId(qint64 id);
+public:
 
-	QString getName() const;
-	void setName(QString name);
-
-	QString getDescription() const;
-	void setDescription(QString description);
-
-
-	Q_INVOKABLE virtual bool save();
-	Q_INVOKABLE virtual void remove();
+	//Q_INVOKABLE virtual bool save();
+	//Q_INVOKABLE virtual void remove();
 
 	static QList<FoodModel*> buildAll(QObject * parent);
 	static FoodModel *build(QSqlQuery &query, QObject * parent);
 
 signals:
-	void exerciseIdChanged();
-	void nameChanged();
-	void descriptionChanged();
 	void removed(FoodModel *model);
 
 protected:
-	qint64 mExerciseId = 0;
-	QString mName;
-	QString mDescription;
+	qint64 mFoodId = 0;
+
+	QString mBrand = "CustomFood";
+	QString mDescription = "Desc";
+	QString mImageUrl;
+
+	QString mOpenFoodFactsCode;
+	double mServingSize = 0.0;
+	double mServingsPerContainer = 0.0;
+	QString mServingUnit = "g";
+
+	double mCalories = 0.0;
+	double mTotalFat = 0.0;
+	double mSaturatedFat = 0.0;
+	double mTransFat = 0.0;
+	double mPolyUnsaturatedFat = 0.0;
+	double mMonoUnsaturatedFat = 0.0;
+	double mCholesterol = 0.0;
+	double mSodium = 0.0;
+	double mTotalCarbohydrate = 0.0;
+	double mDietaryFiber = 0.0;
+	double mSugar = 0.0;
+	double mProtein = 0.0;
+	double mCalcium = 0.0;
+	double mIron = 0.0;
+	double mPotassium = 0.0;
+	double mVitaminA = 0.0;
+	double mVitaminC = 0.0;
+
 };
 
 #endif

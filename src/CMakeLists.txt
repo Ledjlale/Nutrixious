@@ -68,7 +68,7 @@
 	src/database/personal/PersonalDataListModel.cpp
 	src/database/personal/PersonalDataProxyModel.cpp
 
-	src/food/FoodModel.cpp
+	src/database/food/FoodModel.cpp
 
 	src/stat/StatsModel.cpp
 

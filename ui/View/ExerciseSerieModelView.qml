@@ -315,8 +315,6 @@ Item{
 		}
 		Button{
 			id: saveButton
-			//Layout.fillWidth: true
-			//Layout.maximumWidth: 60
 			Layout.preferredWidth: 60
 			visible: !mainItem.isReadOnly && mainItem.showSaveButton && serieModel?.isEdited && !mainItem.serieModel.isRunning || false
 			text: 'Save'
@@ -328,8 +326,6 @@ Item{
 		}
 		Button{
 			id: deleteButton
-			//Layout.fillWidth: true
-			//Layout.maximumWidth: 40
 			Layout.preferredWidth: 40
 			visible: !mainItem.isReadOnly && mainItem.isDeletable && !!mainItem.exerciseUnitModel && !mainItem.serieModel.isRunning && !mainItem.serieModel.isDone
 			text: 'D'

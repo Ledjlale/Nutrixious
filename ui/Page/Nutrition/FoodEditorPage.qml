@@ -52,8 +52,56 @@ Item {
 
 		FoodModel{
 			id: foodModel
+			onServingUnitChanged: console.log("Change !!! " +servingUnit)
 		}
+		ListView{
+			id: fieldsList
+			Layout.fillWidth: true
+			Layout.fillHeight: true
+			model:[{title:'Brand', data: 'brand', editUnits: false}
+					, {title:'Description', data: 'description', editUnits: false}
+					, {title:'Serving Size', data: 'servingSize', editUnits: 'servingUnit'}
+					, {title:'Serving per container', data: 'servingsPerContainer', editUnits: false}
+					, {title:'Calories ( kcal )', data: 'calories', editUnits: false}
+					, {title:'Total Fat ( g )', data: 'totalFat', editUnits: false}
+					, {title:'Saturated Fat ( g )', data: 'saturatedFat', editUnits: false}
+					, {title:'Trans Fat ( g )', data: 'transFat', editUnits: false}
+					, {title:'Polyunsaturated Fat ( g )', data: 'polyUnsaturatedFat', editUnits: false}
+					, {title:'Monounsaturated Fat ( g )', data: 'monoUnsaturatedFat', editUnits: false}
+					, {title:'Cholesterol ( mg )', data: 'cholesterol', editUnits: false}
+					, {title:'Sodium ( mg )', data: 'sodium', editUnits: false}
+					, {title:'Total Carbohydrates ( g )', data: 'totalCarbohydrate', editUnits: false}
+					, {title:'Dietary Fibers ( g )', data: 'dietaryFiber', editUnits: false}
+					, {title:'Sugars ( g )', data: 'sugar', editUnits: false}
+					, {title:'Protein ( g )', data: 'protein', editUnits: false}
+					, {title:'Calcium ( % )', data: 'calcium', editUnits: false}
+					, {title:'Iron ( % )', data: 'iron', editUnits: false}
+					, {title:'Potassium ( mg )', data: 'potassium', editUnits: false}
+					, {title:'Vitamin A ( % )', data: 'vitaminA', editUnits: false}
+					, {title:'Vitamin C ( % )', data: 'vitaminC', editUnits: false}
+			]
+			delegate: RowLayout{
+				width: fieldsList.width
+				Text{
+					text: modelData.title
+				}
+				TextField{
+					Layout.fillWidth: true
+					horizontalAlignment: Text.AlignRight
+					text: foodModel[modelData.data]
+					onEditingFinished: foodModel[modelData.data] = newValue
+				}
+				ComboBox{
+					visible: !!modelData.editUnits
+					displayText: currentText
+					onDisplayTextChanged: console.log(displayText)
+					model: visible  ? ['kg','g'] : []
+					onActivated:{foodModel[modelData.editUnits] = currentText}
 
+					Component.onCompleted: if(visible) currentIndex = find(foodModel[modelData.editUnits])
+				}
+			}
+		}
 
 	}
 }

@@ -26,7 +26,6 @@
 #include <SBarcodeScanner.h>
 
 #include "src/database/DatabaseModel.h"
-#include "src/food/FoodModel.h"
 
 
 
@@ -39,7 +38,7 @@
 #include "src/database/exercise/ExerciseListModel.h"
 #include "src/database/exercise/ExerciseProxyModel.h"
 
-//#include "src/database/food/FoodModel.h"
+#include "src/database/food/FoodModel.h"
 //#include "src/database/food/FoodListModel.h"
 //#include "src/database/food/FoodProxyModel.h"
 
@@ -66,7 +65,7 @@
 
 void registerTypes(){
 	qmlRegisterType<SBarcodeScanner>("com.scythestudio.scodes", 1, 0, "SBarcodeScanner");
-	qmlRegisterType<FoodModel>("App", 1, 0, "FoodModel");
+	//qmlRegisterType<FoodModel>("App", 1, 0, "FoodModel");
 
 	qmlRegisterUncreatableType<QmlData>("App", 1, 0, "QmlData", "");
 	qmlRegisterUncreatableType<QmlModel>("App", 1, 0, "QmlModel", "");
@@ -106,7 +105,9 @@ void registerTypes(){
 	qmlRegisterType<PersonalDataListModel>("App", 1, 0, "PersonalDataListModel");
 	qmlRegisterType<PersonalDataProxyModel>("App", 1, 0, "PersonalDataProxyModel");
 
-	//qmlRegisterType<FoodModel>("App", 1, 0, "FoodModel");
+	qmlRegisterType<FoodModel>("App", 1, 0, "FoodModel");
+
+
 	//qRegisterMetaType<FoodModel*>("FoodModel*");
 	//qmlRegisterType<FoodListModel>("App", 1, 0, "FoodListModel");
 	//qmlRegisterType<FoodProxyModel>("App", 1, 0, "FoodProxyModel");

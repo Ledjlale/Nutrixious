@@ -45,54 +45,51 @@ FoodModel::FoodModel(FoodModel * model, QObject *parent)
 	: QmlModel{parent}
 {
 	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
-	mName = model->getName();
-	mDescription = model->getDescription();
-	mExerciseId = model->getExerciseId();
+
 }
 
 FoodModel* FoodModel::clone(QObject*parent) {
 	return new FoodModel(this, parent);
 
 }
-
-qint64 FoodModel::getExerciseId()const{
-	return mExerciseId;
-}
-
-void FoodModel::setExerciseId(qint64 id) {
-	if(mExerciseId != id) {
-		mExerciseId = id;
-		emit exerciseIdChanged();
+#define DEFINE_GETSET(Class, type, x, X) type Class::get##X() const{ \
+	return m##X;\
+	}\
+	void Class::set##X(type data){\
+		if(m##X!= data){\
+			m##X = data;\
+			emit x##Changed();\
+		}\
 	}
 
-}
-
-QString FoodModel::getName() const{
-	return mName;
-}
-
-void FoodModel::setName(QString name) {
-	if(mName != name){
-		mName = name;
-		emit nameChanged();
-	}
-}
-
-
-QString FoodModel::getDescription() const {
-	return mDescription;
-}
-
-void FoodModel::setDescription(QString description) {
-	if(mDescription != description){
-		mDescription = description;
-		emit descriptionChanged();
-	}
-}
-
+DEFINE_GETSET(FoodModel,qint64,foodId,FoodId)
+DEFINE_GETSET(FoodModel,QString,openFoodFactsCode,OpenFoodFactsCode)
+DEFINE_GETSET(FoodModel,QString,brand,Brand)
+DEFINE_GETSET(FoodModel,QString,imageUrl,ImageUrl)
+DEFINE_GETSET(FoodModel,QString,description,Description)
+DEFINE_GETSET(FoodModel,QString,servingUnit,ServingUnit)
+DEFINE_GETSET(FoodModel,double,servingSize,ServingSize)
+DEFINE_GETSET(FoodModel,double,servingsPerContainer,ServingsPerContainer)
+DEFINE_GETSET(FoodModel,double,calories,Calories)
+DEFINE_GETSET(FoodModel,double,totalFat,TotalFat)
+DEFINE_GETSET(FoodModel,double,saturatedFat,SaturatedFat)
+DEFINE_GETSET(FoodModel,double,transFat,TransFat)
+DEFINE_GETSET(FoodModel,double,polyUnsaturatedFat,PolyUnsaturatedFat)
+DEFINE_GETSET(FoodModel,double,monoUnsaturatedFat,MonoUnsaturatedFat)
+DEFINE_GETSET(FoodModel,double,cholesterol,Cholesterol)
+DEFINE_GETSET(FoodModel,double,sodium,Sodium)
+DEFINE_GETSET(FoodModel,double,totalCarbohydrate,TotalCarbohydrate)
+DEFINE_GETSET(FoodModel,double,dietaryFiber,DietaryFiber)
+DEFINE_GETSET(FoodModel,double,sugar,Sugar)
+DEFINE_GETSET(FoodModel,double,protein,Protein)
+DEFINE_GETSET(FoodModel,double,calcium,Calcium)
+DEFINE_GETSET(FoodModel,double,iron,Iron)
+DEFINE_GETSET(FoodModel,double,potassium,Potassium)
+DEFINE_GETSET(FoodModel,double,vitaminA,VitaminA)
+DEFINE_GETSET(FoodModel,double,vitaminC,VitaminC)
 
 //-------------------------------------------------------------------------------------------------------------------
-
+/*
 
 bool FoodModel::save(){
 	if(mExerciseId>0 && !mIsEdited) return true;// Avoid update for nothing
@@ -159,3 +156,4 @@ QList<FoodModel*> FoodModel::buildAll(QObject * parent){
 
 	return models;
 }
+*/

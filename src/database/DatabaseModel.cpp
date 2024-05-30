@@ -177,6 +177,35 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 
 		}
 	}
+	if(!query.exec("SELECT * FROM foods LIMIT 1")){
+		if(!query.exec("CREATE TABLE foods (food_id INTEGER PRIMARY KEY"
+			", open_food_facts_code TEXT"
+			", image_url TEXT"
+			", brand TEXT"
+			", description TEXT"
+			", serving_size REAL"
+			", serving_unit TEXT"
+			", calories REAL"
+			", total_fat REAL"
+			", saturated_fat REAL"
+			", trans_fat REAL"
+			", poly_unsaturated_fat REAL"
+			", mono_unsaturated_fat REAL"
+			", cholesterol REAL"
+			", sodium REAL"
+			", total_carbohydrate REAL"
+			", dietary_fiber REAL"
+			", sugar REAL"
+			", protein REAL"
+			", calcium REAL"
+			", iron REAL"
+			", potassium REAL"
+			", vitamin_a REAL"
+			", vitamin_c REAL"
+			")"
+		))
+			qCritical() << "Cannot create food table: " << query.lastError().text();
+	}
 
 
 	query.exec("PRAGMA user_version");

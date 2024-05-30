@@ -31,9 +31,16 @@ import App 1.0
 
 Item {
 	id: mainItem
+	FoodEditorPage{
+		anchors.fill: parent
+	}
+
+
+	/*
 	ColumnLayout{
 		anchors.fill: parent
 		spacing: 0
+
 
 		ListView{
 			model: FoodProxyModel{}
@@ -41,5 +48,5 @@ Item {
 				foodModel: $modelData
 			}
 		}
-	}
+	}*/
 }
