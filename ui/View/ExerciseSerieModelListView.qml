@@ -58,7 +58,8 @@ Item{
 			margin: mainItem.margin
 			showWorkTime: mainItem.showWorkTime
 			showCalories: mainItem.showCalories
-			showOrderChange: mainItem.showOrderChange
+			showDecrementOrderChange: mainItem.showOrderChange && setList.count > 1 && index > 0
+			showIncrementOrderChange: mainItem.showOrderChange && setList.count > 1 && index < setList.count - 1
 			isReadOnly: mainItem.isReadOnly
 			isDeletable: setList.count > 1
 			showTitle: index == 0

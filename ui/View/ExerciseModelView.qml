@@ -109,6 +109,8 @@ Item{
 								readOnly: true
 								text: !!exerciseModel.exerciseModel ? exerciseModel.exerciseModel.name : ''
 								font.weight: Font.Bold
+								font.bold: true
+								font.pixelSize: 20
 								ComboBox{
 									id: exerciseChoice
 									Layout.fillWidth: true
@@ -214,6 +216,8 @@ Item{
 							}*/
 							Button{
 								visible: mainItem.isDeletable
+								Layout.maximumWidth: 30
+								Layout.preferredWidth: 30
 								text: 'D'
 								onClicked: {
 									console.log('Try to Delete : ' +exerciseItem.exerciseModel + " in " +exerciseItem.programModel + ' at ' +exerciseItem.exerciseModel.order)

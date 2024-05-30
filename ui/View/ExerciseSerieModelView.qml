@@ -38,7 +38,8 @@ Item{
 	property bool showTitle: true
 	property bool showWorkTime: true
 	property bool showCalories: true
-	property bool showOrderChange: false
+	property bool showDecrementOrderChange: false
+	property bool showIncrementOrderChange: false
 	property bool trainingResultEdition: false
 	property bool doSave: true
 	property int margin: 0
@@ -81,7 +82,12 @@ Item{
 						: mainItem.serieModel.repetitions <0 ? '' : mainItem.serieModel.repetitions
 			//text: mainItem.isLive
 			onEditingFinished: {
-				mainItem.serieModel.repetitions = newValue
+				if(mainItem.isLive) {
+					if(!mainItem.serieModel.isDone)
+						mainItem.serieModel.targetSerieModel.repetitions = newValue
+					mainItem.serieModel.resultSerieModel.repetitions = newValue
+				}else
+					mainItem.serieModel.repetitions = newValue
 			}
 			//onImplicitHeightChanged: fieldsList.updateImplicit()
 		}
@@ -132,7 +138,12 @@ Item{
 			placeholderText: 'm'
 			//text: mainItem.isLive
 			onEditingFinished: {
-				mainItem.serieModel.distance = newValue
+				if(mainItem.isLive) {
+					if(!mainItem.serieModel.isDone)
+						mainItem.serieModel.targetSerieModel.distance = newValue
+					mainItem.serieModel.resultSerieModel.distance = newValue
+				}else
+					mainItem.serieModel.distance = newValue
 			}
 			//onImplicitHeightChanged: fieldsList.updateImplicit()
 		}
@@ -156,7 +167,12 @@ Item{
 			placeholderText: 'km/h'
 			//text: mainItem.isLive
 			onEditingFinished: {
-				mainItem.serieModel.speed = newValue
+				if(mainItem.isLive) {
+					if(!mainItem.serieModel.isDone)
+						mainItem.serieModel.targetSerieModel.speed = newValue
+					mainItem.serieModel.resultSerieModel.speed = newValue
+				}else
+					mainItem.serieModel.speed = newValue
 			}
 			//onImplicitHeightChanged: fieldsList.updateImplicit()
 		}
@@ -181,7 +197,12 @@ Item{
 								: mainItem.serieModel.targetSerieModel.restTimeStr
 							: mainItem.serieModel.restTimeStr
 			onEditingFinished: {
-				mainItem.serieModel.restTimeStr = newValue
+				if(mainItem.isLive) {
+					if(!mainItem.serieModel.isDone)
+						mainItem.serieModel.targetSerieModel.restTimeStr = newValue
+					mainItem.serieModel.resultSerieModel.restTimeStr = newValue
+				}else
+					mainItem.serieModel.restTimeStr = newValue
 			}
 
 		}
@@ -206,8 +227,14 @@ Item{
 							: serieModel.targetSerieModel.workTimeStr
 						: serieModel?.workTimeStr || ''
 					: ''
-			onEditingFinished: mainItem.serieModel.workTimeStr = newValue
-			//onEditingFinished: if(!mainItem.showSaveButton) serieModel.restTime = newValue
+			onEditingFinished: {
+				if(mainItem.isLive) {
+					if(!mainItem.serieModel.isDone)
+						mainItem.serieModel.targetSerieModel.workTimeStr = newValue
+					mainItem.serieModel.resultSerieModel.workTimeStr = newValue
+				}else
+					mainItem.serieModel.workTimeStr = newValue
+			}
 		}
 		TextField{
 			id: calorieTextField
@@ -229,7 +256,14 @@ Item{
 							: serieModel.targetSerieModel.calories
 						: serieModel?.calories || ''
 					: ''
-			onEditingFinished: mainItem.serieModel.calories = newValue
+			onEditingFinished: {
+				if(mainItem.isLive) {
+					if(!mainItem.serieModel.isDone)
+						mainItem.serieModel.targetSerieModel.calories = newValue
+					mainItem.serieModel.resultSerieModel.calories = newValue
+				}else
+					mainItem.serieModel.calories = newValue
+			}
 		}
 		Button{
 			Layout.fillWidth: true
@@ -245,7 +279,7 @@ Item{
 			Layout.preferredHeight: 30
 			Layout.preferredWidth: 30
 			color: Material.primary
-			visible: mainItem.showOrderChange && !serieModel?.isSaved && !serieModel?.isDone && !mainItem.serieModel.isRunning
+			visible: mainItem.showDecrementOrderChange && !serieModel?.isSaved && !serieModel?.isDone && !mainItem.serieModel.isRunning
 
 			radius: width / 2
 			Text{
@@ -264,7 +298,7 @@ Item{
 			Layout.alignment: Qt.AlignCenter
 			Layout.preferredHeight: 30
 			Layout.preferredWidth: 30
-			visible: mainItem.showOrderChange && !serieModel?.isSaved && !serieModel?.isDone && !mainItem.serieModel.isRunning
+			visible: mainItem.showIncrementOrderChange && !serieModel?.isSaved && !serieModel?.isDone && !mainItem.serieModel.isRunning
 			color: Material.primary
 			radius: width / 2
 			Text{
@@ -281,8 +315,9 @@ Item{
 		}
 		Button{
 			id: saveButton
-			Layout.fillWidth: true
-			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
+			//Layout.fillWidth: true
+			//Layout.maximumWidth: 60
+			Layout.preferredWidth: 60
 			visible: !mainItem.isReadOnly && mainItem.showSaveButton && serieModel?.isEdited && !mainItem.serieModel.isRunning || false
 			text: 'Save'
 			onClicked: {
@@ -293,8 +328,9 @@ Item{
 		}
 		Button{
 			id: deleteButton
-			Layout.fillWidth: true
-			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
+			//Layout.fillWidth: true
+			//Layout.maximumWidth: 40
+			Layout.preferredWidth: 40
 			visible: !mainItem.isReadOnly && mainItem.isDeletable && !!mainItem.exerciseUnitModel && !mainItem.serieModel.isRunning && !mainItem.serieModel.isDone
 			text: 'D'
 			onClicked: {
