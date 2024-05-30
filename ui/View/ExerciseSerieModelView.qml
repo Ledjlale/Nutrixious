@@ -54,7 +54,7 @@ Item{
 						? Material.color(Material.Green, Material.Shade100)
 						: serieModel?.isDone
 							? Material.color(Material.Blue, Material.Shade100)
-							: Material.color(Material.Amber, Material.Shade100)
+							: Material.color(Material.Amber, Material.Shade300)
 
 	}
 	RowLayout{
@@ -234,7 +234,7 @@ Item{
 		Button{
 			Layout.fillWidth: true
 			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
-			visible: !mainItem.isReadOnly && calorieTextField.visible && !mainItem.isLive
+			visible: !mainItem.isReadOnly && calorieTextField.visible && !mainItem.isLive && !mainItem.serieModel.isRunning
 			text: 'Cal'
 			onClicked:{
 					serieModel.computeCalories()
@@ -245,7 +245,7 @@ Item{
 			Layout.preferredHeight: 30
 			Layout.preferredWidth: 30
 			color: Material.primary
-			visible: mainItem.showOrderChange && !serieModel?.isSaved && !serieModel?.isDone
+			visible: mainItem.showOrderChange && !serieModel?.isSaved && !serieModel?.isDone && !mainItem.serieModel.isRunning
 
 			radius: width / 2
 			Text{
@@ -264,7 +264,7 @@ Item{
 			Layout.alignment: Qt.AlignCenter
 			Layout.preferredHeight: 30
 			Layout.preferredWidth: 30
-			visible: mainItem.showOrderChange && !serieModel?.isSaved && !serieModel?.isDone
+			visible: mainItem.showOrderChange && !serieModel?.isSaved && !serieModel?.isDone && !mainItem.serieModel.isRunning
 			color: Material.primary
 			radius: width / 2
 			Text{
@@ -283,7 +283,7 @@ Item{
 			id: saveButton
 			Layout.fillWidth: true
 			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
-			visible: !mainItem.isReadOnly && mainItem.showSaveButton && serieModel?.isEdited || false
+			visible: !mainItem.isReadOnly && mainItem.showSaveButton && serieModel?.isEdited && !mainItem.serieModel.isRunning || false
 			text: 'Save'
 			onClicked: {
 				if(!mainItem.trainingResultEdition && mainItem.doSave) {
@@ -295,7 +295,7 @@ Item{
 			id: deleteButton
 			Layout.fillWidth: true
 			Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
-			visible: !mainItem.isReadOnly && mainItem.isDeletable && !!mainItem.exerciseUnitModel
+			visible: !mainItem.isReadOnly && mainItem.isDeletable && !!mainItem.exerciseUnitModel && !mainItem.serieModel.isRunning && !mainItem.serieModel.isDone
 			text: 'D'
 			onClicked: {
 				mainItem.exerciseUnitModel.removeSerie(serieModel)

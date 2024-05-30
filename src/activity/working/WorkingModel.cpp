@@ -25,11 +25,14 @@ extern QQmlApplicationEngine * gEngine;
 
 WorkingModel::WorkingModel() : WorkingModel(nullptr){
 	gEngine->setObjectOwnership(this, QQmlEngine::JavaScriptOwnership);
+	mCurrentExercise = mExercises.end();
+	mExercises.reserve(256);// Because of new implementation on Qt6, list will be resized if appending more object : iterators will be undefined.
 }
 
 WorkingModel::WorkingModel(QObject *parent)
 	: QObject{parent} {
 	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
+	mExercises.reserve(256);
 	mCurrentExercise = mExercises.end();
 //	mTrainModel = new TrainModel(this);
 //	connect(mTrainModel, &TrainModel::exercisesChanged, this, &WorkingModel::exercisesChanged);
@@ -173,7 +176,7 @@ void WorkingModel::refresh(){
 }
 
 void WorkingModel::nextExercise(){
-	if(++mCurrentExercise == mExercises.end()){
+	if(mCurrentExercise == mExercises.end() || ++mCurrentExercise == mExercises.end()){
 		emit finished();
 	}else {
 		(*mCurrentExercise)->startWork();

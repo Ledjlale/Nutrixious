@@ -55,12 +55,31 @@ Flipable {
 				implicitWidth: readOnlyLayout.implicitWidth
 				propagateComposedEvents: true
 				preventStealing: true
-				onClicked: function(mouse){
+
+				// Qt hack to detect clicked events while still propagate press events (to scroll views)
+				property bool isPressed : false
+				signal doubleClickDetected()
+				Timer{
+					id: clickDelay
+					interval: 500
+					onTriggered: frontItem.isPressed = false;
+				}
+				onDoubleClickDetected: function(){
 					if(!mainItem.readOnly) {
 						mainItem.flipped = true
 						backItem.forceActiveFocus()
 					}
-					mouse.accepted= false
+				}
+				onPressed: function(mouse){
+					if(frontItem.isPressed){
+						doubleClickDetected()
+						frontItem.isPressed = false;
+					}else{
+						frontItem.isPressed = true;
+						clickDelay.restart()
+					}
+					mouse.accepted=false
+
 				}
 				ColumnLayout{
 					id: readOnlyLayout
