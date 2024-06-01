@@ -18,24 +18,38 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DATABASE_FOOD_LIST_MODEL_H
-#define DATABASE_FOOD_LIST_MODEL_H
+import QtQuick
+import QtQuick.Controls.Material
+import QtQuick.Layouts
 
-#include "src/tool/proxyModel/ProxyAbstractListModel.hpp"
-#include "FoodModel.h"
+import App 1.0
 
-class FoodListModel: public ProxyAbstractListModel<FoodModel*> {
-Q_OBJECT
-public:
-	FoodListModel(QObject * parent = nullptr);
+Item{
+	id: mainItem
+	property var foodModel
 
-	virtual QHash<int, QByteArray> roleNames () const override;
-	QVariant data (const QModelIndex &index, int role = Qt::DisplayRole) const override;
+	implicitHeight: mainLayout.implicitHeight
 
-	void update();
+	Rectangle{
+		id: mainLineBackground
+		anchors.fill: parent
+		color: Material.background
 
-	void handleRemoved(FoodModel *model);
-
-};
-
-#endif
+	}
+	RowLayout{
+		id: mainLayout
+		anchors.fill: parent
+		ColumnLayout{
+			Text{
+				text: mainItem.foodModel.description
+			}
+			Text{
+				text: mainItem.foodModel.brand
+			}
+		}
+		Text{
+			horizontalAlignment: Text.AlignRight
+			text: mainItem.foodModel.calories
+		}
+	}
+}

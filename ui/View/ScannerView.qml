@@ -80,22 +80,7 @@ Item {
 		id: videoOutput
 		anchors.fill: parent
 		visible: barcodeLoader.status === Loader.Ready
-		/*
-		onVisibleChanged: if(visible)
-								autoTimer.restart()
-							else
-								autoTimer.stop()
-								*/
-// Debug
-		Timer{
-			id: autoTimer
-			interval: 2000
-			onTriggered:  {
-						mainItem.scannedCode = '3520836330036'
-						console.log('Captured auto: 3520836330036 (lait)')
-						barcodeLoader.active = false
-					}
-		}
+
 		ScannerOverlay {
 			id: scannerOverlay
 			anchors.fill: parent

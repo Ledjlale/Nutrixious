@@ -13,11 +13,11 @@ It will allow you to follow your physical training and carry out calorie assessm
 Focus on Android only! (and Linux for debugging).
 
 - Prototype! (ugly interface and unstable)
-- Exercises and programs can be set.
+- Exercises, programs and foods can be set.
 - A physical training on a program can be done.
 - Training can be saved after doing it.
-- Graphs on sum of weights, steps, distances.
-- A Bar code can be scanned that shows only the result.
+- A Bar code can be scanned to check on Open Food Facts (OFF) database.
+- Food can be build and save from OFF database.
 
 ### Main Goals:
 
@@ -32,15 +32,15 @@ Focus on Android only! (and Linux for debugging).
 - Edit exercises
 - Edit programs
 - Run live exercises
-- Display graphs and statistics on performances
 - Setup foods
 - Edit foods
 - Bar code scanner
 - Use of Open Food Facts database
 - Setup meals
 - Daily calories/nutriments monitoring
-- Graphics and statistics on body status (calories, weight)
 - F-Droid
+- Display graphs and statistics on performances
+- Graphics and statistics on body status (calories, weight)
 
 #### Design:
 - Rework on usability
@@ -54,7 +54,7 @@ Focus on Android only! (and Linux for debugging).
 - Import/Export data
 - Multi local account (main interest for Desktop)
 - Sharing progression
-- Muscle type targets
+- Experimentations on Muscle type targets, their modelisation and training program build
 - Statistics
 - Maintenance for Linux, Windows, MacOs, IOS
 

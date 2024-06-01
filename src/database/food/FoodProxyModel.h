@@ -25,18 +25,11 @@
 
 class FoodProxyModel: public SortFilterProxyModel {
 Q_OBJECT
-	Q_PROPERTY(QVariantList exercises READ getExercises WRITE setExercises NOTIFY exercisesChanged)
 public:
 	FoodProxyModel(QObject * parent = nullptr);
 
-	Q_INVOKABLE void update();
-
-	Q_INVOKABLE QVariantList getExercises() const;
-	Q_INVOKABLE void setExercises(QVariantList exercises);
-
-
 signals:
-	void exercisesChanged();
+	void update();
 
 };
 

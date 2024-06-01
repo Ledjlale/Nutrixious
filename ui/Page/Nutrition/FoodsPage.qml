@@ -31,22 +31,87 @@ import App 1.0
 
 Item {
 	id: mainItem
-	FoodEditorPage{
-		anchors.fill: parent
-	}
 
-
-	/*
 	ColumnLayout{
 		anchors.fill: parent
 		spacing: 0
-
-
-		ListView{
-			model: FoodProxyModel{}
-			delegate: FoodModelView{
-				foodModel: $modelData
+		RowLayout{
+			Item{
+				Layout.fillWidth: true
+			}
+			Button{
+				visible: stackView.depth == 1
+				property bool scanning: stackView.currentItem.objectName == "Scanner" && stackView.currentItem.isStarted
+				text: scanning ? 'X' : qsTr('Scan')
+				onClicked: {
+						if(!scanning)
+							stackView.push(scannerComponent)
+						else
+							stackView.pop()
+				}
+			}
+			Button{
+				property bool editing: stackView.currentItem.objectName == "Editor"
+				text: editing
+						?  stackView.currentItem.foodModel.isSaved
+							? 'Update'
+							: 'Save'
+						: 'Create'
+				onClicked:{
+					if(editing){
+						if(stackView.currentItem.foodModel.save()) {
+							stackView.pop()
+							foodListModel.update()
+						}
+					}else {
+						stackView.push(foodEditorComponent)
+					}
+				}
 			}
 		}
-	}*/
+		StackView{
+			id: stackView
+			Layout.fillHeight: true
+			Layout.fillWidth: true
+			initialItem: ListView{
+				model: FoodProxyModel{
+					id: foodListModel
+					Component.onCompleted: update()
+				}
+				delegate: FoodLineView{
+					width: stackView.width
+					//height: implicitHeight
+					foodModel: $modelData
+
+					MouseArea{
+						anchors.fill: parent
+						onClicked:{
+							console.log("Click "+$modelData)
+								 stackView.push(foodEditorComponent, {foodModel:$modelData})
+					}
+					}
+				}
+			}
+			Component{
+				id: scannerComponent
+				ScannerView{
+					id: scannerView
+					objectName: 'Scanner'
+					onScannedCodeChanged:{
+						if(scannedCode != '') {
+							stackView.replace(foodEditorComponent, {offCode: scannedCode})
+						}
+					}
+					Component.onCompleted: start()
+				}
+			}
+			Component{
+				id: foodEditorComponent
+				FoodEditorPage{
+					id: editor
+					objectName: 'Editor'
+				}
+			}
+		}
+	}
 }

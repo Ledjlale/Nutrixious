@@ -221,8 +221,6 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 			", vitamin_a REAL"
 			", vitamin_c REAL"
 			", FOREIGN KEY (serving_unit_id) REFERENCES units (unit_id) ON UPDATE CASCADE ON DELETE SET NULL"
-
-
 			")"
 		))
 			qCritical() << "Cannot create food table: " << query.lastError().text();

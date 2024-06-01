@@ -29,19 +29,15 @@
 FoodListModel::FoodListModel(QObject *parent)
 	: ProxyAbstractListModel<FoodModel*>{parent}
 {
-	mList << FoodModel::loadAll(this);
-	for(auto e : mList)
-		connect(e, &FoodModel::removed, this, &FoodListModel::handleRemoved);
 }
 
-FoodListModel::FoodListModel(QVariantList exercises, QObject *parent)
-	: ProxyAbstractListModel<FoodModel*>{parent}
-{
-	for(auto exercise : exercises){
-		auto e = exercise.value<FoodModel*>();
+void FoodListModel::update(){
+	beginResetModel();
+	mList.clear();
+	mList << FoodModel::buildAll(this);
+	for(auto e : mList)
 		connect(e, &FoodModel::removed, this, &FoodListModel::handleRemoved);
-		mList << e;
-	}
+	endResetModel();
 }
 
 QHash<int, QByteArray> FoodListModel::roleNames () const {
@@ -60,22 +56,11 @@ QVariant FoodListModel::data (const QModelIndex &index, int role) const {
 	if (role == Qt::DisplayRole) {
 		return QVariant::fromValue(model);
 	}else{
-		return model->getName();
+		return model->getBrand();
 	}
 
 	return QVariant();
 }
-
-
-
-QVariantList FoodListModel::getExercises() const{
-	QVariantList models;
-	for(auto exercise : mList){
-		models << QVariant::fromValue(exercise);
-	}
-	return models;
-}
-
 
 void FoodListModel::handleRemoved(FoodModel * model){
 	auto it = std::find(mList.begin(), mList.end(), model);

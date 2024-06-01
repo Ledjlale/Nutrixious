@@ -210,7 +210,7 @@ QList<FoodModel*> FoodModel::buildAll(QObject * parent){
 void FoodModel::loadFromOpenFoodFacts(const QString& code) {
 	setOpenFoodFactsCode(code);
 	qWarning() << code;
-	static QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+	static QNetworkAccessManager *manager = new QNetworkAccessManager(nullptr);
 	QNetworkRequest request;
 	QUrl url("https://ssl-api.openfoodfacts.org/api/v0/product/" +code+".json");
 	if(!QSslSocket::supportsSsl()) {
@@ -255,6 +255,7 @@ void FoodModel::openFoodFactsDownloaded(){
 		if( product.contains("generic_name") && getDescription().isEmpty()) setDescription(product["generic_name"].toString());
 		if( product.contains("image_url")) setImageUrl(product["image_url"].toString());
 		if( product.contains("serving_quantity")) setServingSize(product["serving_quantity"].toDouble());
+		else setServingSize(1);
 		//if( product.contains("")) setServingsPerContainer(product[""].toDouble());
 
 		QString unit = "g";

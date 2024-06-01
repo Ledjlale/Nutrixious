@@ -31,36 +31,16 @@ import App 1.0
 
 Item {
 	id: mainItem
+	property string offCode
 	property var foodModel: FoodModel{
 			id: foodModel
-			onServingUnitIdChanged: console.log("Change !!! " +servingUnitId)
 		}
+	signal saved()
+	onOffCodeChanged: if(offCode) mainItem.foodModel.loadFromOpenFoodFacts(offCode)
+
 	ColumnLayout{
 		anchors.fill: parent
 		spacing: 0
-		RowLayout{
-			Text{
-				Layout.fillWidth: true
-				horizontalAlignment: Text.AlignHCenter
-				color: Material.foreground
-				text: qsTr('Create your meals')
-			}
-			Button{
-				visible: foodModel.isEdited
-				text: "Save"
-				onClicked: foodModel.save()
-			}
-		}
-		RowLayout{
-			spacing: 15
-			TextField{
-				Layout.fillWidth: true
-				Layout.leftMargin: 5
-				placeholderText: 'Search for a saved meal'
-			}
-
-		}
-
 
 		ListView{
 			id: fieldsList
@@ -91,13 +71,14 @@ Item {
 			delegate: RowLayout{
 				width: fieldsList.width
 				Text{
+					color: Material.foreground
 					text: modelData.title
 				}
 				TextField{
 					Layout.fillWidth: true
 					horizontalAlignment: Text.AlignRight
-					text: foodModel[modelData.data] < 0 ? '' : foodModel[modelData.data]
-					onEditingFinished: foodModel[modelData.data] = newValue
+					text: mainItem.foodModel[modelData.data] < 0 ? '' : mainItem.foodModel[modelData.data]
+					onEditingFinished: mainItem.foodModel[modelData.data] = newValue
 				}
 				ComboBox{
 					id: unitChoice
@@ -108,8 +89,8 @@ Item {
 						filterType: UnitProxyModel.WEIGHT | UnitProxyModel.VOLUME
 						Component.onCompleted: if( unitChoice.visible) update()
 					}
-					onActivated:{foodModel[modelData.editUnits] = currentValue}
-					currentIndex: indexOfValue(foodModel[modelData.editUnits])
+					onActivated:{mainItem.foodModel[modelData.editUnits] = currentValue}
+					currentIndex: indexOfValue(mainItem.foodModel[modelData.editUnits])
 				}
 			}
 		}

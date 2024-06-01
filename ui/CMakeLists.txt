@@ -48,6 +48,7 @@
 
 	ui/View/ExerciseModelView.qml
 	ui/View/FoodModelView.qml
+	ui/View/FoodLineView.qml
 
 	ui/View/ExerciseSerieModelView.qml
 	ui/View/ExerciseSerieModelListView.qml

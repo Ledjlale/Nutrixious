@@ -24,22 +24,7 @@
 FoodProxyModel::FoodProxyModel(QObject *parent)
 	: SortFilterProxyModel{parent}
 {
+	auto list = new FoodListModel( this);
+	connect(this, &FoodProxyModel::update, list, &FoodListModel::update);
+	setSourceModel(list);
 }
-
-void FoodProxyModel::update(){
-	if(sourceModel()) sourceModel()->deleteLater();
-	setSourceModel(new FoodListModel(this));
-}
-
-
-QVariantList FoodProxyModel::getExercises() const {
-	if(sourceModel()) return dynamic_cast<FoodListModel*>(sourceModel())->getExercises();
-	else return QVariantList();
-}
-
-void FoodProxyModel::setExercises(QVariantList exercises){
-	if(sourceModel()) sourceModel()->deleteLater();
-	setSourceModel(new FoodListModel(exercises, this));
-}
-
-

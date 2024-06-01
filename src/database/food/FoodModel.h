@@ -95,7 +95,7 @@ protected:
 	QString mOpenFoodFactsCode;
 	double mServingSize = 0.0;
 	double mServingsPerContainer = 1.0;
-	qint64 mServingUnitId = 1;
+	qint64 mServingUnitId = 0;
 
 	double mCalories = -1.0;
 	double mTotalFat = -1.0;
