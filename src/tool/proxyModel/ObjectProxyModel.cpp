@@ -18,23 +18,29 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DATABASE_MODEL_H
-#define DATABASE_MODEL_H
+#include "ObjectProxyModel.h"
+#include "ObjectListModel.h"
 
-#include <QObject>
+#include "src/database/unit/UnitModel.h"
+
+ObjectProxyModel::ObjectProxyModel(QObject *parent)
+	: SortFilterProxyModel{parent}
+{
+}
+
+void ObjectProxyModel::update(){
+	if(sourceModel()) sourceModel()->deleteLater();
+	setSourceModel(new ObjectListModel(this));
+}
+
+QVariantList ObjectProxyModel::getData() const {
+	if(sourceModel()) return dynamic_cast<ObjectListModel*>(sourceModel())->getData();
+	else return QVariantList();
+}
+
+void ObjectProxyModel::setData(QVariantList data){
+	if(sourceModel()) sourceModel()->deleteLater();
+	setSourceModel(new ObjectListModel(data, this));
+}
 
 
-class DatabaseModel : public QObject {
-	Q_OBJECT
-public:
-	explicit DatabaseModel(QObject *parent = nullptr);
-
-	static void migrate();
-	static void initUnitsData();
-	static void insertDefaultData();
-	static void insertDefaultData_old();
-
-
-};
-
-#endif

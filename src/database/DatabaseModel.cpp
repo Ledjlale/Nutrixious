@@ -29,6 +29,8 @@
 #include "program/ProgramModel.h"
 #include "exercise/ExerciseModel.h"
 
+#include "unit/UnitModel.h"
+
 DatabaseModel::DatabaseModel(QObject *parent)
 	: QObject{parent}
 {}
@@ -177,6 +179,21 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 
 		}
 	}
+	if(!query.exec("SELECT * FROM units LIMIT 1")){
+		if(!query.exec("CREATE TABLE units (unit_id INTEGER PRIMARY KEY"
+			", name TEXT"
+			", gram_value REAL DEFAULT 0"
+			", meter_value REAL DEFAULT 0"
+			", second_value REAL DEFAULT 0"
+			", kcal_value REAL DEFAULT 0"
+			", milliliter_value REAL DEFAULT 0"
+			")"
+		))
+			qCritical() << "Cannot create units table: " << query.lastError().text();
+		else{
+			initUnitsData();
+		}
+	}
 	if(!query.exec("SELECT * FROM foods LIMIT 1")){
 		if(!query.exec("CREATE TABLE foods (food_id INTEGER PRIMARY KEY"
 			", open_food_facts_code TEXT"
@@ -184,7 +201,8 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 			", brand TEXT"
 			", description TEXT"
 			", serving_size REAL"
-			", serving_unit TEXT"
+			", servings_per_container REAL"
+			", serving_unit_id INTEGER"
 			", calories REAL"
 			", total_fat REAL"
 			", saturated_fat REAL"
@@ -202,10 +220,14 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 			", potassium REAL"
 			", vitamin_a REAL"
 			", vitamin_c REAL"
+			", FOREIGN KEY (serving_unit_id) REFERENCES units (unit_id) ON UPDATE CASCADE ON DELETE SET NULL"
+
+
 			")"
 		))
 			qCritical() << "Cannot create food table: " << query.lastError().text();
 	}
+
 
 
 	query.exec("PRAGMA user_version");
@@ -216,6 +238,52 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 	}
 }
 
+void DatabaseModel::initUnitsData(){
+	QList<UnitModel*> models;
+// Weight
+	models << new UnitModel("g",1,0,0,0,0,nullptr);
+	models << new UnitModel("kg",1000,0,0,0,0,nullptr);
+	models << new UnitModel("mg",0.001,0,0,0,0,nullptr);
+	models << new UnitModel("oz",28.3495,0,0,0,0,nullptr);
+	models << new UnitModel("ounce",28.3495,0,0,0,0,nullptr);
+	models << new UnitModel("lbs",453.592,0,0,0,0,nullptr);
+	models << new UnitModel("pound",453.592,0,0,0,0,nullptr);
+
+// Volume
+	models << new UnitModel("ml",0,0,0,0,1,nullptr);
+	models << new UnitModel("L",0,0,0,0,1000,nullptr);
+	models << new UnitModel("cl",0,0,0,0,10,nullptr);
+
+	models << new UnitModel("teaspoon",0,0,0,0,4.92892,nullptr);
+	models << new UnitModel("tablespoon",0,0,0,0,14.7868,nullptr);
+	models << new UnitModel("fl oz",0,0,0,0,29.5735,nullptr);
+	models << new UnitModel("cup",0,0,0,0,240,nullptr);
+	models << new UnitModel("pint",0,0,0,0,473.176,nullptr);
+	models << new UnitModel("quart",0,0,0,0,946.353,nullptr);
+	models << new UnitModel("gal",0,0,0,0,3785.41,nullptr);
+
+
+// Distance
+	models << new UnitModel("m",0,1,0,0,0,nullptr);
+	models << new UnitModel("cm",0,0.01,0,0,0,nullptr);
+	models << new UnitModel("mm",0,0.001,0,0,0,nullptr);
+	models << new UnitModel("km",0,1000,0,0,0,nullptr);
+
+// Calories
+	models << new UnitModel("kcal",0,0,0,1,0,nullptr);
+	models << new UnitModel("Cal",0,0,0,1,0,nullptr);
+	models << new UnitModel("cal",0,0,0,0.001,0,nullptr);
+
+// Time
+	models << new UnitModel("s",0,0,1,0,0,nullptr);
+	models << new UnitModel("min",0,0,60,0,0,nullptr);
+	models << new UnitModel("h",0,0,3600,0,0,nullptr);
+
+	for(auto i : models){
+		i->save();
+		i->deleteLater();
+	}
+}
 void DatabaseModel::insertDefaultData() {
 /*
 	QVector<ExerciseModel *> exercises;

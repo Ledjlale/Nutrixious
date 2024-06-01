@@ -18,22 +18,25 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DATABASE_MODEL_H
-#define DATABASE_MODEL_H
+#ifndef TOOL_OBJECT_PROXY_MODEL_H
+#define TOOL_OBJECT_PROXY_MODEL_H
 
-#include <QObject>
+#include "src/tool/proxyModel/SortFilterProxyModel.hpp"
 
-
-class DatabaseModel : public QObject {
-	Q_OBJECT
+class ObjectProxyModel: public SortFilterProxyModel {
+Q_OBJECT
+	Q_PROPERTY(QVariantList data READ getData WRITE setData NOTIFY dataChanged)
 public:
-	explicit DatabaseModel(QObject *parent = nullptr);
+	ObjectProxyModel(QObject * parent = nullptr);
 
-	static void migrate();
-	static void initUnitsData();
-	static void insertDefaultData();
-	static void insertDefaultData_old();
+	Q_INVOKABLE void update();
 
+	Q_INVOKABLE QVariantList getData() const;
+	Q_INVOKABLE void setData(QVariantList data);
+
+
+signals:
+	void dataChanged();
 
 };
 

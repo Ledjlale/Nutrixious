@@ -24,6 +24,23 @@
 #include <QObject>
 #include <QVariant>
 
+#define DECLARE_GETSET(type, x, X) public:\
+	Q_PROPERTY(type x MEMBER m##X WRITE set##X NOTIFY x##Changed)\
+	type get##X() const; \
+	void set##X(type data);\
+	Q_SIGNAL void x##Changed();
+
+#define DEFINE_GETSET(Class, type, x, X) type Class::get##X() const{ \
+	return m##X;\
+	}\
+	void Class::set##X(type data){\
+		if(m##X!= data){\
+			addBackup(&m##X,m##X,data);\
+			m##X = data;\
+			emit x##Changed();\
+		}\
+	}
+
 class QmlModel: public QObject{
 Q_OBJECT
 	Q_PROPERTY(bool isSaved READ getIsSaved WRITE setIsSaved NOTIFY isSavedChanged)

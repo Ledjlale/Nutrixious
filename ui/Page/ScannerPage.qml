@@ -64,7 +64,7 @@ Item {
 			Layout.fillHeight: true
 			onScannedCodeChanged:{
 				if(scannedCode != '')
-					foodModel.loadFromOpenFoodFacts(scannedCode)
+					editor.foodModel.loadFromOpenFoodFacts(scannedCode)
 					debugText.text = scannedCode
 					//xmlModel.scannedCode = scannedCode
 					//foodModel.request(scannedCode)
@@ -75,9 +75,16 @@ Item {
 				color: Material.foreground
 
 			}
+		}
+		FoodEditorPage{
+			id: editor
+		}
+	}
+}
+/*
 			FoodModel{
 				id: foodModel
-/*
+
 function request(scannedCode) {
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function() {
@@ -95,10 +102,10 @@ function request(scannedCode) {
 	xhr.open("GET",url );
 	xhr.send();
 }
-*/
+
 			}
 
-			/*
+
 			ListView{
 				anchors.fill: parent
 				model: XmlListModel {
@@ -117,9 +124,10 @@ function request(scannedCode) {
 						text: index + " : " +nutriments + ", " +carbohydrates
 					}
 				}
-			}*/
+			}
 
 		}
 	}
 }
+*/
 // https://ssl-api.openfoodfacts.org/api/v0/product/3257971101015.json

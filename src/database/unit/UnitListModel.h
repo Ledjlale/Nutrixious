@@ -18,21 +18,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DATABASE_MODEL_H
-#define DATABASE_MODEL_H
+#ifndef DATABASE_UNIT_LIST_MODEL_H
+#define DATABASE_UNIT_LIST_MODEL_H
 
-#include <QObject>
+#include "src/tool/proxyModel/ProxyAbstractListModel.hpp"
+#include "UnitModel.h"
 
-
-class DatabaseModel : public QObject {
-	Q_OBJECT
+class UnitListModel: public ProxyAbstractListModel<UnitModel*> {
+Q_OBJECT
 public:
-	explicit DatabaseModel(QObject *parent = nullptr);
+	UnitListModel(QObject * parent = nullptr);
 
-	static void migrate();
-	static void initUnitsData();
-	static void insertDefaultData();
-	static void insertDefaultData_old();
+	virtual QHash<int, QByteArray> roleNames () const override;
+	QVariant data (const QModelIndex &index, int role = Qt::DisplayRole) const override;
+	QVariantList getData() const;
+
+	void update();
 
 
 };

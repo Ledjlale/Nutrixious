@@ -31,14 +31,25 @@ import App 1.0
 
 Item {
 	id: mainItem
+	property var foodModel: FoodModel{
+			id: foodModel
+			onServingUnitIdChanged: console.log("Change !!! " +servingUnitId)
+		}
 	ColumnLayout{
 		anchors.fill: parent
 		spacing: 0
-		Text{
-			Layout.fillWidth: true
-			horizontalAlignment: Text.AlignHCenter
-			color: Material.foreground
-			text: qsTr('Create your meals')
+		RowLayout{
+			Text{
+				Layout.fillWidth: true
+				horizontalAlignment: Text.AlignHCenter
+				color: Material.foreground
+				text: qsTr('Create your meals')
+			}
+			Button{
+				visible: foodModel.isEdited
+				text: "Save"
+				onClicked: foodModel.save()
+			}
 		}
 		RowLayout{
 			spacing: 15
@@ -50,18 +61,15 @@ Item {
 
 		}
 
-		FoodModel{
-			id: foodModel
-			onServingUnitChanged: console.log("Change !!! " +servingUnit)
-		}
+
 		ListView{
 			id: fieldsList
 			Layout.fillWidth: true
 			Layout.fillHeight: true
 			model:[{title:'Brand', data: 'brand', editUnits: false}
 					, {title:'Description', data: 'description', editUnits: false}
-					, {title:'Serving Size', data: 'servingSize', editUnits: 'servingUnit'}
-					, {title:'Serving per container', data: 'servingsPerContainer', editUnits: false}
+					, {title:'Serving Size', data: 'servingSize', editUnits: 'servingUnitId'}
+					//, {title:'Serving per container', data: 'servingsPerContainer', editUnits: false}
 					, {title:'Calories ( kcal )', data: 'calories', editUnits: false}
 					, {title:'Total Fat ( g )', data: 'totalFat', editUnits: false}
 					, {title:'Saturated Fat ( g )', data: 'saturatedFat', editUnits: false}
@@ -69,14 +77,14 @@ Item {
 					, {title:'Polyunsaturated Fat ( g )', data: 'polyUnsaturatedFat', editUnits: false}
 					, {title:'Monounsaturated Fat ( g )', data: 'monoUnsaturatedFat', editUnits: false}
 					, {title:'Cholesterol ( mg )', data: 'cholesterol', editUnits: false}
-					, {title:'Sodium ( mg )', data: 'sodium', editUnits: false}
 					, {title:'Total Carbohydrates ( g )', data: 'totalCarbohydrate', editUnits: false}
-					, {title:'Dietary Fibers ( g )', data: 'dietaryFiber', editUnits: false}
+					, {title:'Fibers ( g )', data: 'dietaryFiber', editUnits: false}
 					, {title:'Sugars ( g )', data: 'sugar', editUnits: false}
 					, {title:'Protein ( g )', data: 'protein', editUnits: false}
 					, {title:'Calcium ( % )', data: 'calcium', editUnits: false}
 					, {title:'Iron ( % )', data: 'iron', editUnits: false}
 					, {title:'Potassium ( mg )', data: 'potassium', editUnits: false}
+					, {title:'Sodium ( mg )', data: 'sodium', editUnits: false}
 					, {title:'Vitamin A ( % )', data: 'vitaminA', editUnits: false}
 					, {title:'Vitamin C ( % )', data: 'vitaminC', editUnits: false}
 			]
@@ -88,17 +96,20 @@ Item {
 				TextField{
 					Layout.fillWidth: true
 					horizontalAlignment: Text.AlignRight
-					text: foodModel[modelData.data]
+					text: foodModel[modelData.data] < 0 ? '' : foodModel[modelData.data]
 					onEditingFinished: foodModel[modelData.data] = newValue
 				}
 				ComboBox{
+					id: unitChoice
 					visible: !!modelData.editUnits
-					displayText: currentText
-					onDisplayTextChanged: console.log(displayText)
-					model: visible  ? ['kg','g'] : []
-					onActivated:{foodModel[modelData.editUnits] = currentText}
-
-					Component.onCompleted: if(visible) currentIndex = find(foodModel[modelData.editUnits])
+					textRole: "displayText"
+					valueRole: "id"
+					model: UnitProxyModel{
+						filterType: UnitProxyModel.WEIGHT | UnitProxyModel.VOLUME
+						Component.onCompleted: if( unitChoice.visible) update()
+					}
+					onActivated:{foodModel[modelData.editUnits] = currentValue}
+					currentIndex: indexOfValue(foodModel[modelData.editUnits])
 				}
 			}
 		}

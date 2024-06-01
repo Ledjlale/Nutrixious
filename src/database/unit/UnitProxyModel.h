@@ -18,23 +18,28 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DATABASE_MODEL_H
-#define DATABASE_MODEL_H
+#ifndef DATABASE_UNIT_PROXY_MODEL_H
+#define DATABASE_UNIT_PROXY_MODEL_H
 
-#include <QObject>
+#include "src/tool/proxyModel/SortFilterProxyModel.hpp"
 
-
-class DatabaseModel : public QObject {
-	Q_OBJECT
+class UnitProxyModel: public SortFilterProxyModel {
+Q_OBJECT
 public:
-	explicit DatabaseModel(QObject *parent = nullptr);
+	UnitProxyModel(QObject * parent = nullptr);
+	enum FILTER_TYPE{
+		ALL = 0,
+		WEIGHT = 1,
+		DISTANCE = 2,
+		TIME = 4,
+		ENERGY = 8,
+		VOLUME = 16
+	};
+	Q_ENUM(FILTER_TYPE)
 
-	static void migrate();
-	static void initUnitsData();
-	static void insertDefaultData();
-	static void insertDefaultData_old();
-
-
+	virtual bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
+signals:
+	void update();
 };
 
 #endif

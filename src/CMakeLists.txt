@@ -69,11 +69,16 @@
 	src/database/personal/PersonalDataProxyModel.cpp
 
 	src/database/food/FoodModel.cpp
+	src/database/unit/UnitModel.cpp
+	src/database/unit/UnitListModel.cpp
+	src/database/unit/UnitProxyModel.cpp
 
 	src/stat/StatsModel.cpp
 
 	src/tool/proxyModel/SortFilterProxyModel.cpp
 	src/tool/proxyModel/ProxyAbstractObject.hpp
+	src/tool/proxyModel/ObjectListModel.cpp
+	src/tool/proxyModel/ObjectProxyModel.cpp
 	src/tool/QmlData.cpp
 	src/tool/QmlModel.cpp
 

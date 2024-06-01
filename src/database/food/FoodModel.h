@@ -25,14 +25,12 @@
 #include <QVector>
 #include <QVariantList>
 #include <QSqlQuery>
+#include <QSslError>
+#include <QNetworkReply>
 
 #include "src/tool/QmlModel.h"
 
-#define DECLARE_GETSET(type, x, X) public:\
-	Q_PROPERTY(type x MEMBER m##X WRITE set##X NOTIFY x##Changed)\
-	type get##X() const; \
-	void set##X(type data);\
-	Q_SIGNAL void x##Changed();
+
 
 class FoodModel : public QmlModel{
 Q_OBJECT
@@ -42,7 +40,7 @@ Q_OBJECT
 	DECLARE_GETSET(QString,brand,Brand)
 	DECLARE_GETSET(QString,imageUrl,ImageUrl)
 	DECLARE_GETSET(QString,description,Description)
-	DECLARE_GETSET(QString,servingUnit,ServingUnit)
+	DECLARE_GETSET(qint64,servingUnitId,ServingUnitId)
 	DECLARE_GETSET(double,servingSize,ServingSize)
 	DECLARE_GETSET(double,servingsPerContainer,ServingsPerContainer)
 	DECLARE_GETSET(double,calories,Calories)
@@ -71,11 +69,18 @@ public:
 
 public:
 
-	//Q_INVOKABLE virtual bool save();
-	//Q_INVOKABLE virtual void remove();
+	Q_INVOKABLE virtual bool save();
+	Q_INVOKABLE virtual void remove();
+	virtual void updateIsSaved();
 
 	static QList<FoodModel*> buildAll(QObject * parent);
 	static FoodModel *build(QSqlQuery &query, QObject * parent);
+
+	Q_INVOKABLE void loadFromOpenFoodFacts(const QString& code);
+
+	void openFoodFactsDownloaded();
+	void handleSslErrors (const QList<QSslError> &sslErrors);
+	void handleError (QNetworkReply::NetworkError code);
 
 signals:
 	void removed(FoodModel *model);
@@ -83,32 +88,32 @@ signals:
 protected:
 	qint64 mFoodId = 0;
 
-	QString mBrand = "CustomFood";
-	QString mDescription = "Desc";
+	QString mBrand = "";
+	QString mDescription = "";
 	QString mImageUrl;
 
 	QString mOpenFoodFactsCode;
 	double mServingSize = 0.0;
-	double mServingsPerContainer = 0.0;
-	QString mServingUnit = "g";
+	double mServingsPerContainer = 1.0;
+	qint64 mServingUnitId = 1;
 
-	double mCalories = 0.0;
-	double mTotalFat = 0.0;
-	double mSaturatedFat = 0.0;
-	double mTransFat = 0.0;
-	double mPolyUnsaturatedFat = 0.0;
-	double mMonoUnsaturatedFat = 0.0;
-	double mCholesterol = 0.0;
-	double mSodium = 0.0;
-	double mTotalCarbohydrate = 0.0;
-	double mDietaryFiber = 0.0;
-	double mSugar = 0.0;
-	double mProtein = 0.0;
-	double mCalcium = 0.0;
-	double mIron = 0.0;
-	double mPotassium = 0.0;
-	double mVitaminA = 0.0;
-	double mVitaminC = 0.0;
+	double mCalories = -1.0;
+	double mTotalFat = -1.0;
+	double mSaturatedFat = -1.0;
+	double mTransFat = -1.0;
+	double mPolyUnsaturatedFat = -1.0;
+	double mMonoUnsaturatedFat = -1.0;
+	double mCholesterol = -1.0;
+	double mSodium = -1.0;
+	double mTotalCarbohydrate = -1.0;
+	double mDietaryFiber = -1.0;
+	double mSugar = -1.0;
+	double mProtein = -1.0;
+	double mCalcium = -1.0;
+	double mIron = -1.0;
+	double mPotassium = -1.0;
+	double mVitaminA = -1.0;
+	double mVitaminC = -1.0;
 
 };
 
