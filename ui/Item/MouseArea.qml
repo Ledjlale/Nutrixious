@@ -18,30 +18,41 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick
-import QtQuick.Controls.Material
+import QtQuick as Quick
+import QtQuick.Controls.Material as Control
+import QtQuick.Effects
 import QtQuick.Layouts
 
-import App 1.0
-
-Item {
+Control.Button {
 	id: mainItem
-	ColumnLayout{
-		anchors.fill: parent
-		DayNavigationBar{
-			Layout.fillWidth : true
-		}
 
-		MealView{
-			Layout.fillWidth: true
-			Layout.preferredHeight: implicitHeight
-			onHeightChanged: console.log(height + " / "+ implicitHeight)
-		}
-		MealView{
-			Layout.fillWidth: true
-		}
-		Item{
-			Layout.fillHeight: true
-		}
+	spacing: 0
+	hoverEnabled: true
+
+	leftInset: 0
+	rightInset: 0
+	topInset: 0
+	bottomInset: 0
+
+	leftPadding:0
+	rightPadding:0
+
+	//onClicked: console.log("click")
+	//onDoubleClicked: console.log("doubleClick")
+	//onPressAndHold: console.log("holdPress")
+	Quick.MouseArea {
+		anchors.fill: parent
+		hoverEnabled: parent.hoverEnabled
+		cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+		acceptedButtons: Qt.NoButton
+	}
+
+	background: Quick.Item {
+		anchors.fill: parent
+			Quick.MouseArea {
+				anchors.fill: parent
+				hoverEnabled: mainItem.hoverEnabled
+				cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+			}
 	}
 }

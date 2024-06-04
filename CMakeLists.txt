@@ -25,7 +25,7 @@ project(${TARGET_NAME} VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INSTALL_PREFIX "OUTPUT")
 
-find_package(Qt6 6.4 REQUIRED COMPONENTS Quick QuickControls2 Sql Charts)
+find_package(Qt6 6.4 REQUIRED COMPONENTS Quick QuickControls2 Sql Charts Multimedia)
 
 add_subdirectory(external/SCodes/src)
 
@@ -38,10 +38,13 @@ set(_APP_QML_SINGLETONS)
 add_subdirectory(ui)
 add_subdirectory(src)
 
+
 qt_add_executable(${TARGET_NAME} main.cpp)
 
 set_source_files_properties(${_APP_QML_SINGLETONS} PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
-
+set_property(TARGET ${TARGET_NAME} APPEND PROPERTY
+	QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/asset/android
+)
 
 qt_add_qml_module(${TARGET_NAME}
 	URI App

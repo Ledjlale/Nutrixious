@@ -27,43 +27,35 @@ import App 1.0
 
 Control.ToolBar{
 	id: mainItem
-	property bool showBackButton : true
-	property bool showMenuButton: true
-	property bool showOptionsButton: true
-	property alias title: titleLabel.text
-	property bool displayStopwatch: false
-	signal back()
-	signal menu()
-	signal options()
+	property bool showPreviousButton : true
+	property bool showNextButton: true
+	signal previous()
+	signal next()
+
+	property var currentDay: DateModel{}
+
+	onNext:{ currentDay.nextDay()
+	}
+	onPrevious:{ currentDay.previousDay()
+	}
 	RowLayout {
 		 anchors.fill: parent
 		 Control.ToolButton {
-			visible: mainItem.showMenuButton
-			text: qsTr("=")
-			onClicked: mainItem.menu()
-		 }
-		 Control.ToolButton {
-			visible: mainItem.showBackButton
-			text: qsTr("‹")
-			onClicked: mainItem.back()
+			visible: mainItem.showPreviousButton
+			text: qsTr("<")
+			onClicked: mainItem.previous()
 		 }
 		 Control.Label {
 			id: titleLabel
-			visible: !!text
-			elide: Control.Label.ElideRight
-			horizontalAlignment: Qt.AlignLeft
+			horizontalAlignment: Qt.AlignHCenter
 			verticalAlignment: Qt.AlignVCenter
 			Layout.fillWidth: true
+			text: currentDay.date
 		}
-		Control.ToolButton {
-			text: qsTr("T")
-			onClicked: mainItem.displayStopwatch = !mainItem.displayStopwatch
-		}
-
-		Control.ToolButton {
-			visible: mainItem.showOptionsButton
-			text: qsTr("⋮")
-			onClicked: mainItem.options()
-		}
+		 Control.ToolButton {
+			visible: mainItem.showNextButton
+			text: qsTr(">")
+			onClicked: mainItem.next()
+		 }
 	}
 }

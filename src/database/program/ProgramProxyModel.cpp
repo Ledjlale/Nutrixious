@@ -25,11 +25,15 @@
 ProgramProxyModel::ProgramProxyModel(QObject *parent)
 	: SortFilterProxyModel{parent}
 {
-	setSourceModel(new ProgramListModel());
+	auto model = new ProgramListModel(this);
+	connect(this, &ProgramProxyModel::create, model, &ProgramListModel::create);
+	setSourceModel(model);
 }
 
 void ProgramProxyModel::update(){
 	sourceModel()->deleteLater();
-	setSourceModel(new ProgramListModel());
+	auto model = new ProgramListModel(this);
+	connect(this, &ProgramProxyModel::create, model, &ProgramListModel::create);
+	setSourceModel(model);
 }
 

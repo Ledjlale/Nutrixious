@@ -26,22 +26,27 @@ import App 1.0
 
 Item {
 	id: mainItem
+	property int editMode: 0	// 0=New, 1=Edit
 	property bool showSaveButton: true
 	property alias exerciseModel: programExerciseModelId.exerciseModel
 	property var programExerciseModel: ProgramExerciseModel {
 		id: programExerciseModelId
-		Component.onCompleted: addSerie()
+		Component.onCompleted: updateFromLastProgram()
 	}
 	property var serieModel: ProgramSerieModel{
 		id: serieModelId
 	}
 	property var programModel
-
+	onProgramExerciseModelChanged: console.log(programExerciseModel.description + ' / ' +programExerciseModelId.description)
 	Component.onCompleted: Material.background = Qt.darker(Material.background, 1.02)
 
 	function save(){
-		mainItem.programModel.addNewExercise(mainItem.programExerciseModel)
-		return mainItem.programModel.save()
+		if(editMode == 0){
+			mainItem.programModel.addNewExercise(mainItem.programExerciseModel)
+			return mainItem.programModel.save()
+		}else if(editMode == 1){
+			return mainItem.programExerciseModel.save()
+		}
 	}
 	ColumnLayout{
 		anchors.fill: parent
@@ -59,9 +64,11 @@ Item {
 				TextField{
 					Layout.fillWidth: true
 					Layout.leftMargin: 10
-					title: 'Name'
+					placeholderText: 'Name'
 					text: exerciseModel.name
 					focus: true
+					readOnly: exerciseModel.isSaved
+					keepEditView: exerciseModel.name == ''
 					//Material.background: exerciseModel.invalidName ? Material.color(Material.Pink, Material.Shade50) : mainItem.Material.background
 					//Material.foreground: exerciseModel.invalidName ? Material.accent : mainItem.Material.foreground
 					onEditingFinished: {
@@ -73,10 +80,11 @@ Item {
 					id: descrtiptionField
 					Layout.fillWidth: true
 					Layout.leftMargin: 10
-					title: 'Description'
-					text: programExerciseModelId.description
+					placeholderText: 'Description'
+					keepEditView:  mainItem.programExerciseModel.description == ''
+					text: mainItem.programExerciseModel.description
 					onEditingFinished: {
-						programExerciseModelId.description = newValue
+						mainItem.programExerciseModel.description = newValue
 						metField.forceActiveFocus()
 					}
 				}
@@ -153,7 +161,7 @@ Item {
 			//Material.foreground: programExerciseModelId.invalidSets ? Material.accent : mainItem.Material.foreground
 
 			onClicked: {
-				programExerciseModelId.addSerie()
+				mainItem.programExerciseModel.addSerie()
 			}
 		}
 
@@ -165,7 +173,7 @@ Item {
 			Layout.rightMargin: 10
 			Layout.topMargin: 10
 			clip: true
-			model: programExerciseModelId.series
+			model: mainItem.programExerciseModel.series
 			delegate:ExerciseSerieModelView{
 				serieModel: modelData
 				exerciseUnitModel: mainItem.programExerciseModel
@@ -176,6 +184,7 @@ Item {
 				showCalories: false
 				doSave: false
 				showSaveButton: mainItem.showSaveButton
+				showWorkTime: false
 				keepEditView: true
 			}
 		}

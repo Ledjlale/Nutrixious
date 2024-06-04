@@ -49,6 +49,18 @@ Item {
 				}
 			}
 			Button{
+				Layout.fillWidth: true
+				Layout.preferredWidth: implicitWidth
+				Layout.minimumWidth: implicitWidth
+				Layout.maximumWidth: implicitWidth
+				visible: !!exerciseChoice.currentValue
+				text: 'D'
+				onClicked: {
+					exerciseChoice.currentValue.remove()
+
+				}
+			}
+			Button{
 				text: 'Reload'
 				//visible: stackView.depth == 1
 				onClicked: exercises.update()
@@ -76,9 +88,9 @@ Item {
 					id: metField
 					Layout.fillWidth: true
 					Layout.leftMargin: 10
-					inputMethodHints: Qt.ImhDigitsOnly
+					inputMethodHints: Qt.ImhFormattedNumbersOnly
 					title: 'MET'
-					text: mainItem.exerciseModel?.met || ''
+					text: mainItem.exerciseModel?.met.toFixed(2) || ''
 					onEditingFinished: {
 						mainItem.exerciseModel.met = newValue
 						//repsField.forceActiveFocus()
@@ -96,6 +108,7 @@ Item {
 				text: 'Save'
 				onClicked:{
 					mainItem.exerciseModel.save()
+					exercises.update()
 				}
 			}
 		}

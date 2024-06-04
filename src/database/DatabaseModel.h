@@ -33,6 +33,7 @@ public:
 	static void initUnitsData();
 	static void insertDefaultData();
 	static void insertDefaultData_old();
+	static void insertVersion2Data();
 
 
 };

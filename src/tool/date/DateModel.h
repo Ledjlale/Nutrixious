@@ -18,20 +18,31 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PROGRAM_PROXY_MODEL_H
-#define PROGRAM_PROXY_MODEL_H
+#ifndef DATE_MODEL_H
+#define DATE_MODEL_H
 
-#include "src/tool/proxyModel/SortFilterProxyModel.hpp"
+#include <QObject>
+#include <QDateTime>
 
-class ProgramProxyModel: public SortFilterProxyModel {
+class DateModel: public QObject{
 Q_OBJECT
+	Q_PROPERTY(QString date READ getDateStr NOTIFY dateChanged)
+	Q_PROPERTY(QString time READ getTimeStr NOTIFY timeChanged)
 public:
-	ProgramProxyModel(QObject * parent = nullptr);
+	DateModel();
 
-	Q_INVOKABLE void update();
+	QString getDateStr()const;
+	QString getTimeStr()const;
+	void setDate(QDate data);
+
+	Q_INVOKABLE void nextDay();
+	Q_INVOKABLE void previousDay();
 signals:
-	void create();
-
+	void dateChanged();
+	void timeChanged();
+protected:
+	QDate mDate;
+	QTime mTime;
 };
 
 #endif

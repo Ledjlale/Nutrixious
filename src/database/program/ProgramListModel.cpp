@@ -58,7 +58,13 @@ QVariant ProgramListModel::data (const QModelIndex &index, int role) const {
 	return QVariant();
 }
 
-
+void ProgramListModel::create(){
+	beginInsertRows(QModelIndex(), 0,0);
+	auto model = new ProgramModel(this);
+	connect(model, &ProgramModel::removed, this, &ProgramListModel::handleRemoved);
+	mList.push_front(model);
+	endInsertRows();
+}
 
 void ProgramListModel::handleRemoved(){
 	auto model = dynamic_cast<ProgramModel*>(sender());

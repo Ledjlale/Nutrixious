@@ -149,28 +149,15 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 
 		insertDefaultData();
 
-		query.exec("CREATE TABLE version (version INTEGER)");
-		query.exec("INSERT INTO version (version) VALUES(1)");
+		//query.exec("CREATE TABLE version (version INTEGER)");
+		//query.exec("INSERT INTO version (version) VALUES(1)");
 
-		query.exec("PRAGMA user_version=1");
+		query.exec("PRAGMA user_version=2");
 	}else{// Migration
-	/*
 		if( version < 2){
-			QList<QPair<qint64, QStringList>> data;
-			if(!query.exec("SELECT data, program_exercise_id FROM program_exercises")) {
-				qCritical() << "Cannot update database on program_exercise_id : "<< query.lastError().text();
-				return;
-			}
-			auto dataField = query.record().indexOf("data");
-			auto idField = query.record().indexOf("program_exercise_id");
-			while(query.next()){
-				data << QPair<qint64, QStringList>(query.value(dataField).toInt(),query.value(dataField).toString().split(","));
-			}
-			for(auto i : data){
-				i.second << "
-				query.exec("");
-			}
-		}*/
+			insertVersion2Data();
+		}
+		query.exec("PRAGMA user_version=2");
 	}
 	if(!query.exec("SELECT calories FROM training_exercise_series LIMIT 1")){
 		if(!query.exec("ALTER TABLE training_exercise_series ADD COLUMN calories REAL DEFAULT 0")){
@@ -224,6 +211,51 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 			")"
 		))
 			qCritical() << "Cannot create food table: " << query.lastError().text();
+	}
+
+	if(!query.exec("SELECT * FROM meal_groups LIMIT 1")){
+		if(!query.exec("CREATE TABLE meals_groups (meal_group_id INTEGER PRIMARY KEY"
+			", name TEXT"
+			", order_id INTEGER"
+			", default_time INTEGER"
+			)){
+			qCritical() << "Cannot create meal group table: " << query.lastError().text();
+		}
+	}
+
+	if(!query.exec("SELECT * FROM meal_foods LIMIT 1")){
+		if(!query.exec("CREATE TABLE meal_foods (food_id INTEGER PRIMARY KEY"
+			", meal_group_id INTEGER"
+			", consumption_time INTEGER"
+			", open_food_facts_code TEXT"
+			", image_url TEXT"
+			", brand TEXT"
+			", description TEXT"
+			", serving_size REAL"
+			", servings_per_container REAL"
+			", serving_unit_id INTEGER"
+			", calories REAL"
+			", total_fat REAL"
+			", saturated_fat REAL"
+			", trans_fat REAL"
+			", poly_unsaturated_fat REAL"
+			", mono_unsaturated_fat REAL"
+			", cholesterol REAL"
+			", sodium REAL"
+			", total_carbohydrate REAL"
+			", dietary_fiber REAL"
+			", sugar REAL"
+			", protein REAL"
+			", calcium REAL"
+			", iron REAL"
+			", potassium REAL"
+			", vitamin_a REAL"
+			", vitamin_c REAL"
+			", FOREIGN KEY (serving_unit_id) REFERENCES units (unit_id) ON UPDATE CASCADE ON DELETE SET NULL"
+			", FOREIGN KEY (meal_group_id) REFERENCES meal_groups (meal_group_id) ON UPDATE CASCADE ON DELETE SET NULL"
+			")"
+		))
+			qCritical() << "Cannot create meal foods table: " << query.lastError().text();
 	}
 
 
@@ -282,7 +314,16 @@ void DatabaseModel::initUnitsData(){
 		i->deleteLater();
 	}
 }
+
+void DatabaseModel::insertVersion2Data() {
+	ProgramModel * programModel = new ProgramModel(nullptr);
+	programModel->setName("AllExercises");
+	programModel->setDescription("Create all your exercises in this program to store them.\nIt will be easier to add them in other programs or while training.");
+	programModel->save();
+	programModel->deleteLater();
+}
 void DatabaseModel::insertDefaultData() {
+	insertVersion2Data();
 /*
 	QVector<ExerciseModel *> exercises;
 	QVector<ProgramExerciseModel *> programExercises;

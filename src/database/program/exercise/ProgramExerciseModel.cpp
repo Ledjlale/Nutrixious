@@ -26,6 +26,7 @@
 #include <QSqlError>
 #include <QEvent>
 //#include <QDynamicPropertyChange>
+#include "src/database/training/TrainingModel.h"
 
 #include <QQmlApplicationEngine>
 extern QQmlApplicationEngine * gEngine;
@@ -69,6 +70,24 @@ void ProgramExerciseModel::addSerie(){
 	else
 		model = new ProgramSerieModel(nullptr);
 	ExerciseUnitModel::insertSerie(model);
+}
+
+void ProgramExerciseModel::updateFromLastProgram() {
+	auto model = TrainingModel::buildExercise(mExercise.second, this);
+	if(model){
+		setUseDistance(model->getUseDistance());
+		setUseRepetitions(model->getUseRepetitions());
+		setUseSpeed(model->getUseSpeed());
+		setUseWeight(model->getUseWeight());
+		setDescription(model->getDescription());
+		for(auto s : model->getSeries()){
+			auto serie = new ProgramSerieModel(s, this);
+			ExerciseUnitModel::insertSerie(serie);
+		}
+		model->deleteLater();
+	}
+	if(mSeries.size() == 0)
+		addSerie();
 }
 
 ProgramExerciseModel *ProgramExerciseModel::build(QSqlQuery &query, QObject * parent) {

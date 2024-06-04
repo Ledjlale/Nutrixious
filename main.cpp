@@ -69,6 +69,8 @@
 #include "src/tool/proxyModel/ObjectListModel.h"
 #include "src/tool/proxyModel/ObjectProxyModel.h"
 
+#include "src/tool/date/DateModel.h"
+
 void registerTypes(){
 	qmlRegisterType<SBarcodeScanner>("com.scythestudio.scodes", 1, 0, "SBarcodeScanner");
 	//qmlRegisterType<FoodModel>("App", 1, 0, "FoodModel");
@@ -129,6 +131,7 @@ void registerTypes(){
 	//qmlRegisterType<FoodProxyModel>("App", 1, 0, "FoodProxyModel");
 
 	qmlRegisterType<StatsModel>("App", 1, 0, "StatsModel");
+	qmlRegisterType<DateModel>("App", 1, 0, "DateModel");
 }
 
 static QQmlApplicationEngine * gEngine = nullptr;

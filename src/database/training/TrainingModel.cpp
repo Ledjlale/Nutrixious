@@ -102,7 +102,15 @@ ProgramExerciseModel* TrainingModel::insertExercise(ProgramExerciseModel *model)
 	return insertedModel;
 }
 
+
+
+
 TrainingExerciseModel* TrainingModel::buildExercise(ExerciseModel *model) {
+	return buildExercise(model, this);
+}
+TrainingExerciseModel* TrainingModel::buildExercise(ExerciseModel *model, QObject *parent){
+
+	if(model->getExerciseId() == 0) return nullptr;
 	QSqlQuery query;
 	QString trainingTablePrefix = "training";
 	QString programTablePrefix = "program";
@@ -112,7 +120,7 @@ TrainingExerciseModel* TrainingModel::buildExercise(ExerciseModel *model) {
 		qCritical() << "Cannot request training exercises to build exercise : " << query.lastError().text();
 	else{
 		if(query.next()){
-			exerciseModel = new TrainingExerciseModel(this);
+			exerciseModel = new TrainingExerciseModel(parent);
 			exerciseModel->ProgramExerciseModel::load(query);
 			exerciseModel->setExerciseModel(model);
 			if(!query.exec("SELECT * FROM "+trainingTablePrefix+"_exercise_series WHERE "+trainingTablePrefix+"_exercise_unit_id = "+QString::number(exerciseModel->getExerciseUnitId()))) {
@@ -143,7 +151,7 @@ TrainingExerciseModel* TrainingModel::buildExercise(ExerciseModel *model) {
 						programModel->ExerciseUnitModel::insertSerie(ProgramSerieModel::build(query, programModel));
 					}
 				}
-				exerciseModel = new TrainingExerciseModel(programModel, this);
+				exerciseModel = new TrainingExerciseModel(programModel, parent);
 				for(auto i : programModel->getSeries())
 					exerciseModel->insertSerie(new TrainingSerieModel(i, exerciseModel));
 				programModel->deleteLater();

@@ -31,6 +31,7 @@ Item{
 	property var resultModel: workingExerciseModel?.resultExerciseModel
 	property var programModel
 	property bool showAddButton: false
+	property bool showEditButton: false
 	property bool showSaveButton: !isReadOnly
 	property bool showRunning: false
 	property bool showTitle: false
@@ -47,6 +48,7 @@ Item{
 	height: implicitHeight
 
 	signal addClicked(var exerciseModel)
+	signal editClicked(var exerciseModel)
 	Timer{
 		id: workTimer
 		property int count: 0
@@ -92,8 +94,9 @@ Item{
 
 					implicitHeight: mainLayout.implicitHeight
 					signal addClicked(var exerciseModel)
-
 					onAddClicked: function(exerciseModel) {mainItem.addClicked(exerciseModel) }
+					signal editClicked(var exerciseModel)
+					onEditClicked: function(exerciseModel) {mainItem.editClicked(exerciseModel) }
 
 					ColumnLayout{
 						id: mainLayout
@@ -104,16 +107,26 @@ Item{
 							spacing: 0
 							TextField{
 								id: nameTextField
-								Layout.preferredWidth: mainItem.width / rowlayout.visibleChildren.length
+								property bool haveName: !!exerciseModel.exerciseModel && exerciseModel.exerciseModel.name != ''
+								Layout.fillWidth: true
+								Layout.topMargin: 5
+								//Layout.preferredWidth: mainItem.width / rowlayout.visibleChildren.length
+								Layout.preferredWidth: Math.max(implicitWidth, exerciseChoice.visible ? exerciseChoice.implicitWidth : 0)
 								showTitle: false
 								readOnly: true
-								text: !!exerciseModel.exerciseModel ? exerciseModel.exerciseModel.name : ''
+								placeholderText: 'Name'
+								text: !!exerciseModel.exerciseModel
+									? exerciseModel.exerciseModel.name
+										? exerciseModel.exerciseModel.name
+										: 'Unnamed'
+									: ''
 								font.weight: Font.Bold
 								font.bold: true
 								font.pixelSize: 20
+
 								ComboBox{
 									id: exerciseChoice
-									Layout.fillWidth: true
+									anchors.fill: parent
 									visible: !exerciseModel.exerciseModel
 									textRole: "displayText"
 									valueRole: "$modelData"
@@ -126,16 +139,22 @@ Item{
 										exerciseModel.save()
 									}
 									onVisibleChanged: if(visible) exercises.update()
+									Component.onCompleted: if(visible) exercises.update()
 								}
+
 							}
 							TextField{
 								id: descriptionTextField
-								Layout.preferredWidth: mainItem.width / rowlayout.visibleChildren.length
+								Layout.fillWidth: true
+								Layout.topMargin: 5
+								//Layout.preferredWidth: mainItem.width / rowlayout.visibleChildren.length
 								visible: !readOnly || text != ''// && !!mainItem.workingExerciseModel
 								showTitle: false
 								readOnly: mainItem.isReadOnly
+								placeholderText: 'Description'
 								text: mainItem.resultModel ? mainItem.resultModel.description
 														: mainItem.exerciseModel ? mainItem.exerciseModel.description : ''
+								keepEditView: !readOnly && text == ''
 								onEditingFinished: {
 									if( mainItem.resultModel)
 										resultModel.description = newValue
@@ -171,8 +190,17 @@ Item{
 								visible: mainItem.showAddButton
 								text: 'Add'
 								onClicked: {
-									exerciseItem.saveValues()
 									exerciseItem.addClicked(exerciseModel)
+								}
+							}
+							Button{
+								Layout.fillWidth: true
+								Layout.preferredWidth: implicitWidth
+								//Layout.preferredWidth: 40
+								visible: mainItem.showEditButton
+								text: 'Edit'
+								onClicked: {
+									exerciseItem.editClicked(exerciseModel)
 								}
 							}
 							/*

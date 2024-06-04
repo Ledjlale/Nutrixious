@@ -44,6 +44,7 @@ public:
 
 	QList<ProgramSerieModel*> getSeries() const;
 	Q_INVOKABLE void addSerie();
+	Q_INVOKABLE void updateFromLastProgram();
 
 	static QList<ProgramExerciseModel*> buildAll(QObject * parent);
 	static ProgramExerciseModel *build(QSqlQuery &query, QObject * parent);

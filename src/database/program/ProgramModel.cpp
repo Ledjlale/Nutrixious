@@ -38,7 +38,7 @@ ProgramModel::ProgramModel(QObject *parent)
 	: QmlModel{parent}
 {
 	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
-	mName = "Program";
+
 	connect(this, &ProgramModel::idChanged, [this](){
 		for(auto &i: mExercises) i->setParentId(mId);
 	});

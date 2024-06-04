@@ -18,20 +18,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PROGRAM_PROXY_MODEL_H
-#define PROGRAM_PROXY_MODEL_H
+#ifndef MOUSE_AREA_H
+#define MOUSE_AREA_H
 
-#include "src/tool/proxyModel/SortFilterProxyModel.hpp"
+#include <QObject>
+#include <QVariant>
+#include <QQuickMouseArea>
 
-class ProgramProxyModel: public SortFilterProxyModel {
+class MouseArea: public QQuickMouseArea{
 Q_OBJECT
 public:
-	ProgramProxyModel(QObject * parent = nullptr);
-
-	Q_INVOKABLE void update();
-signals:
-	void create();
-
+	MouseArea(QObject * parent);
 };
 
 #endif

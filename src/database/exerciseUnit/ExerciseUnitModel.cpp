@@ -139,61 +139,11 @@ void ExerciseUnitModel::setParentId(qint64 id) {
 	}
 }
 
-QString ExerciseUnitModel::getDescription() const{
-	return mDescription;
-}
-
-void ExerciseUnitModel::setDescription(QString data) {
-	if(mDescription != data){
-		addBackup(&mDescription, mDescription, data);
-		mDescription = data;
-		emit descriptionChanged();
-	}
-}
-
-bool ExerciseUnitModel::getUseDistance() const{
-	return mUseDistance;
-}
-
-void ExerciseUnitModel::setUseDistance(bool data){
-	if(mUseDistance != data){
-		mUseDistance = data;
-		emit useDistanceChanged();
-	}
-}
-
-bool ExerciseUnitModel::getUseSpeed() const{
-	return mUseSpeed;
-}
-
-void ExerciseUnitModel::setUseSpeed(bool data){
-	if(mUseSpeed != data){
-		mUseSpeed = data;
-		emit useSpeedChanged();
-	}
-}
-
-bool ExerciseUnitModel::getUseWeight() const{
-	return mUseWeight;
-}
-
-void ExerciseUnitModel::setUseWeight(bool data){
-	if(mUseWeight != data){
-		mUseWeight = data;
-		emit useWeightChanged();
-	}
-}
-
-bool ExerciseUnitModel::getUseRepetitions() const{
-	return mUseRepetitions;
-}
-
-void ExerciseUnitModel::setUseRepetitions(bool data){
-	if(mUseRepetitions != data){
-		mUseRepetitions = data;
-		emit useRepetitionsChanged();
-	}
-}
+DEFINE_GETSET(ExerciseUnitModel,QString,description,Description)
+DEFINE_GETSET(ExerciseUnitModel,bool,useDistance,UseDistance)
+DEFINE_GETSET(ExerciseUnitModel,bool,useSpeed,UseSpeed)
+DEFINE_GETSET(ExerciseUnitModel,bool,useWeight,UseWeight)
+DEFINE_GETSET(ExerciseUnitModel,bool,useRepetitions,UseRepetitions)
 
 int ExerciseUnitModel::getOrder() const {
 	return mOrder;

@@ -130,13 +130,15 @@ void ExerciseModel::computeMet(){
 		double calories = query.value(caloriesField).toDouble();
 		qulonglong trainingDate = query.value(startField).toULongLong();
 		int workTime = query.value(workField).toInt();
-		if( weights.size() > 1){
-			while(weightIndex < weights.size() - 1 && trainingDate > weights[weightIndex+1].first)
-				++weightIndex;
-			bestWeightIndex = trainingDate - weights[weightIndex].first < weights[weightIndex+1].first - trainingDate ? weightIndex : weightIndex +1;
+		if( weights.size() > 0){
+			if( weights.size() > 1){
+				while(weightIndex < weights.size() - 1 && trainingDate > weights[weightIndex+1].first)
+					++weightIndex;
+				bestWeightIndex = trainingDate - weights[weightIndex].first < weights[weightIndex+1].first - trainingDate ? weightIndex : weightIndex +1;
+			}
+			mets += calories * 60.0/(workTime * 3.5 * weights[bestWeightIndex].second / 200.0);
+			++count;
 		}
-		mets += calories * 60.0/(workTime * 3.5 * weights[bestWeightIndex].second / 200.0);
-		++count;
 	}
 	if(count > 0){
 		setMet(mets / count);

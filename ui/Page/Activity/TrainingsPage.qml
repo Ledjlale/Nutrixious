@@ -64,20 +64,17 @@ Item {
 						id: trains
 					}
 					delegate:
-						MouseArea{
+						Item{
 							width: trainList.width
 							height: trainView.implicitHeight
 							//anchors.fill: parent
-							propagateComposedEvents: true
-							preventStealing: true
-							onClicked: function(mouse){
-								trainDetailsList.program = $modelData
-								mouse.accepted = false
-							}
+							//propagateComposedEvents: true
+							//preventStealing: true
 							TrainModelView{
 								id: trainView
 								width: parent.width
 								trainModel: $modelData
+								onClicked: trainDetailsList.program = $modelData
 							}
 						}
 				}

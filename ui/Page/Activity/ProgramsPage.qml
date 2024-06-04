@@ -48,14 +48,16 @@ Item {
 			Button{
 				Layout.fillWidth: true
 				Layout.preferredWidth: implicitWidth
-				text: stackView.depth == 1 ? 'New' : 'Create'
-				onClicked: if(stackView.depth == 1)
-						stackView.push(programEditorComponent);
-					else {
+				text: stackView.depth == 1 ? 'New Program'
+											:  stackView.currentItem.editMode == 0
+												? 'Create'
+												: 'Save'
+				onClicked: if(stackView.depth == 1) {
+						programs.create();
+					}else {
 						if(stackView.currentItem.save()){
 							while(stackView.depth > 1)
 								stackView.pop();
-							programs.update()
 							exercises.update()
 						}
 						//stackView.replace(programEditorComponent);
@@ -66,7 +68,10 @@ Item {
 				Layout.preferredWidth: implicitWidth
 				text: 'Reload'
 				visible: stackView.depth == 1
-				onClicked: programs.update()
+				onClicked: {
+					programs.update()
+					exercises.update()
+				}
 			}
 		}
 		StackView{
@@ -82,16 +87,12 @@ Item {
 					clip: true
 					model:  ProgramProxyModel{
 							id: programs
+							onCountChanged:  programDetailsList.program = count > 0 ? programs.getAt(0) : null
+							Component.onCompleted: programDetailsList.program = count > 0 ? programs.getAt(0) : null
 						}
-					delegate:MouseArea{
+					delegate:Item{
 								width: programList.width
-								height: modelView.implicitHeight
-
-								onClicked: {
-									programDetailsList.program = $modelData
-									exercises.update()
-									//programExercises.setExercises($modelData.exercises)
-								}
+								height: modelView.implicitHeight + 5
 								Rectangle{
 									anchors.fill: parent
 									color: Material.background
@@ -99,8 +100,12 @@ Item {
 								TrainModelView{
 									id: modelView
 									anchors.fill: parent
+									anchors.topMargin: 5
 									trainModel: $modelData
-
+									onClicked: {
+										programDetailsList.program = $modelData
+										exercises.update()
+									}
 								}
 
 						/*
@@ -163,6 +168,14 @@ Item {
 					Layout.preferredHeight: 1
 					color: 'black'
 				}
+				Text{
+					Layout.fillWidth: true
+					horizontalAlignment: Text.AlignHCenter
+					visible: !!programDetailsList.program
+					text: visible ? 'Exercises for ' + programDetailsList.program.name : ''
+					font.bold: true
+					font.pixelSize: 17
+				}
 				RowLayout{
 					visible: !!programDetailsList.program
 					ComboBox{
@@ -185,18 +198,7 @@ Item {
 							}
 						}
 					}
-					Button{
-						Layout.fillWidth: true
-						Layout.preferredWidth: implicitWidth
-						Layout.minimumWidth: implicitWidth
-						Layout.maximumWidth: implicitWidth
-						visible: !!exerciseChoice.currentValue
-						text: 'D'
-						onClicked: {
-							exerciseChoice.currentValue.remove()
 
-						}
-					}
 					Button{
 						Layout.fillWidth: true
 						Layout.preferredWidth: implicitWidth
@@ -207,7 +209,7 @@ Item {
 								showSaveButton: false
 							}
 						}
-						text: 'New'
+						text: 'New Exercise'
 						visible: stackView.depth == 1
 						onClicked: if(stackView.depth == 1)
 										stackView.push(exerciseEditorComponent);
@@ -228,6 +230,10 @@ Item {
 						isDeletable: true
 						showWorkTime: false
 						showCalories: false
+						showEditButton: true
+						onEditClicked: function(model){
+							stackView.push(exerciseEditorComponent, {programExerciseModel:model, exerciseModel:model.exerciseModel, editMode:1});
+						}
 					}
 				}
 

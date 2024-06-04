@@ -22,6 +22,8 @@ import QtQuick
 import QtQuick.Controls.Material as Control
 import QtQuick.Layouts
 
+import App 1.0
+
 Flipable {
 	id: mainItem
 	property var title: ''
@@ -38,6 +40,7 @@ Flipable {
 	property int horizontalAlignment: Text.AlignLeft
 
 	signal editingFinished()
+	signal clicked()
 
 	function forceActiveFocus(){
 		if(mainItem.flipped) frontItem.forceActiveFocus()
@@ -54,9 +57,16 @@ Flipable {
 				anchors.fill: parent
 				implicitHeight: readOnlyLayout.implicitHeight
 				implicitWidth: readOnlyLayout.implicitWidth
-				propagateComposedEvents: true
-				preventStealing: true
-
+				onClicked: mainItem.clicked()
+				onPressAndHold: if(!mainItem.readOnly) {
+						mainItem.flipped = true
+						backItem.forceActiveFocus()
+					}
+				onDoubleClicked: if(!mainItem.readOnly) {
+						mainItem.flipped = true
+						backItem.forceActiveFocus()
+					}
+/*
 				// Qt hack to detect clicked events while still propagate press events (to scroll views)
 				property bool isPressed : false
 				signal doubleClickDetected()
@@ -81,7 +91,7 @@ Flipable {
 					}
 					mouse.accepted=false
 
-				}
+				}*/
 				ColumnLayout{
 					id: readOnlyLayout
 					anchors.fill: parent
@@ -101,6 +111,7 @@ Flipable {
 						elide: mainItem.elide
 						color: mainItem.textColor
 						text: mainItem.text
+						wrapMode: TextEdit.WordWrap
 					}
 				}
 			}
@@ -120,6 +131,56 @@ Flipable {
 					text: mainItem.title
 
 				}
+
+				Control.TextArea{
+					id: textField
+					Layout.fillHeight: true
+					Layout.fillWidth: true
+					//Layout.leftMargin: 10
+					//Layout.rightMargin: 10
+					Layout.bottomMargin: 10
+
+					horizontalAlignment: mainItem.horizontalAlignment
+					wrapMode: TextEdit.WordWrap
+					inputMethodHints: mainItem.inputMethodHints
+					readOnly: mainItem.readOnly
+					color: mainItem.textColor
+					text: mainItem.text === undefined ? '' : mainItem.text
+					placeholderText: mainItem.placeholderText
+					onEditingFinished:  {
+						mainItem.newValue = textField.text
+						mainItem.editingFinished()
+						if(!mainItem.keepEditView)
+							mainItem.flipped = false
+					}
+					onActiveFocusChanged: {
+						if(!activeFocus && !mainItem.keepEditView) mainItem.flipped = false
+					}
+					onPressed: mainItem.clicked()
+					Keys.onReturnPressed: function (event){
+						console.log('Return:'+event.modifiers)
+						if (event.modifiers == Qt.NoModifier) {
+							editingFinished();
+							event.accepted = true;
+						}else if(event.modifiers & Qt.ControlModifier) {
+							insert(cursorPosition, "\n")
+						}else {
+							event.accepted = false;
+						}
+					}
+					Keys.onEnterPressed: function (event){
+						console.log('Enter:'+event.modifiers)
+						if (event.modifiers == Qt.NoModifier) {
+							editingFinished();
+							event.accepted = true;
+						}else if(event.modifiers & Qt.ControlModifier) {
+							insert(cursorPosition, "\n")
+						}else {
+							event.accepted = false;
+						}
+					}
+				}
+				/*
 				Control.TextField{
 					id: textField
 					Layout.fillHeight: true
@@ -144,7 +205,8 @@ Flipable {
 					onActiveFocusChanged: {
 						if(!activeFocus && !mainItem.keepEditView) mainItem.flipped = false
 					}
-				}
+					onPressed: mainItem.clicked()
+				}*/
 			}
 
 	transform: Rotation {

@@ -33,7 +33,7 @@ Item{
 	function saveValues(){
 		//if(nameTextField.isEdited) distanceModel.name = nameTextField.newValue
 	}
-
+	signal clicked()
 	RowLayout{
 		id: mainLine
 		anchors.fill: parent
@@ -41,17 +41,29 @@ Item{
 		TextField{
 			id: nameTextField
 			Layout.fillWidth: true
+			property int bestWidth: Math.min(mainLine.width / mainLine.visibleChildren.length, descriptionTextField.flipped ? 40 : implicitWidth)
+			Layout.preferredWidth: bestWidth
+			Layout.minimumWidth : descriptionTextField.flipped ? 0 : bestWidth
+			font.bold: true
+			font.pixelSize: 16
 			text: trainModel ? trainModel.name : ''
+			keepEditView: text == ''
+			placeholderText: 'Name'
 			onEditingFinished: trainModel.name = newValue
+			onClicked: mainItem.clicked()
 		}
 		TextField{
 			id: descriptionTextField
 			Layout.fillWidth: true
 			text: trainModel ?  trainModel.description : ''
+			keepEditView: text == ''
+			placeholderText: 'Description'
 			onEditingFinished: {
 				trainModel.description = newValue
 
 				}
+
+			onClicked: mainItem.clicked()
 		}
 		TextField{
 			id: startTimeTextField

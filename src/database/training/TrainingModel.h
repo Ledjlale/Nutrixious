@@ -61,7 +61,7 @@ public:
 */
 
 	Q_INVOKABLE TrainingExerciseModel* buildExercise(ExerciseModel *model);
-
+	static TrainingExerciseModel* buildExercise(ExerciseModel *model, QObject *parent);
 	virtual void addQueryValues(DatabaseQuery &query);
 
 	void computeCalorie(TrainingExerciseModel * exercise, TrainingSerieModel * serie);

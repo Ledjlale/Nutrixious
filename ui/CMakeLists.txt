@@ -32,8 +32,10 @@
 
 	ui/Item/Button.qml
 	ui/Item/DatePicker.qml
+	ui/Item/DayNavigationBar.qml
 	ui/Item/Dialog.qml
 	ui/Item/EffectImage.qml
+	ui/Item/MouseArea.qml
 	ui/Item/ScannerOverlay.qml
 	ui/Item/TextField.qml
 	ui/Item/SerieFieldPicker.qml
@@ -54,6 +56,7 @@
 	ui/View/ExerciseSerieModelListView.qml
 	ui/View/TrainModelView.qml
 	ui/View/ScannerView.qml
+	ui/View/MealView.qml
 
 	ui/Page/Activity/ExerciseEditorPage.qml
 	ui/Page/Activity/ExercisesPage.qml

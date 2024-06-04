@@ -34,13 +34,13 @@
 class ExerciseUnitModel : public QmlModel{
 Q_OBJECT
 // DB
-	Q_PROPERTY(QString description READ getDescription WRITE setDescription NOTIFY descriptionChanged)
 	Q_PROPERTY(int order READ getOrder WRITE setOrder NOTIFY orderChanged)
 
-	Q_PROPERTY(bool useDistance READ getUseDistance WRITE setUseDistance NOTIFY useDistanceChanged)
-	Q_PROPERTY(bool useSpeed READ getUseSpeed WRITE setUseSpeed NOTIFY useSpeedChanged)
-	Q_PROPERTY(bool useWeight READ getUseWeight WRITE setUseWeight NOTIFY useWeightChanged)
-	Q_PROPERTY(bool useRepetitions READ getUseRepetitions WRITE setUseRepetitions NOTIFY useRepetitionsChanged)
+	DECLARE_GETSET(QString,description,Description)
+	DECLARE_GETSET(bool,useDistance,UseDistance)
+	DECLARE_GETSET(bool,useSpeed,UseSpeed)
+	DECLARE_GETSET(bool,useWeight,UseWeight)
+	DECLARE_GETSET(bool,useRepetitions,UseRepetitions)
 
 	Q_PROPERTY(ExerciseModel *exerciseModel READ getExerciseModel WRITE setExerciseModel NOTIFY exerciseModelChanged);
 	Q_PROPERTY(QVariantList series READ getVariantSeries NOTIFY seriesChanged)
@@ -66,21 +66,6 @@ public:
 
 	Q_INVOKABLE qint64 getParentId()const;
 	Q_INVOKABLE virtual void setParentId(qint64 id);
-
-	QString getDescription() const;
-	void setDescription(QString description);
-
-	bool getUseDistance() const;
-	void setUseDistance(bool data);
-
-	bool getUseSpeed() const;
-	void setUseSpeed(bool data);
-
-	bool getUseWeight() const;
-	void setUseWeight(bool data);
-
-	bool getUseRepetitions() const;
-	void setUseRepetitions(bool data);
 
 	int getOrder() const;
 	void setOrder(int data);
@@ -118,11 +103,6 @@ signals:
 	void exerciseIdChanged();
 	void exerciseModelChanged();
 	void parentIdChanged();
-	void descriptionChanged();
-	void useDistanceChanged();
-	void useSpeedChanged();
-	void useWeightChanged();
-	void useRepetitionsChanged();
 	void orderChanged();
 	void isSavedChanged();
 	void isEditedChanged();
