@@ -28,7 +28,8 @@
 #include "program/serie/ProgramSerieModel.h"
 #include "program/ProgramModel.h"
 #include "exercise/ExerciseModel.h"
-
+#include "mealGroup/MealGroupModel.h"
+#include "mealFood/MealFoodModel.h"
 #include "unit/UnitModel.h"
 
 DatabaseModel::DatabaseModel(QObject *parent)
@@ -39,8 +40,8 @@ DatabaseModel::DatabaseModel(QObject *parent)
 
 void DatabaseModel::migrate(){
 	QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-	db.setDatabaseName("data");
-	//db.setDatabaseName(":memory:");
+	//db.setDatabaseName("data");
+	db.setDatabaseName(":memory:");
 	if (!db.open()) {
 		qCritical() << QObject::tr("Unable to establish a database connection.\n"
 						"This example needs SQLite support. Please read "
@@ -214,19 +215,20 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 	}
 
 	if(!query.exec("SELECT * FROM meal_groups LIMIT 1")){
-		if(!query.exec("CREATE TABLE meals_groups (meal_group_id INTEGER PRIMARY KEY"
+		if(!query.exec("CREATE TABLE meal_groups (meal_group_id INTEGER PRIMARY KEY"
 			", name TEXT"
-			", order_id INTEGER"
 			", default_time INTEGER"
+			", is_displayed INTEGER DEFAULT 1"
+			")"
 			)){
 			qCritical() << "Cannot create meal group table: " << query.lastError().text();
+		}else{
+			initMealGroupsData();
 		}
 	}
 
 	if(!query.exec("SELECT * FROM meal_foods LIMIT 1")){
-		if(!query.exec("CREATE TABLE meal_foods (food_id INTEGER PRIMARY KEY"
-			", meal_group_id INTEGER"
-			", consumption_time INTEGER"
+		if(!query.exec("CREATE TABLE meal_foods (meal_food_id INTEGER PRIMARY KEY"
 			", open_food_facts_code TEXT"
 			", image_url TEXT"
 			", brand TEXT"
@@ -251,11 +253,16 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 			", potassium REAL"
 			", vitamin_a REAL"
 			", vitamin_c REAL"
+			", meal_group_id INTEGER"
+			", consumption_date_time INTEGER"
 			", FOREIGN KEY (serving_unit_id) REFERENCES units (unit_id) ON UPDATE CASCADE ON DELETE SET NULL"
 			", FOREIGN KEY (meal_group_id) REFERENCES meal_groups (meal_group_id) ON UPDATE CASCADE ON DELETE SET NULL"
 			")"
 		))
 			qCritical() << "Cannot create meal foods table: " << query.lastError().text();
+		else{
+			initMealFoodData();
+		}
 	}
 
 
@@ -265,6 +272,47 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 	while (query.next()) {
 		version = query.value(fieldNo).toInt();
 		qDebug() << "Final Database Version : " << version;
+	}
+}
+
+
+void DatabaseModel::initMealFoodData(){
+	QList<MealFoodModel*> models;
+
+	models << new MealFoodModel();
+	models.back()->setMealGroupId(1);
+	models.back()->setServingUnitId(1);
+	models.back()->setBrand("a");
+	models.back()->setConsumptionDateTime(QDateTime::currentDateTime());
+
+	models << new MealFoodModel();
+	models.back()->setMealGroupId(1);
+	models.back()->setServingUnitId(1);
+	models.back()->setBrand("b");
+	models.back()->setConsumptionDateTime(QDateTime::currentDateTime());
+
+	models << new MealFoodModel();
+	models.back()->setMealGroupId(2);
+	models.back()->setServingUnitId(1);
+	models.back()->setBrand("c");
+
+	models.back()->setConsumptionDateTime(QDateTime::currentDateTime());
+
+	for(auto i : models){
+		i->save();
+		i->deleteLater();
+	}
+}
+
+void DatabaseModel::initMealGroupsData(){
+	QList<MealGroupModel*> models;
+	models << new MealGroupModel("Breakfast", QTime(8,0,0));
+	models << new MealGroupModel("Lunch", QTime(12,0,0));
+	models << new MealGroupModel("Snacks", QTime(16,0,0));
+	models << new MealGroupModel("Dinner", QTime(20,0,0));
+	for(auto i : models){
+		i->save();
+		i->deleteLater();
 	}
 }
 

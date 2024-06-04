@@ -18,26 +18,39 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DATABASE_MODEL_H
-#define DATABASE_MODEL_H
+import QtQuick
+import QtQuick.Controls.Material
+import QtQuick.Layouts
+import QtCore
+import QtMultimedia
 
-#include <QObject>
+import QtQml.XmlListModel
 
-
-class DatabaseModel : public QObject {
-	Q_OBJECT
-public:
-	explicit DatabaseModel(QObject *parent = nullptr);
-
-	static void migrate();
-	static void initMealFoodData();
-	static void initMealGroupsData();
-	static void initUnitsData();
-	static void insertDefaultData();
-	static void insertDefaultData_old();
-	static void insertVersion2Data();
+import App 1.0
 
 
-};
+Item {
+	id: mainItem
 
-#endif
+	ColumnLayout{
+		anchors.fill: parent
+		spacing: 0
+		Button{
+			text: 'Add'
+			onClicked: mealGroups.addNewMealGroup()
+		}
+		ListView{
+			id: mealGroupList
+			Layout.fillWidth: true
+			Layout.fillHeight: true
+			model: MealGroupProxyModel{
+				id: mealGroups
+				Component.onCompleted: update()
+			}
+			delegate: MealGroupView{
+				width: mealGroupList.width
+				mealGroup: $modelData
+			}
+		}
+	}
+}

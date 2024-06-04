@@ -57,6 +57,7 @@
 	ui/View/TrainModelView.qml
 	ui/View/ScannerView.qml
 	ui/View/MealView.qml
+	ui/View/MealGroupView.qml
 
 	ui/Page/Activity/ExerciseEditorPage.qml
 	ui/Page/Activity/ExercisesPage.qml
@@ -70,6 +71,7 @@
 	ui/Page/Nutrition/NutritionPage.qml
 	ui/Page/Nutrition/FoodEditorPage.qml
 	ui/Page/Nutrition/FoodsPage.qml
+	ui/Page/Nutrition/MealGroupsPage.qml
 
 
 	ui/Tool/DragDropTool.qml

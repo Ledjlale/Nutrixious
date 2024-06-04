@@ -44,6 +44,10 @@ QString DateModel::getTimeStr()const {
 	return mTime.toString("hh:mm:ss");
 }
 
+QDate DateModel::getDate() const{
+	return mDate;
+}
+
 void DateModel::setDate(QDate data){
 	if(mDate != data){
 		mDate = data;

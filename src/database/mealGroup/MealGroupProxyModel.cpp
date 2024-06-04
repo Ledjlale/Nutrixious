@@ -18,26 +18,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DATABASE_MODEL_H
-#define DATABASE_MODEL_H
+#include "MealGroupProxyModel.h"
+#include "MealGroupListModel.h"
 
-#include <QObject>
-
-
-class DatabaseModel : public QObject {
-	Q_OBJECT
-public:
-	explicit DatabaseModel(QObject *parent = nullptr);
-
-	static void migrate();
-	static void initMealFoodData();
-	static void initMealGroupsData();
-	static void initUnitsData();
-	static void insertDefaultData();
-	static void insertDefaultData_old();
-	static void insertVersion2Data();
+MealGroupProxyModel::MealGroupProxyModel(QObject *parent)
+	: SortFilterProxyModel{parent} {
+	auto model = new MealGroupListModel(this);
+	connect(this, &MealGroupProxyModel::update, model, &MealGroupListModel::update);
+	connect(this, &MealGroupProxyModel::addNewMealGroup, model, &MealGroupListModel::addNewMealGroup);
+	setSourceModel(model);
+}
 
 
-};
 
-#endif
+

@@ -71,6 +71,15 @@
 	src/database/food/FoodModel.cpp
 	src/database/food/FoodListModel.cpp
 	src/database/food/FoodProxyModel.cpp
+
+	src/database/mealFood/MealFoodModel.cpp
+	src/database/mealFood/MealFoodListModel.cpp
+	src/database/mealFood/MealFoodProxyModel.cpp
+
+	src/database/mealGroup/MealGroupModel.cpp
+	src/database/mealGroup/MealGroupListModel.cpp
+	src/database/mealGroup/MealGroupProxyModel.cpp
+
 	src/database/unit/UnitModel.cpp
 	src/database/unit/UnitListModel.cpp
 	src/database/unit/UnitProxyModel.cpp

@@ -33,6 +33,7 @@ public:
 
 	QString getDateStr()const;
 	QString getTimeStr()const;
+	QDate getDate() const;
 	void setDate(QDate data);
 
 	Q_INVOKABLE void nextDay();
