@@ -37,25 +37,53 @@ FoodModel::FoodModel() : FoodModel(nullptr){	// QML
 	gEngine->setObjectOwnership(this, QQmlEngine::JavaScriptOwnership);
 }
 FoodModel::FoodModel(QObject *parent)
-	: QmlModel{parent}
-{
+	: QmlModel{parent} {
 	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
-	connect(this, &FoodModel::foodIdChanged, this, &FoodModel::updateIsSaved);
+	connect(this, &FoodModel::idChanged, this, &FoodModel::updateIsSaved);
+	mTablePrefix = "food";
 }
 
-FoodModel::FoodModel(FoodModel * model, QObject *parent)
-	: QmlModel{parent}
-{
+FoodModel::FoodModel(const FoodModel * model, QObject *parent)
+	: QmlModel{parent} {
 	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
-	connect(this, &FoodModel::foodIdChanged, this, &FoodModel::updateIsSaved);
+	connect(this, &FoodModel::idChanged, this, &FoodModel::updateIsSaved);
+	mTablePrefix = "food";
+	mId = initiBackup(model, &model->mId, model->mId, &mId).toLongLong();
+	mOpenFoodFactsCode = initiBackup(model, &model->mOpenFoodFactsCode, model->mOpenFoodFactsCode, &mOpenFoodFactsCode).toString();
+	mBrand = initiBackup(model, &model->mBrand, model->mBrand, &mBrand).toString();
+	mImageUrl = initiBackup(model, &model->mImageUrl, model->mImageUrl, &mImageUrl).toString();
+	mDescription = initiBackup(model, &model->mDescription, model->mDescription, &mDescription).toString();
+	mServingUnitId = initiBackup(model, &model->mServingUnitId, model->mServingUnitId, &mServingUnitId).toLongLong();
+
+	mServingSize = initiBackup(model, &model->mServingSize, model->mServingSize, &mServingSize).toDouble();
+	mServingsPerContainer = initiBackup(model, &model->mServingsPerContainer, model->mServingsPerContainer, &mServingsPerContainer).toDouble();
+	mCalories = initiBackup(model, &model->mCalories, model->mCalories, &mCalories).toDouble();
+	mTotalFat = initiBackup(model, &model->mTotalFat, model->mTotalFat, &mTotalFat).toDouble();
+	mSaturatedFat = initiBackup(model, &model->mSaturatedFat, model->mSaturatedFat, &mSaturatedFat).toDouble();
+	mTransFat = initiBackup(model, &model->mTransFat, model->mTransFat, &mTransFat).toDouble();
+	mPolyUnsaturatedFat = initiBackup(model, &model->mPolyUnsaturatedFat, model->mPolyUnsaturatedFat, &mPolyUnsaturatedFat).toDouble();
+	mMonoUnsaturatedFat = initiBackup(model, &model->mMonoUnsaturatedFat, model->mMonoUnsaturatedFat, &mMonoUnsaturatedFat).toDouble();
+	mCholesterol = initiBackup(model, &model->mCholesterol, model->mCholesterol, &mCholesterol).toDouble();
+	mSodium = initiBackup(model, &model->mSodium, model->mSodium, &mSodium).toDouble();
+	mTotalCarbohydrate = initiBackup(model, &model->mTotalCarbohydrate, model->mTotalCarbohydrate, &mTotalCarbohydrate).toDouble();
+	mDietaryFiber = initiBackup(model, &model->mDietaryFiber, model->mDietaryFiber, &mDietaryFiber).toDouble();
+	mSugar = initiBackup(model, &model->mSugar, model->mSugar, &mSugar).toDouble();
+	mProtein = initiBackup(model, &model->mProtein, model->mProtein, &mProtein).toDouble();
+	mCalcium = initiBackup(model, &model->mCalcium, model->mCalcium, &mCalcium).toDouble();
+	mIron = initiBackup(model, &model->mIron, model->mIron, &mIron).toDouble();
+	mPotassium = initiBackup(model, &model->mPotassium, model->mPotassium, &mPotassium).toDouble();
+	mVitaminA = initiBackup(model, &model->mVitaminA, model->mVitaminA, &mVitaminA).toDouble();
+	mVitaminC = initiBackup(model, &model->mVitaminC, model->mVitaminC, &mVitaminC).toDouble();
+
 }
 
 FoodModel* FoodModel::clone(QObject*parent) {
-	return new FoodModel(this, parent);
-
+	auto model = new FoodModel(this, parent);
+	model->clearBackupValues();
+	return model;
 }
 
-DEFINE_GETSET(FoodModel,qint64,foodId,FoodId)
+DEFINE_GETSET(FoodModel,qint64,id,Id)
 DEFINE_GETSET(FoodModel,QString,openFoodFactsCode,OpenFoodFactsCode)
 DEFINE_GETSET(FoodModel,QString,brand,Brand)
 DEFINE_GETSET(FoodModel,QString,imageUrl,ImageUrl)
@@ -83,16 +111,17 @@ DEFINE_GETSET(FoodModel,double,vitaminC,VitaminC)
 
 //-------------------------------------------------------------------------------------------------------------------
 
+
 void FoodModel::updateIsSaved(){
-	setIsSaved(getFoodId() > 0);
+	setIsSaved(getId() > 0);
 }
 
 bool FoodModel::save(){
-	if(mFoodId>0 && !mIsEdited) return true;// Avoid update for nothing
-	qDebug() << "Saving food " << mBrand << mDescription;
+	if(mId>0 && !mIsEdited) return true;// Avoid update for nothing
+	qDebug() << "Saving " << mTablePrefix  << mBrand << mDescription;
 	DatabaseQuery query;
 
-	query.begin(mFoodId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "foods" );
+	query.begin(mId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, mTablePrefix+"s" );
 
 	query.add("brand", mBrand);
 	query.add("description", mDescription);
@@ -118,78 +147,81 @@ bool FoodModel::save(){
 	query.add("potassium", mPotassium);
 	query.add("vitamin_a", mVitaminA);
 	query.add("vitamin_c", mVitaminC);
-
-	query.addConditionnal("food_id",mFoodId);
-	if(mFoodId == 0){
+	addQueryValues(query);
+	query.addConditionnal(mTablePrefix+"_id",mId);
+	if(mId == 0){
 		if(!query.exec()){
-			qCritical() << "Cannot save food: "  << query.mQuery.lastError().text();
+			qCritical() << "Cannot save " << mTablePrefix << " : " << query.mQuery.lastError().text();
 			return false;
 		}
-		auto fieldNo = query.mQuery.record().indexOf("food_id");
+		auto fieldNo = query.mQuery.record().indexOf(mTablePrefix+"_id");
 		while (query.mQuery.next()) {
-			setFoodId(query.mQuery.value(fieldNo).toInt());
-			qDebug() << "Insert food: " << mFoodId;
+			setId(query.mQuery.value(fieldNo).toInt());
+			qDebug() << "Insert " << mTablePrefix  << ": " << mId;
 		}
 	}else{
 		if(!query.exec()) {
-			qCritical() << "Cannot update food: "  << query.mQuery.lastError().text();
+			qCritical() << "Cannot update " << mTablePrefix << query.mQuery.lastError().text();
 			return false;
 		}else {
-			qDebug() << "Update food: " << mFoodId;
+			qDebug() << "Update " << mTablePrefix  << ": " << mId;
 		}
 	}
 	clearBackupValues();
 	return true;
 }
 
+void FoodModel::saveValues(DatabaseQuery &query){
+}
+
 void FoodModel::remove(){
-	if(mFoodId > 0){
+	if(mId > 0){
 		DatabaseQuery query;
-		query.begin(DatabaseQuery::Delete, "foods");
-		query.addConditionnal("food_id",mFoodId);
+		query.begin(DatabaseQuery::Delete, "mTablePrefix+s");
+		query.addConditionnal(mTablePrefix+"_id",mId);
 		if(!query.exec()){
-			if(!query.exec()) qCritical() << "Cannot delete food  : "  << query.mQuery.lastError().text();
+			if(!query.exec()) qCritical() << "Cannot delete " << mTablePrefix << " : "  << query.mQuery.lastError().text();
 		}
 	}
 	emit removed(this);
 }
 
 FoodModel *FoodModel::build(QSqlQuery &query, QObject * parent) {
-	auto idField = query.record().indexOf("foods.food_id");
+	FoodModel * model = new FoodModel(parent);
+	model->load(query);
+	return model;
+}
 
-	if( idField>= 0){
-		FoodModel * model = new FoodModel(parent);
+void FoodModel::load(QSqlQuery &query){
 	// TODO optimize
-		for(int i = 0 ; i < query.record().count() ; ++i){
-			QString fieldName = query.record().field(i).name();
-			if(fieldName == "food_id") model->setFoodId(query.value(i).toInt());
-			else if(fieldName == "open_food_facts_code") model->setOpenFoodFactsCode(query.value(i).toString());
-			else if(fieldName == "image_url") model->setImageUrl(query.value(i).toString());
-			else if(fieldName == "brand") model->setBrand(query.value(i).toString());
-			else if(fieldName == "description") model->setDescription(query.value(i).toString());
-			else if(fieldName == "serving_size") model->setServingSize(query.value(i).toDouble());
-			else if(fieldName == "servings_per_container") model->setServingsPerContainer(query.value(i).toDouble());
-			else if(fieldName == "serving_unit_id") model->setServingUnitId(query.value(i).toLongLong());
-			else if(fieldName == "calories") model->setCalories(query.value(i).toDouble());
-			else if(fieldName == "total_fat") model->setTotalFat(query.value(i).toDouble());
-			else if(fieldName == "saturated_fat") model->setSaturatedFat(query.value(i).toDouble());
-			else if(fieldName == "trans_fat") model->setTransFat(query.value(i).toDouble());
-			else if(fieldName == "poly_unsaturated_fat") model->setPolyUnsaturatedFat(query.value(i).toDouble());
-			else if(fieldName == "mono_unsaturated_fat") model->setMonoUnsaturatedFat(query.value(i).toDouble());
-			else if(fieldName == "cholesterol") model->setCholesterol(query.value(i).toDouble());
-			else if(fieldName == "sodium") model->setSodium(query.value(i).toDouble());
-			else if(fieldName == "total_carbohydrate") model->setTotalCarbohydrate(query.value(i).toDouble());
-			else if(fieldName == "dietary_fiber") model->setDietaryFiber(query.value(i).toDouble());
-			else if(fieldName == "sugar") model->setSugar(query.value(i).toDouble());
-			else if(fieldName == "protein") model->setProtein(query.value(i).toDouble());
-			else if(fieldName == "calcium") model->setCalcium(query.value(i).toDouble());
-			else if(fieldName == "iron") model->setIron(query.value(i).toDouble());
-			else if(fieldName == "potassium") model->setPotassium(query.value(i).toDouble());
-			else if(fieldName == "vitamin_a") model->setVitaminA(query.value(i).toDouble());
-			else if(fieldName == "vitamin_c") model->setVitaminC(query.value(i).toDouble());
-		}
-		return model;
-	}else return nullptr;
+	for(int i = 0 ; i < query.record().count() ; ++i){
+		QString fieldName = query.record().field(i).name();
+		if(fieldName == mTablePrefix+"_id") setId(query.value(i).toInt());
+		else if(fieldName == "open_food_facts_code") setOpenFoodFactsCode(query.value(i).toString());
+		else if(fieldName == "image_url") setImageUrl(query.value(i).toString());
+		else if(fieldName == "brand") setBrand(query.value(i).toString());
+		else if(fieldName == "description") setDescription(query.value(i).toString());
+		else if(fieldName == "serving_size") setServingSize(query.value(i).toDouble());
+		else if(fieldName == "servings_per_container") setServingsPerContainer(query.value(i).toDouble());
+		else if(fieldName == "serving_unit_id") setServingUnitId(query.value(i).toLongLong());
+		else if(fieldName == "calories") setCalories(query.value(i).toDouble());
+		else if(fieldName == "total_fat") setTotalFat(query.value(i).toDouble());
+		else if(fieldName == "saturated_fat") setSaturatedFat(query.value(i).toDouble());
+		else if(fieldName == "trans_fat") setTransFat(query.value(i).toDouble());
+		else if(fieldName == "poly_unsaturated_fat") setPolyUnsaturatedFat(query.value(i).toDouble());
+		else if(fieldName == "mono_unsaturated_fat") setMonoUnsaturatedFat(query.value(i).toDouble());
+		else if(fieldName == "cholesterol") setCholesterol(query.value(i).toDouble());
+		else if(fieldName == "sodium") setSodium(query.value(i).toDouble());
+		else if(fieldName == "total_carbohydrate") setTotalCarbohydrate(query.value(i).toDouble());
+		else if(fieldName == "dietary_fiber") setDietaryFiber(query.value(i).toDouble());
+		else if(fieldName == "sugar") setSugar(query.value(i).toDouble());
+		else if(fieldName == "protein") setProtein(query.value(i).toDouble());
+		else if(fieldName == "calcium") setCalcium(query.value(i).toDouble());
+		else if(fieldName == "iron") setIron(query.value(i).toDouble());
+		else if(fieldName == "potassium") setPotassium(query.value(i).toDouble());
+		else if(fieldName == "vitamin_a") setVitaminA(query.value(i).toDouble());
+		else if(fieldName == "vitamin_c") setVitaminC(query.value(i).toDouble());
+	}
 }
 
 QList<FoodModel*> FoodModel::buildAll(QObject * parent){
@@ -237,7 +269,7 @@ void FoodModel::openFoodFactsDownloaded(){
 	QMap<QString,QVariant> nutrimentsMap;
 	auto rootArray = document.toVariant().toMap();
 	if(rootArray.contains("product")){
-		setFoodId(0);
+		setId(0);
 		auto product = rootArray["product"].toMap();
 		if(product.contains("nutriments")){
 			nutrimentsMap = product["nutriments"].toMap();

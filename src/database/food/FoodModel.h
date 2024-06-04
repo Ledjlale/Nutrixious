@@ -29,13 +29,12 @@
 #include <QNetworkReply>
 
 #include "src/tool/QmlModel.h"
-
-
+#include "src/database/DatabaseQuery.h"
 
 class FoodModel : public QmlModel{
 Q_OBJECT
 // DB
-	DECLARE_GETSET(qint64,foodId,FoodId)
+	DECLARE_GETSET(qint64,id,Id)
 	DECLARE_GETSET(QString,openFoodFactsCode,OpenFoodFactsCode)
 	DECLARE_GETSET(QString,brand,Brand)
 	DECLARE_GETSET(QString,imageUrl,ImageUrl)
@@ -64,17 +63,22 @@ Q_OBJECT
 public:
 	FoodModel();	// QML
 	FoodModel(QObject *parent);
-	FoodModel(FoodModel * model, QObject *parent);
+	FoodModel(const FoodModel * model, QObject *parent);
 	FoodModel* clone(QObject*parent);
 
 public:
 
+	virtual void addQueryValues(DatabaseQuery &query){}
 	Q_INVOKABLE virtual bool save();
+	virtual void saveValues(DatabaseQuery &query);
 	Q_INVOKABLE virtual void remove();
 	virtual void updateIsSaved();
 
 	static QList<FoodModel*> buildAll(QObject * parent);
+
 	static FoodModel *build(QSqlQuery &query, QObject * parent);
+	void load(QSqlQuery &query);
+
 
 	Q_INVOKABLE void loadFromOpenFoodFacts(const QString& code);
 
@@ -86,7 +90,7 @@ signals:
 	void removed(FoodModel *model);
 
 protected:
-	qint64 mFoodId = 0;
+	qint64 mId = 0;
 
 	QString mBrand = "";
 	QString mDescription = "";
@@ -114,6 +118,8 @@ protected:
 	double mPotassium = -1.0;
 	double mVitaminA = -1.0;
 	double mVitaminC = -1.0;
+// Internal
+	QString mTablePrefix = "";
 
 };
 

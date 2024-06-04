@@ -96,6 +96,14 @@ ApplicationWindow {
 			id: scannerPage
 			ScannerPage{}
 		}
+		Component{
+			id: diaryPage
+			DiaryPage{}
+		}
+		Component{
+			id: mealGroupsPage
+			MealGroupsPage{}
+		}
 	}
 	Item{
 		id: menuPanel
@@ -176,6 +184,8 @@ ApplicationWindow {
 					id: menuItems
 					//model:[{title: 'Overview'},{title: 'Diary'},{title: 'Food'},{title: 'Training'}, {title: 'Exercises'},{title: 'Programs'},{title: 'Trainings'},{title: 'Statistics'},{title: 'Settings'}]
 					model:[{title: 'Foods', component:foodsPage}
+						,{title: 'Diary', component:diaryPage}
+						,{title: 'Meal Groups', component:mealGroupsPage}
 						,{title: 'Scanner', component:scannerPage}
 						,{title: 'Training', component:trainingPage}
 						, {title: 'Exercises', component:exercisesPage}

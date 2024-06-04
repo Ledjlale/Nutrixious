@@ -159,7 +159,7 @@ Flipable {
 					onPressed: mainItem.clicked()
 					Keys.onReturnPressed: function (event){
 						console.log('Return:'+event.modifiers)
-						if (event.modifiers == Qt.NoModifier) {
+						if (event.modifiers == Qt.NoModifier || event.modifiers & Qt.KeypadModifier) {
 							editingFinished();
 							event.accepted = true;
 						}else if(event.modifiers & Qt.ControlModifier) {
@@ -170,10 +170,10 @@ Flipable {
 					}
 					Keys.onEnterPressed: function (event){
 						console.log('Enter:'+event.modifiers)
-						if (event.modifiers == Qt.NoModifier) {
+						if (event.modifiers == Qt.NoModifier || event.modifiers & Qt.KeypadModifier) {
 							editingFinished();
 							event.accepted = true;
-						}else if(event.modifiers & Qt.ControlModifier) {
+						}else if(event.modifiers & Qt.ControlModifier ) {
 							insert(cursorPosition, "\n")
 						}else {
 							event.accepted = false;

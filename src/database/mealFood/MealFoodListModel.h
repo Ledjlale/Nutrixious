@@ -18,25 +18,25 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DATABASE_MODEL_H
-#define DATABASE_MODEL_H
+#ifndef DATABASE_MEAL_FOOD_LIST_MODEL_H
+#define DATABASE_MEAL_FOOD_LIST_MODEL_H
 
-#include <QObject>
+#include "src/tool/proxyModel/ProxyAbstractListModel.hpp"
+#include "MealFoodModel.h"
+#include "src/tool/date/DateModel.h"
 
-
-class DatabaseModel : public QObject {
-	Q_OBJECT
+class MealFoodListModel: public ProxyAbstractListModel<MealFoodModel*> {
+Q_OBJECT
 public:
-	explicit DatabaseModel(QObject *parent = nullptr);
+	MealFoodListModel(QObject * parent = nullptr);
 
-	static void migrate();
-	static void initMealFoodData();
-	static void initMealGroupsData();
-	static void initUnitsData();
-	static void insertDefaultData();
-	static void insertDefaultData_old();
-	static void insertVersion2Data();
+	virtual QHash<int, QByteArray> roleNames () const override;
+	QVariant data (const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
+	void update();
+	void updateFromDate(DateModel * data);
+
+	void handleRemoved(MealFoodModel *model);
 
 };
 

@@ -24,29 +24,40 @@ import QtQuick.Layouts
 
 import App 1.0
 
-Item {
+Item{
 	id: mainItem
-	ColumnLayout{
+	property var mealGroup
+	implicitHeight: mainRow.implicitHeight
+	RowLayout{
+		id: mainRow
 		anchors.fill: parent
-		DayNavigationBar{
-			id: dayBar
-			Layout.fillWidth : true
-			onNext: mealFoods.updateFromDate(currentDay)
-			onPrevious: mealFoods.updateFromDate(currentDay)
-			Component.onCompleted: mealFoods.updateFromDate(currentDay)
-
-		}
-		ListView{
-			id: mealFoodList
+		TextField{
 			Layout.fillWidth: true
-			Layout.fillHeight: true
-			model: MealFoodProxyModel{
-				id: mealFoods
-			}
-			delegate: MealView{
-				width: mealFoodList.width
-				mealFoodModel: $modelData
-			}
+			text: mainItem.mealGroup.name
+			placeholderText: 'Group Name'
+			keepEditView: text == ''
+			onEditingFinished: mainItem.mealGroup.name = newValue
+		}
+		TextField{
+			inputMethodHints: Qt.ImhTime
+			text: mainItem.mealGroup.defaultTimeStr
+			keepEditView: text == ''
+			placeholderText: 'hh:mm:ss'
+			onEditingFinished: mainItem.mealGroup.defaultTimeStr = newValue
+		}
+		Switch{
+			checked: mainItem.mealGroup.isDisplayed
+			onCheckedChanged: mainItem.mealGroup.isDisplayed = checked
+		}
+		Button{
+			visible: mainItem.mealGroup.isEdited
+			text: 'Save'
+			onClicked: mainItem.mealGroup.save()
+		}
+		Button{
+			visible: mainItem.mealGroup.isSaved
+			text: 'D'
+			onClicked: mainItem.mealGroup.remove()
 		}
 	}
 }
