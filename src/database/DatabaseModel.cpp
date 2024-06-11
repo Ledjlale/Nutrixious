@@ -144,6 +144,7 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 			", weight REAL"
 			", sex INTEGER"
 			", height INTEGER"
+			", birthday INTEGER"
 			")")) qCritical() << "Cannot create personal database : " << query.lastError().text();
 
 //					EXERCISES STATS
@@ -159,6 +160,12 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 			insertVersion2Data();
 		}
 		query.exec("PRAGMA user_version=2");
+	}
+	if(!query.exec("SELECT birthday FROM personal_data LIMIT 1")){
+		if(!query.exec("ALTER TABLE personal_data ADD COLUMN birthday INTEGER DEFAULT "+QString::number(QDate(1983,8,1).toJulianDay()))){
+			qCritical() << "Cannot Add birthday column into personal_data: " << query.lastError().text();
+		}else{
+		}
 	}
 	if(!query.exec("SELECT calories FROM training_exercise_series LIMIT 1")){
 		if(!query.exec("ALTER TABLE training_exercise_series ADD COLUMN calories REAL DEFAULT 0")){

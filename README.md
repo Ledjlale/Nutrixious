@@ -18,6 +18,7 @@ Focus on Android only! (and Linux for debugging).
 - Training can be saved after doing it.
 - A Bar code can be scanned to check on Open Food Facts (OFF) database.
 - Food can be build and save from OFF database.
+- Diary edition on meals.
 
 ### Main Goals:
 
@@ -27,17 +28,17 @@ Focus on Android only! (and Linux for debugging).
 - V4: ReDesign (Quality)
 
 #### Main features:
-- Setup exercises
-- Setup programs
-- Edit exercises
-- Edit programs
-- Run live exercises
-- Setup foods
-- Edit foods
-- Bar code scanner
-- Use of Open Food Facts database
-- Setup meals
-- Daily calories/nutriments monitoring
+- Setup exercises (feature done)
+- Setup programs (feature done)
+- Edit exercises (feature done)
+- Edit programs (feature done)
+- Run live exercises (training) (feature done)
+- Setup foods (feature done)
+- Edit foods (feature done)
+- Bar code scanner (feature done)
+- Use of Open Food Facts database (feature done)
+- Setup meals (feature done)
+- Daily calories/nutriments monitoring (feature done)
 - F-Droid
 - Display graphs and statistics on performances
 - Graphics and statistics on body status (calories, weight)

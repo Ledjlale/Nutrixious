@@ -62,8 +62,62 @@ Item {
 				onNext: mealFoods.updateFromDate(currentDay)
 				onPrevious: mealFoods.updateFromDate(currentDay)
 				Component.onCompleted: mealFoods.updateFromDate(currentDay)
+			}
+//---------------------------------		OVERVIEW
+			RowLayout {
+				spacing: 0
+				ColumnLayout{
+					spacing: 0
+					Text{
+						Layout.fillWidth : true
+						text: 'Calories'
+						color: Material.foreground
+					}
+					Text{
+						text: Number.parseFloat(mainItem.meals.totalCalories.toFixed(2)) + ' / ' +Number.parseFloat(mainItem.meals.targetCalories.toFixed(2))
+						color: Material.foreground
+					}
+				}
+				ColumnLayout{
+					spacing: 0
+					Text{
+						Layout.fillWidth : true
+						text: 'Carbohydreats'
+						color: Material.foreground
+					}
+					Text{
+						text: Number.parseFloat(mainItem.meals.totalCarboRatio.toFixed(2)) + ' / ' +Number.parseFloat(mainItem.meals.targetCarboRatio.toFixed(2))
+						color: Material.foreground
+					}
+				}
+				ColumnLayout{
+					spacing: 0
+					Text{
+						Layout.fillWidth : true
+						text: 'Fat'
+						color: Material.foreground
+					}
+					Text{
+						text: Number.parseFloat(mainItem.meals.totalFatRatio.toFixed(2)) + ' / ' +Number.parseFloat(mainItem.meals.targetFatRatio.toFixed(2))
+						color: Material.foreground
+					}
+				}
+				ColumnLayout{
+					spacing: 0
+					Text{
+						Layout.fillWidth : true
+						text: 'Protein'
+						color: Material.foreground
+					}
+					Text{
+						text: Number.parseFloat(mainItem.meals.totalProteinRatio.toFixed(2)) + ' / ' +Number.parseFloat(mainItem.meals.targetProteinRatio.toFixed(2))
+						color: Material.foreground
+					}
+				}
+
 
 			}
+//----------------------------------------------------------------------------------------
 			ListView{
 				id: mealGroupList
 				Layout.fillWidth: true
@@ -169,61 +223,3 @@ Item {
 	}
 }
 
-
-		/*
-		ListView{
-			id: mealFoodList
-			Layout.fillWidth: true
-			Layout.fillHeight: true
-			model: MealFoodProxyModel{
-				id: mealFoods
-			}
-			section.property: "meal_group_id"
-			section.criteria: ViewSection.FullString
-			section.delegate: Rectangle{
-					id: sectionItem
-					required property string section
-					width: mealFoodList.width
-					height: sectionRow.implicitHeight + 10
-					color: Material.color(Material.BlueGrey)
-					RowLayout{
-						id: sectionRow
-						anchors.fill: parent
-						anchors.margins: 5
-						Text{
-							id: mealGroupTitle
-							Layout.fillWidth: true
-							color: 'white'
-							text: ''
-							Component.onCompleted: text = mainItem.mealGroups.getNameFromId(sectionItem.section)
-							Connections{
-								target: mainItem.mealGroups
-								function onCountChanged(){
-									mealGroupTitle.text = mainItem.mealGroups.getNameFromId(sectionItem.section)
-								}
-							}
-						}
-					}
-			}
-			delegate: ColumnLayout{
-						width: mealFoodList.width
-						height: mealView.implicitHeight + addButton.implicitHeight
-						spacing: 0
-						property bool isLast: ListView.nextSection !== ListView.section
-						MealView{
-							id: mealView
-							Layout.fillWidth: true
-							mealFoodModel: $modelData
-						}
-						Button{
-							id: addButton
-							visible:  parent.isLast
-							text: 'add'
-							onClicked: mainItem.selectFood($modelData.mealGroupId)
-						}
-			}
-		}
-
-	}
-}
-*/

@@ -39,6 +39,7 @@ PersonalDataModel::PersonalDataModel(QObject *parent)
 {
 	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	mDateTime = QDateTime::currentDateTime();
+	mBirthday = QDate(1983,8,1);
 }
 
 PersonalDataModel::PersonalDataModel(PersonalDataModel * model, QObject *parent)
@@ -49,6 +50,7 @@ PersonalDataModel::PersonalDataModel(PersonalDataModel * model, QObject *parent)
 	mWeight = model->getWeight();
 	mHeight = model->getHeight();
 	mDateTime = model->getDateTime();
+	mBirthday = model->getBirthday();
 }
 
 PersonalDataModel* PersonalDataModel::clone(QObject*parent) {
@@ -92,13 +94,44 @@ QString PersonalDataModel::getDateTimeStr()const{
 		return "";
 }
 
-
 void PersonalDataModel::setDateTimeStr(QString data) {
 	QDateTime dateTime = QDateTime::fromString(data, "yyyy/MM/dd hh:mm:ss");
 	if( dateTime.isValid() && dateTime != mDateTime){
 		addBackup(&mDateTime, mDateTime, dateTime);
 		mDateTime = dateTime;
 		dateTimeChanged();
+	}
+}
+
+
+QDate PersonalDataModel::getBirthday() const{
+	return mBirthday;
+}
+
+void PersonalDataModel::setBirthday(const qint64& days){
+	setBirthday(QDate::fromJulianDay(days));
+}
+
+void PersonalDataModel::setBirthday(const QDate& data){
+	if(mBirthday != data){
+		mBirthday = data;
+		emit birthdayChanged();
+	}
+}
+
+QString PersonalDataModel::getBirthdayStr()const{
+	if(mBirthday.isValid())
+		return QLocale().toString(mBirthday, "yyyy/MM/dd");
+	else
+		return "";
+}
+
+void PersonalDataModel::setBirthdayStr(QString data){
+	QDate birthday = QDate::fromString(data, "yyyy/MM/dd");
+	if( birthday.isValid() && birthday != mBirthday){
+		addBackup(&mBirthday, mBirthday, birthday);
+		mBirthday = birthday;
+		birthdayChanged();
 	}
 }
 
@@ -160,13 +193,14 @@ bool PersonalDataModel::save(){
 	query.add("height", mHeight);
 	query.add("date_time", mDateTime.toMSecsSinceEpoch());
 	query.add("sex", mSex);
+	query.add("birthday", mBirthday.toJulianDay());
 	query.addConditionnal("personal_data_id",mPersonalDataId);
 
 	if(mPersonalDataId == 0){
 		if(!query.exec()) qCritical() << "Cannot save personal data: "  << query.mQuery.lastError().text();
 		auto fieldNo = query.mQuery.record().indexOf("personal_data_id");
 		while (query.mQuery.next()) {
-			setPersonalDataId(query.mQuery.value(fieldNo).toInt());
+			setPersonalDataId(query.mQuery.value(fieldNo).toLongLong());
 			qDebug() << "Insert personal data: " << mPersonalDataId;
 		}
 		clearBackupValues();
@@ -198,14 +232,16 @@ PersonalDataModel *PersonalDataModel::load(QSqlQuery &query, QObject * parent) {
 	auto heightField = query.record().indexOf("personal_data.height");
 	auto sexField = query.record().indexOf("personal_data.sex");
 	auto dateTimeField = query.record().indexOf("personal_data.date_time");
+	auto birthdayField = query.record().indexOf("personal_data.birthday");
 	if( idField>= 0 && weightField >= 0 && heightField >= 0 && sexField>=0 && dateTimeField>=0){
 		PersonalDataModel * model = new PersonalDataModel(parent);
 	// TODO optimize
-		model->setPersonalDataId(query.value(idField).toInt());
+		model->setPersonalDataId(query.value(idField).toLongLong());
 		model->setWeight(query.value(weightField).toDouble());
 		model->setHeight(query.value(heightField).toInt());
 		model->setSex(query.value(sexField).toInt());
 		model->setDateTime(query.value(dateTimeField).toULongLong());
+		model->setBirthday(query.value(birthdayField).toULongLong());
 		model->clearBackupValues();
 		return model;
 	}else return nullptr;
@@ -216,12 +252,16 @@ void PersonalDataModel::set(QSqlQuery &query,PersonalDataModel * model) {
 	auto weightField = query.record().indexOf("personal_data.weight");
 	auto heightField = query.record().indexOf("personal_data.height");
 	auto sexField = query.record().indexOf("personal_data.sex");
+	auto dateTimeField = query.record().indexOf("personal_data.date_time");
+	auto birthdayField = query.record().indexOf("personal_data.birthday");
 	if( idField>= 0 && weightField >= 0 && heightField >= 0 && sexField>=0){
 	// TODO optimize
-		model->setPersonalDataId(query.value(idField).toInt());
+		model->setPersonalDataId(query.value(idField).toLongLong());
 		model->setWeight(query.value(weightField).toDouble());
 		model->setHeight(query.value(heightField).toInt());
 		model->setSex(query.value(sexField).toInt());
+		model->setDateTime(query.value(dateTimeField).toULongLong());
+		model->setBirthday(query.value(birthdayField).toULongLong());
 		model->clearBackupValues();
 	}
 }

@@ -28,6 +28,14 @@
 
 class MealFoodListModel: public ProxyAbstractListModel<MealFoodModel*> {
 Q_OBJECT
+	Q_PROPERTY(double totalCalories READ getTotalCalories NOTIFY totalCaloriesChanged)
+	Q_PROPERTY(double targetCalories READ getTargetCalories NOTIFY targetCaloriesChanged)
+	Q_PROPERTY(double totalCarboRatio READ getTotalCarboRatio NOTIFY totalCarboRatioChanged)
+	Q_PROPERTY(double targetCarboRatio READ getTargetCarboRatio NOTIFY targetCarboRatioChanged)
+	Q_PROPERTY(double totalFatRatio READ getTotalFatRatio NOTIFY totalFatRatioChanged)
+	Q_PROPERTY(double targetFatRatio READ getTargetFatRatio NOTIFY targetFatRatioChanged)
+	Q_PROPERTY(double totalProteinRatio READ getTotalProteinRatio NOTIFY totalProteinRatioChanged)
+	Q_PROPERTY(double targetProteinRatio READ getTargetProteinRatio NOTIFY targetProteinRatioChanged)
 
 public:
 	MealFoodListModel(QObject * parent = nullptr);
@@ -42,8 +50,41 @@ public:
 
 	void handleRemoved(MealFoodModel *model);
 
+	void setCurrentDate(QDate data);
+	void computeTotalRatios();
+
+	double getTotalCalories()const;
+	double getTargetCalories()const;
+	double getTotalCarboRatio()const;
+	double getTargetCarboRatio()const;
+	double getTotalFatRatio()const;
+	double getTargetFatRatio()const;
+	double getTotalProteinRatio()const;
+	double getTargetProteinRatio()const;
+
+	void setTotalCarboRatio(double data);
+	void setTotalFatRatio(double data);
+	void setTotalProteinRatio(double data);
+
+
 signals:
 	void caloriesChanged();
+	void currentDateChanged();
+	void totalCaloriesChanged();
+	void targetCaloriesChanged();
+	void totalCarboRatioChanged();
+	void targetCarboRatioChanged();
+	void totalFatRatioChanged();
+	void targetFatRatioChanged();
+	void totalProteinRatioChanged();
+	void targetProteinRatioChanged();
+
+protected:
+	QDate mCurrentDate;
+
+	double mTotalCarboRatio = 0.0;
+	double mTotalFatRatio = 0.0;
+	double mTotalProteinRatio = 0.0;
 
 };
 

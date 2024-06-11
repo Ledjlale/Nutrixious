@@ -25,11 +25,14 @@
 #include <QSqlRecord>
 
 #include "MealFoodModel.h"
+#include "src/computation/Computation.h"
 
 MealFoodListModel::MealFoodListModel(QObject *parent)
 	: ProxyAbstractListModel<MealFoodModel*>{parent}
 {
-
+	connect(this, &MealFoodListModel::currentDateChanged, this, &MealFoodListModel::targetCaloriesChanged);
+	connect(this, &MealFoodListModel::currentDateChanged, this, &MealFoodListModel::computeTotalRatios);
+	connect(this, &MealFoodListModel::countChanged, this, &MealFoodListModel::computeTotalRatios);
 }
 
 
@@ -69,6 +72,7 @@ void MealFoodListModel::update(){
 }
 
 void MealFoodListModel::updateFromDate(DateModel * data){
+
 	auto models = MealFoodModel::buildAll(data->getDate(), this);
 	for(auto e : models) {
 		connect(e, &MealFoodModel::removed, this, &MealFoodListModel::handleRemoved);
@@ -76,6 +80,7 @@ void MealFoodListModel::updateFromDate(DateModel * data){
 	}
 	resetData();
 	add(models);
+	setCurrentDate(data->getDate());
 	/*
 	beginResetModel();
 	mList.clear();
@@ -111,4 +116,91 @@ void MealFoodListModel::handleRemoved(MealFoodModel * model){
 		mList.erase(it);
 		endRemoveRows();
 	}
+}
+
+void MealFoodListModel::setCurrentDate(QDate data){
+	if(mCurrentDate != data){
+		mCurrentDate = data;
+		emit currentDateChanged();
+	}
+}
+
+
+double MealFoodListModel::getTotalCalories()const{
+	double sum = 0.0;
+	for(auto i : mList){
+		if(i->getCalories() > 0) sum += i->getCalories();
+	}
+	return sum;
+}
+
+double MealFoodListModel::getTargetCalories()const{
+	return Computation::targetDailyCalories(mCurrentDate);
+}
+
+void MealFoodListModel::computeTotalRatios(){
+	double carbo  = 0.0;
+	double fat = 0.0;
+	double protein = 0.0;
+	for(auto i : mList){
+		if(i->getTotalCarbohydrate() > 0) carbo += i->getTotalCarbohydrate();
+		if(i->getTotalFat() > 0)  fat += i->getTotalFat();
+		if(i->getProtein() > 0)  protein += i->getProtein();
+	}
+	double total = carbo + fat + protein;
+	if(total > 0){
+		setTotalCarboRatio( 100.0 * carbo / total);
+		setTotalFatRatio( 100.0 * fat / total);
+		setTotalProteinRatio( 100.0 * protein / total);
+	}else{
+		setTotalCarboRatio(0);
+		setTotalFatRatio(0);
+		setTotalProteinRatio(0);
+	}
+}
+
+void MealFoodListModel::setTotalCarboRatio(double data){
+	if(mTotalCarboRatio != data){
+		mTotalCarboRatio = data;
+		totalCarboRatioChanged();
+	}
+}
+
+void MealFoodListModel::setTotalFatRatio(double data){
+	if(mTotalFatRatio != data){
+		mTotalFatRatio = data;
+		totalFatRatioChanged();
+	}
+}
+
+void MealFoodListModel::setTotalProteinRatio(double data){
+	if(mTotalProteinRatio != data){
+		mTotalProteinRatio = data;
+		totalProteinRatioChanged();
+	}
+}
+
+
+double MealFoodListModel::getTotalCarboRatio()const{
+	return mTotalCarboRatio;
+}
+
+double MealFoodListModel::getTargetCarboRatio()const{
+	return Computation::targetDailyCarbo(mCurrentDate);
+}
+
+double MealFoodListModel::getTotalFatRatio()const{
+	return mTotalFatRatio;
+}
+
+double MealFoodListModel::getTargetFatRatio()const{
+	return Computation::targetDailyFat(mCurrentDate);
+}
+
+double MealFoodListModel::getTotalProteinRatio()const{
+	return mTotalProteinRatio;
+}
+
+double MealFoodListModel::getTargetProteinRatio()const{
+	return Computation::targetDailyProtein(mCurrentDate);
 }

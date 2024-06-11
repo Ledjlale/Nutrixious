@@ -30,6 +30,7 @@
 #	src/activity/base/serie/SerieListModel.cpp
 #	src/activity/base/serie/SerieProxyModel.cpp
 
+	src/computation/Computation.cpp
 
 	src/database/program/ProgramModel.cpp
 	src/database/program/ProgramListModel.cpp

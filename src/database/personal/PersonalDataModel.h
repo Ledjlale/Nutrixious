@@ -36,6 +36,7 @@ Q_OBJECT
 	Q_PROPERTY(QString dateTimeStr READ getDateTimeStr WRITE setDateTimeStr NOTIFY dateTimeChanged)
 	Q_PROPERTY(int sex READ getSex WRITE setSex NOTIFY sexChanged)
 	Q_PROPERTY(int height READ getHeight WRITE setHeight NOTIFY heightChanged)
+	Q_PROPERTY(QString birthday READ getBirthdayStr WRITE setBirthdayStr NOTIFY birthdayChanged)
 
 public:
 	PersonalDataModel();	// QML
@@ -51,6 +52,12 @@ public:
 	void setDateTime(const QDateTime& data);
 	QString getDateTimeStr()const;
 	void setDateTimeStr(QString data);
+
+	QDate getBirthday() const;
+	void setBirthday(const qint64& days);	//Description ms
+	void setBirthday(const QDate& data);
+	QString getBirthdayStr()const;
+	void setBirthdayStr(QString data);
 
 	double getWeight()const;
 	void setWeight(double data);
@@ -77,6 +84,7 @@ signals:
 	void dateTimeChanged();
 	void sexChanged();
 	void heightChanged();
+	void birthdayChanged();
 
 	void removed(PersonalDataModel *model);
 
@@ -86,6 +94,7 @@ protected:
 	double mWeight = 90.0;
 	int mHeight = 180;
 	QDateTime mDateTime;
+	QDate mBirthday;
 };
 
 #endif
