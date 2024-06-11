@@ -31,11 +31,24 @@ import App 1.0
 
 Item {
 	id: mainItem
+	property bool isPicker: false
+
+	signal back()
+	signal picked(var food)
+
+
 
 	ColumnLayout{
 		anchors.fill: parent
 		spacing: 0
 		RowLayout{
+			Button{
+				visible: mainItem.isPicker || stackView.depth > 1
+				text: 'Back'
+				onClicked: if( stackView.depth > 1 ) stackView.pop()
+				else
+					mainItem.back()
+			}
 			Item{
 				Layout.fillWidth: true
 			}
@@ -54,12 +67,26 @@ Item {
 				property bool editing: stackView.currentItem.objectName == "Editor"
 				text: editing
 						?  stackView.currentItem.foodModel.isSaved
-							? 'Update'
-							: 'Save'
+							? mainItem.isPicker
+								? 'Use'
+								: 'Update'
+							: mainItem.isPicker
+								? 'Save & use'
+								: 'Save'
 						: 'Create'
 				onClicked:{
 					if(editing){
-						if(stackView.currentItem.foodModel.save()) {
+						if(mainItem.isPicker){
+							if(stackView.currentItem.foodModel.isSaved){
+								mainItem.picked(stackView.currentItem.foodModel)
+								stackView.pop()
+							}else{
+								if(stackView.currentItem.foodModel.save()){
+									mainItem.picked(stackView.currentItem.foodModel)
+									stackView.pop()
+								}
+							}
+						}else if(stackView.currentItem.foodModel.save()) {
 							stackView.pop()
 							foodListModel.update()
 						}
@@ -86,9 +113,9 @@ Item {
 					MouseArea{
 						anchors.fill: parent
 						onClicked:{
-							console.log("Click "+$modelData)
-								 stackView.push(foodEditorComponent, {foodModel:$modelData})
-					}
+
+							stackView.push(foodEditorComponent, {foodModel:$modelData})
+						}
 					}
 				}
 			}

@@ -32,16 +32,6 @@ MealGroupListModel::MealGroupListModel(QObject *parent)
 
 }
 
-MealGroupListModel::MealGroupListModel(QVariantList exercises, QObject *parent)
-	: ProxyAbstractListModel<MealGroupModel*>{parent}
-{
-	for(auto exercise : exercises){
-		auto e = exercise.value<MealGroupModel*>();
-		connect(e, &MealGroupModel::removed, this, &MealGroupListModel::handleRemoved);
-		mList << e;
-	}
-}
-
 QHash<int, QByteArray> MealGroupListModel::roleNames () const {
 	QHash<int, QByteArray> roles;
 	roles[Qt::DisplayRole] = "$modelData";
@@ -68,6 +58,15 @@ void MealGroupListModel::addNewMealGroup(){
 	beginInsertRows(QModelIndex(), mList.size(), mList.size());
 	mList << new MealGroupModel(this);
 	endInsertRows();
+}
+
+MealGroupModel* MealGroupListModel::getModelFromId(int id)const{
+	auto it = std::find_if(mList.begin(), mList.end(), [id](const MealGroupModel *item){
+		return item->getMealGroupId() == id;
+	});
+	if(it != mList.end())
+		return *it;
+	else return nullptr;
 }
 
 void MealGroupListModel::update(){

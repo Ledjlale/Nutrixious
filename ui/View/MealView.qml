@@ -27,35 +27,14 @@ import App 1.0
 Item{
 	id: mainItem
 	property var mealFoodModel
-	property string title
 
-	implicitHeight: descLine.implicitHeight +  mainLine.implicitHeight + addButton.implicitHeight
+	implicitHeight: descLine.implicitHeight
 	//implicitHeight: mainLayout.implicitHeight // don't work
 	ColumnLayout{
 		id: mainLayout
 		anchors.fill: parent
 		spacing: 0
-		implicitHeight: descLine.implicitHeight +  mainLine.implicitHeight + addButton.implicitHeight
-		onImplicitHeightChanged: console.log( descLine.implicitHeight +'/'+  mainLine.implicitHeight +'/'+ addButton.implicitHeight)
-		Rectangle{
-			id: mainLineBackground
-			Layout.fillWidth: true
-			Layout.fillHeight: true
-			color: Material.background
-			RowLayout{
-				id: mainLine
-				anchors.fill: parent
-				Text{
-					Layout.fillWidth: true
-					horizontalAlignment: Text.AlignLeft
-					text: mainItem.title
-				}
-				Text{
-					horizontalAlignment: Text.AlignRight
-					text: '95 kcal'
-				}
-			}
-		}
+		implicitHeight: descLine.implicitHeight
 		Rectangle{
 			Layout.fillWidth: true
 			Layout.fillHeight: true
@@ -64,21 +43,19 @@ Item{
 				anchors.fill: parent
 				ColumnLayout{
 					Text{
-						text:'Description'
+						Layout.fillWidth: true
+						text: mealFoodModel.description
 					}
 					Text{
+						Layout.fillWidth: true
 						text: mealFoodModel.brand
 					}
 				}
 				Text{
 					horizontalAlignment: Text.AlignRight
-					text: '0 kcal'
+					text: Number.parseFloat(mealFoodModel.calories.toFixed(2))
 				}
 			}
-		}
-		Button{
-			id: addButton
-			text: 'Add'
 		}
 	}
 }

@@ -41,6 +41,13 @@
 		}\
 	}
 
+#define DEFINE_UNDO_LONGLONG(X) if(mBackupValues.contains(&m##X)) set##X( mBackupValues[&m##X].toLongLong());
+#define DEFINE_UNDO_STRING(X) if(mBackupValues.contains(&m##X)) set##X( mBackupValues[&m##X].toString());
+#define DEFINE_UNDO_DOUBLE(X) if(mBackupValues.contains(&m##X)) set##X( mBackupValues[&m##X].toDouble());
+#define DEFINE_UNDO_INT(X) if(mBackupValues.contains(&m##X)) set##X( mBackupValues[&m##X].toInt());
+#define DEFINE_UNDO_BOOL(X) if(mBackupValues.contains(&m##X)) set##X( mBackupValues[&m##X].toBool());
+#define DEFINE_UNDO_DATETIME(X) if(mBackupValues.contains(&m##X)) set##X( mBackupValues[&m##X].toDateTime());
+
 class QmlModel: public QObject{
 Q_OBJECT
 	Q_PROPERTY(bool isSaved READ getIsSaved WRITE setIsSaved NOTIFY isSavedChanged)
@@ -51,7 +58,7 @@ public:
 
 	virtual void updateIsEdited();
 	virtual void updateIsSaved();
-	virtual void undo();
+	Q_INVOKABLE virtual void undo();
 
 	bool getIsSaved() const;
 	void setIsSaved(bool data);

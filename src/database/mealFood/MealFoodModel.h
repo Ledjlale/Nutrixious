@@ -29,6 +29,7 @@
 #include "src/database/DatabaseQuery.h"
 
 #include "src/database/food/FoodModel.h"
+#include "src/database/mealGroup/MealGroupModel.h"
 
 class MealFoodModel : public FoodModel{
 Q_OBJECT
@@ -38,13 +39,13 @@ Q_OBJECT
 public:
 	MealFoodModel();
 	explicit MealFoodModel(QObject *parent);
+	MealFoodModel(const FoodModel * model, MealGroupModel *groupModel, QObject *parent);
 	MealFoodModel(const MealFoodModel * model, QObject *parent);
 	virtual ~MealFoodModel();
 	virtual MealFoodModel * clone(QObject *parent)const;
 
-	virtual void undo();
-
 // ----------------------
+	Q_INVOKABLE virtual void undo();
 
 	virtual void addQueryValues(DatabaseQuery &query);
 	virtual void load(QSqlQuery &query);

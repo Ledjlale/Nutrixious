@@ -212,6 +212,9 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 			")"
 		))
 			qCritical() << "Cannot create food table: " << query.lastError().text();
+		else{
+			initFoodData();
+		}
 	}
 
 	if(!query.exec("SELECT * FROM meal_groups LIMIT 1")){
@@ -275,7 +278,23 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 	}
 }
 
+void DatabaseModel::initFoodData(){
+	QList<FoodModel*> models;
 
+	models << new FoodModel();
+	models.back()->initRandomValues();
+	models << new FoodModel();
+	models.back()->initRandomValues();
+	models << new FoodModel();
+	models.back()->initRandomValues();
+	models << new FoodModel();
+	models.back()->initRandomValues();
+
+	for(auto i : models){
+		i->save();
+		i->deleteLater();
+	}
+}
 void DatabaseModel::initMealFoodData(){
 	QList<MealFoodModel*> models;
 
@@ -283,20 +302,23 @@ void DatabaseModel::initMealFoodData(){
 	models.back()->setMealGroupId(1);
 	models.back()->setServingUnitId(1);
 	models.back()->setBrand("a");
-	models.back()->setConsumptionDateTime(QDateTime::currentDateTime());
+	models.back()->setCalories(200);
+	models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate(),QTime(8,0,0) ));
 
 	models << new MealFoodModel();
 	models.back()->setMealGroupId(1);
 	models.back()->setServingUnitId(1);
 	models.back()->setBrand("b");
-	models.back()->setConsumptionDateTime(QDateTime::currentDateTime());
+	models.back()->setCalories(50);
+	models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate(),QTime(8,0,0) ));
 
 	models << new MealFoodModel();
 	models.back()->setMealGroupId(2);
 	models.back()->setServingUnitId(1);
 	models.back()->setBrand("c");
+	models.back()->setCalories(119);
 
-	models.back()->setConsumptionDateTime(QDateTime::currentDateTime());
+	models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate(),QTime(12,0,0) ));
 
 	for(auto i : models){
 		i->save();

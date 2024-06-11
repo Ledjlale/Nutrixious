@@ -46,27 +46,27 @@ Item {
 			id: fieldsList
 			Layout.fillWidth: true
 			Layout.fillHeight: true
-			model:[{title:'Brand', data: 'brand', editUnits: false}
-					, {title:'Description', data: 'description', editUnits: false}
-					, {title:'Serving Size', data: 'servingSize', editUnits: 'servingUnitId'}
+			model:[{title:'Brand', data: 'brand', editUnits: false, inputMethodHints: Qt.ImhNone}
+					, {title:'Description', data: 'description', editUnits: false, inputMethodHints: Qt.ImhNone}
+					, {title:'Serving Size', data: 'servingSize', editUnits: 'servingUnitId', inputMethodHints: Qt.ImhNone}
 					//, {title:'Serving per container', data: 'servingsPerContainer', editUnits: false}
-					, {title:'Calories ( kcal )', data: 'calories', editUnits: false}
-					, {title:'Total Fat ( g )', data: 'totalFat', editUnits: false}
-					, {title:'Saturated Fat ( g )', data: 'saturatedFat', editUnits: false}
-					, {title:'Trans Fat ( g )', data: 'transFat', editUnits: false}
-					, {title:'Polyunsaturated Fat ( g )', data: 'polyUnsaturatedFat', editUnits: false}
-					, {title:'Monounsaturated Fat ( g )', data: 'monoUnsaturatedFat', editUnits: false}
-					, {title:'Cholesterol ( mg )', data: 'cholesterol', editUnits: false}
-					, {title:'Total Carbohydrates ( g )', data: 'totalCarbohydrate', editUnits: false}
-					, {title:'Fibers ( g )', data: 'dietaryFiber', editUnits: false}
-					, {title:'Sugars ( g )', data: 'sugar', editUnits: false}
-					, {title:'Protein ( g )', data: 'protein', editUnits: false}
-					, {title:'Calcium ( % )', data: 'calcium', editUnits: false}
-					, {title:'Iron ( % )', data: 'iron', editUnits: false}
-					, {title:'Potassium ( mg )', data: 'potassium', editUnits: false}
-					, {title:'Sodium ( mg )', data: 'sodium', editUnits: false}
-					, {title:'Vitamin A ( % )', data: 'vitaminA', editUnits: false}
-					, {title:'Vitamin C ( % )', data: 'vitaminC', editUnits: false}
+					, {title:'Calories ( kcal )', data: 'calories', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
+					, {title:'Total Fat ( g )', data: 'totalFat', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
+					, {title:'Saturated Fat ( g )', data: 'saturatedFat', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
+					, {title:'Trans Fat ( g )', data: 'transFat', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
+					, {title:'Polyunsaturated Fat ( g )', data: 'polyUnsaturatedFat', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
+					, {title:'Monounsaturated Fat ( g )', data: 'monoUnsaturatedFat', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
+					, {title:'Cholesterol ( mg )', data: 'cholesterol', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
+					, {title:'Total Carbohydrates ( g )', data: 'totalCarbohydrate', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
+					, {title:'Fibers ( g )', data: 'dietaryFiber', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
+					, {title:'Sugars ( g )', data: 'sugar', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
+					, {title:'Protein ( g )', data: 'protein', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
+					, {title:'Calcium ( % )', data: 'calcium', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
+					, {title:'Iron ( % )', data: 'iron', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
+					, {title:'Potassium ( mg )', data: 'potassium', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
+					, {title:'Sodium ( mg )', data: 'sodium', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
+					, {title:'Vitamin A ( % )', data: 'vitaminA', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
+					, {title:'Vitamin C ( % )', data: 'vitaminC', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
 			]
 			delegate: RowLayout{
 				width: fieldsList.width
@@ -77,7 +77,9 @@ Item {
 				TextField{
 					Layout.fillWidth: true
 					horizontalAlignment: Text.AlignRight
-					text: mainItem.foodModel[modelData.data] < 0 ? '' : mainItem.foodModel[modelData.data]
+					inputMethodHints: modelData.inputMethodHints
+					property var txt: mainItem.foodModel[modelData.data] < 0 ? '' : mainItem.foodModel[modelData.data]
+					text: txt && inputMethodHints ==  Qt.ImhFormattedNumbersOnly ? txt.toFixed(4) : txt
 					onEditingFinished: mainItem.foodModel[modelData.data] = newValue
 				}
 				ComboBox{

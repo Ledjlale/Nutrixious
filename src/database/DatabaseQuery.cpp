@@ -58,7 +58,7 @@ void DatabaseQuery::addConditionnal(QString key, QVariant value ) {
 QString getLastExecutedQuery(const QSqlQuery& query) {
 	QString str = query.executedQuery();
 	const QVariantList list = query.boundValues();
-	for (qsizetype i = 0; i < list.size(); ++i){
+	for (qsizetype i = list.size()-1; i >=0; --i){
 		str.replace(":"+QString::number(i),list.at(i).toString());
 	}
 	return str;

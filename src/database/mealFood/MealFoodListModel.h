@@ -23,20 +23,27 @@
 
 #include "src/tool/proxyModel/ProxyAbstractListModel.hpp"
 #include "MealFoodModel.h"
+#include "src/database/mealGroup/MealGroupModel.h"
 #include "src/tool/date/DateModel.h"
 
 class MealFoodListModel: public ProxyAbstractListModel<MealFoodModel*> {
 Q_OBJECT
+
 public:
 	MealFoodListModel(QObject * parent = nullptr);
 
 	virtual QHash<int, QByteArray> roleNames () const override;
 	QVariant data (const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-	void update();
-	void updateFromDate(DateModel * data);
+	Q_INVOKABLE void update();
+	Q_INVOKABLE void updateFromDate(DateModel * data);
+	Q_INVOKABLE void addFoodModel(FoodModel *model, MealGroupModel *groupModel );
+	Q_INVOKABLE double calories(qint64 mealGroupId);
 
 	void handleRemoved(MealFoodModel *model);
+
+signals:
+	void caloriesChanged();
 
 };
 

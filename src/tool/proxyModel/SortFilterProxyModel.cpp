@@ -24,6 +24,7 @@ SortFilterProxyModel::SortFilterProxyModel(QObject * parent) : QSortFilterProxyM
 	mFilterType = 0;
 	connect(this, &SortFilterProxyModel::rowsInserted, this, &SortFilterProxyModel::countChanged);
 	connect(this, &SortFilterProxyModel::rowsRemoved, this, &SortFilterProxyModel::countChanged);
+	connect(this, &SortFilterProxyModel::modelReset, this, &SortFilterProxyModel::countChanged);
 }
 
 SortFilterProxyModel::~SortFilterProxyModel(){

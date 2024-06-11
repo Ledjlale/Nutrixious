@@ -28,6 +28,8 @@ Q_OBJECT
 public:
 	MealGroupProxyModel(QObject * parent = nullptr);
 
+	Q_INVOKABLE QString getNameFromId(int id) const;
+
 	signals:
 		void update();
 		void addNewMealGroup();

@@ -24,11 +24,17 @@
 MealGroupProxyModel::MealGroupProxyModel(QObject *parent)
 	: SortFilterProxyModel{parent} {
 	auto model = new MealGroupListModel(this);
+	setSourceModel(model);
 	connect(this, &MealGroupProxyModel::update, model, &MealGroupListModel::update);
 	connect(this, &MealGroupProxyModel::addNewMealGroup, model, &MealGroupListModel::addNewMealGroup);
-	setSourceModel(model);
 }
 
+QString MealGroupProxyModel::getNameFromId(int id) const{
+	auto model = dynamic_cast<MealGroupListModel*>(sourceModel())->getModelFromId(id);
+	if(model){
+		return model->getName();
+	}else return "";
+}
 
 
 

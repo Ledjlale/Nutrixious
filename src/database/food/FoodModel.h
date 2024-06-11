@@ -66,13 +66,14 @@ public:
 	FoodModel(const FoodModel * model, QObject *parent);
 	FoodModel* clone(QObject*parent);
 
-public:
+	void initRandomValues();
 
 	virtual void addQueryValues(DatabaseQuery &query){}
 	Q_INVOKABLE virtual bool save();
 	virtual void saveValues(DatabaseQuery &query);
 	Q_INVOKABLE virtual void remove();
 	virtual void updateIsSaved();
+	Q_INVOKABLE virtual void undo();
 
 	static QList<FoodModel*> buildAll(QObject * parent);
 

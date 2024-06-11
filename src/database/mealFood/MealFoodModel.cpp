@@ -40,8 +40,16 @@ MealFoodModel::MealFoodModel(QObject *parent)
 	mTablePrefix = "meal_food";
 }
 
+MealFoodModel::MealFoodModel(const FoodModel * model, MealGroupModel *groupModel, QObject *parent) : FoodModel(model, parent){
+	mTablePrefix = "meal_food";
+	mId = 0;
+	mConsumptionDateTime = QDateTime(QDate::currentDate(), groupModel->getDefaultTime());
+	mMealGroupId= groupModel->getMealGroupId();
+}
+
 MealFoodModel::MealFoodModel(const MealFoodModel * model, QObject *parent) : FoodModel(model, parent){
 	mTablePrefix = "meal_food";
+	mId = 0;
 	mConsumptionDateTime = initiBackup(model, &model->mConsumptionDateTime, model->mConsumptionDateTime, &mConsumptionDateTime).toDateTime();
 	mMealGroupId= initiBackup(model, &model->mMealGroupId, model->mMealGroupId, &mMealGroupId).toLongLong();
 }
@@ -64,23 +72,28 @@ DEFINE_GETSET(MealFoodModel,QDateTime,consumptionDateTime,ConsumptionDateTime)
 
 //-------------------------------------------------------------------------------------------------------------------
 void MealFoodModel::undo(){
-	QmlModel::undo();
+	DEFINE_UNDO_LONGLONG(MealGroupId)
+	DEFINE_UNDO_DATETIME(ConsumptionDateTime)
+	FoodModel::undo();
 }
 //-------------------------------------------------------------------------------------------------------------------
 
 void MealFoodModel::addQueryValues(DatabaseQuery &query){
+	qDebug() << mConsumptionDateTime.toMSecsSinceEpoch();
 	query.add("consumption_date_time", mConsumptionDateTime.toMSecsSinceEpoch());
+	query.add("meal_group_id", mMealGroupId);
 }
 
 void MealFoodModel::load(QSqlQuery &query) {
 // TODO optimize
 	FoodModel::load(query);
-	auto caloriesField = query.record().indexOf("consumption_date_time");
+	auto consumptionField = query.record().indexOf("consumption_date_time");
 	auto mealGroupIdField = query.record().indexOf("meal_group_id");
-	setConsumptionDateTime(QDateTime::fromMSecsSinceEpoch(query.value(caloriesField).toInt()));
+	setConsumptionDateTime(QDateTime::fromMSecsSinceEpoch(query.value(consumptionField).toLongLong()));
 	setMealGroupId(query.value(mealGroupIdField).toLongLong());
 	clearBackupValues();
 }
+
 MealFoodModel *MealFoodModel::build(QSqlQuery &query, QObject * parent) {
 	MealFoodModel * model = new MealFoodModel(parent);
 	model->load(query);
@@ -92,13 +105,13 @@ QList<MealFoodModel*> MealFoodModel::buildAll(QDate date, QObject * parent){
 	QList<MealFoodModel*> models;
 	QSqlQuery query;
 	QDateTime day(date, QTime(0,0,0));
-	query.prepare("SELECT * FROM meal_foods WHERE consumption_date_time BETWEEN ? AND ? ORDER BY consumption_date_time ASC");
+	query.prepare("SELECT * FROM meal_foods WHERE consumption_date_time BETWEEN ? AND ? ORDER BY consumption_date_time ASC, meal_food_id ASC");
 	query.addBindValue(day.toMSecsSinceEpoch());
 	query.addBindValue(day.addDays(1).toMSecsSinceEpoch()-1);
 
 	QString str = query.executedQuery();
 	const QVariantList list = query.boundValues();
-	for (qsizetype i = 0; i < list.size(); ++i){
+	for (qsizetype i = list.size() - 1 ; i >= 0; --i){
 		str.replace(":"+QString::number(i),list.at(i).toString());
 	}
 

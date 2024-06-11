@@ -28,12 +28,12 @@ class MealGroupListModel: public ProxyAbstractListModel<MealGroupModel*> {
 Q_OBJECT
 public:
 	MealGroupListModel(QObject * parent = nullptr);
-	MealGroupListModel(QVariantList exercises, QObject * parent);
 
 	virtual QHash<int, QByteArray> roleNames () const override;
 	QVariant data (const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
 	void addNewMealGroup();
+	MealGroupModel* getModelFromId(int id)const;
 
 	void update();
 
