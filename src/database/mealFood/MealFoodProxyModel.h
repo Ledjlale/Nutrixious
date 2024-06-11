@@ -22,17 +22,32 @@
 #define DATABASE_MEAL_FOOD_PROXY_MODEL_H
 
 #include "src/tool/proxyModel/SortFilterProxyModel.hpp"
-
+#include "MealFoodListModel.h"
 class DateModel;
+
 
 class MealFoodProxyModel: public SortFilterProxyModel {
 Q_OBJECT
+	Q_PROPERTY(MealFoodListModel *meals READ getMealFoodListModel WRITE setMealFoodListModel NOTIFY mealFoodListModelChanged)
+	Q_PROPERTY(qint64 mealGroupId READ getMealGroupId WRITE setMealGroupId NOTIFY mealGroupIdChanged)
 public:
 	MealFoodProxyModel(QObject * parent = nullptr);
 
+	MealFoodListModel *getMealFoodListModel() const;
+	void setMealFoodListModel(MealFoodListModel *data);
+	qint64 getMealGroupId() const;
+	void setMealGroupId(qint64 data);
+
+	virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const;
+
 signals:
+	void mealFoodListModelChanged();
+	void mealGroupIdChanged();
 	void update();
 	void updateFromDate(DateModel*);
+
+private:
+	qint64 mMealGroupId = 0;
 
 };
 

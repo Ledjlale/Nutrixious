@@ -83,6 +83,32 @@ FoodModel* FoodModel::clone(QObject*parent) {
 	return model;
 }
 
+void FoodModel::initRandomValues(){
+	static int count = 0;
+	mId = 0;
+	mBrand = "Random Food "+QString::number(++count);
+	mDescription = "A random food for debugging or example";
+	mServingUnitId = 1;
+	mServingSize = std::rand() * 40.0 / RAND_MAX;
+	mCalories = std::rand() * 1000.0 / RAND_MAX;
+	mTotalFat = std::rand() * 100.0 / RAND_MAX;
+	mSaturatedFat = std::rand() * 50.0 / RAND_MAX;
+	mTransFat = std::rand() * 50.0 / RAND_MAX;
+	mPolyUnsaturatedFat = std::rand() * 50.0 / RAND_MAX;
+	mMonoUnsaturatedFat = std::rand() * 50.0 / RAND_MAX;
+	mCholesterol = std::rand() * 50.0 / RAND_MAX;
+	mSodium = std::rand() * 50.0 / RAND_MAX;
+	mTotalCarbohydrate = std::rand() * 100.0 / RAND_MAX;
+	mDietaryFiber = std::rand() * 50.0 / RAND_MAX;
+	mSugar = std::rand() * 50.0 / RAND_MAX;
+	mProtein = std::rand() * 100.0 / RAND_MAX;
+	mCalcium = std::rand() * 50.0 / RAND_MAX;
+	mIron = std::rand() * 100.0 / RAND_MAX;
+	mPotassium = std::rand() * 100.0 / RAND_MAX;
+	mVitaminA = std::rand() * 100.0 / RAND_MAX;
+	mVitaminC = std::rand() * 100.0 / RAND_MAX;
+}
+
 DEFINE_GETSET(FoodModel,qint64,id,Id)
 DEFINE_GETSET(FoodModel,QString,openFoodFactsCode,OpenFoodFactsCode)
 DEFINE_GETSET(FoodModel,QString,brand,Brand)
@@ -114,6 +140,34 @@ DEFINE_GETSET(FoodModel,double,vitaminC,VitaminC)
 
 void FoodModel::updateIsSaved(){
 	setIsSaved(getId() > 0);
+}
+void FoodModel::undo(){
+	DEFINE_UNDO_LONGLONG(Id)
+	DEFINE_UNDO_STRING(OpenFoodFactsCode)
+	DEFINE_UNDO_STRING(Brand)
+	DEFINE_UNDO_STRING(ImageUrl)
+	DEFINE_UNDO_STRING(Description)
+	DEFINE_UNDO_LONGLONG(ServingUnitId)
+	DEFINE_UNDO_DOUBLE(ServingSize)
+	DEFINE_UNDO_DOUBLE(ServingsPerContainer)
+	DEFINE_UNDO_DOUBLE(Calories)
+	DEFINE_UNDO_DOUBLE(TotalFat)
+	DEFINE_UNDO_DOUBLE(SaturatedFat)
+	DEFINE_UNDO_DOUBLE(TransFat)
+	DEFINE_UNDO_DOUBLE(PolyUnsaturatedFat)
+	DEFINE_UNDO_DOUBLE(MonoUnsaturatedFat)
+	DEFINE_UNDO_DOUBLE(Cholesterol)
+	DEFINE_UNDO_DOUBLE(Sodium)
+	DEFINE_UNDO_DOUBLE(TotalCarbohydrate)
+	DEFINE_UNDO_DOUBLE(DietaryFiber)
+	DEFINE_UNDO_DOUBLE(Sugar)
+	DEFINE_UNDO_DOUBLE(Protein)
+	DEFINE_UNDO_DOUBLE(Calcium)
+	DEFINE_UNDO_DOUBLE(Iron)
+	DEFINE_UNDO_DOUBLE(Potassium)
+	DEFINE_UNDO_DOUBLE(VitaminA)
+	DEFINE_UNDO_DOUBLE(VitaminC)
+	QmlModel::undo();
 }
 
 bool FoodModel::save(){

@@ -51,8 +51,6 @@ Control.Button {
 	implicitWidth: Math.max(textMetrics.width + 4, 40)
 
 	width: implicitWidth
-	//onImplicitWidthChanged: console.log(implicitWidth + " / " + text)
-	//Component.onCompleted: console.log("C:"+implicitWidth + " / " + text)
 	MouseArea {
 		anchors.fill: parent
 		hoverEnabled: true

@@ -30,6 +30,7 @@ public:
 	explicit DatabaseModel(QObject *parent = nullptr);
 
 	static void migrate();
+	static void initFoodData();
 	static void initMealFoodData();
 	static void initMealGroupsData();
 	static void initUnitsData();

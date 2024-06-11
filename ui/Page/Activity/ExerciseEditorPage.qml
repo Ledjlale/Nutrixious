@@ -37,7 +37,6 @@ Item {
 		id: serieModelId
 	}
 	property var programModel
-	onProgramExerciseModelChanged: console.log(programExerciseModel.description + ' / ' +programExerciseModelId.description)
 	Component.onCompleted: Material.background = Qt.darker(Material.background, 1.02)
 
 	function save(){

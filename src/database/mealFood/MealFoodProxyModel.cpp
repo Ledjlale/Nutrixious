@@ -19,7 +19,6 @@
  */
 
 #include "MealFoodProxyModel.h"
-#include "MealFoodListModel.h"
 
 MealFoodProxyModel::MealFoodProxyModel(QObject *parent)
 	: SortFilterProxyModel{parent} {
@@ -28,3 +27,32 @@ MealFoodProxyModel::MealFoodProxyModel(QObject *parent)
 	setSourceModel(model);
 }
 
+MealFoodListModel *MealFoodProxyModel::getMealFoodListModel() const{
+	auto model = sourceModel();
+	return model ? dynamic_cast<MealFoodListModel*>(model) : nullptr;
+}
+
+void MealFoodProxyModel::setMealFoodListModel(MealFoodListModel *data){
+	setSourceModel(data);
+	emit mealFoodListModelChanged();
+}
+
+qint64 MealFoodProxyModel::getMealGroupId() const{
+	return mMealGroupId;
+}
+
+void MealFoodProxyModel::setMealGroupId(qint64 data){
+	if( mMealGroupId != data){
+		mMealGroupId = data;
+		mealGroupIdChanged();
+	}
+}
+
+bool MealFoodProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const{
+	if(mMealGroupId == 0) return true;
+	else{
+		QModelIndex index0 = sourceModel()->index(sourceRow, 0, sourceParent);
+		auto model = sourceModel()->data(index0).value<MealFoodModel*>();
+		return model->getMealGroupId() == mMealGroupId;
+	}
+}

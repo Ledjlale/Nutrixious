@@ -34,6 +34,7 @@ public:
 	ProxyAbstractObject(QObject * parent = nullptr) : QAbstractListModel(parent){
 		connect(this, &ProxyAbstractObject::rowsInserted, this, &ProxyAbstractObject::countChanged);
 		connect(this, &ProxyAbstractObject::rowsRemoved, this, &ProxyAbstractObject::countChanged);
+		connect(this, &ProxyAbstractObject::modelReset, this, &ProxyAbstractObject::countChanged);
 	}
 	Q_INVOKABLE virtual int getCount() const{
 		return rowCount();

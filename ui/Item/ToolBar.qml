@@ -30,11 +30,13 @@ Control.ToolBar{
 	property bool showBackButton : true
 	property bool showMenuButton: true
 	property bool showOptionsButton: true
+	property bool showSaveButton: false
 	property alias title: titleLabel.text
 	property bool displayStopwatch: false
 	signal back()
 	signal menu()
 	signal options()
+	signal save()
 	RowLayout {
 		 anchors.fill: parent
 		 Control.ToolButton {
@@ -64,6 +66,11 @@ Control.ToolBar{
 			visible: mainItem.showOptionsButton
 			text: qsTr("⋮")
 			onClicked: mainItem.options()
+		}
+		Control.ToolButton {
+			visible: mainItem.showSaveButton
+			text: qsTr("S")
+			onClicked: mainItem.save()
 		}
 	}
 }

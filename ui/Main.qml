@@ -25,7 +25,7 @@ import QtQuick.Layouts
 import App 1.0
 
 ApplicationWindow {
-	id: mainItem
+	id: mainWindow
 	width: 360
 	height: 740
 	visible: true
@@ -36,23 +36,34 @@ ApplicationWindow {
 	property string titleText : 'Programs'
 
 	property bool gShowMenuButton: true
+	property bool gShowBackButton: false
+	property bool gShowSaveButton: false
 
+	signal gBack()
+	signal gSave()
 
 	header: ToolBar{
 		id: toolBar
 		z: -1
 		showOptionsButton: false
-		showBackButton: mainView.depth > 1
+		showSaveButton: mainWindow.gShowSaveButton
+		showBackButton: mainView.depth > 1 || gShowBackButton
 		showMenuButton: mainView.depth == 1 && gShowMenuButton
-		title: menuPanel.show ? '' : mainItem.titleText
-		onBack: {mainView.pop()}
+		title: menuPanel.show ? '' : mainWindow.titleText
+		onBack: {if(!gShowBackButton) mainView.pop()
+			else
+				mainWindow.gBack()
+		}
 		onMenu:{menuPanel.show = true}
+		onSave: mainWindow.gSave()
 	}
 
 
 	StackView{
 		id: mainView
-		anchors.fill: parent
+		width: parent.width
+		height: parent.height
+		anchors.centerIn: parent
 		initialItem: programsPage
 		//TrainingPage{}
 
@@ -126,7 +137,7 @@ ApplicationWindow {
 			id: menuLayout
 			anchors.top: parent.top
 			anchors.bottom: parent.bottom
-			width: Math.max(2 * mainItem.width / 3, logoLayout.implicitWidth + 50)
+			width: Math.max(2 * mainWindow.width / 3, logoLayout.implicitWidth + 50)
 			x: -width
 			color: Material.primary
 
@@ -201,7 +212,7 @@ ApplicationWindow {
 						onClicked: {
 							//mainView.currentIndex = index
 							mainView.replace(modelData.component)
-							mainItem.titleText = modelData.title
+							mainWindow.titleText = modelData.title
 							menuPanel.show = false
 						}
 						ColumnLayout{
