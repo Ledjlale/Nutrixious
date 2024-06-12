@@ -205,10 +205,11 @@ QList<TrainingModel*> TrainingModel::buildAll(QList<ExerciseModel *> exercises, 
 	QList<TrainingModel*> models;
 	QMap<qint64, QList<TrainingSerieModel*>> series;
 	QMap<qint64, ExerciseModel*> exercisesMap;
-
-	for(auto i : exercises)
+	QStringList ids;
+	for(auto i : exercises) {
 		exercisesMap[i->getExerciseId()] = i;
-
+		ids << QString::number(i->getExerciseId());
+	}
 	QSqlQuery query;
 	if(!query.exec("SELECT * FROM "+tablePrefix+"_exercise_series"))
 		 qCritical() << "Cannot select series: "  << query.lastError().text();
@@ -219,8 +220,8 @@ QList<TrainingModel*> TrainingModel::buildAll(QList<ExerciseModel *> exercises, 
 
 
 	QMap<qint64, QList<TrainingExerciseModel*>> exerciseModels;
-	if(!query.exec("SELECT * FROM "+tablePrefix+"_exercise_units"))
-		 qCritical() << "Cannot select series: "  << query.lastError().text();
+	if(!query.exec("SELECT * FROM "+tablePrefix+"_exercise_units WHERE exercise_id IN("+ids.join(',')+")"))
+		 qCritical() << "Cannot select exercises: "  << query.lastError().text();
 	while (query.next()) {
 		auto model = TrainingExerciseModel::build(query, nullptr);
 		if(exercisesMap.contains(model->getExerciseId()))

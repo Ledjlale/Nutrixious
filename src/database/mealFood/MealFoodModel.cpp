@@ -105,10 +105,14 @@ MealFoodModel *MealFoodModel::build(QSqlQuery &query, QObject * parent) {
 QList<MealFoodModel*> MealFoodModel::buildAll(QDate date, QObject * parent){
 	QList<MealFoodModel*> models;
 	QSqlQuery query;
-	QDateTime day(date, QTime(0,0,0));
-	query.prepare("SELECT * FROM meal_foods WHERE consumption_date_time BETWEEN ? AND ? ORDER BY consumption_date_time ASC, meal_food_id ASC");
-	query.addBindValue(day.toMSecsSinceEpoch());
-	query.addBindValue(day.addDays(1).toMSecsSinceEpoch()-1);
+	if(date.isValid()){
+		QDateTime day(date, QTime(0,0,0));
+		query.prepare("SELECT * FROM meal_foods WHERE consumption_date_time BETWEEN ? AND ? ORDER BY consumption_date_time ASC, meal_food_id ASC");
+		query.addBindValue(day.toMSecsSinceEpoch());
+		query.addBindValue(day.addDays(1).toMSecsSinceEpoch()-1);
+	}else{
+		query.prepare("SELECT * FROM meal_foods WHERE consumption_date_time ORDER BY consumption_date_time ASC, meal_food_id ASC");
+	}
 
 	QString str = query.executedQuery();
 	const QVariantList list = query.boundValues();

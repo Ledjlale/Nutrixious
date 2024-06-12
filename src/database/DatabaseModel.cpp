@@ -27,6 +27,7 @@
 #include "program/exercise/ProgramExerciseModel.h"
 #include "program/serie/ProgramSerieModel.h"
 #include "program/ProgramModel.h"
+#include "personal/PersonalDataModel.h"
 
 #include "training/exercise/TrainingExerciseModel.h"
 #include "training/serie/TrainingSerieModel.h"
@@ -333,6 +334,29 @@ void DatabaseModel::initMealFoodData(){
 
 	models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate(),QTime(12,0,0) ));
 
+
+	models << new MealFoodModel();
+	models.back()->setMealGroupId(1);
+	models.back()->setServingUnitId(1);
+	models.back()->setBrand("a");
+	models.back()->setCalories(150);
+	models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate().addDays(-2),QTime(8,0,0) ));
+
+	models << new MealFoodModel();
+	models.back()->setMealGroupId(1);
+	models.back()->setServingUnitId(1);
+	models.back()->setBrand("b");
+	models.back()->setCalories(100);
+	models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate().addDays(-2),QTime(8,0,0) ));
+
+	models << new MealFoodModel();
+	models.back()->setMealGroupId(2);
+	models.back()->setServingUnitId(1);
+	models.back()->setBrand("c");
+	models.back()->setCalories(519);
+
+	models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate().addDays(-2),QTime(12,0,0) ));
+
 	for(auto i : models){
 		i->save();
 		i->deleteLater();
@@ -471,6 +495,23 @@ void DatabaseModel::insertDefaultData() {
 		trainings.back()->initRandomValues();
 		trainings.back()->save();
 	}
+
+
+	// Personal Data
+	QVector<PersonalDataModel*> personalData;
+
+	for(int i = 0 ; i < 100 ; ++i){
+		personalData << new PersonalDataModel();
+		personalData.back()->setBirthday(QDate(1983,8,1));
+		personalData.back()->setDateTime(QDateTime::fromString("2024/01/01 10:00:00", "yyyy/MM/dd hh:mm:ss").addDays(i));
+		personalData.back()->setHeight(180);
+		personalData.back()->setWeight(100 - (i * 20.0 / 100.0));
+		personalData.back()->setSex(0);
+		personalData.back()->save();
+	}
+
+
+	for(auto i : personalData) i->deleteLater();
 
 	for(auto i : trainingSeries) i->deleteLater();
 	for(auto i : trainingExercises) i->deleteLater();

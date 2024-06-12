@@ -42,6 +42,9 @@ public:
 	Q_ENUM(ComputeMode);
 
 	Q_INVOKABLE QVariantList computeOnSerie(ComputeMode mode) const;
+	Q_INVOKABLE QVariantList computeBodyWeights() const;
+	Q_INVOKABLE QVariantList computeNutritionCalories() const;
+
 
 signals:
 	void exerciseModelChanged();

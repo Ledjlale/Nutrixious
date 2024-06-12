@@ -43,6 +43,8 @@
 	ui/Item/TimeDisplay.qml
 	ui/Item/ToolBar.qml
 
+	ui/Item/Chart/TimeChart.qml
+
 	ui/Item/TimePicker/TimeComponentLabel.qml
 	ui/Item/TimePicker/TimePicker.qml
 	ui/Item/TimePicker/TimePickerDialog.qml

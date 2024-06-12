@@ -31,155 +31,96 @@ Item {
 	id: mainItem
 	ColumnLayout{
 		anchors.fill: parent
-		RowLayout{
-		/*
-			Button{
-				text: 'Back'
-				visible: exerciseCreation.currentIndex != 0
-				onClicked: {
-					exerciseCreation.currentIndex = 0
-					while(stackView.depth > 1)
-						stackView.pop();
-				}
-			}*/
-			Text{
-				color: Material.foreground
+		TabBar{
+			id: bar
+			Layout.fillWidth: true
+			TabButton{
 				text: 'Exercises'
 			}
-			ComboBox{
-				id: exerciseChoice
-				Layout.fillWidth: true
-				textRole: "displayText"
-				valueRole: "$modelData"
-				model: ExerciseProxyModel{
-					id: exercises
-				}
-				Component.onCompleted: exercises.update()
-				//onCurrentValueChanged: programExercises.setExercises(currentValue.exercises)
-				onCurrentValueChanged:{
-					//chartView.exerciseType = currentValue.type
-					stats.setExercise(currentValue)
-				}
+			TabButton{
+				text: 'Nutrition'
 			}
-			ComboBox{
-				id: modeChoice
-				Layout.fillWidth: true
-				textRole: "text"
-				valueRole: "value"
-				model: stats.availableSerieModes
-				//onCurrentValueChanged: programExercises.setExercises(currentValue.exercises)
-				onCurrentValueChanged:{
-					//chartView.exerciseType = currentValue.type
-					//stats.setExercise(currentValue)
-					stats.compute(currentValue)
-
-				}
-			}
-			Button{
-				text: 'Reload'
-				//visible: stackView.depth == 1
-				onClicked: exercises.update()
+			onCurrentIndexChanged: {
+				exerciseChoice.currentIndex = -1
+				nutritionChoice.currentIndex = 0
+				timeView.clear()
 			}
 		}
-		ChartView{
-			id: chartView
-			property int exerciseType: 1
-			property var statsModel: StatsModel{
-				id: stats
-				function compute(mode){
-					var points = stats.computeOnSerie(mode)
-					var minX = -1
-					var maxX = -1
-					var minY = -1
-					var maxY = -1
-					series.clear()
-					for(var p in points){
-						var x = points[p].x
-						var y = points[p].y
-						if( x > maxX) maxX = x
-						if( y > maxY) maxY = y
-						if( x < minX || minX == -1) minX = x
-						if( y < minY || minY == -1) minY = y
-						console.log('Add : ' +x + ", "+y)
-						series.append(x, y)
+		Item{// StackLayout is not used because Qt bug on layout refreshing.
+			id: stackLayout
+			Layout.fillWidth: true
+			Layout.preferredHeight: currentIndex == 0 ? exercisesLayout.implicitHeight : nutritionLayout.implicitHeight
+			property int currentIndex: bar.currentIndex
+			ColumnLayout{
+				id: exercisesLayout
+				anchors.fill: parent
+				property var statsModel: StatsModel{
+					id: stats
+					function compute(mode){
+						var points = stats.computeOnSerie(mode)
+						if(points && points.length)timeView.displayPoints(points)
 					}
-					chartView.axisY(series).min = minY-1;
-					chartView.axisY(series).max = maxY+1 ;
-					console.log(minX + " , " +minY + " / " + maxX+ " , " +maxY)
-					chartView.axisX(series).min = minX;
-					chartView.axisX(series).max = maxX;
+					onExerciseModelChanged: {compute(StatsModel.WEIGHT) }
 				}
-				onExerciseModelChanged: {compute(StatsModel.WEIGHT)
-				}
-
-			}
-			Layout.fillWidth: true
-			Layout.fillHeight: true
-			title: chartView.exerciseType == 3 ? 'Strength' : chartView.exerciseType==2 ? 'Steps' : chartView.exerciseType==1 ? 'Distance' : ''
-			antialiasing: true
-			ValueAxis {
-				id: vAxis
-			}
-			DateTimeAxis{
-				id: dAxis
-				format: 'yyyy-MM-dd'
-				labelsAngle: -60
-			}
-			LineSeries{
-				id: series
-				name: chartView.exerciseType == 3 ? 'Weights (kg)' : chartView.exerciseType==2 ? 'Nb of Steps' : chartView.exerciseType==1 ? 'Distance (m)' : ''
-				axisX: dAxis
-				axisY: vAxis
-			}
-		}
-
-		/*
-		ChartView{
-			property StatsModel stats
-		}*/
-		/*
-		ChartView{
-			property var statsModel: StatsModel{
-				id: stats
-				onExerciseModelChanged: loader.active = true
-			}
-			Layout.fillWidth: true
-			Layout.fillHeight: true
-			title: 'test'
-			antialiasing: true
-			LineSeries{
-				name: "Line"
-				Loader{
-					id: loader
-					active: false
-					sourceComponent:
-					Repeater{
-						id: data
-						model: stats.computeWeights()
-						XYPoint{
-							Component.onCompleted: console.log(modelData)
+				visible: stackLayout.currentIndex == 0
+				RowLayout{
+					ComboBox{
+						id: exerciseChoice
+						Layout.fillWidth: true
+						textRole: "displayText"
+						valueRole: "$modelData"
+						model: ExerciseProxyModel{
+							id: exercises
+						}
+						Component.onCompleted: exercises.update()
+						onCurrentValueChanged:{
+							stats.setExercise(currentValue)
 						}
 					}
+					ComboBox{
+						id: modeChoice
+						Layout.fillWidth: true
+						textRole: "text"
+						valueRole: "value"
+						model: stats.availableSerieModes
+						onCurrentValueChanged:{
+							stats.compute(currentValue)
+
+						}
+					}
+					Button{
+						text: 'Reload'
+						onClicked: exercises.update()
+					}
+				}
+			}
+
+			ColumnLayout{
+				id: nutritionLayout
+				property var statsModel: StatsModel{
+						id: nutritionTimeStats
+				}
+				anchors.fill: parent
+				visible: stackLayout.currentIndex == 1
+				ComboBox{
+					id: nutritionChoice
+					Layout.fillWidth: true
+					model:['Nutrition', 'Body Weight','Calories']
+					onCurrentIndexChanged: {
+						var points
+						if( currentIndex == 1 )
+							points = nutritionTimeStats.computeBodyWeights()
+						else if(currentIndex == 2)
+							points = nutritionTimeStats.computeNutritionCalories()
+						if(points && points.length)timeView.displayPoints(points)
+					}
 				}
 			}
 		}
-		*/
-		/*
-		ChartView{
+		TimeChart{
+			id: timeView
 			Layout.fillWidth: true
 			Layout.fillHeight: true
-			title: 'test'
-			antialiasing: true
-			LineSeries{
-				name: "Line"
-				XYPoint { x: 0; y: 0 }
-				XYPoint { x: 1.1; y: 2.1 }
-				XYPoint { x: 1.9; y: 3.3 }
-				XYPoint { x: 2.1; y: 2.1 }
-				XYPoint { x: 2.9; y: 4.9 }
-				XYPoint { x: 3.4; y: 3.0 }
-				XYPoint { x: 4.1; y: 3.3 }
-			}
-		}*/
+		}
 	}
 }
