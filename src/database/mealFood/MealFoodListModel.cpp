@@ -81,14 +81,6 @@ void MealFoodListModel::updateFromDate(DateModel * data){
 	resetData();
 	add(models);
 	setCurrentDate(data->getDate());
-	/*
-	beginResetModel();
-	mList.clear();
-	mList << MealFoodModel::buildAll(data->getDate(), this);
-	for(auto e : mList)
-		connect(e, &MealFoodModel::removed, this, &MealFoodListModel::handleRemoved);
-	endResetModel();
-	*/
 }
 
 void MealFoodListModel::addFoodModel(FoodModel *model, MealGroupModel *groupModel ) {

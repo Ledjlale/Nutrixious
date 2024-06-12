@@ -46,8 +46,11 @@ DatabaseModel::DatabaseModel(QObject *parent)
 
 void DatabaseModel::migrate(){
 	QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-	//db.setDatabaseName("data");
+#ifdef QT_DEBUG
 	db.setDatabaseName(":memory:");
+#else
+	db.setDatabaseName("data");
+#endif
 	if (!db.open()) {
 		qCritical() << QObject::tr("Unable to establish a database connection.\n"
 						"This example needs SQLite support. Please read "
@@ -68,18 +71,18 @@ void DatabaseModel::migrate(){
 		query.exec("PRAGMA foreign_keys=ON");
 
 //----------------------------------------------------------------------------------------------------------------------
-	if(!query.exec("CREATE TABLE exercises (exercise_id INTEGER PRIMARY KEY"
+		if(!query.exec("CREATE TABLE exercises (exercise_id INTEGER PRIMARY KEY"
 				", name TEXT"
 				", met REAL"
 				")")) qCritical() << "Cannot create an exercise table  : " << query.lastError().text();
 
 // Programs : List of exercises
-	if(!query.exec("CREATE TABLE programs (program_id INTEGER PRIMARY KEY"
+		if(!query.exec("CREATE TABLE programs (program_id INTEGER PRIMARY KEY"
 				", name TEXT"
 				", description TEXT)")) qCritical() << "Cannot create programs : " << query.lastError().text();
 
 // Program Exercise = Exercise + program_id + exercise_order
-	if(!query.exec("CREATE TABLE program_exercise_units (program_exercise_unit_id INTEGER PRIMARY KEY"
+		if(!query.exec("CREATE TABLE program_exercise_units (program_exercise_unit_id INTEGER PRIMARY KEY"
 			", description TEXT"
 			", exercise_order INTEGER"
 			", program_id INTEGER NOT NULL"
@@ -93,7 +96,7 @@ void DatabaseModel::migrate(){
 			")")) qCritical() << "Cannot create program exercises table : " << query.lastError().text();
 
 // // Program Serie = Serie
-	if(!query.exec("CREATE TABLE program_exercise_series (program_serie_id INTEGER PRIMARY KEY"
+		if(!query.exec("CREATE TABLE program_exercise_series (program_serie_id INTEGER PRIMARY KEY"
 			", program_exercise_unit_id INTEGER NOT NULL"
 			", serie_order INTEGER"
 			", rest_time INTEGER"
@@ -108,13 +111,13 @@ void DatabaseModel::migrate(){
 
 
 // Training : List of exercises
-	if(!query.exec("CREATE TABLE trainings (training_id INTEGER PRIMARY KEY"
+		if(!query.exec("CREATE TABLE trainings (training_id INTEGER PRIMARY KEY"
 				", name TEXT"
 				", description TEXT"
 				", start_date_time INTERGER)")) qCritical() << "Cannot create trainings: " << query.lastError().text();
 
 // Training Exercise = Exercise + training_id + exercise_order
-if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id INTEGER PRIMARY KEY"
+		if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id INTEGER PRIMARY KEY"
 			", description TEXT"
 			", exercise_order INTEGER"
 			", training_id INTEGER NOT NULL"
@@ -128,7 +131,7 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 			")")) qCritical() << "Cannot create training exercises table : " << query.lastError().text();
 
 // Training Serie = Serie
-	if(!query.exec("CREATE TABLE training_exercise_series (training_serie_id INTEGER PRIMARY KEY"
+		if(!query.exec("CREATE TABLE training_exercise_series (training_serie_id INTEGER PRIMARY KEY"
 			", training_exercise_unit_id INTEGER NOT NULL"
 			", serie_order INTEGER"
 			", rest_time INTEGER"
@@ -143,10 +146,9 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 			")")) qCritical() << "Cannot create training series table : " << query.lastError().text();
 
 //-----------------------------------------------------------------------------------------------------------------------
-
 //					PERSONAL DATA
 
-	if(!query.exec("CREATE TABLE personal_data (personal_data_id INTEGER PRIMARY KEY"
+		if(!query.exec("CREATE TABLE personal_data (personal_data_id INTEGER PRIMARY KEY"
 			", date_time INTEGER"
 			", weight REAL"
 			", sex INTEGER"
@@ -154,34 +156,9 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 			", birthday INTEGER"
 			")")) qCritical() << "Cannot create personal database : " << query.lastError().text();
 
-//					EXERCISES STATS
+//-----------------------------------------------------------------------------------------------------------------------
+//					FOOD
 
-		insertDefaultData();
-
-		//query.exec("CREATE TABLE version (version INTEGER)");
-		//query.exec("INSERT INTO version (version) VALUES(1)");
-
-		query.exec("PRAGMA user_version=2");
-	}else{// Migration
-		if( version < 2){
-			insertVersion2Data();
-		}
-		query.exec("PRAGMA user_version=2");
-	}
-	if(!query.exec("SELECT birthday FROM personal_data LIMIT 1")){
-		if(!query.exec("ALTER TABLE personal_data ADD COLUMN birthday INTEGER DEFAULT "+QString::number(QDate(1983,8,1).toJulianDay()))){
-			qCritical() << "Cannot Add birthday column into personal_data: " << query.lastError().text();
-		}else{
-		}
-	}
-	if(!query.exec("SELECT calories FROM training_exercise_series LIMIT 1")){
-		if(!query.exec("ALTER TABLE training_exercise_series ADD COLUMN calories REAL DEFAULT 0")){
-			qCritical() << "Cannot Add calories column into training_exercise_series: " << query.lastError().text();
-		}else{
-
-		}
-	}
-	if(!query.exec("SELECT * FROM units LIMIT 1")){
 		if(!query.exec("CREATE TABLE units (unit_id INTEGER PRIMARY KEY"
 			", name TEXT"
 			", gram_value REAL DEFAULT 0"
@@ -195,8 +172,6 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 		else{
 			initUnitsData();
 		}
-	}
-	if(!query.exec("SELECT * FROM foods LIMIT 1")){
 		if(!query.exec("CREATE TABLE foods (food_id INTEGER PRIMARY KEY"
 			", open_food_facts_code TEXT"
 			", image_url TEXT"
@@ -229,9 +204,7 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 		else{
 			initFoodData();
 		}
-	}
 
-	if(!query.exec("SELECT * FROM meal_groups LIMIT 1")){
 		if(!query.exec("CREATE TABLE meal_groups (meal_group_id INTEGER PRIMARY KEY"
 			", name TEXT"
 			", default_time INTEGER"
@@ -242,9 +215,6 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 		}else{
 			initMealGroupsData();
 		}
-	}
-
-	if(!query.exec("SELECT * FROM meal_foods LIMIT 1")){
 		if(!query.exec("CREATE TABLE meal_foods (meal_food_id INTEGER PRIMARY KEY"
 			", open_food_facts_code TEXT"
 			", image_url TEXT"
@@ -280,9 +250,34 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 		else{
 			initMealFoodData();
 		}
+
+
+		insertDefaultData();
+
+		query.exec("PRAGMA user_version=1");
+	}else{
+//---------------------------------------------------------------------------------------------------------
+//								MIGRATION
+//---------------------------------------------------------------------------------------------------------
+		if( version < 2){
+			insertVersion2Data();
+		}
+		query.exec("PRAGMA user_version=1");
 	}
+//---------------------------------------------------------------------------------------------------------
+	if(!query.exec("SELECT birthday FROM personal_data LIMIT 1")){
+		if(!query.exec("ALTER TABLE personal_data ADD COLUMN birthday INTEGER DEFAULT "+QString::number(QDate(1983,8,1).toJulianDay()))){
+			qCritical() << "Cannot Add birthday column into personal_data: " << query.lastError().text();
+		}else{
+		}
+	}
+	if(!query.exec("SELECT calories FROM training_exercise_series LIMIT 1")){
+		if(!query.exec("ALTER TABLE training_exercise_series ADD COLUMN calories REAL DEFAULT 0")){
+			qCritical() << "Cannot Add calories column into training_exercise_series: " << query.lastError().text();
+		}else{
 
-
+		}
+	}
 
 	query.exec("PRAGMA user_version");
 	fieldNo = query.record().indexOf("user_version");
@@ -293,6 +288,7 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 }
 
 void DatabaseModel::initFoodData(){
+#ifdef QT_DEBUG
 	QList<FoodModel*> models;
 
 	models << new FoodModel();
@@ -308,8 +304,10 @@ void DatabaseModel::initFoodData(){
 		i->save();
 		i->deleteLater();
 	}
+#endif
 }
 void DatabaseModel::initMealFoodData(){
+#ifdef QT_DEBUG
 	QList<MealFoodModel*> models;
 
 	models << new MealFoodModel();
@@ -361,6 +359,7 @@ void DatabaseModel::initMealFoodData(){
 		i->save();
 		i->deleteLater();
 	}
+#endif
 }
 
 void DatabaseModel::initMealGroupsData(){
@@ -431,7 +430,7 @@ void DatabaseModel::insertVersion2Data() {
 }
 void DatabaseModel::insertDefaultData() {
 	insertVersion2Data();
-
+#ifdef QT_DEBUG
 	QVector<ExerciseModel *> exercises;
 	QVector<ProgramExerciseModel *> programExercises;
 	QVector<ProgramSerieModel *> series;
@@ -521,7 +520,7 @@ void DatabaseModel::insertDefaultData() {
 	for(auto i : series) i->deleteLater();
 	for(auto i : programExercises) i->deleteLater();
 	for(auto i : programs) i->deleteLater();
-
+#endif
 }
 
 

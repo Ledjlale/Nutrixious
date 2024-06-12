@@ -19,6 +19,7 @@ Focus on Android only! (and Linux for debugging).
 - A Bar code can be scanned to check on Open Food Facts (OFF) database.
 - Food can be build and save from OFF database.
 - Diary edition on meals.
+- Display of Main statistics on trainings, meal calories and weight
 
 ### Main Goals:
 
@@ -39,8 +40,8 @@ Focus on Android only! (and Linux for debugging).
 - Use of Open Food Facts database (feature done)
 - Setup meals (feature done)
 - Daily calories/nutriments monitoring (feature done)
-- Display graphs and statistics on performances
-- Graphics and statistics on body status (calories, weight)
+- Display graphs and statistics on performances (feature done)
+- Graphics and statistics on body status (calories, weight) (feature done)
 - F-Droid
 
 #### Design:
