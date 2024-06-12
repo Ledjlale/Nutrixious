@@ -42,6 +42,8 @@ public:
 	ProgramModel(QObject *parent);
 	ProgramModel(ProgramModel * model, QObject *parent);
 
+	virtual void initRandomValues();	// Debug
+
 	Q_INVOKABLE qint64 getId()const;
 	virtual void setId(qint64 id);
 

@@ -50,6 +50,8 @@ public:
 	virtual ~ExerciseSerieModel();
 	virtual ExerciseSerieModel * clone( QObject *parent)const;
 
+	virtual void initRandomValues();	// Debug
+
 	qint64 getSerieId() const;
 	void setSerieId(qint64 data);
 

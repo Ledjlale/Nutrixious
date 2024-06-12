@@ -25,21 +25,31 @@
 
 #include "src/database/exercise/ExerciseModel.h"
 
+class TrainingModel;
+
 class StatsModel : public QObject {
 	Q_OBJECT
-
+	Q_PROPERTY(QVariantList availableSerieModes READ getAvailableSerieModes NOTIFY trainingsChanged)
 
 public:
 	StatsModel(QObject *parent = nullptr);
 	Q_INVOKABLE void setExercise(ExerciseModel *exercise);
 
-	Q_INVOKABLE QVariantList computeWeights() const;
+	void setTrainings(QList<TrainingModel*> data);
+
+	QVariantList getAvailableSerieModes()const;
+	typedef enum{WEIGHT=0, REPETITION=1,DISTANCE=2,SPEED=3,CALORIES=4} ComputeMode;
+	Q_ENUM(ComputeMode);
+
+	Q_INVOKABLE QVariantList computeOnSerie(ComputeMode mode) const;
 
 signals:
 	void exerciseModelChanged();
+	void trainingsChanged();
 
 protected:
 	ExerciseModel *mExerciseModel;
+	QList<TrainingModel*> mTrainings;
 };
 
 #endif

@@ -54,6 +54,8 @@ public:
 	virtual ~ExerciseUnitModel();
 	virtual ExerciseUnitModel * clone(QObject *parent)const;
 
+	virtual void initRandomValues();
+
 	qint64 getExerciseUnitId()const;
 	virtual void setExerciseUnitId(qint64 id);
 

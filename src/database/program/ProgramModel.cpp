@@ -52,6 +52,11 @@ ProgramModel::ProgramModel(ProgramModel * model, QObject *parent) : ProgramModel
 	}
 }
 
+void ProgramModel::initRandomValues(){
+	for(auto i : mExercises)
+		i->initRandomValues();
+}
+
 qint64 ProgramModel::getId()const{
 	return mId;
 }

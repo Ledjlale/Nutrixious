@@ -27,6 +27,11 @@
 #include "program/exercise/ProgramExerciseModel.h"
 #include "program/serie/ProgramSerieModel.h"
 #include "program/ProgramModel.h"
+
+#include "training/exercise/TrainingExerciseModel.h"
+#include "training/serie/TrainingSerieModel.h"
+#include "training/TrainingModel.h"
+
 #include "exercise/ExerciseModel.h"
 #include "mealGroup/MealGroupModel.h"
 #include "mealFood/MealFoodModel.h"
@@ -131,6 +136,7 @@ if(!query.exec("CREATE TABLE training_exercise_units (training_exercise_unit_id 
 			", speed REAL"
 			", weight INTEGER"
 			", repetitions INTEGER"
+			", calories REAL"
 			", FOREIGN KEY (training_exercise_unit_id) REFERENCES training_exercise_units (training_exercise_unit_id) ON UPDATE CASCADE ON DELETE CASCADE"
 
 			")")) qCritical() << "Cannot create training series table : " << query.lastError().text();
@@ -401,7 +407,7 @@ void DatabaseModel::insertVersion2Data() {
 }
 void DatabaseModel::insertDefaultData() {
 	insertVersion2Data();
-/*
+
 	QVector<ExerciseModel *> exercises;
 	QVector<ProgramExerciseModel *> programExercises;
 	QVector<ProgramSerieModel *> series;
@@ -414,78 +420,67 @@ void DatabaseModel::insertDefaultData() {
 	exercises << new ExerciseModel();
 	exercises.back()->setName("Bike");
 	exercises.back()->save();
-	programExercises << new ProgramExerciseModel(1, nullptr);
+	programExercises << new ProgramExerciseModel(nullptr);
+	programExercises.back()->setUseWeight(false);
+	programExercises.back()->setUseRepetitions(false);
 	programExercises.back()->setExerciseModel(exercises.back());
-	programExercises.back()->getData()[0]->setValue(1234);
-	programs.back()->addExercise(programExercises.back());
+	series << new ProgramSerieModel();
+	series.back()->setDistance(5000);
+	programExercises.back()->insertSerie(series.back());
+	programs.back()->insertExercise(programExercises.back());
 
 
 	exercises << new ExerciseModel();
 	exercises.back()->setName("Shoulder");
-	exercises.back()->setDescription("Lateral elevations");
 	exercises.back()->save();
-	programExercises << new ProgramExerciseModel(3, nullptr);
+	programExercises << new ProgramExerciseModel(nullptr);
+	programExercises.back()->setDescription("Lateral elevations");
+	programExercises.back()->setUseDistance(false);
+	programExercises.back()->setUseSpeed(false);
 	programExercises.back()->setExerciseModel(exercises.back());
 
-	series.push_back(new ProgramSerieModel(1, programExercises.back()));
-	series.back()->getData()[0]->setValue(12);
-	series.back()->getData()[1]->setValue(15);
+	series << new ProgramSerieModel(programExercises.back());
+	series.back()->setRepetitions(12);
+	series.back()->setWeight(15);
 	series.back()->setRestTime(1);
-	programExercises.back()->addSerie(series.back(), false);
-	series.push_back(new ProgramSerieModel(1, programExercises.back()));
-	series.back()->getData()[0]->setValue(10);
-	series.back()->getData()[1]->setValue(10);
-	series.back()->setRestTime(3);
-	programExercises.back()->addSerie(series.back(), false);
+	programExercises.back()->insertSerie(series.back());
 
-	programs.back()->addExercise(programExercises.back());
+	series << new ProgramSerieModel(programExercises.back());
+	series.back()->setRepetitions(12);
+	series.back()->setWeight(10);
+	series.back()->setRestTime(5);
+	programExercises.back()->insertSerie(series.back());
 
-	exercises << new ExerciseModel();
-	exercises.back()->setName("Work");
-	exercises.back()->setDescription("Going to Work");
-	exercises.back()->save();
-	programExercises << new ProgramExerciseModel(2, nullptr);
-	programExercises.back()->setExerciseModel(exercises.back());
-	programExercises.back()->getData()[0]->setValue(2500);
-	programExercises.back()->setRestTime(0);
-	programs.back()->addExercise(programExercises.back());
+	programs.back()->insertExercise(programExercises.back());
+
 
 	programs.back()->save();
 
 
-	programs << new ProgramModel();
-	programs.back()->setName("Dist");
-	programs.back()->setDescription("Testouille");
+//  Trainings
 
-	programExercises << new ProgramExerciseModel(1, nullptr);
-	programExercises.back()->setExerciseModel(exercises[0]);
-	programExercises.back()->getData()[0]->setValue(1234);
-	series.back()->setRestTime(0);
-	programs.back()->addExercise(programExercises.back());
-
-	programs.back()->save();
-
-	programs << new ProgramModel();
-	programs.back()->setName("Walk");
-	programs.back()->setDescription("Testouille");
-
-	programExercises << new ProgramExerciseModel(2, nullptr);
-	programExercises.back()->setExerciseModel(exercises[2]);
-	programExercises.back()->getData()[0]->setValue(2500);
-	series.back()->setRestTime(0);
-	programs.back()->addExercise(programExercises.back());
-
-	programs.back()->save();
+	QVector<TrainingModel *> trainings;
+	QVector<TrainingExerciseModel *> trainingExercises;
+	QVector<TrainingSerieModel *> trainingSeries;
 
 
+	for(int i = 0 ; i < 100 ; ++i){
+		trainings << new TrainingModel(programs.back(), nullptr);
+		trainings.back()->setDescription("Debug");
+		trainings.back()->setStartDateTime(QDateTime::fromString("2024/01/01 10:00:00", "yyyy/MM/dd hh:mm:ss").addDays(i));
+		trainings.back()->initRandomValues();
+		trainings.back()->save();
+	}
+
+	for(auto i : trainingSeries) i->deleteLater();
+	for(auto i : trainingExercises) i->deleteLater();
+	for(auto i : trainings) i->deleteLater();
 
 
-
-	for(auto i : programs) i->deleteLater();
 	for(auto i : series) i->deleteLater();
 	for(auto i : programExercises) i->deleteLater();
 	for(auto i : programs) i->deleteLater();
-	*/
+
 }
 
 

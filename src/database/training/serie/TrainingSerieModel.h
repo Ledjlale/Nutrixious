@@ -38,6 +38,8 @@ public:
 	TrainingSerieModel(const TrainingSerieModel * model, QObject *parent);
 	virtual TrainingSerieModel * clone( QObject *parent)const;
 
+	virtual void initRandomValues();
+
 	virtual void addQueryValues(DatabaseQuery &query);
 	virtual void load(QSqlQuery &query);
 	static TrainingSerieModel *build(QSqlQuery &query, QObject * parent);

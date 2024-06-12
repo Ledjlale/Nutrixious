@@ -62,6 +62,13 @@ ExerciseSerieModel * ExerciseSerieModel::clone(QObject *parent)const{
 	return model;
 }
 
+void ExerciseSerieModel::initRandomValues() {
+	mRestTime = std::rand() * 60.0 / RAND_MAX + 1.0;
+	mDistance = std::rand() * 20000.0 / RAND_MAX + 1000.0;
+	mRepetitions = std::rand() * 10.0 / RAND_MAX + 5.0;
+	mWeight = std::rand() * 100.0 / RAND_MAX + 5.0;
+	mSpeed = std::rand() * 10.0 / RAND_MAX + 10.0;
+}
 
 qint64 ExerciseSerieModel::getSerieId()const{
 	return mSerieId;

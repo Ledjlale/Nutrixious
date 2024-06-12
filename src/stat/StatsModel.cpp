@@ -29,6 +29,7 @@
 #include <QSqlRecord>
 
 #include "src/database/training/exercise/TrainingExerciseModel.h"
+#include "src/database/training/TrainingModel.h"
 #include "src/database/training/serie/TrainingSerieModel.h"
 
 StatsModel::StatsModel(QObject *parent)
@@ -39,8 +40,61 @@ StatsModel::StatsModel(QObject *parent)
 void StatsModel::setExercise(ExerciseModel *exercise) {
 	if( mExerciseModel != exercise ){
 		mExerciseModel = exercise;
+		if(mExerciseModel)
+			setTrainings(TrainingModel::buildAll({mExerciseModel}, nullptr));
 		emit exerciseModelChanged();
 	}
+}
+
+void StatsModel::setTrainings(QList<TrainingModel*> data){
+	if(mTrainings != data){
+		for(auto i : mTrainings) i->deleteLater();
+		mTrainings = data;
+		emit trainingsChanged();
+	}
+}
+
+QVariantList StatsModel::getAvailableSerieModes()const{
+	QVariantList result;
+	QVariantMap mode;
+
+	bool distance=false, repetition=false, weight=false, speed=false;
+
+	// TODO optimization
+	for(auto i : mTrainings){
+		for(auto j : i->getExercises()){
+			distance |= j->getUseDistance();
+			repetition |= j->getUseRepetitions();
+			weight |= j->getUseWeight();
+			speed |= j->getUseSpeed();
+			if( distance && repetition && weight && speed) break;
+		}
+	}
+	if(weight) {
+		mode["text"] = "Weight";
+		mode["value"] = WEIGHT;
+		result << mode;
+	}
+	if(distance){
+		mode["text"] = "Distance";
+		mode["value"] = DISTANCE;
+		result << mode;
+	}
+	if(speed){
+		mode["text"] = "Speed";
+		mode["value"] = SPEED;
+		result << mode;
+	}
+	if(repetition){
+		mode["text"] = "Repetition";
+		mode["value"] = REPETITION;
+		result << mode;
+	}
+	mode["text"] = "Calories";
+	mode["value"] = CALORIES;
+	result << mode;
+
+	return result;
 }
 
 QVariantMap getPoint(QDate x, double y) {
@@ -50,12 +104,45 @@ QVariantMap getPoint(QDate x, double y) {
 	return m;
 }
 
-QVariantList StatsModel::computeWeights() const {
+QVariantList StatsModel::computeOnSerie(ComputeMode mode) const {
 	QVariantList points;
 	QSqlQuery query;
-	QMap<QDate, double> weights;
+	QMap<QDate, double> sums;
+	QMap<QDate, QList<double>> average;
 
-	auto id = mExerciseModel->getExerciseId();
+	for(auto i : mTrainings){
+		for(auto j : i->getExercises()){
+			for(auto k : j->getSeries()){
+				switch(mode){
+				case WEIGHT : if( j->getUseWeight()){
+								sums[i->getStartDateTime().date()] += k->getWeight();
+							} break;
+				case DISTANCE : if( j->getUseDistance()){
+									sums[i->getStartDateTime().date()] += k->getDistance();
+								}
+								break;
+				case REPETITION : if( j->getUseRepetitions()){
+									sums[i->getStartDateTime().date()] += k->getRepetitions();
+								}
+								break;
+				case CALORIES : sums[i->getStartDateTime().date()] += dynamic_cast<TrainingSerieModel*>(k)->getCalories(); break;
+				case SPEED : if( j->getUseSpeed()){
+								average[i->getStartDateTime().date()] << k->getSpeed();
+							}
+							break;
+				default:{}
+				}
+			}
+		}
+	}
+	if(mode == SPEED){
+		for(auto i = average.begin() ; i != average.end() ; ++i){
+			for(auto j : i.value())
+				sums[i.key()] += j;
+			if(i.value().size()> 0)
+				sums[i.key()] /= i.value().size();
+		}
+	}
 	//auto exercises = TrainingExerciseModel::loadAll(id);
 /*
 // Get exercises
@@ -133,7 +220,7 @@ QVariantList StatsModel::computeWeights() const {
 		}
 	}
 */
-	for(auto p = weights.begin() ; p != weights.end() ; ++p) {
+	for(auto p = sums.begin() ; p != sums.end() ; ++p) {
 			//points << getPoint(p.key().toJulianDay(), p.value() );
 			points << getPoint(p.key(), p.value() );
 		}

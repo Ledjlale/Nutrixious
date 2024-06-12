@@ -39,9 +39,9 @@ Focus on Android only! (and Linux for debugging).
 - Use of Open Food Facts database (feature done)
 - Setup meals (feature done)
 - Daily calories/nutriments monitoring (feature done)
-- F-Droid
 - Display graphs and statistics on performances
 - Graphics and statistics on body status (calories, weight)
+- F-Droid
 
 #### Design:
 - Rework on usability

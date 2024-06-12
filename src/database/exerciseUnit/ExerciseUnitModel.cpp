@@ -89,6 +89,11 @@ ExerciseUnitModel * ExerciseUnitModel::clone(QObject *parent)const{
 	return model;
 }
 
+void ExerciseUnitModel::initRandomValues(){
+	for(auto i : mSeries)
+		i->initRandomValues();
+}
+
 qint64 ExerciseUnitModel::getExerciseUnitId()const{
 	return mExerciseUnitId;
 }

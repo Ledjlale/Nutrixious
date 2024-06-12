@@ -56,6 +56,12 @@ TrainingSerieModel * TrainingSerieModel::clone(QObject *parent)const{
 	return model;
 }
 
+
+void TrainingSerieModel::initRandomValues(){
+	ProgramSerieModel::initRandomValues();
+	mCalories = std::rand() * 500.0 / RAND_MAX + 10.0;
+}
+
 //-------------------------------------------------------------------------------------------------------------------
 
 void TrainingSerieModel::addQueryValues(DatabaseQuery &query){

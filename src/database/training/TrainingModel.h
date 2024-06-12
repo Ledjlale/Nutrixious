@@ -41,6 +41,7 @@ public:
 	TrainingModel(ProgramModel * program, QObject *parent);
 	TrainingModel(TrainingModel * program, QObject *parent);
 
+
 	QDateTime getStartDateTime() const;
 	void setStartDateTime(const time_t& data_ms);	// ms
 	void setStartDateTime(const QDateTime& data);
@@ -69,6 +70,7 @@ public:
 	virtual void load(QSqlQuery &query);
 	static TrainingModel *build(QSqlQuery &query, QObject * parent);
 	static QList<TrainingModel*> buildAll(QObject * parent);
+	static QList<TrainingModel*> buildAll(QList<ExerciseModel *> exercises, QObject * parent);
 
 signals:
 	void startDateTimeChanged();

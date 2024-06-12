@@ -44,7 +44,7 @@ Item {
 			}*/
 			Text{
 				color: Material.foreground
-				text: 'Choose and exercise'
+				text: 'Exercises'
 			}
 			ComboBox{
 				id: exerciseChoice
@@ -61,6 +61,20 @@ Item {
 					stats.setExercise(currentValue)
 				}
 			}
+			ComboBox{
+				id: modeChoice
+				Layout.fillWidth: true
+				textRole: "text"
+				valueRole: "value"
+				model: stats.availableSerieModes
+				//onCurrentValueChanged: programExercises.setExercises(currentValue.exercises)
+				onCurrentValueChanged:{
+					//chartView.exerciseType = currentValue.type
+					//stats.setExercise(currentValue)
+					stats.compute(currentValue)
+
+				}
+			}
 			Button{
 				text: 'Reload'
 				//visible: stackView.depth == 1
@@ -72,8 +86,8 @@ Item {
 			property int exerciseType: 1
 			property var statsModel: StatsModel{
 				id: stats
-				onExerciseModelChanged: {
-					var points = stats.computeWeights()
+				function compute(mode){
+					var points = stats.computeOnSerie(mode)
 					var minX = -1
 					var maxX = -1
 					var minY = -1
@@ -95,6 +109,9 @@ Item {
 					chartView.axisX(series).min = minX;
 					chartView.axisX(series).max = maxX;
 				}
+				onExerciseModelChanged: {compute(StatsModel.WEIGHT)
+				}
+
 			}
 			Layout.fillWidth: true
 			Layout.fillHeight: true

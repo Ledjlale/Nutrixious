@@ -104,9 +104,9 @@ Item{
 			textColor: isGood ? Material.foreground : Material.accent
 			text: mainItem.isLive
 						? mainItem.serieModel.isDone
-							?  (isGood ? '' : mainItem.serieModel.targetSerieModel.weight+'/') + mainItem.serieModel.resultSerieModel.weight
-							: mainItem.serieModel.targetSerieModel.weight
-						: mainItem.serieModel.weight <0 ? '' : mainItem.serieModel.weight
+							?  (isGood ? '' : mainItem.serieModel.targetSerieModel.weight+'/') + Number.parseFloat(mainItem.serieModel.resultSerieModel.weight.toFixed(2))
+							: Number.parseFloat(mainItem.serieModel.targetSerieModel.weight.toFixed(2))
+						: mainItem.serieModel.weight <0 ? '' : Number.parseFloat(mainItem.serieModel.weight.toFixed(2))
 			placeholderText: 'kg'
 			//text: mainItem.isLive
 			onEditingFinished: {
@@ -132,9 +132,9 @@ Item{
 			title: mainItem.showTitle ? 'Distance' : ''
 			text: mainItem.isLive
 						? mainItem.serieModel.isDone
-							?  (isGood ? '' : mainItem.serieModel.targetSerieModel.distance+'/') + mainItem.serieModel.resultSerieModel.distance
-							: mainItem.serieModel.targetSerieModel.distance
-						: mainItem.serieModel.distance <0 ? '' : mainItem.serieModel.distance
+							?  (isGood ? '' : mainItem.serieModel.targetSerieModel.distance+'/') + Number.parseFloat(mainItem.serieModel.resultSerieModel.distance.toFixed(2))
+							: Number.parseFloat(mainItem.serieModel.targetSerieModel.distance.toFixed(2))
+						: mainItem.serieModel.distance <0 ? '' : Number.parseFloat(mainItem.serieModel.distance.toFixed(2))
 			placeholderText: 'm'
 			//text: mainItem.isLive
 			onEditingFinished: {
@@ -161,9 +161,9 @@ Item{
 			title: mainItem.showTitle ? 'Speed' : ''
 			text: mainItem.isLive
 						? mainItem.serieModel.isDone
-							? (isGood ? '' : mainItem.serieModel.targetSerieModel.speed+'/') + mainItem.serieModel.resultSerieModel.speed
-							: mainItem.serieModel.targetSerieModel.speed
-						: mainItem.serieModel.speed <0 ? '' : mainItem.serieModel.speed
+							? (isGood ? '' : mainItem.serieModel.targetSerieModel.speed+'/') + Number.parseFloat(mainItem.serieModel.resultSerieModel.speed.toFixed(2))
+							: Number.parseFloat(mainItem.serieModel.targetSerieModel.speed.toFixed(2))
+						: mainItem.serieModel.speed <0 ? '' : Number.parseFloat(mainItem.serieModel.speed.toFixed(2))
 			placeholderText: 'km/h'
 			//text: mainItem.isLive
 			onEditingFinished: {
@@ -252,9 +252,9 @@ Item{
 			text: visible
 					? mainItem.isLive
 						? serieModel?.isDone
-							? serieModel.resultSerieModel.calories
+							? Number.parseFloat(serieModel.resultSerieModel.calories.toFixed(2))
 							: serieModel.targetSerieModel.calories
-						: serieModel?.calories || ''
+						: Number.parseFloat(serieModel?.calories.toFixed(2)) || ''
 					: ''
 			onEditingFinished: {
 				if(mainItem.isLive) {

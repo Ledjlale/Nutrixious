@@ -51,6 +51,7 @@ TrainingModel::TrainingModel(ProgramModel * model, QObject *parent) : ProgramMod
 		for(auto j : i->getSeries())
 			exercise->insertSerie(new TrainingSerieModel(j, exercise));
 		connect(exercise, &TrainingExerciseModel::requestComputeCalories, this, &TrainingModel::computeCalorie);
+		exercise->makeNew();
 		mExercises << exercise;
 	}
 }
@@ -187,19 +188,28 @@ TrainingModel *TrainingModel::build(QSqlQuery &query, QObject * parent) {
 
 
 QList<TrainingModel*> TrainingModel::buildAll(QObject * parent){
-	QList<TrainingModel*> models;
-	QString tablePrefix = "training";
-	QMap<qint64, ExerciseModel*> exercises;
+	QList<ExerciseModel *> exercises;
 	QSqlQuery query;
 	if(!query.exec("SELECT * FROM exercises"))
 		 qCritical() << "Cannot select exercises: "  << query.lastError().text();
 	while (query.next()) {
-		auto model = ExerciseModel::build(query, nullptr);
-		exercises[model->getExerciseId()] = model;
+		exercises << ExerciseModel::build(query, nullptr);
 	}
+	auto result = buildAll(exercises, parent);
+	for(auto i : exercises) i->deleteLater();
+	return result;
+}
 
-
+QList<TrainingModel*> TrainingModel::buildAll(QList<ExerciseModel *> exercises, QObject * parent){
+	QString tablePrefix = "training";
+	QList<TrainingModel*> models;
 	QMap<qint64, QList<TrainingSerieModel*>> series;
+	QMap<qint64, ExerciseModel*> exercisesMap;
+
+	for(auto i : exercises)
+		exercisesMap[i->getExerciseId()] = i;
+
+	QSqlQuery query;
 	if(!query.exec("SELECT * FROM "+tablePrefix+"_exercise_series"))
 		 qCritical() << "Cannot select series: "  << query.lastError().text();
 	while (query.next()) {
@@ -213,8 +223,8 @@ QList<TrainingModel*> TrainingModel::buildAll(QObject * parent){
 		 qCritical() << "Cannot select series: "  << query.lastError().text();
 	while (query.next()) {
 		auto model = TrainingExerciseModel::build(query, nullptr);
-		if(exercises.contains(model->getExerciseId()))
-			model->setExerciseModel(exercises[model->getExerciseId()]->clone(model));
+		if(exercisesMap.contains(model->getExerciseId()))
+			model->setExerciseModel(exercisesMap[model->getExerciseId()]->clone(model));
 		else
 			model->setExerciseModel(nullptr);
 		if( series.contains(model->getExerciseUnitId())){
@@ -242,11 +252,11 @@ QList<TrainingModel*> TrainingModel::buildAll(QObject * parent){
 	for(auto i : series)
 		for(auto j : i)
 			j->deleteLater();
-	for(auto i : exercises) i->deleteLater();
-
 //--------------------------------
 	return models;
 }
+
+
 
 void TrainingModel::computeCalorie(TrainingExerciseModel * exercise, TrainingSerieModel * serie) {
 	QSqlQuery query;
