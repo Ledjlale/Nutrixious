@@ -113,7 +113,7 @@ Item {
 					MouseArea{
 						anchors.fill: parent
 						onClicked:{
-
+							$modelData.autoCompute = mainItem.isPicker && $modelData.isSaved
 							stackView.push(foodEditorComponent, {foodModel:$modelData})
 						}
 					}

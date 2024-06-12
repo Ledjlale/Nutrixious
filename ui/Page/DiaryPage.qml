@@ -183,6 +183,7 @@ Item {
 										gShowBackButton = true
 										gShowSaveButton = true
 										gShowMenuButton = false
+										$modelData.autoCompute = true
 										stackView.push(foodEditorComponent, {foodModel:$modelData})
 									}
 								}

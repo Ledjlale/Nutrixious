@@ -71,6 +71,7 @@ DEFINE_GETSET(MealFoodModel,qint64,mealGroupId,MealGroupId)
 DEFINE_GETSET(MealFoodModel,QDateTime,consumptionDateTime,ConsumptionDateTime)
 
 //-------------------------------------------------------------------------------------------------------------------
+
 void MealFoodModel::undo(){
 	DEFINE_UNDO_LONGLONG(MealGroupId)
 	DEFINE_UNDO_DATETIME(ConsumptionDateTime)

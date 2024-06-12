@@ -48,6 +48,8 @@
 #define DEFINE_UNDO_BOOL(X) if(mBackupValues.contains(&m##X)) set##X( mBackupValues[&m##X].toBool());
 #define DEFINE_UNDO_DATETIME(X) if(mBackupValues.contains(&m##X)) set##X( mBackupValues[&m##X].toDateTime());
 
+#define GET_OLD_VALUE_DOUBLE(X) (mBackupValues.contains(&m##X) ? mBackupValues[&m##X].toDouble() : m##X)
+
 class QmlModel: public QObject{
 Q_OBJECT
 	Q_PROPERTY(bool isSaved READ getIsSaved WRITE setIsSaved NOTIFY isSavedChanged)

@@ -40,6 +40,7 @@ FoodModel::FoodModel(QObject *parent)
 	: QmlModel{parent} {
 	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	connect(this, &FoodModel::idChanged, this, &FoodModel::updateIsSaved);
+	connect(this, &FoodModel::servingSizeChanged, this, &FoodModel::recomputeFromServingSize);
 	mTablePrefix = "food";
 }
 
@@ -47,6 +48,7 @@ FoodModel::FoodModel(const FoodModel * model, QObject *parent)
 	: QmlModel{parent} {
 	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	connect(this, &FoodModel::idChanged, this, &FoodModel::updateIsSaved);
+	connect(this, &FoodModel::servingSizeChanged, this, &FoodModel::recomputeFromServingSize);
 	mTablePrefix = "food";
 	mId = initiBackup(model, &model->mId, model->mId, &mId).toLongLong();
 	mOpenFoodFactsCode = initiBackup(model, &model->mOpenFoodFactsCode, model->mOpenFoodFactsCode, &mOpenFoodFactsCode).toString();
@@ -135,8 +137,34 @@ DEFINE_GETSET(FoodModel,double,potassium,Potassium)
 DEFINE_GETSET(FoodModel,double,vitaminA,VitaminA)
 DEFINE_GETSET(FoodModel,double,vitaminC,VitaminC)
 
+DEFINE_GETSET(FoodModel,bool,autoCompute,AutoCompute)
+
 //-------------------------------------------------------------------------------------------------------------------
 
+void FoodModel::recomputeFromServingSize(){
+	if(mAutoCompute){
+		double oldServingSize = GET_OLD_VALUE_DOUBLE(ServingSize);
+		if(oldServingSize>0){
+			setCalories(mServingSize * GET_OLD_VALUE_DOUBLE(Calories) / oldServingSize);
+			setTotalFat(mServingSize* GET_OLD_VALUE_DOUBLE(TotalFat) / oldServingSize);
+			setSaturatedFat(mServingSize* GET_OLD_VALUE_DOUBLE(SaturatedFat) / oldServingSize);
+			setTransFat(mServingSize* GET_OLD_VALUE_DOUBLE(TransFat) / oldServingSize);
+			setPolyUnsaturatedFat(mServingSize* GET_OLD_VALUE_DOUBLE(PolyUnsaturatedFat) / oldServingSize);
+			setMonoUnsaturatedFat(mServingSize* GET_OLD_VALUE_DOUBLE(MonoUnsaturatedFat) / oldServingSize);
+			setCholesterol(mServingSize* GET_OLD_VALUE_DOUBLE(Cholesterol) / oldServingSize);
+			setSodium(mServingSize* GET_OLD_VALUE_DOUBLE(Sodium) / oldServingSize);
+			setTotalCarbohydrate(mServingSize* GET_OLD_VALUE_DOUBLE(TotalCarbohydrate) / oldServingSize);
+			setDietaryFiber(mServingSize* GET_OLD_VALUE_DOUBLE(DietaryFiber) / oldServingSize);
+			setSugar(mServingSize* GET_OLD_VALUE_DOUBLE(Sugar) / oldServingSize);
+			setProtein(mServingSize* GET_OLD_VALUE_DOUBLE(Protein) / oldServingSize);
+			setCalcium(mServingSize* GET_OLD_VALUE_DOUBLE(Calcium) / oldServingSize);
+			setIron(mServingSize* GET_OLD_VALUE_DOUBLE(Iron) / oldServingSize);
+			setPotassium(mServingSize* GET_OLD_VALUE_DOUBLE(Potassium) / oldServingSize);
+			setVitaminA(mServingSize* GET_OLD_VALUE_DOUBLE(VitaminA) / oldServingSize);
+			setVitaminC(mServingSize* GET_OLD_VALUE_DOUBLE(VitaminC) / oldServingSize);
+		}
+	}
+}
 
 void FoodModel::updateIsSaved(){
 	setIsSaved(getId() > 0);
@@ -276,6 +304,7 @@ void FoodModel::load(QSqlQuery &query){
 		else if(fieldName == "vitamin_a") setVitaminA(query.value(i).toDouble());
 		else if(fieldName == "vitamin_c") setVitaminC(query.value(i).toDouble());
 	}
+	clearBackupValues();
 }
 
 QList<FoodModel*> FoodModel::buildAll(QObject * parent){

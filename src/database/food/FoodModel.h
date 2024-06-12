@@ -60,6 +60,7 @@ Q_OBJECT
 	DECLARE_GETSET(double,vitaminA,VitaminA)
 	DECLARE_GETSET(double,vitaminC,VitaminC)
 
+	DECLARE_GETSET(bool,autoCompute,AutoCompute)
 public:
 	FoodModel();	// QML
 	FoodModel(QObject *parent);
@@ -67,6 +68,7 @@ public:
 	FoodModel* clone(QObject*parent);
 
 	void initRandomValues();
+	void recomputeFromServingSize();
 
 	virtual void addQueryValues(DatabaseQuery &query){}
 	Q_INVOKABLE virtual bool save();
@@ -119,6 +121,8 @@ protected:
 	double mPotassium = -1.0;
 	double mVitaminA = -1.0;
 	double mVitaminC = -1.0;
+
+	bool mAutoCompute = false;
 // Internal
 	QString mTablePrefix = "";
 

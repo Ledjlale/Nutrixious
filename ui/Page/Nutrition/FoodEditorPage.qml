@@ -48,7 +48,7 @@ Item {
 			Layout.fillHeight: true
 			model:[{title:'Brand', data: 'brand', editUnits: false, inputMethodHints: Qt.ImhNone}
 					, {title:'Description', data: 'description', editUnits: false, inputMethodHints: Qt.ImhNone}
-					, {title:'Serving Size', data: 'servingSize', editUnits: 'servingUnitId', inputMethodHints: Qt.ImhNone}
+					, {title:'Serving Size', data: 'servingSize', editUnits: 'servingUnitId', inputMethodHints: Qt.ImhFormattedNumbersOnly}
 					//, {title:'Serving per container', data: 'servingsPerContainer', editUnits: false}
 					, {title:'Calories ( kcal )', data: 'calories', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
 					, {title:'Total Fat ( g )', data: 'totalFat', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
@@ -79,7 +79,7 @@ Item {
 					horizontalAlignment: Text.AlignRight
 					inputMethodHints: modelData.inputMethodHints
 					property var txt: mainItem.foodModel[modelData.data] < 0 ? '' : mainItem.foodModel[modelData.data]
-					text: txt && inputMethodHints ==  Qt.ImhFormattedNumbersOnly ? txt.toFixed(4) : txt
+					text: txt && inputMethodHints ==  Qt.ImhFormattedNumbersOnly ? Number.parseFloat(txt.toFixed(4)) : txt
 					onEditingFinished: mainItem.foodModel[modelData.data] = newValue
 				}
 				ComboBox{
@@ -92,7 +92,7 @@ Item {
 						Component.onCompleted: if( unitChoice.visible) update()
 					}
 					onActivated:{mainItem.foodModel[modelData.editUnits] = currentValue}
-					currentIndex: indexOfValue(mainItem.foodModel[modelData.editUnits])
+					currentIndex: unitChoice.count && indexOfValue(mainItem.foodModel[modelData.editUnits])
 				}
 			}
 		}
