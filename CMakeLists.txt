@@ -34,12 +34,15 @@ qt_standard_project_setup()
 set(_APP_QML_FILES)
 set(_APP_SOURCE_FILES)
 set(_APP_QML_SINGLETONS)
+set(_APP_RC_FILES)
 
 add_subdirectory(ui)
 add_subdirectory(src)
+add_subdirectory(asset)
 
 
 qt_add_executable(${TARGET_NAME} main.cpp)
+qt_add_resources(${TARGET_NAME} "resources" PREFIX "/" FILES ${_APP_RC_FILES})
 
 set_source_files_properties(${_APP_QML_SINGLETONS} PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 set_property(TARGET ${TARGET_NAME} APPEND PROPERTY
