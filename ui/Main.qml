@@ -137,7 +137,7 @@ ApplicationWindow {
 			id: menuLayout
 			anchors.top: parent.top
 			anchors.bottom: parent.bottom
-			width: Math.max(2 * mainWindow.width / 3, logoLayout.implicitWidth + 50)
+			width: Math.max(2 * mainWindow.width / 3, logoLayout.implicitWidth + 80)
 			x: -width
 			color: Material.primary
 
@@ -164,6 +164,7 @@ ApplicationWindow {
 						radius: width / 2
 						color: Material.primary
 						border.color: 'white'
+						border.width: 2
 						RowLayout{
 							id: logoLayout
 							anchors.centerIn: parent
@@ -173,19 +174,22 @@ ApplicationWindow {
 								id: logoText1
 								color: 'white'
 								font.pixelSize: parent.pixelSize
+								font.family: DefaultStyle.titleFont
+								font.bold: true
 								text: 'Nutri'
 							}
-							Text{
-								//color: Material.color(Material.Green, Material.Shade100)
-								color: Material.color(Material.Red)//, Material.Shade100)
-								//Material.foreground: Material.Orange
-								font.pixelSize: parent.pixelSize*2
-								font.weight: Font.Bold
-								text: 'X'
+							Image{
+								Layout.leftMargin: -20
+								Layout.rightMargin: -20
+								Layout.preferredHeight: 80
+								Layout.preferredWidth:80
+								source: "image://internal/nutrixious_logo.svg"
 							}
 							Text{
 								color: 'white'
 								font.pixelSize: parent.pixelSize
+								font.family: DefaultStyle.titleFont
+								font.bold: true
 								text: 'ious'
 							}
 						}
@@ -231,10 +235,11 @@ ApplicationWindow {
 								Text{
 									Layout.leftMargin: 10
 									color: 'white'
-									text: 'Icon'
+									text: ''
 								}
 								Text{
 									Layout.fillWidth: true
+									Layout.rightMargin: 30
 									horizontalAlignment: Text.AlignHCenter
 									color: 'white'
 									text: modelData.title

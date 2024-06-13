@@ -76,6 +76,7 @@
 
 #include "src/tool/proxyModel/ObjectListModel.h"
 #include "src/tool/proxyModel/ObjectProxyModel.h"
+#include "src/tool/provider/ImageProvider.hpp"
 
 #include "src/tool/date/DateModel.h"
 
@@ -166,12 +167,14 @@ int main(int argc, char *argv[]) {
 	ignoreVSync.setSwapInterval(0);
 	QSurfaceFormat::setDefaultFormat(ignoreVSync);
 	DatabaseModel::migrate();
+	app.setWindowIcon(QIcon(":/asset/icons/nutrixious_logo.svg"));
 
 	QStringList selectors("custom");
 	gEngine = new QQmlApplicationEngine();
 	auto selector = new QQmlFileSelector(gEngine, gEngine);
 	selector->setExtraSelectors(selectors);
 	gEngine->addImportPath(":/");
+	gEngine->addImageProvider(ImageProvider::ProviderId, new ImageProvider());
 	const QUrl url(u"qrc:/App/ui/Main.qml"_qs);
     QObject::connect(
 		gEngine,

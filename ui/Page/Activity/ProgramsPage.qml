@@ -173,6 +173,7 @@ Item {
 					horizontalAlignment: Text.AlignHCenter
 					visible: !!programDetailsList.program
 					text: visible ? 'Exercises for ' + programDetailsList.program.name : ''
+					color: Material.foreground
 					font.bold: true
 					font.pixelSize: 17
 				}

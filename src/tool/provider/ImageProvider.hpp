@@ -18,23 +18,29 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick
-import QtQuick.Controls.Material
-import QtQuick.Layouts
+#ifndef IMAGE_PROVIDER_H_
+#define IMAGE_PROVIDER_H_
 
-import App 1.0
+#include <QQuickAsyncImageProvider>
 
-Item {
-	id: mainItem
-	ColumnLayout{
-		anchors.fill: parent
-		
-		Switch {
-			id: darkThemeSwitch
-			Layout.alignment: Qt.AlignCenter
-			text: qsTr("Dark")
-			checked: DefaultStyle.theme == Material.Dark
-			onCheckedChanged: DefaultStyle.theme= darkThemeSwitch.checked ? Material.Dark : Material.Light
-		}
-	}
-}
+// =============================================================================
+class ImageAsyncImageResponse : public QQuickImageResponse {
+public:
+	ImageAsyncImageResponse(const QString &id, const QSize &requestedSize);
+
+	QQuickTextureFactory *textureFactory() const override;
+
+	void imageGrabbed(QImage image);
+
+	QImage mImage;
+	QString mPath;
+};
+
+class ImageProvider : public QQuickAsyncImageProvider {
+public:
+	virtual QQuickImageResponse *requestImageResponse(const QString &id, const QSize &requestedSize) override;
+
+	static const QString ProviderId;
+};
+
+#endif
