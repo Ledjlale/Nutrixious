@@ -30,6 +30,7 @@
 
 #include "src/tool/QmlModel.h"
 #include "src/database/DatabaseQuery.h"
+#include "src/database/unit/UnitListModel.h"
 
 class FoodModel : public QmlModel{
 Q_OBJECT
@@ -61,6 +62,10 @@ Q_OBJECT
 	DECLARE_GETSET(double,vitaminC,VitaminC)
 
 	DECLARE_GETSET(bool,autoCompute,AutoCompute)
+
+	DECLARE_GETSET(double,baseSize,BaseSize)
+	DECLARE_GETSET(qint64,baseUnitId,BaseUnitId)
+
 public:
 	FoodModel();	// QML
 	FoodModel(QObject *parent);
@@ -69,6 +74,8 @@ public:
 
 	void initRandomValues();
 	void recomputeFromServingSize();
+	double computeNutriment(double base);
+	Q_INVOKABLE static double computeNutriment(double base, double servingSize, qint64 servingUnitId, double baseSize, qint64 baseUnitId);
 
 	virtual void addQueryValues(DatabaseQuery &query){}
 	Q_INVOKABLE virtual bool save();
@@ -100,9 +107,12 @@ protected:
 	QString mImageUrl;
 
 	QString mOpenFoodFactsCode;
-	double mServingSize = 0.0;
+	double mServingSize = 10.0;
 	double mServingsPerContainer = 1.0;
 	qint64 mServingUnitId = 0;
+
+	double mBaseSize = 100.0;	// Nuriments values are based on this quantity.
+	quint64 mBaseUnitId = 1;
 
 	double mCalories = -1.0;
 	double mTotalFat = -1.0;

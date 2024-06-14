@@ -41,13 +41,16 @@ Item{
 		anchors.fill: parent
 		ColumnLayout{
 			Text{
+				color: Material.foreground
 				text: mainItem.foodModel.description
 			}
 			Text{
+				color: Material.foreground
 				text: mainItem.foodModel.brand
 			}
 		}
 		Text{
+			color: Material.foreground
 			horizontalAlignment: Text.AlignRight
 			text: mainItem.foodModel.calories
 		}

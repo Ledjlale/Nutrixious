@@ -27,6 +27,7 @@
 #include <QSqlField>
 #include <QJsonDocument>
 #include "src/database/DatabaseQuery.h"
+#include "src/database/unit/UnitListModel.h"
 
 #include "src/tool/Utils.h"
 
@@ -40,7 +41,7 @@ FoodModel::FoodModel(QObject *parent)
 	: QmlModel{parent} {
 	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	connect(this, &FoodModel::idChanged, this, &FoodModel::updateIsSaved);
-	connect(this, &FoodModel::servingSizeChanged, this, &FoodModel::recomputeFromServingSize);
+	//connect(this, &FoodModel::servingSizeChanged, this, &FoodModel::recomputeFromServingSize);
 	mTablePrefix = "food";
 }
 
@@ -48,7 +49,7 @@ FoodModel::FoodModel(const FoodModel * model, QObject *parent)
 	: QmlModel{parent} {
 	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	connect(this, &FoodModel::idChanged, this, &FoodModel::updateIsSaved);
-	connect(this, &FoodModel::servingSizeChanged, this, &FoodModel::recomputeFromServingSize);
+	//connect(this, &FoodModel::servingSizeChanged, this, &FoodModel::recomputeFromServingSize);
 	mTablePrefix = "food";
 	mId = initiBackup(model, &model->mId, model->mId, &mId).toLongLong();
 	mOpenFoodFactsCode = initiBackup(model, &model->mOpenFoodFactsCode, model->mOpenFoodFactsCode, &mOpenFoodFactsCode).toString();
@@ -59,6 +60,10 @@ FoodModel::FoodModel(const FoodModel * model, QObject *parent)
 
 	mServingSize = initiBackup(model, &model->mServingSize, model->mServingSize, &mServingSize).toDouble();
 	mServingsPerContainer = initiBackup(model, &model->mServingsPerContainer, model->mServingsPerContainer, &mServingsPerContainer).toDouble();
+
+	mBaseUnitId = initiBackup(model, &model->mBaseUnitId, model->mBaseUnitId, &mBaseUnitId).toLongLong();
+	mBaseSize = initiBackup(model, &model->mBaseSize, model->mBaseSize, &mBaseSize).toDouble();
+
 	mCalories = initiBackup(model, &model->mCalories, model->mCalories, &mCalories).toDouble();
 	mTotalFat = initiBackup(model, &model->mTotalFat, model->mTotalFat, &mTotalFat).toDouble();
 	mSaturatedFat = initiBackup(model, &model->mSaturatedFat, model->mSaturatedFat, &mSaturatedFat).toDouble();
@@ -92,6 +97,8 @@ void FoodModel::initRandomValues(){
 	mDescription = "A random food for debugging or example";
 	mServingUnitId = 1;
 	mServingSize = std::rand() * 40.0 / RAND_MAX;
+	mBaseUnitId = 1;
+	mBaseSize = 100.0;
 	mCalories = std::rand() * 1000.0 / RAND_MAX;
 	mTotalFat = std::rand() * 100.0 / RAND_MAX;
 	mSaturatedFat = std::rand() * 50.0 / RAND_MAX;
@@ -119,6 +126,9 @@ DEFINE_GETSET(FoodModel,QString,description,Description)
 DEFINE_GETSET(FoodModel,qint64,servingUnitId,ServingUnitId)
 DEFINE_GETSET(FoodModel,double,servingSize,ServingSize)
 DEFINE_GETSET(FoodModel,double,servingsPerContainer,ServingsPerContainer)
+
+DEFINE_GETSET(FoodModel,double,baseSize,BaseSize)
+DEFINE_GETSET(FoodModel,qint64,baseUnitId,BaseUnitId)
 DEFINE_GETSET(FoodModel,double,calories,Calories)
 DEFINE_GETSET(FoodModel,double,totalFat,TotalFat)
 DEFINE_GETSET(FoodModel,double,saturatedFat,SaturatedFat)
@@ -145,6 +155,7 @@ void FoodModel::recomputeFromServingSize(){
 	if(mAutoCompute){
 		double oldServingSize = GET_OLD_VALUE_DOUBLE(ServingSize);
 		if(oldServingSize>0){
+
 			setCalories(mServingSize * GET_OLD_VALUE_DOUBLE(Calories) / oldServingSize);
 			setTotalFat(mServingSize* GET_OLD_VALUE_DOUBLE(TotalFat) / oldServingSize);
 			setSaturatedFat(mServingSize* GET_OLD_VALUE_DOUBLE(SaturatedFat) / oldServingSize);
@@ -166,6 +177,35 @@ void FoodModel::recomputeFromServingSize(){
 	}
 }
 
+double FoodModel::computeNutriment(double base) {
+	return computeNutriment(base, mServingSize, mServingUnitId, mBaseSize, mBaseUnitId);
+}
+
+double FoodModel::computeNutriment(double base, double servingSize, qint64 servingUnitId, double baseSize, qint64 baseUnitId) {
+	auto baseUnit = UnitListModel::getInstance()->findUnit(baseUnitId);
+	auto targetUnit = UnitListModel::getInstance()->findUnit(servingUnitId);
+	double newValue;
+	double unitFactor = 1.0;
+	if(baseSize<=0.0)
+		baseSize = 100.0;
+	if(baseSize > 0 && baseUnit && targetUnit) {
+		if(targetUnit->getGramValue() > 0 && baseUnit->getGramValue() > 0)
+			unitFactor = targetUnit->getGramValue() / baseUnit->getGramValue();
+		else if(targetUnit->getKcalValue() > 0 && baseUnit->getKcalValue() > 0)
+			unitFactor = targetUnit->getKcalValue() / baseUnit->getKcalValue();
+		else if(targetUnit->getMeterValue() > 0 && baseUnit->getMeterValue() > 0)
+			unitFactor = targetUnit->getMeterValue() / baseUnit->getMeterValue();
+		else if(targetUnit->getMilliliterValue() > 0 && baseUnit->getMilliliterValue() > 0)
+			unitFactor = targetUnit->getMilliliterValue() / baseUnit->getMilliliterValue();
+		else if(targetUnit->getSecondValue() > 0 && baseUnit->getSecondValue() > 0)
+			unitFactor = targetUnit->getSecondValue() / baseUnit->getSecondValue();
+
+		newValue = base * unitFactor * servingSize / baseSize;
+	}else
+		newValue = base;
+	return newValue;
+}
+
 void FoodModel::updateIsSaved(){
 	setIsSaved(getId() > 0);
 }
@@ -177,6 +217,8 @@ void FoodModel::undo(){
 	DEFINE_UNDO_STRING(Description)
 	DEFINE_UNDO_LONGLONG(ServingUnitId)
 	DEFINE_UNDO_DOUBLE(ServingSize)
+	DEFINE_UNDO_LONGLONG(BaseUnitId)
+	DEFINE_UNDO_DOUBLE(BaseSize)
 	DEFINE_UNDO_DOUBLE(ServingsPerContainer)
 	DEFINE_UNDO_DOUBLE(Calories)
 	DEFINE_UNDO_DOUBLE(TotalFat)
@@ -212,6 +254,8 @@ bool FoodModel::save(){
 	query.add("serving_size", mServingSize);
 	query.add("servings_per_container", mServingsPerContainer);
 	query.add("serving_unit_id", mServingUnitId);
+	query.add("base_size", mBaseSize);
+	query.add("base_unit_id", mBaseUnitId);
 	query.add("calories", mCalories);
 	query.add("total_fat", mTotalFat);
 	query.add("saturated_fat", mSaturatedFat);
@@ -286,6 +330,8 @@ void FoodModel::load(QSqlQuery &query){
 		else if(fieldName == "serving_size") setServingSize(query.value(i).toDouble());
 		else if(fieldName == "servings_per_container") setServingsPerContainer(query.value(i).toDouble());
 		else if(fieldName == "serving_unit_id") setServingUnitId(query.value(i).toLongLong());
+		else if(fieldName == "base_size") setBaseSize(query.value(i).toDouble());
+		else if(fieldName == "base_unit_id") setBaseUnitId(query.value(i).toLongLong());
 		else if(fieldName == "calories") setCalories(query.value(i).toDouble());
 		else if(fieldName == "total_fat") setTotalFat(query.value(i).toDouble());
 		else if(fieldName == "saturated_fat") setSaturatedFat(query.value(i).toDouble());
@@ -381,8 +427,11 @@ void FoodModel::openFoodFactsDownloaded(){
 		if(query.exec() && query.next()){
 			setServingUnitId(query.value(0).toLongLong());
 		}
-
-
+		if(	query.exec("SELECT unit_id FROM units WHERE name = 'g'") && query.next()){
+			setBaseUnitId(query.value(0).toLongLong());
+		}else
+			setBaseUnitId(1);
+		setBaseSize(100.0);
 		if( nutrimentsMap.contains("energy-kcal_100g")) setCalories(nutrimentsMap["energy-kcal_100g"].toDouble() );
 		if( nutrimentsMap.contains("fat_100g")) setTotalFat(nutrimentsMap["fat_100g"].toDouble());
 		if( nutrimentsMap.contains("saturated-fat_100g")) setSaturatedFat(nutrimentsMap["saturated-fat_100g"].toDouble());

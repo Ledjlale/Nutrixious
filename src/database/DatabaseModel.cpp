@@ -180,6 +180,8 @@ void DatabaseModel::migrate(){
 			", serving_size REAL"
 			", servings_per_container REAL"
 			", serving_unit_id INTEGER"
+			", base_size REAL"
+			", base_unit_id INTEGER"
 			", calories REAL"
 			", total_fat REAL"
 			", saturated_fat REAL"
@@ -198,6 +200,7 @@ void DatabaseModel::migrate(){
 			", vitamin_a REAL"
 			", vitamin_c REAL"
 			", FOREIGN KEY (serving_unit_id) REFERENCES units (unit_id) ON UPDATE CASCADE ON DELETE SET NULL"
+			", FOREIGN KEY (base_unit_id) REFERENCES units (unit_id) ON UPDATE CASCADE ON DELETE SET NULL"
 			")"
 		))
 			qCritical() << "Cannot create food table: " << query.lastError().text();
@@ -223,6 +226,8 @@ void DatabaseModel::migrate(){
 			", serving_size REAL"
 			", servings_per_container REAL"
 			", serving_unit_id INTEGER"
+			", base_size REAL"
+			", base_unit_id INTEGER"
 			", calories REAL"
 			", total_fat REAL"
 			", saturated_fat REAL"
@@ -244,6 +249,7 @@ void DatabaseModel::migrate(){
 			", consumption_date_time INTEGER"
 			", FOREIGN KEY (serving_unit_id) REFERENCES units (unit_id) ON UPDATE CASCADE ON DELETE SET NULL"
 			", FOREIGN KEY (meal_group_id) REFERENCES meal_groups (meal_group_id) ON UPDATE CASCADE ON DELETE SET NULL"
+			", FOREIGN KEY (base_unit_id) REFERENCES units (unit_id) ON UPDATE CASCADE ON DELETE SET NULL"
 			")"
 		))
 			qCritical() << "Cannot create meal foods table: " << query.lastError().text();
@@ -273,6 +279,31 @@ void DatabaseModel::migrate(){
 			qCritical() << "Cannot Add calories column into training_exercise_series: " << query.lastError().text();
 		}else{
 
+		}
+	}
+
+	if(!query.exec("SELECT base_size FROM foods LIMIT 1")){
+		if(!query.exec("ALTER TABLE foods ADD COLUMN base_size REAL DEFAULT 100")){
+			qCritical() << "Cannot Add base_size column into foods: " << query.lastError().text();
+		}else{
+		}
+	}
+	if(!query.exec("SELECT base_unit_id FROM foods LIMIT 1")){
+		if(!query.exec("ALTER TABLE foods ADD COLUMN base_unit_id INTEGER DEFAULT 1")){
+			qCritical() << "Cannot Add base_unit_id column into foods: " << query.lastError().text();
+		}else{
+		}
+	}
+	if(!query.exec("SELECT base_size FROM meal_foods LIMIT 1")){
+		if(!query.exec("ALTER TABLE meal_foods ADD COLUMN base_size REAL DEFAULT 100")){
+			qCritical() << "Cannot Add base_size column into meal_foods: " << query.lastError().text();
+		}else{
+		}
+	}
+	if(!query.exec("SELECT base_unit_id FROM meal_foods LIMIT 1")){
+		if(!query.exec("ALTER TABLE meal_foods ADD COLUMN base_unit_id INTEGER DEFAULT 1")){
+			qCritical() << "Cannot Add base_unit_id column into meal_foods: " << query.lastError().text();
+		}else{
 		}
 	}
 

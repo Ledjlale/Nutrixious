@@ -53,7 +53,7 @@ double Computation::targetDailyCalories(QDate date) {
 	qint64 dateT = QDateTime(date, QTime(0,0,0)).toMSecsSinceEpoch();
 	if( weights.size() > 0){
 		if( weights.size() > 1){
-			while(weightIndex < weights.size() - 1 && dateT > weights[weightIndex+1].first)
+			while(weightIndex < weights.size() - 2 && dateT > weights[weightIndex+1].first)
 				++weightIndex;
 			bestWeightIndex = dateT - weights[weightIndex].first < weights[weightIndex+1].first - dateT ? weightIndex : weightIndex +1;
 		}

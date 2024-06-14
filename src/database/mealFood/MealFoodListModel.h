@@ -79,6 +79,8 @@ signals:
 	void totalProteinRatioChanged();
 	void targetProteinRatioChanged();
 
+	void updateTotals();
+
 protected:
 	QDate mCurrentDate;
 

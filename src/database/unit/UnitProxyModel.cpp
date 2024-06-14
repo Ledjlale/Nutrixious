@@ -23,7 +23,7 @@
 
 UnitProxyModel::UnitProxyModel(QObject *parent)
 	: SortFilterProxyModel{parent}{
-	auto list = new UnitListModel( this);
+	auto list = UnitListModel::getInstance();
 	connect(this, &UnitProxyModel::update, list, &UnitListModel::update);
 	setSourceModel(list);
 }

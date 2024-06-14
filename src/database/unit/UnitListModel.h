@@ -29,9 +29,14 @@ Q_OBJECT
 public:
 	UnitListModel(QObject * parent = nullptr);
 
+	static UnitListModel *gUnits;
+	static UnitListModel * getInstance();
+
 	virtual QHash<int, QByteArray> roleNames () const override;
 	QVariant data (const QModelIndex &index, int role = Qt::DisplayRole) const override;
 	QVariantList getData() const;
+
+	UnitModel *findUnit(qint64 id)const;
 
 	void update();
 

@@ -30,9 +30,17 @@
 MealFoodListModel::MealFoodListModel(QObject *parent)
 	: ProxyAbstractListModel<MealFoodModel*>{parent}
 {
+	connect(this, &MealFoodListModel::caloriesChanged, this, &MealFoodListModel::totalCaloriesChanged);
 	connect(this, &MealFoodListModel::currentDateChanged, this, &MealFoodListModel::targetCaloriesChanged);
+	connect(this, &MealFoodListModel::caloriesChanged, this, &MealFoodListModel::computeTotalRatios);
 	connect(this, &MealFoodListModel::currentDateChanged, this, &MealFoodListModel::computeTotalRatios);
 	connect(this, &MealFoodListModel::countChanged, this, &MealFoodListModel::computeTotalRatios);
+
+	connect(this, &MealFoodListModel::caloriesChanged, [](){
+		qDebug() << "toto";
+	});
+	connect(this, &MealFoodListModel::updateTotals, &MealFoodListModel::totalCaloriesChanged);
+	connect(this, &MealFoodListModel::updateTotals, &MealFoodListModel::computeTotalRatios);
 }
 
 
@@ -95,7 +103,7 @@ double MealFoodListModel::calories(qint64 mealGroupId){
 	double cal = 0.0;
 	for(auto i : mList){
 		if( i->getMealGroupId() == mealGroupId)
-			cal += i->getCalories();
+			cal += i->computeNutriment(i->getCalories());
 	}
 	return cal;
 }
@@ -121,7 +129,7 @@ void MealFoodListModel::setCurrentDate(QDate data){
 double MealFoodListModel::getTotalCalories()const{
 	double sum = 0.0;
 	for(auto i : mList){
-		if(i->getCalories() > 0) sum += i->getCalories();
+		if(i->getCalories() > 0) sum += i->computeNutriment(i->getCalories());
 	}
 	return sum;
 }
@@ -135,9 +143,9 @@ void MealFoodListModel::computeTotalRatios(){
 	double fat = 0.0;
 	double protein = 0.0;
 	for(auto i : mList){
-		if(i->getTotalCarbohydrate() > 0) carbo += i->getTotalCarbohydrate();
-		if(i->getTotalFat() > 0)  fat += i->getTotalFat();
-		if(i->getProtein() > 0)  protein += i->getProtein();
+		if(i->getTotalCarbohydrate() > 0) carbo += i->computeNutriment(i->getTotalCarbohydrate());
+		if(i->getTotalFat() > 0)  fat += i->computeNutriment(i->getTotalFat());
+		if(i->getProtein() > 0)  protein += i->computeNutriment(i->getProtein());
 	}
 	double total = carbo + fat + protein;
 	if(total > 0){

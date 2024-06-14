@@ -38,22 +38,26 @@ Item{
 		Rectangle{
 			Layout.fillWidth: true
 			Layout.fillHeight: true
+			color: Material.background
 			RowLayout{
 				id: descLine
 				anchors.fill: parent
 				ColumnLayout{
 					Text{
 						Layout.fillWidth: true
+						color: Material.foreground
 						text: mealFoodModel.description
 					}
 					Text{
 						Layout.fillWidth: true
+						color: Material.foreground
 						text: mealFoodModel.brand
 					}
 				}
 				Text{
 					horizontalAlignment: Text.AlignRight
-					text: Number.parseFloat(mealFoodModel.calories.toFixed(2))
+					color: Material.foreground
+					text: Number.parseFloat(mealFoodModel.computeNutriment(mealFoodModel.calories,mealFoodModel.servingSize,mealFoodModel.servingUnitId,mealFoodModel.baseSize,mealFoodModel.baseUnitId).toFixed(2))
 				}
 			}
 		}

@@ -32,6 +32,8 @@ Item {
 	property MealFoodListModel meals: MealFoodListModel{
 				id: mealFoods
 	}
+	property int totalRefresh: 1
+	onTotalRefreshChanged: mainItem.meals.updateTotals()
 	Connections{
 		target: mainWindow
 		function onGSave(){
@@ -40,6 +42,7 @@ Item {
 			gShowBackButton = false
 			gShowSaveButton = false
 			gShowMenuButton = true
+			++mainItem.totalRefresh
 		}
 		function onGBack(){
 			stackView.currentItem.foodModel.undo()
@@ -127,8 +130,8 @@ Item {
 				delegate:
 					ColumnLayout{
 						width: mealGroupList.width
-						height: sectionItem.height + mealFoodsList.contentHeight + addButton.height
-						spacing: 0
+						height: sectionItem.height + mealFoodsList.contentHeight + addButton.height + 4*spacing
+						spacing: 5
 						Rectangle{
 							id: sectionItem
 							property var model: $modelData
@@ -149,7 +152,7 @@ Item {
 								Text{
 									id: totalCalories
 									color: 'white'
-									text: Number.parseFloat(mainItem.meals.calories($modelData.mealGroupId).toFixed(2))
+									text: mainItem.totalRefresh ? Number.parseFloat(mainItem.meals.calories($modelData.mealGroupId).toFixed(2)) : ''
 									Connections{
 										target: mainItem.meals
 										function onCountChanged(){
@@ -167,31 +170,46 @@ Item {
 							id: mealFoodsList
 							Layout.fillWidth: true
 							Layout.fillHeight: true
+							interactive: false
 							model: MealFoodProxyModel{
 								meals: mainItem.meals
 								mealGroupId: $modelData.mealGroupId
 							}
-							delegate:	MealView{
-								id: mealView
+							delegate:	ColumnLayout{
+								spacing:4
 								width: mealFoodsList.width
-								height: implicitHeight
-								visible: $modelData.mealGroupId == sectionItem.model.mealGroupId
-								mealFoodModel: $modelData
-								MouseArea{
-									anchors.fill: parent
-									onClicked: {
-										gShowBackButton = true
-										gShowSaveButton = true
-										gShowMenuButton = false
-										$modelData.autoCompute = true
-										stackView.push(foodEditorComponent, {foodModel:$modelData})
+								height: mealView.implicitHeight+5
+								MealView{
+									id: mealView
+									Layout.fillWidth: true
+									Layout.preferredHeight: implicitHeight
+									visible: $modelData.mealGroupId == sectionItem.model.mealGroupId
+									mealFoodModel: $modelData
+									MouseArea{
+										anchors.fill: parent
+										onClicked: {
+											gShowBackButton = true
+											gShowSaveButton = true
+											gShowMenuButton = false
+											$modelData.autoCompute = true
+											stackView.push(foodEditorComponent, {foodModel:$modelData})
+										}
 									}
+								}
+								Rectangle{
+									Layout.fillWidth: true
+									Layout.leftMargin: 5
+									Layout.rightMargin: 5
+									height: 1
+									opacity: 0.5
+									color: Material.foreground
 								}
 							}
 						}
 						Button{
 							id: addButton
 							Layout.fillWidth: true
+							Layout.topMargin: 5
 							text: 'Add'
 							onClicked: {
 								stackView.push(foodPickerComponent, {mealGroup:$modelData})

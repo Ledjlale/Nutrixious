@@ -46,38 +46,48 @@ Item {
 			id: fieldsList
 			Layout.fillWidth: true
 			Layout.fillHeight: true
-			model:[{title:'Brand', data: 'brand', editUnits: false, inputMethodHints: Qt.ImhNone}
-					, {title:'Description', data: 'description', editUnits: false, inputMethodHints: Qt.ImhNone}
-					, {title:'Serving Size', data: 'servingSize', editUnits: 'servingUnitId', inputMethodHints: Qt.ImhFormattedNumbersOnly}
+			model:[{title:'Brand', data: 'brand', editUnits: false, inputMethodHints: Qt.ImhNone, isComputable:false}
+					, {title:'Description', data: 'description', editUnits: false, inputMethodHints: Qt.ImhNone, isComputable:false}
+					, {title:'Serving Size', data: 'servingSize', editUnits: 'servingUnitId', inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:false}
 					//, {title:'Serving per container', data: 'servingsPerContainer', editUnits: false}
-					, {title:'Calories ( kcal )', data: 'calories', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
-					, {title:'Total Fat ( g )', data: 'totalFat', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
-					, {title:'Saturated Fat ( g )', data: 'saturatedFat', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
-					, {title:'Trans Fat ( g )', data: 'transFat', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
-					, {title:'Polyunsaturated Fat ( g )', data: 'polyUnsaturatedFat', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
-					, {title:'Monounsaturated Fat ( g )', data: 'monoUnsaturatedFat', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
-					, {title:'Cholesterol ( mg )', data: 'cholesterol', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
-					, {title:'Total Carbohydrates ( g )', data: 'totalCarbohydrate', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
-					, {title:'Fibers ( g )', data: 'dietaryFiber', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
-					, {title:'Sugars ( g )', data: 'sugar', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
-					, {title:'Protein ( g )', data: 'protein', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
-					, {title:'Calcium ( % )', data: 'calcium', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
-					, {title:'Iron ( % )', data: 'iron', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
-					, {title:'Potassium ( mg )', data: 'potassium', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
-					, {title:'Sodium ( mg )', data: 'sodium', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
-					, {title:'Vitamin A ( % )', data: 'vitaminA', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
-					, {title:'Vitamin C ( % )', data: 'vitaminC', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly}
+
+					, {title:'Base size', data: 'baseSize', editUnits: 'baseUnitId', inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:false}
+					, {title:'Calories ( kcal )', data: 'calories', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:true}
+					, {title:'Total Fat ( g )', data: 'totalFat', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:true}
+					, {title:'Saturated Fat ( g )', data: 'saturatedFat', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:true}
+					, {title:'Trans Fat ( g )', data: 'transFat', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:true}
+					, {title:'Polyunsaturated Fat ( g )', data: 'polyUnsaturatedFat', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:true}
+					, {title:'Monounsaturated Fat ( g )', data: 'monoUnsaturatedFat', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:true}
+					, {title:'Cholesterol ( mg )', data: 'cholesterol', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:true}
+					, {title:'Total Carbohydrates ( g )', data: 'totalCarbohydrate', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:true}
+					, {title:'Fibers ( g )', data: 'dietaryFiber', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:true}
+					, {title:'Sugars ( g )', data: 'sugar', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:true}
+					, {title:'Protein ( g )', data: 'protein', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:true}
+					, {title:'Calcium ( % )', data: 'calcium', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:true}
+					, {title:'Iron ( % )', data: 'iron', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:true}
+					, {title:'Potassium ( mg )', data: 'potassium', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:true}
+					, {title:'Sodium ( mg )', data: 'sodium', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:true}
+					, {title:'Vitamin A ( % )', data: 'vitaminA', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:true}
+					, {title:'Vitamin C ( % )', data: 'vitaminC', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:true}
 			]
 			delegate: RowLayout{
 				width: fieldsList.width
 				Text{
+					Layout.fillWidth: true
 					color: Material.foreground
 					text: modelData.title
 				}
+				Text{
+					visible: !!modelData.isComputable
+					color: Material.accent
+					text: visible ? mainItem.foodModel.computeNutriment(dataField.text, mainItem.foodModel.servingSize, mainItem.foodModel.servingUnitId, mainItem.foodModel.baseSize, mainItem.foodModel.baseUnitId) : ''
+				}
 				TextField{
-					Layout.fillWidth: true
+					id: dataField
+					Layout.preferredWidth:  inputMethodHints ==  Qt.ImhFormattedNumbersOnly ? 120 : 240
 					horizontalAlignment: Text.AlignRight
 					inputMethodHints: modelData.inputMethodHints
+					keepEditView: true
 					property var txt: mainItem.foodModel[modelData.data] < 0 ? '' : mainItem.foodModel[modelData.data]
 					text: txt && inputMethodHints ==  Qt.ImhFormattedNumbersOnly ? Number.parseFloat(txt.toFixed(4)) : txt
 					onEditingFinished: mainItem.foodModel[modelData.data] = newValue
@@ -88,8 +98,8 @@ Item {
 					textRole: "displayText"
 					valueRole: "id"
 					model: UnitProxyModel{
+						id: unitProxyModel
 						filterType: UnitProxyModel.WEIGHT | UnitProxyModel.VOLUME
-						Component.onCompleted: if( unitChoice.visible) update()
 					}
 					onActivated:{mainItem.foodModel[modelData.editUnits] = currentValue}
 					currentIndex: unitChoice.count && indexOfValue(mainItem.foodModel[modelData.editUnits])

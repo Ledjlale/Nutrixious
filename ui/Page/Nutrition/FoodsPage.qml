@@ -101,6 +101,7 @@ Item {
 			Layout.fillHeight: true
 			Layout.fillWidth: true
 			initialItem: ListView{
+				spacing: 5
 				model: FoodProxyModel{
 					id: foodListModel
 					Component.onCompleted: update()

@@ -28,8 +28,15 @@
 
 UnitListModel::UnitListModel(QObject *parent)
 	: ProxyAbstractListModel<UnitModel*>{parent}
-{}
+{
+	update();
+}
 
+UnitListModel *UnitListModel::gUnits = nullptr;
+UnitListModel * UnitListModel::getInstance() {
+	if( !gUnits) gUnits = new UnitListModel();
+	return gUnits;
+}
 
 QHash<int, QByteArray> UnitListModel::roleNames () const {
 	QHash<int, QByteArray> roles;
@@ -53,6 +60,12 @@ QVariant UnitListModel::data (const QModelIndex &index, int role) const {
 		return model->getUnitId();
 
 	return QVariant();
+}
+
+UnitModel *UnitListModel::findUnit(qint64 id)const {
+	for(auto i : mList)
+		if(i->getUnitId() == id) return i;
+	return nullptr;
 }
 
 void UnitListModel::update(){
