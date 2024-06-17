@@ -149,7 +149,7 @@ void ExerciseModel::computeMet(){
 //-------------------------------------------------------------------------------------------------------------------
 
 
-bool ExerciseModel::save(){
+int ExerciseModel::save(){
 	if(mExerciseId>0 && !mIsEdited) return true;// Avoid update for nothing
 	qDebug() << "Saving exercise " << mName;
 	DatabaseQuery query;

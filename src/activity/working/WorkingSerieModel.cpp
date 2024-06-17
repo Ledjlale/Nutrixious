@@ -134,7 +134,7 @@ QVariant WorkingSerieModel::getCurrentWork() {
 	return QVariant::fromValue(this);
 }
 
-bool WorkingSerieModel::save(){
+int WorkingSerieModel::save(){
 	return false;
 }
 //-------------------------------------------------------------------------------------------------------------------

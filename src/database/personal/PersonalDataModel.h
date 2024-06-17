@@ -70,7 +70,7 @@ public:
 
 
 	Q_INVOKABLE virtual bool add();
-	Q_INVOKABLE virtual bool save();
+	Q_INVOKABLE virtual int save();
 	Q_INVOKABLE virtual void remove();
 
 	static QList<PersonalDataModel*> loadAll(QObject * parent);

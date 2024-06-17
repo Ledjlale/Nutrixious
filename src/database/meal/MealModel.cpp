@@ -61,7 +61,7 @@ void MealModel::updateIsSaved(){
 	setIsSaved(getMealId() > 0);
 }
 
-bool MealModel::save(){
+int MealModel::save(){
 	if(mMealId>0 && !mIsEdited) return true;// Avoid update for nothing
 	qDebug() << "Saving meal " << mName;
 	DatabaseQuery query;

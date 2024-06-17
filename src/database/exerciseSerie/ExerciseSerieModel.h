@@ -92,7 +92,7 @@ public:
 	Q_INVOKABLE void makeNew();
 
 	virtual void addQueryValues(DatabaseQuery &query){}
-	Q_INVOKABLE virtual bool save();
+	Q_INVOKABLE virtual int save();
 	virtual void load(QSqlQuery &query);
 	Q_INVOKABLE virtual void remove();
 

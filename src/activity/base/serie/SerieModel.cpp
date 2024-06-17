@@ -139,7 +139,7 @@ void SerieModel::undo(){
 
 //-------------------------------------------------------------------------------------------------------------------
 
-bool SerieModel::save(){
+int SerieModel::save(){
 	DatabaseQuery query;
 	query.begin(mSerieId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, mDbTable);
 	query.add("name", mName);

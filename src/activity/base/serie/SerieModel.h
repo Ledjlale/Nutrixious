@@ -51,7 +51,7 @@ public:
 	virtual void updateIsSaved();
 	virtual void undo();
 
-	Q_INVOKABLE virtual bool save();
+	Q_INVOKABLE virtual int save();
 	static SerieModel *load(QSqlQuery &query, QObject * parent);
 	Q_INVOKABLE virtual void remove();
 

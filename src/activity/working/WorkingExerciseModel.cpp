@@ -185,7 +185,7 @@ QVariant WorkingExerciseModel::getCurrentWork() {
 		return QVariant::fromValue(this);
 }
 
-bool WorkingExerciseModel::save(){
+int WorkingExerciseModel::save(){
 	return false;
 }
 

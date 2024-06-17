@@ -182,7 +182,7 @@ bool PersonalDataModel::add(){
 	return result;
 }
 
-bool PersonalDataModel::save(){
+int PersonalDataModel::save(){
 	if(mPersonalDataId>0 && !mIsEdited) return true;// Avoid update for nothing
 	qDebug() << "Saving personal data "<< mDateTime << mWeight << mHeight << mSex;
 	DatabaseQuery query;

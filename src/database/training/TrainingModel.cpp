@@ -48,8 +48,11 @@ TrainingModel::TrainingModel(ProgramModel * model, QObject *parent) : ProgramMod
 	mDescription = model->getName();
 	for(auto i : model->getExercises()){
 		auto exercise = new TrainingExerciseModel(i, this);
-		for(auto j : i->getSeries())
-			exercise->insertSerie(new TrainingSerieModel(j, exercise));
+		for(auto j : i->getSeries()) {
+			auto s = new TrainingSerieModel(j, exercise);
+			connect(s, &TrainingSerieModel::caloriesChanged, this, &TrainingModel::updateCalories);
+			exercise->insertSerie(s);
+		}
 		connect(exercise, &TrainingExerciseModel::requestComputeCalories, this, &TrainingModel::computeCalorie);
 		exercise->makeNew();
 		mExercises << exercise;
@@ -91,6 +94,27 @@ void TrainingModel::setStartDateTimeStr(QString data) {
 	}
 }
 
+QString TrainingModel::getStartTimeStr()const{
+	if(mStartDateTime.isValid())
+		//return QLocale().toString(mStartDateTime, QLocale().dateTimeFormat(QLocale::FormatType::ShortFormat));
+		return QLocale().toString(mStartDateTime, "hh:mm:ss");
+	else
+		return "";
+}
+
+void TrainingModel::setStartTimeStr(QString data) {
+	QDateTime dateTime = QDateTime(mStartDateTime.date(), QTime::fromString(data, "hh:mm:ss"));
+	if( dateTime.isValid() && dateTime != mStartDateTime){
+		addBackup(&mStartDateTime, mStartDateTime, dateTime);
+		mStartDateTime = dateTime;
+		startDateTimeChanged();
+	}
+}
+
+
+
+DEFINE_SIMPLE_GETSET(TrainingModel,double,calories,Calories)
+
 ProgramExerciseModel* TrainingModel::insertNewExercise(ProgramExerciseModel *model){
 	auto insertedModel = dynamic_cast<TrainingExerciseModel*>(ProgramModel::insertNewExercise(model));
 	connect(insertedModel, &TrainingExerciseModel::requestComputeCalories, this, &TrainingModel::computeCalorie);
@@ -100,6 +124,8 @@ ProgramExerciseModel* TrainingModel::insertNewExercise(ProgramExerciseModel *mod
 ProgramExerciseModel* TrainingModel::insertExercise(ProgramExerciseModel *model){
 	auto insertedModel = dynamic_cast<TrainingExerciseModel*>(ProgramModel::insertExercise(model));
 	connect(insertedModel, &TrainingExerciseModel::requestComputeCalories, this, &TrainingModel::computeCalorie);
+	connect(insertedModel, &TrainingExerciseModel::caloriesChanged, this, &TrainingModel::updateCalories);
+	updateCalories();
 	return insertedModel;
 }
 
@@ -280,4 +306,12 @@ void TrainingModel::computeCalorie(TrainingExerciseModel * exercise, TrainingSer
 			qCritical() << "Cannot compute calorie because of personal data : "  << query.lastError().text();
 		}
 	}
+}
+
+void TrainingModel::updateCalories() {
+	double calories = 0.0;
+	for(auto e : mExercises){
+		calories += dynamic_cast<TrainingExerciseModel*>(e)->getCalories();
+	}
+	setCalories(calories);
 }

@@ -58,7 +58,7 @@ DEFINE_GETSET(UnitModel,double,kcalValue,KcalValue)
 DEFINE_GETSET(UnitModel,double,milliliterValue,MilliliterValue)
 
 
-bool UnitModel::save(){
+int UnitModel::save(){
 	if(mUnitId>0 && !mIsEdited) return true;// Avoid update for nothing
 	qDebug() << "Saving unit " << mName;
 	DatabaseQuery query;

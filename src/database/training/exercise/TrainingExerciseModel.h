@@ -31,6 +31,8 @@
 class TrainingExerciseModel : public ProgramExerciseModel{
 Q_OBJECT
 
+	DECLARE_GETSET(double,calories,Calories)
+
 public:
 	TrainingExerciseModel();
 	TrainingExerciseModel(QObject *parent);
@@ -44,11 +46,15 @@ public:
 	QList<TrainingSerieModel*> getSeries() const;
 
 	void computeCalories(TrainingSerieModel * serie);
+	void updateCalories();
 
 	static TrainingExerciseModel *build(QSqlQuery &query, QObject * parent);
 
 signals:
 	void requestComputeCalories(TrainingExerciseModel* exercise, TrainingSerieModel *serie);
+
+protected:
+	double mCalories = 0.0;
 
 };
 

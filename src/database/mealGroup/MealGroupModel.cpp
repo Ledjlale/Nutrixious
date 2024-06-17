@@ -87,7 +87,7 @@ DEFINE_GETSET(MealGroupModel,bool,isDisplayed,IsDisplayed)
 //-------------------------------------------------------------------------------------------------------------------
 
 
-bool MealGroupModel::save(){
+int MealGroupModel::save(){
 	if(mMealGroupId>0 && !mIsEdited) return true;// Avoid update for nothing
 	qDebug() << "Saving exercise " << mName;
 	DatabaseQuery query;

@@ -70,7 +70,7 @@ public:
 
 
 
-	Q_INVOKABLE virtual bool save();
+	Q_INVOKABLE virtual int save();
 	Q_INVOKABLE virtual void remove();
 	virtual void load(QSqlQuery &query);
 	static QList<ProgramModel*> buildAll(QObject * parent);

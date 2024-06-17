@@ -23,6 +23,7 @@
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlError>
+#include <QCoreApplication>
 
 #include "program/exercise/ProgramExerciseModel.h"
 #include "program/serie/ProgramSerieModel.h"
@@ -174,6 +175,7 @@ void DatabaseModel::migrate(){
 		}
 		if(!query.exec("CREATE TABLE foods (food_id INTEGER PRIMARY KEY"
 			", open_food_facts_code TEXT"
+			", open_food_facts_image_url TEXT"
 			", image_url TEXT"
 			", brand TEXT"
 			", description TEXT"
@@ -220,6 +222,7 @@ void DatabaseModel::migrate(){
 		}
 		if(!query.exec("CREATE TABLE meal_foods (meal_food_id INTEGER PRIMARY KEY"
 			", open_food_facts_code TEXT"
+			", open_food_facts_image_url TEXT"
 			", image_url TEXT"
 			", brand TEXT"
 			", description TEXT"
@@ -306,6 +309,18 @@ void DatabaseModel::migrate(){
 		}else{
 		}
 	}
+	if(!query.exec("SELECT open_food_facts_image_url FROM meal_foods LIMIT 1")){
+		if(!query.exec("ALTER TABLE meal_foods ADD COLUMN open_food_facts_image_url TEXT")){
+			qCritical() << "Cannot Add open_food_facts_image_url column into meal_foods: " << query.lastError().text();
+		}else{
+		}
+	}
+	if(!query.exec("SELECT open_food_facts_image_url FROM foods LIMIT 1")){
+		if(!query.exec("ALTER TABLE foods ADD COLUMN open_food_facts_image_url TEXT")){
+			qCritical() << "Cannot Add open_food_facts_image_url column into foods: " << query.lastError().text();
+		}else{
+		}
+	}
 
 	query.exec("PRAGMA user_version");
 	fieldNo = query.record().indexOf("user_version");
@@ -321,15 +336,24 @@ void DatabaseModel::initFoodData(){
 
 	models << new FoodModel();
 	models.back()->initRandomValues();
+	models.back()->setOpenFoodFactsCode("3335880006048");
+	//models.back()->setOpenFoodFactsImageUrl("https://images.openfoodfacts.org/images/products/333/588/000/6048/front_fr.25.400.jpg");
 	models << new FoodModel();
 	models.back()->initRandomValues();
+	//models.back()->setImageUrl("https://images.openfoodfacts.org/images/products/333/588/000/6048/front_fr.25.400.jpg");
+
 	models << new FoodModel();
 	models.back()->initRandomValues();
 	models << new FoodModel();
 	models.back()->initRandomValues();
 
 	for(auto i : models){
-		i->save();
+		if(i->save() == 2) {
+			bool end = false;
+			connect(i, &FoodModel::saved, [&end](){end = true;});
+			connect(i, &FoodModel::loadingFailed, [&end](){end = true;});
+			while(!end) QCoreApplication::processEvents();
+		}
 		i->deleteLater();
 	}
 #endif
@@ -515,7 +539,7 @@ void DatabaseModel::insertDefaultData() {
 	QVector<TrainingSerieModel *> trainingSeries;
 
 
-	for(int i = 0 ; i < 100 ; ++i){
+	for(int i = 0 ; i < 200 ; ++i){
 		trainings << new TrainingModel(programs.back(), nullptr);
 		trainings.back()->setDescription("Debug");
 		trainings.back()->setStartDateTime(QDateTime::fromString("2024/01/01 10:00:00", "yyyy/MM/dd hh:mm:ss").addDays(i));

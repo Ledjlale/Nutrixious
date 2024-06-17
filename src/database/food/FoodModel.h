@@ -37,6 +37,7 @@ Q_OBJECT
 // DB
 	DECLARE_GETSET(qint64,id,Id)
 	DECLARE_GETSET(QString,openFoodFactsCode,OpenFoodFactsCode)
+	DECLARE_GETSET(QString,openFoodFactsImageUrl,OpenFoodFactsImageUrl)
 	DECLARE_GETSET(QString,brand,Brand)
 	DECLARE_GETSET(QString,imageUrl,ImageUrl)
 	DECLARE_GETSET(QString,description,Description)
@@ -76,9 +77,11 @@ public:
 	void recomputeFromServingSize();
 	double computeNutriment(double base);
 	Q_INVOKABLE static double computeNutriment(double base, double servingSize, qint64 servingUnitId, double baseSize, qint64 baseUnitId);
+	Q_INVOKABLE QString generateImagepath(bool unique);
 
 	virtual void addQueryValues(DatabaseQuery &query){}
-	Q_INVOKABLE virtual bool save();
+	Q_INVOKABLE virtual int save();
+	void saveImage();
 	virtual void saveValues(DatabaseQuery &query);
 	Q_INVOKABLE virtual void remove();
 	virtual void updateIsSaved();
@@ -91,13 +94,20 @@ public:
 
 
 	Q_INVOKABLE void loadFromOpenFoodFacts(const QString& code);
+	Q_INVOKABLE void findOpenFoodFacts(const QString& name);
 
+	void openFoodFactsImageDownloaded();
 	void openFoodFactsDownloaded();
+	void openFoodFactsFoundResults();
 	void handleSslErrors (const QList<QSslError> &sslErrors);
 	void handleError (QNetworkReply::NetworkError code);
 
 signals:
 	void removed(FoodModel *model);
+	void saved();
+	void imageDownloaded();
+	void openFoodFactsFound(QVariantList results);
+	void loadingFailed();
 
 protected:
 	qint64 mId = 0;
@@ -107,6 +117,7 @@ protected:
 	QString mImageUrl;
 
 	QString mOpenFoodFactsCode;
+	QString mOpenFoodFactsImageUrl;
 	double mServingSize = 10.0;
 	double mServingsPerContainer = 1.0;
 	qint64 mServingUnitId = 0;

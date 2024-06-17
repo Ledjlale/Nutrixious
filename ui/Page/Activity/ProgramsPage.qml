@@ -90,7 +90,42 @@ Item {
 							onCountChanged:  programDetailsList.program = count > 0 ? programs.getAt(0) : null
 							Component.onCompleted: programDetailsList.program = count > 0 ? programs.getAt(0) : null
 						}
-					delegate:Item{
+					delegate:/*
+						SwipeView{
+							width: programList.width
+							height: currentItem.height
+							currentIndex: 1
+							Rectangle{
+								width: programList.width
+								height: 40
+								color: 'green'
+							}
+							Item{
+								width: programList.width
+								height: modelView.implicitHeight + 5
+								Rectangle{
+									anchors.fill: parent
+									color: Material.background
+								}
+								TrainModelView{
+									id: modelView
+									anchors.fill: parent
+									anchors.topMargin: 5
+									trainModel: $modelData
+									onClicked: {
+										programDetailsList.program = $modelData
+										exercises.update()
+									}
+								}
+							}
+							Rectangle{
+								width: programList.width
+								height: 40
+								color: 'red'
+							}*/
+
+
+					Item{
 								width: programList.width
 								height: modelView.implicitHeight + 5
 								Rectangle{

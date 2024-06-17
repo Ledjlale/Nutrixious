@@ -251,7 +251,7 @@ void ExerciseUnitModel::setCanHaveSeries(bool data) {
 
 //-------------------------------------------------------------------------------------------------------------------
 
-bool ExerciseUnitModel::save(){
+int ExerciseUnitModel::save(){
 	DatabaseQuery query;
 
 	if(!mExercise.second) return false;

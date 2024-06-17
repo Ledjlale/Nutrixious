@@ -54,6 +54,17 @@ Item {
 			}
 			Button{
 				visible: stackView.depth == 1
+				property bool searching: stackView.currentItem.objectName == "Search"
+				text: searching ? 'X' : qsTr('Search')
+				onClicked: {
+						if(!searching)
+							stackView.push(searchComponent)
+						else
+							stackView.pop()
+				}
+			}
+			Button{
+				visible: stackView.depth == 1
 				property bool scanning: stackView.currentItem.objectName == "Scanner" && stackView.currentItem.isStarted
 				text: scanning ? 'X' : qsTr('Scan')
 				onClicked: {
@@ -81,12 +92,12 @@ Item {
 								mainItem.picked(stackView.currentItem.foodModel)
 								stackView.pop()
 							}else{
-								if(stackView.currentItem.foodModel.save()){
+								if(stackView.currentItem.foodModel.save() == 1){
 									mainItem.picked(stackView.currentItem.foodModel)
 									stackView.pop()
 								}
 							}
-						}else if(stackView.currentItem.foodModel.save()) {
+						}else if(stackView.currentItem.foodModel.save() == 1) {
 							stackView.pop()
 							foodListModel.update()
 						}
@@ -110,13 +121,18 @@ Item {
 					width: stackView.width
 					//height: implicitHeight
 					foodModel: $modelData
-
 					MouseArea{
 						anchors.fill: parent
 						onClicked:{
 							$modelData.autoCompute = mainItem.isPicker && $modelData.isSaved
 							stackView.push(foodEditorComponent, {foodModel:$modelData})
 						}
+					}
+					Rectangle{
+						width: parent.width
+						anchors.bottom: parent.bottom
+						height: 1
+						color: 'gray'
 					}
 				}
 			}
@@ -134,10 +150,31 @@ Item {
 				}
 			}
 			Component{
+				id: searchComponent
+				FoodSearchView{
+					id: searchView
+					objectName: 'Search'
+					onSearchedCodeChanged:{
+						if(scannedCode != '') {
+							stackView.replace(foodEditorComponent, {offCode: searchedCode})
+						}
+					}
+				}
+			}
+			Component{
 				id: foodEditorComponent
 				FoodEditorPage{
 					id: editor
 					objectName: 'Editor'
+					onSaved: {
+						if(mainItem.isPicker){
+							mainItem.picked(foodModel)
+							stackView.pop()
+						}else {
+							foodListModel.update()
+							stackView.pop()
+						}
+					}
 				}
 			}
 		}

@@ -122,23 +122,28 @@ Flipable {
 				function forceActiveFocus(){
 					textField.forceActiveFocus()
 				}
+				property var qtBug: title.implicitHeight + textField.implicitHeight + 5
+				onQtBugChanged: implicitHeight = qtBug
+				implicitHeight: qtBug
+				onImplicitHeightChanged: if( implicitHeight != qtBug) implicitHeight = qtBug
 				Text{
+					id: title
 					Layout.fillWidth: true
 					color: mainItem.textColor
 					visible: text != ''
 					font.italic: true
 					font.pixelSize: textField.font.pixelSize - 2
 					text: mainItem.title
-
 				}
 
 				Control.TextArea{
 					id: textField
-					Layout.fillHeight: true
+					Layout.preferredHeight: implicitHeight
 					Layout.fillWidth: true
 					//Layout.leftMargin: 10
 					//Layout.rightMargin: 10
-					Layout.bottomMargin: 10
+					Layout.bottomMargin: 100
+					Layout.topMargin: 5
 
 					horizontalAlignment: mainItem.horizontalAlignment
 					wrapMode: TextEdit.WordWrap

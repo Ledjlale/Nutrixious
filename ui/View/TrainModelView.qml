@@ -24,9 +24,11 @@ import QtQuick.Layouts
 
 import App 1.0
 
-Item{
+SwipeView{
 	id: mainItem
 	property var trainModel
+	property bool isDeletable: true
+	property bool displayDate: true
 
 	implicitHeight: mainLine.implicitHeight
 
@@ -34,9 +36,13 @@ Item{
 		//if(nameTextField.isEdited) distanceModel.name = nameTextField.newValue
 	}
 	signal clicked()
+	currentIndex: 0
+	interactive: mainItem.isDeletable
 	RowLayout{
 		id: mainLine
-		anchors.fill: parent
+		width: mainItem.width
+		height: mainItem.height
+		//anchors.fill: parent
 		spacing: 0
 		TextField{
 			id: nameTextField
@@ -70,10 +76,16 @@ Item{
 			Layout.fillWidth: true
 			visible: trainModel.startDateTimeStr !== undefined
 			inputMethodHints: Qt.ImhDigitsOnly
-			text: visible && trainModel ? trainModel.startDateTimeStr: ''
-			readOnly: false
-			onEditingFinished: trainModel.startDateTimeStr = newValue
+			text: visible && trainModel ? mainItem.displayDate ? trainModel.startDateTimeStr : trainModel.startTimeStr : ''
+			readOnly: !mainItem.displayDate
+			onEditingFinished: mainItem.displayDate ? trainModel.startDateTimeStr = newValue : trainModel.startTimeStr = newValue
 		}
+		Text{
+			visible: text != ''
+			color: Material.foreground
+			text: trainModel.calories ? Number.parseFloat(trainModel.calories.toFixed(2)) : ''
+		}
+
 		Button{
 			visible: trainModel.isEdited
 			text: 'Save'
@@ -81,10 +93,23 @@ Item{
 				trainModel.save()
 			}
 		}
-		Button{
-			text: 'D'
-			onClicked: {
-				trainModel.remove()
+
+	}
+	Rectangle{
+		width: mainItem.width
+		height: mainItem.height
+		color: Material.accent
+		RowLayout{
+		anchors.fill: parent
+			Item{
+				Layout.fillWidth: true
+			}
+			Button{
+				visible: mainItem.isDeletable
+				text: 'D'
+				onClicked: {
+					trainModel.remove()
+				}
 			}
 		}
 	}

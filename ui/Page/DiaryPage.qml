@@ -32,6 +32,8 @@ Item {
 	property MealFoodListModel meals: MealFoodListModel{
 				id: mealFoods
 	}
+	property TrainingListModel trainings: TrainingListModel{
+	}
 	property int totalRefresh: 1
 	onTotalRefreshChanged: mainItem.meals.updateTotals()
 	Connections{
@@ -70,14 +72,25 @@ Item {
 			RowLayout {
 				spacing: 0
 				ColumnLayout{
+					id: caloriesLayout
+					property real total: mainItem.meals.totalCalories
+					property real target: mainItem.meals.targetCalories + trains.calories
+					property real weight: 1000 * (caloriesLayout.total - caloriesLayout.target) / 7500
 					spacing: 0
-					Text{
-						Layout.fillWidth : true
-						text: 'Calories'
-						color: Material.foreground
+					RowLayout{
+						Text{
+							Layout.fillWidth : true
+							color: Material.foreground
+							text: 'Calories'
+						}
+						Text{
+							Layout.fillWidth : true
+							color: caloriesLayout.weight > 0 ? Material.accent : Material.color(Material.LightGreen)
+							text: Number.parseFloat(caloriesLayout.weight.toFixed(2)) + 'g'
+						}
 					}
 					Text{
-						text: Number.parseFloat(mainItem.meals.totalCalories.toFixed(2)) + ' / ' +Number.parseFloat(mainItem.meals.targetCalories.toFixed(2))
+						text: Number.parseFloat(caloriesLayout.total.toFixed(2)) + ' / ' +Number.parseFloat(caloriesLayout.target.toFixed(2))
 						color: Material.foreground
 					}
 				}
@@ -121,98 +134,143 @@ Item {
 
 			}
 //----------------------------------------------------------------------------------------
-			ListView{
-				id: mealGroupList
+			Flickable{
 				Layout.fillWidth: true
 				Layout.fillHeight: true
+				contentHeight: mainColumnLayout.implicitHeight
 				clip: true
-				model: mainItem.mealGroups
-				delegate:
-					ColumnLayout{
-						width: mealGroupList.width
-						height: sectionItem.height + mealFoodsList.contentHeight + addButton.height + 4*spacing
-						spacing: 5
-						Rectangle{
-							id: sectionItem
-							property var model: $modelData
-							width: mealGroupList.width
-							height: sectionRow.implicitHeight + 10
-							color: Material.color(Material.BlueGrey)
-							RowLayout{
-								id: sectionRow
-								anchors.fill: parent
-								anchors.margins: 5
-								Text{
-									id: mealGroupTitle
-									Layout.fillWidth: true
-									color: 'white'
-									text:  $modelData.name
-									//Component.onCompleted: text = $modelData.name
-								}
-								Text{
-									id: totalCalories
-									color: 'white'
-									text: mainItem.totalRefresh ? Number.parseFloat(mainItem.meals.calories($modelData.mealGroupId).toFixed(2)) : ''
-									Connections{
-										target: mainItem.meals
-										function onCountChanged(){
-											totalCalories.text = Number.parseFloat(mainItem.meals.calories($modelData.mealGroupId).toFixed(2))
+				ColumnLayout{
+					id: mainColumnLayout
+					width: parent.width
+					ListView{
+						id: mealGroupList
+						Layout.fillWidth: true
+						implicitHeight: contentHeight
+						clip: true
+						model: mainItem.mealGroups
+						interactive: false
+						delegate:
+							ColumnLayout{
+								width: mealGroupList.width
+								height: sectionItem.height + mealFoodsList.contentHeight + addButton.height + 4*spacing
+								spacing: 5
+								Rectangle{
+									id: sectionItem
+									property var model: $modelData
+									width: mealGroupList.width
+									height: sectionRow.implicitHeight + 10
+									color: Material.color(Material.BlueGrey)
+									RowLayout{
+										id: sectionRow
+										anchors.fill: parent
+										anchors.margins: 5
+										Text{
+											id: mealGroupTitle
+											Layout.fillWidth: true
+											color: 'white'
+											text:  $modelData.name
+											//Component.onCompleted: text = $modelData.name
 										}
-										function onCaloriesChanged(){
-											totalCalories.text = Number.parseFloat(mainItem.meals.calories($modelData.mealGroupId).toFixed(2))
-										}
+										Text{
+											id: totalCalories
+											color: 'white'
+											text: mainItem.totalRefresh ? Number.parseFloat(mainItem.meals.calories($modelData.mealGroupId).toFixed(2)) : ''
+											Connections{
+												target: mainItem.meals
+												function onCountChanged(){
+													totalCalories.text = Number.parseFloat(mainItem.meals.calories($modelData.mealGroupId).toFixed(2))
+												}
+												function onCaloriesChanged(){
+													totalCalories.text = Number.parseFloat(mainItem.meals.calories($modelData.mealGroupId).toFixed(2))
+												}
 
+											}
+										}
 									}
 								}
+								ListView{
+									id: mealFoodsList
+									Layout.fillWidth: true
+									Layout.fillHeight: true
+									interactive: false
+									model: MealFoodProxyModel{
+										meals: mainItem.meals
+										mealGroupId: $modelData.mealGroupId
+									}
+									delegate:	ColumnLayout{
+										spacing:4
+										width: mealFoodsList.width
+										height: mealView.implicitHeight+5
+										MealView{
+											id: mealView
+											Layout.fillWidth: true
+											Layout.preferredHeight: implicitHeight
+											visible: $modelData.mealGroupId == sectionItem.model.mealGroupId
+											mealFoodModel: $modelData
+											onClicked: {
+												gShowBackButton = true
+												gShowSaveButton = true
+												gShowMenuButton = false
+												$modelData.autoCompute = true
+												stackView.push(foodEditorComponent, {foodModel:$modelData})
+											}
+										}
+										Rectangle{
+											Layout.fillWidth: true
+											Layout.leftMargin: 5
+											Layout.rightMargin: 5
+											height: 1
+											opacity: 0.5
+											color: Material.foreground
+										}
+									}
+								}
+								Button{
+									id: addButton
+									Layout.fillWidth: true
+									Layout.topMargin: 5
+									text: 'Add'
+									onClicked: {
+										stackView.push(foodPickerComponent, {mealGroup:$modelData})
+									}
+								}
+							}
+						}
+						Rectangle{
+							Layout.fillWidth: true
+							height: 80
+							color: Material.primary
+							Text{
+								anchors.centerIn: parent
+								color: 'white'
+								text: 'Exercises'
 							}
 						}
 						ListView{
-							id: mealFoodsList
-							Layout.fillWidth: true
-							Layout.fillHeight: true
-							interactive: false
-							model: MealFoodProxyModel{
-								meals: mainItem.meals
-								mealGroupId: $modelData.mealGroupId
-							}
-							delegate:	ColumnLayout{
-								spacing:4
-								width: mealFoodsList.width
-								height: mealView.implicitHeight+5
-								MealView{
-									id: mealView
-									Layout.fillWidth: true
-									Layout.preferredHeight: implicitHeight
-									visible: $modelData.mealGroupId == sectionItem.model.mealGroupId
-									mealFoodModel: $modelData
-									MouseArea{
-										anchors.fill: parent
-										onClicked: {
-											gShowBackButton = true
-											gShowSaveButton = true
-											gShowMenuButton = false
-											$modelData.autoCompute = true
-											stackView.push(foodEditorComponent, {foodModel:$modelData})
-										}
-									}
-								}
-								Rectangle{
-									Layout.fillWidth: true
-									Layout.leftMargin: 5
-									Layout.rightMargin: 5
-									height: 1
-									opacity: 0.5
-									color: Material.foreground
-								}
-							}
+						id: trainingList
+						Layout.fillWidth: true
+						implicitHeight: contentHeight
+						clip: true
+						interactive: false
+						model: TrainingProxyModel{
+							id: trains
+							trainingDay: dayBar.currentDay
+							sourceModel: mainItem.trainings
 						}
-						Button{
-							id: addButton
-							Layout.fillWidth: true
-							Layout.topMargin: 5
-							text: 'Add'
-							onClicked: {
-								stackView.push(foodPickerComponent, {mealGroup:$modelData})
+						delegate:
+							Item{
+								width: trainingList.width
+								height: trainView.implicitHeight
+								//anchors.fill: parent
+								//propagateComposedEvents: true
+								//preventStealing: true
+								TrainModelView{
+									id: trainView
+									width: parent.width
+									trainModel: $modelData
+									displayDate: false
+									//onClicked: trainDetailsList.program = $modelData
+								}
 							}
 						}
 					}
@@ -228,15 +286,19 @@ Item {
 
 				onBack: stackView.pop()
 				onPicked: function(food){
-					mainItem.meals.addFoodModel(food, mealGroup)
+					mainItem.meals.addFoodModel(food, mealGroup, dayBar.currentDay)
 					stackView.pop()
+					++mainItem.totalRefresh
 				}
 			}
 		}
 		Component{
 			id: foodEditorComponent
 			FoodEditorPage{
-				onSaved: stackView.pop()
+				onSaved: {
+					stackView.pop()
+					++mainItem.totalRefresh
+				}
 			}
 		}
 	}

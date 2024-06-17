@@ -30,7 +30,7 @@
 
 #include "src/database/food/FoodModel.h"
 #include "src/database/mealGroup/MealGroupModel.h"
-
+#include "src/tool/date/DateModel.h"
 class MealFoodModel : public FoodModel{
 Q_OBJECT
 	DECLARE_GETSET(qint64,mealGroupId,MealGroupId)
@@ -46,14 +46,10 @@ public:
 
 // ----------------------
 	Q_INVOKABLE virtual void undo();
-
 	virtual void addQueryValues(DatabaseQuery &query);
 	virtual void load(QSqlQuery &query);
 	static MealFoodModel *build(QSqlQuery &query, QObject * parent);
 	static QList<MealFoodModel*> buildAll(QDate date, QObject * parent);
-
-signals:
-	void removed(MealFoodModel * model);
 
 protected:
 	qint64 mMealGroupId = 0;

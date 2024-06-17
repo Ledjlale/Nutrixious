@@ -102,6 +102,7 @@ QVariantList ProgramModel::getVariantExercises() const {
 	return exercises;
 }
 
+
 const QList<ProgramExerciseModel*>& ProgramModel::getExercises()const {
 	return mExercises;
 }
@@ -172,10 +173,11 @@ void ProgramModel::incrementExerciseOrder(ProgramExerciseModel *model){
 }
 
 
+
 //-------------------------------------------------------------------------------------------------------------------
 
 
-bool ProgramModel::save(){
+int ProgramModel::save(){
 	qDebug() << "Saving " << mTablePrefix << mName << mDescription;
 	DatabaseQuery query;
 	if( mId > 0 && !getIsEdited()){

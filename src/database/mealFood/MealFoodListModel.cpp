@@ -30,16 +30,12 @@
 MealFoodListModel::MealFoodListModel(QObject *parent)
 	: ProxyAbstractListModel<MealFoodModel*>{parent}
 {
-	connect(this, &MealFoodListModel::caloriesChanged, this, &MealFoodListModel::totalCaloriesChanged);
-	connect(this, &MealFoodListModel::currentDateChanged, this, &MealFoodListModel::targetCaloriesChanged);
-	connect(this, &MealFoodListModel::caloriesChanged, this, &MealFoodListModel::computeTotalRatios);
-	connect(this, &MealFoodListModel::currentDateChanged, this, &MealFoodListModel::computeTotalRatios);
+	connect(this, &MealFoodListModel::caloriesChanged, this, &MealFoodListModel::updateTotals);
+	connect(this, &MealFoodListModel::currentDateChanged, this, &MealFoodListModel::updateTotals);
 	connect(this, &MealFoodListModel::countChanged, this, &MealFoodListModel::computeTotalRatios);
 
-	connect(this, &MealFoodListModel::caloriesChanged, [](){
-		qDebug() << "toto";
-	});
 	connect(this, &MealFoodListModel::updateTotals, &MealFoodListModel::totalCaloriesChanged);
+	connect(this, &MealFoodListModel::updateTotals, &MealFoodListModel::targetCaloriesChanged);
 	connect(this, &MealFoodListModel::updateTotals, &MealFoodListModel::computeTotalRatios);
 }
 
@@ -73,7 +69,7 @@ void MealFoodListModel::update(){
 	beginResetModel();
 	mList.clear();
 	for(auto e : mList) {
-		connect(e, &MealFoodModel::removed, this, &MealFoodListModel::handleRemoved);
+		connect(e, &FoodModel::removed, this, &MealFoodListModel::handleRemoved);
 		connect(e, &MealFoodModel::caloriesChanged, this, &MealFoodListModel::caloriesChanged);
 	}
 	endResetModel();
@@ -91,8 +87,9 @@ void MealFoodListModel::updateFromDate(DateModel * data){
 	setCurrentDate(data->getDate());
 }
 
-void MealFoodListModel::addFoodModel(FoodModel *model, MealGroupModel *groupModel ) {
+void MealFoodListModel::addFoodModel(FoodModel *model, MealGroupModel *groupModel , DateModel *dateModel) {
 	auto newModel = new MealFoodModel(model, groupModel, this);
+	newModel->setConsumptionDateTime(QDateTime(dateModel->getDate(), newModel->getConsumptionDateTime().time()));
 	connect(newModel, &MealFoodModel::removed, this, &MealFoodListModel::handleRemoved);
 	connect(newModel, &MealFoodModel::caloriesChanged, this, &MealFoodListModel::caloriesChanged);
 	newModel->save();
@@ -108,7 +105,7 @@ double MealFoodListModel::calories(qint64 mealGroupId){
 	return cal;
 }
 
-void MealFoodListModel::handleRemoved(MealFoodModel * model){
+void MealFoodListModel::handleRemoved(FoodModel * model){
 	auto it = std::find(mList.begin(), mList.end(), model);
 	if( it != mList.end()){
 		int row = it - mList.begin();
@@ -116,6 +113,7 @@ void MealFoodListModel::handleRemoved(MealFoodModel * model){
 		mList.erase(it);
 		endRemoveRows();
 	}
+	emit caloriesChanged();
 }
 
 void MealFoodListModel::setCurrentDate(QDate data){

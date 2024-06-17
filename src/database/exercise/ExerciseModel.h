@@ -50,7 +50,7 @@ public:
 	void setMet(double data);
 	Q_INVOKABLE void computeMet();
 
-	Q_INVOKABLE virtual bool save();
+	Q_INVOKABLE virtual int save();
 	Q_INVOKABLE virtual void remove();
 
 	static QList<ExerciseModel*> buildAll(QObject * parent);

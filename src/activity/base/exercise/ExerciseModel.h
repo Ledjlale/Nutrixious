@@ -113,7 +113,7 @@ public:
 
 // ----------------------
 
-	Q_INVOKABLE virtual bool save();
+	Q_INVOKABLE virtual int save();
 	virtual void saveValues(DatabaseQuery &query);
 	static QList<ExerciseModel*> loadAll(QObject * parent);
 	static ExerciseModel *load(QSqlQuery &query, QObject * parent);

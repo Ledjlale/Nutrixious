@@ -29,14 +29,58 @@ TrainingProxyModel::TrainingProxyModel(QObject *parent)
 	sort(0);
 }
 
+
+DateModel* TrainingProxyModel::getTrainingDay()const{
+	return mTrainingDay;
+}
+
+void TrainingProxyModel::setTrainingDay(DateModel * data){
+	if(mTrainingDay != data){
+		if(mTrainingDay){
+			disconnect(mTrainingDay);
+		}
+		mTrainingDay = data;
+		if(mTrainingDay){
+			connect(mTrainingDay, &DateModel::dateChanged, this, &TrainingProxyModel::invalidateFilter);
+			connect(mTrainingDay, &DateModel::dateChanged, this, &TrainingProxyModel::updateCalories);
+		}
+		emit trainingDayChanged();
+	}
+}
+
+DEFINE_SIMPLE_GETSET(TrainingProxyModel,double,calories,Calories)
+
 void TrainingProxyModel::update(){
 	sourceModel()->deleteLater();
 	setSourceModel(new TrainingListModel());
 	sort(0);
 }
 
+void TrainingProxyModel::updateCalories(){
+	auto model = dynamic_cast<TrainingListModel*>(sourceModel());
+	double calories = 0.0;
+	if( mTrainingDay) {
+		for(int i = 0 ; i < model->getCount() ; ++i){
+			auto item = model->getAt(i);
+			if( item->getStartDateTime().date() == mTrainingDay->getDate()){
+				calories += item->getCalories();
+			}
+		}
+	}
+	setCalories(calories);
+}
+
 bool TrainingProxyModel::lessThan (const QModelIndex &left, const QModelIndex &right) const{
 	auto l = sourceModel()->data(left);
 	auto r = sourceModel()->data(right);
 	return l.value<TrainingModel*>()->getStartDateTime() > r.value<TrainingModel*>()->getStartDateTime();
+}
+
+bool TrainingProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const{
+	if(!mTrainingDay) return true;
+	else{
+		QModelIndex index0 = sourceModel()->index(sourceRow, 0, sourceParent);
+		auto model = sourceModel()->data(index0).value<TrainingModel*>();
+		return model->getStartDateTime().date() == mTrainingDay->getDate();
+	}
 }

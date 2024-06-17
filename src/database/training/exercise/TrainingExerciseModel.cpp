@@ -58,6 +58,9 @@ TrainingExerciseModel * TrainingExerciseModel::clone(QObject *parent)const{
 	return model;
 }
 
+
+DEFINE_SIMPLE_GETSET(TrainingExerciseModel,double,calories,Calories)
+
 void TrainingExerciseModel::addSerie(){
 	auto model = new TrainingSerieModel(nullptr);
 	insertSerie(model);
@@ -65,7 +68,9 @@ void TrainingExerciseModel::addSerie(){
 
 ExerciseSerieModel* TrainingExerciseModel::insertSerie(ExerciseSerieModel *model){
 	connect(dynamic_cast<TrainingSerieModel*>(model), &TrainingSerieModel::requestComputeCalories, this, &TrainingExerciseModel::computeCalories);
+	connect(dynamic_cast<TrainingSerieModel*>(model), &TrainingSerieModel::caloriesChanged, this, &TrainingExerciseModel::updateCalories);
 	ExerciseUnitModel::insertSerie(model);
+	updateCalories();
 	return model;
 }
 
@@ -78,6 +83,14 @@ QList<TrainingSerieModel*> TrainingExerciseModel::getSeries() const {
 
 void TrainingExerciseModel::computeCalories(TrainingSerieModel * serie){
 	emit requestComputeCalories(this, serie);
+}
+
+void TrainingExerciseModel::updateCalories() {
+	double calories = 0.0;
+	for(auto s : mSeries) {
+		calories += dynamic_cast<TrainingSerieModel*>(s)->getCalories();
+	}
+	setCalories(calories);
 }
 
 TrainingExerciseModel *TrainingExerciseModel::build(QSqlQuery &query, QObject * parent) {

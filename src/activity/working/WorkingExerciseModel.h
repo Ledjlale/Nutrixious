@@ -75,7 +75,7 @@ public:
 	virtual void endOfCurrentRest();
 	virtual QVariant getCurrentWork();
 
-	Q_INVOKABLE virtual bool save();
+	Q_INVOKABLE virtual int save();
 
 	virtual void fillRandomValues(); // Debug
 

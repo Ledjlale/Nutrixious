@@ -77,6 +77,7 @@ void MealFoodModel::undo(){
 	DEFINE_UNDO_DATETIME(ConsumptionDateTime)
 	FoodModel::undo();
 }
+
 //-------------------------------------------------------------------------------------------------------------------
 
 void MealFoodModel::addQueryValues(DatabaseQuery &query){

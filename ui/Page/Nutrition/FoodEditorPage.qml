@@ -34,10 +34,20 @@ Item {
 	property string offCode
 	property var foodModel: FoodModel{
 			id: foodModel
+
 		}
 	signal saved()
 	onOffCodeChanged: if(offCode) mainItem.foodModel.loadFromOpenFoodFacts(offCode)
-
+	Connections{
+		target: mainItem.foodModel
+		function onSaved(){
+			mainItem.saved()
+		}
+		function onLoadingFailed(){
+			errorText.text = "Cannot save. If the food have an Open Food Facts image URL, the image could'nt be download. Restart saving."
+			errorPopup.open()
+		}
+	}
 	ColumnLayout{
 		anchors.fill: parent
 		spacing: 0
@@ -46,7 +56,7 @@ Item {
 			id: fieldsList
 			Layout.fillWidth: true
 			Layout.fillHeight: true
-			model:[{title:'Brand', data: 'brand', editUnits: false, inputMethodHints: Qt.ImhNone, isComputable:false}
+			model:[{title:'Brand', data: 'brand', editUnits: false, inputMethodHints: Qt.ImhNone, isComputable:false, showImage:true}
 					, {title:'Description', data: 'description', editUnits: false, inputMethodHints: Qt.ImhNone, isComputable:false}
 					, {title:'Serving Size', data: 'servingSize', editUnits: 'servingUnitId', inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:false}
 					//, {title:'Serving per container', data: 'servingsPerContainer', editUnits: false}
@@ -72,15 +82,35 @@ Item {
 			]
 			delegate: RowLayout{
 				width: fieldsList.width
+				spacing: 1
 				Text{
+					id: titleField
 					Layout.fillWidth: true
 					color: Material.foreground
 					text: modelData.title
 				}
+				Image{
+					id: imageField
+					Layout.fillWidth: true
+					Layout.preferredHeight: dataField.height
+					visible: !!modelData.showImage && url != ''
+					fillMode: Image.PreserveAspectFit
+					property string url: mainItem.foodModel.imageUrl != ''  ? mainItem.foodModel.imageUrl : mainItem.foodModel.openFoodFactsImageUrl
+					source: !visible ? '' : url
+
+					MouseArea{
+						anchors.fill: parent
+						onClicked:{
+							imagePreview.source = imageField.source
+							previewPopup.open()
+						}
+					}
+				}
+
 				Text{
 					visible: !!modelData.isComputable
 					color: Material.accent
-					text: visible ? mainItem.foodModel.computeNutriment(dataField.text, mainItem.foodModel.servingSize, mainItem.foodModel.servingUnitId, mainItem.foodModel.baseSize, mainItem.foodModel.baseUnitId) : ''
+					text: visible ? mainItem.foodModel.computeNutriment(dataField.text, mainItem.foodModel.servingSize, mainItem.foodModel.servingUnitId, mainItem.foodModel.baseSize, mainItem.foodModel.baseUnitId).toFixed(2) : ''
 				}
 				TextField{
 					id: dataField
@@ -107,5 +137,42 @@ Item {
 			}
 		}
 
+	}
+	Popup{
+		id: previewPopup
+		height: mainWindow.height
+		width: mainWindow.width
+		y: -mapToGlobal(0,0).y
+		Rectangle{
+			color: Material.background
+			anchors.fill: parent
+			Image{
+				id: imagePreview
+				anchors.fill: parent
+				fillMode: Image.PreserveAspectFit
+			}
+			MouseArea{
+				anchors.fill: parent
+				onClicked: previewPopup.close()
+			}
+		}
+	}
+	Popup{
+		id: errorPopup
+		height: mainWindow.height
+		width: mainWindow.width
+		y: -mapToGlobal(0,0).y
+		Rectangle{
+			color: Material.background
+			anchors.fill: parent
+			Text{
+				id: errorText
+				anchors.centerIn: parent
+			}
+			MouseArea{
+				anchors.fill: parent
+				onClicked: errorPopup.close()
+			}
+		}
 	}
 }

@@ -217,7 +217,7 @@ void ExerciseSerieModel::makeNew(){
 }
 //-------------------------------------------------------------------------------------------------------------------
 
-bool ExerciseSerieModel::save(){
+int ExerciseSerieModel::save(){
 	DatabaseQuery query;
 
 	if( mSerieId > 0 && !getIsEdited()){

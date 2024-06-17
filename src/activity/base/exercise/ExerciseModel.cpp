@@ -386,7 +386,7 @@ void ExerciseModel::setCanHaveSeries(bool data) {
 
 //-------------------------------------------------------------------------------------------------------------------
 
-bool ExerciseModel::save(){
+int ExerciseModel::save(){
 	if( mInvalidName || mInvalidDescription) return false;
 
 	DatabaseQuery query;

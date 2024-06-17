@@ -41,18 +41,22 @@ Item{
 		anchors.fill: parent
 		ColumnLayout{
 			Text{
+				Layout.fillWidth: true
 				color: Material.foreground
+				elide: Text.ElideRight
 				text: mainItem.foodModel.description
 			}
 			Text{
+				Layout.fillWidth: true
 				color: Material.foreground
+				elide: Text.ElideRight
 				text: mainItem.foodModel.brand
 			}
 		}
 		Text{
 			color: Material.foreground
 			horizontalAlignment: Text.AlignRight
-			text: mainItem.foodModel.calories
+			text: Number.parseFloat(mainItem.foodModel.calories.toFixed(4))
 		}
 	}
 }

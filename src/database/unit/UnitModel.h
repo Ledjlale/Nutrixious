@@ -45,7 +45,7 @@ public:
 	UnitModel(QString name, double gram, double meter, double second, double kcal, double ml, QObject *parent);
 
 
-	Q_INVOKABLE virtual bool save();
+	Q_INVOKABLE virtual int save();
 
 	static QList<UnitModel*> buildAll(QObject * parent);
 	static UnitModel *build(QSqlQuery &query, QObject * parent);

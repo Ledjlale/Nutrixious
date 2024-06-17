@@ -57,6 +57,7 @@
 	ui/View/ExerciseSerieModelView.qml
 	ui/View/ExerciseSerieModelListView.qml
 	ui/View/TrainModelView.qml
+	ui/View/FoodSearchView.qml
 	ui/View/ScannerView.qml
 	ui/View/MealView.qml
 	ui/View/MealGroupView.qml

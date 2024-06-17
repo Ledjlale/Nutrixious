@@ -50,7 +50,7 @@ public:
 	QString getDefaultTimeStr()const;
 	void setDefaultTimeStr(QString data);
 
-	Q_INVOKABLE virtual bool save();
+	Q_INVOKABLE virtual int save();
 	Q_INVOKABLE virtual void remove();
 
 	static QList<MealGroupModel*> buildAll(QObject * parent);

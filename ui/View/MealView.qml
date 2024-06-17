@@ -24,15 +24,17 @@ import QtQuick.Layouts
 
 import App 1.0
 
-Item{
+SwipeView{
 	id: mainItem
 	property var mealFoodModel
-
+	signal clicked()
 	implicitHeight: descLine.implicitHeight
 	//implicitHeight: mainLayout.implicitHeight // don't work
+
 	ColumnLayout{
 		id: mainLayout
-		anchors.fill: parent
+		height: mainItem.height
+		width: mainItem.width
 		spacing: 0
 		implicitHeight: descLine.implicitHeight
 		Rectangle{
@@ -58,6 +60,29 @@ Item{
 					horizontalAlignment: Text.AlignRight
 					color: Material.foreground
 					text: Number.parseFloat(mealFoodModel.computeNutriment(mealFoodModel.calories,mealFoodModel.servingSize,mealFoodModel.servingUnitId,mealFoodModel.baseSize,mealFoodModel.baseUnitId).toFixed(2))
+				}
+			}
+			MouseArea{
+				anchors.fill: parent
+				onClicked: {
+					mainItem.clicked()
+				}
+			}
+		}
+	}
+	Rectangle{
+		width: mainItem.width
+		height: mainItem.height
+		color: Material.accent
+		RowLayout{
+		anchors.fill: parent
+			Item{
+				Layout.fillWidth: true
+			}
+			Button{
+				text: 'D'
+				onClicked: {
+					mealFoodModel.remove()
 				}
 			}
 		}

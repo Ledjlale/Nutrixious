@@ -20,12 +20,15 @@
 
 #include "FoodModel.h"
 
+#include <QFile>
+#include <QDir>
+#include <QJsonDocument>
 #include <QQmlApplicationEngine>
-#include <QSqlQuery>
-#include <QSqlRecord>
 #include <QSqlError>
 #include <QSqlField>
-#include <QJsonDocument>
+#include <QSqlQuery>
+#include <QSqlRecord>
+#include "qstandardpaths.h"
 #include "src/database/DatabaseQuery.h"
 #include "src/database/unit/UnitListModel.h"
 
@@ -53,6 +56,7 @@ FoodModel::FoodModel(const FoodModel * model, QObject *parent)
 	mTablePrefix = "food";
 	mId = initiBackup(model, &model->mId, model->mId, &mId).toLongLong();
 	mOpenFoodFactsCode = initiBackup(model, &model->mOpenFoodFactsCode, model->mOpenFoodFactsCode, &mOpenFoodFactsCode).toString();
+	mOpenFoodFactsImageUrl = initiBackup(model, &model->mOpenFoodFactsImageUrl, model->mOpenFoodFactsImageUrl, &mOpenFoodFactsImageUrl).toString();
 	mBrand = initiBackup(model, &model->mBrand, model->mBrand, &mBrand).toString();
 	mImageUrl = initiBackup(model, &model->mImageUrl, model->mImageUrl, &mImageUrl).toString();
 	mDescription = initiBackup(model, &model->mDescription, model->mDescription, &mDescription).toString();
@@ -120,6 +124,7 @@ void FoodModel::initRandomValues(){
 
 DEFINE_GETSET(FoodModel,qint64,id,Id)
 DEFINE_GETSET(FoodModel,QString,openFoodFactsCode,OpenFoodFactsCode)
+DEFINE_GETSET(FoodModel,QString,openFoodFactsImageUrl,OpenFoodFactsImageUrl)
 DEFINE_GETSET(FoodModel,QString,brand,Brand)
 DEFINE_GETSET(FoodModel,QString,imageUrl,ImageUrl)
 DEFINE_GETSET(FoodModel,QString,description,Description)
@@ -212,6 +217,7 @@ void FoodModel::updateIsSaved(){
 void FoodModel::undo(){
 	DEFINE_UNDO_LONGLONG(Id)
 	DEFINE_UNDO_STRING(OpenFoodFactsCode)
+	DEFINE_UNDO_STRING(OpenFoodFactsImageUrl)
 	DEFINE_UNDO_STRING(Brand)
 	DEFINE_UNDO_STRING(ImageUrl)
 	DEFINE_UNDO_STRING(Description)
@@ -239,10 +245,38 @@ void FoodModel::undo(){
 	DEFINE_UNDO_DOUBLE(VitaminC)
 	QmlModel::undo();
 }
+/*
+QString FoodModel::saveImage(){
+	QFile image(mImageUrl);
+	if(!image.exists() && !mOpenFoodFactsImageUrl.isEmpty()){
 
-bool FoodModel::save(){
+	}
+}*/
+
+QString FoodModel::generateImagepath(bool unique){
+	QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)+"/foods/img/";
+	QDir dir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+	if(!dir.exists("foods/img/"))
+		dir.mkpath("foods/img/");
+	QFile image(path+mOpenFoodFactsCode+".png");
+	if(unique){
+		int count = 0;
+		while(image.exists())
+			image.setFileName(path+mOpenFoodFactsCode+"_"+QString::number(++count)+".png");
+	}
+	return image.fileName();
+}
+
+int FoodModel::save(){
+	if( mImageUrl.isEmpty() && !mOpenFoodFactsImageUrl.isEmpty()){
+		connect(this, &FoodModel::imageDownloaded, this, &FoodModel::save, Qt::SingleShotConnection);
+		saveImage();
+		return 2;
+	}
 	if(mId>0 && !mIsEdited) return true;// Avoid update for nothing
+
 	qDebug() << "Saving " << mTablePrefix  << mBrand << mDescription;
+	//saveImage();
 	DatabaseQuery query;
 
 	query.begin(mId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, mTablePrefix+"s" );
@@ -250,6 +284,7 @@ bool FoodModel::save(){
 	query.add("brand", mBrand);
 	query.add("description", mDescription);
 	query.add("open_food_facts_code", mOpenFoodFactsCode);
+	query.add("open_food_facts_image_url", mOpenFoodFactsImageUrl);
 	query.add("image_url", mImageUrl);
 	query.add("serving_size", mServingSize);
 	query.add("servings_per_container", mServingsPerContainer);
@@ -294,6 +329,7 @@ bool FoodModel::save(){
 		}
 	}
 	clearBackupValues();
+	emit saved();
 	return true;
 }
 
@@ -303,7 +339,7 @@ void FoodModel::saveValues(DatabaseQuery &query){
 void FoodModel::remove(){
 	if(mId > 0){
 		DatabaseQuery query;
-		query.begin(DatabaseQuery::Delete, "mTablePrefix+s");
+		query.begin(DatabaseQuery::Delete, mTablePrefix+"s");
 		query.addConditionnal(mTablePrefix+"_id",mId);
 		if(!query.exec()){
 			if(!query.exec()) qCritical() << "Cannot delete " << mTablePrefix << " : "  << query.mQuery.lastError().text();
@@ -324,6 +360,7 @@ void FoodModel::load(QSqlQuery &query){
 		QString fieldName = query.record().field(i).name();
 		if(fieldName == mTablePrefix+"_id") setId(query.value(i).toInt());
 		else if(fieldName == "open_food_facts_code") setOpenFoodFactsCode(query.value(i).toString());
+		else if(fieldName == "open_food_facts_image_url") setOpenFoodFactsImageUrl(query.value(i).toString());
 		else if(fieldName == "image_url") setImageUrl(query.value(i).toString());
 		else if(fieldName == "brand") setBrand(query.value(i).toString());
 		else if(fieldName == "description") setDescription(query.value(i).toString());
@@ -366,14 +403,15 @@ QList<FoodModel*> FoodModel::buildAll(QObject * parent){
 	return models;
 }
 
+QStringList getAllFields(){
+	return {"product","nutriments","brands","brand_owner","ecoscore_data","generic_name","image_url","serving_quantity","serving_quantity_unit"};
+}
 
+static QNetworkAccessManager *gManager = new QNetworkAccessManager(nullptr);
 
-void FoodModel::loadFromOpenFoodFacts(const QString& code) {
-	setOpenFoodFactsCode(code);
-	qWarning() << code;
-	static QNetworkAccessManager *manager = new QNetworkAccessManager(nullptr);
+void FoodModel::saveImage() {
 	QNetworkRequest request;
-	QUrl url("https://ssl-api.openfoodfacts.org/api/v0/product/" +code+".json");
+	QUrl url(mOpenFoodFactsImageUrl);
 	if(!QSslSocket::supportsSsl()) {
 		qWarning() << "Https has been requested but SSL is not supported. Fallback to http. Install manually OpenSSL libraries in your PATH.";
 		url.setScheme("http");
@@ -381,12 +419,66 @@ void FoodModel::loadFromOpenFoodFacts(const QString& code) {
 	request.setUrl(url);
 	//request.setRawHeader("User-Agent", "MyOwnBrowser 1.0");
 
-	QNetworkReply *reply = manager->get(request);
+	QNetworkReply *reply = gManager->get(request);
+	connect(reply, &QNetworkReply::finished, this, &FoodModel::openFoodFactsImageDownloaded);
+	connect(reply, &QNetworkReply::errorOccurred, this, &FoodModel::handleError);
+	connect(reply, &QNetworkReply::sslErrors, this, &FoodModel::handleSslErrors);
+
+	qDebug() << "Device supports OpenSSL: " << QSslSocket::supportsSsl();
+}
+
+
+void FoodModel::findOpenFoodFacts(const QString& name){
+	QNetworkRequest request;
+	QUrl url("https://world.openfoodfacts.org/cgi/search.pl?search_terms="+name+"&search_simple=1&action=process&json=1&fields=code,brands,generic_name,image_url");
+	if(!QSslSocket::supportsSsl()) {
+		qWarning() << "Https has been requested but SSL is not supported. Fallback to http. Install manually OpenSSL libraries in your PATH.";
+		url.setScheme("http");
+	}
+	request.setUrl(url);
+	//request.setRawHeader("User-Agent", "MyOwnBrowser 1.0");
+
+	QNetworkReply *reply = gManager->get(request);
+	connect(reply, &QNetworkReply::finished, this, &FoodModel::openFoodFactsFoundResults);
+	connect(reply, &QNetworkReply::errorOccurred, this, &FoodModel::handleError);
+	connect(reply, &QNetworkReply::sslErrors, this, &FoodModel::handleSslErrors);
+
+	qDebug() << "Device supports OpenSSL: " << QSslSocket::supportsSsl();
+
+}
+
+void FoodModel::loadFromOpenFoodFacts(const QString& code) {
+	setOpenFoodFactsCode(code);
+	qWarning() << code;
+	QNetworkRequest request;
+	QUrl url("https://ssl-api.openfoodfacts.org/api/v0/product/" +code+".json&fields="+getAllFields().join(','));
+	if(!QSslSocket::supportsSsl()) {
+		qWarning() << "Https has been requested but SSL is not supported. Fallback to http. Install manually OpenSSL libraries in your PATH.";
+		url.setScheme("http");
+	}
+	request.setUrl(url);
+	//request.setRawHeader("User-Agent", "MyOwnBrowser 1.0");
+
+	QNetworkReply *reply = gManager->get(request);
 	connect(reply, &QNetworkReply::finished, this, &FoodModel::openFoodFactsDownloaded);
 	connect(reply, &QNetworkReply::errorOccurred, this, &FoodModel::handleError);
 	connect(reply, &QNetworkReply::sslErrors, this, &FoodModel::handleSslErrors);
 
 	qDebug() << "Device supports OpenSSL: " << QSslSocket::supportsSsl();
+}
+
+void FoodModel::openFoodFactsImageDownloaded(){
+	auto reply = dynamic_cast<QNetworkReply*>(sender());
+	auto data = reply->readAll();
+	if(!data.isEmpty()){
+		auto path = generateImagepath(false);
+		QFile file(path);
+		if (!file.open(QIODevice::WriteOnly))
+			return;
+		file.write(data);
+		setImageUrl("file://"+path);
+		emit imageDownloaded();
+	}
 }
 
 // https://wiki.openfoodfacts.org/API_Fields
@@ -414,7 +506,7 @@ void FoodModel::openFoodFactsDownloaded(){
 			}
 		}
 		if( product.contains("generic_name") && getDescription().isEmpty()) setDescription(product["generic_name"].toString());
-		if( product.contains("image_url")) setImageUrl(product["image_url"].toString());
+		if( product.contains("image_url")) setOpenFoodFactsImageUrl(product["image_url"].toString());
 		if( product.contains("serving_quantity")) setServingSize(product["serving_quantity"].toDouble());
 		else setServingSize(1);
 		//if( product.contains("")) setServingsPerContainer(product[""].toDouble());
@@ -472,11 +564,50 @@ void FoodModel::handleSslErrors (const QList<QSslError> &sslErrors) {
 	Q_UNUSED(sslErrors);
 #endif
 }
+
+void FoodModel::openFoodFactsFoundResults(){
+	auto reply = dynamic_cast<QNetworkReply*>(sender());
+	auto document = QJsonDocument::fromJson(reply->readAll());
+	if(document.isNull()) return;
+	QVariantList results;
+	auto rootArray = document.toVariant().toMap();
+	if(rootArray.contains("products")){
+		auto products = rootArray["products"].toList();
+		for(auto productIt : products){
+			auto product = productIt.toMap();
+			QVariantMap result;
+			if(product.contains("code")){
+				result["code"] = product["code"];
+			}
+
+			if(product.contains("brands")){
+				result["brands"] = product["brands"];
+			}
+			if(product.contains("generic_name")){
+				result["generic_name"] = product["generic_name"];
+			}
+			if(product.contains("image_url")){
+				result["image_url"] = product["image_url"];
+			}
+			results << result;
+		}
+	}
+	emit openFoodFactsFound(results);
+}
+
 void FoodModel::handleError (QNetworkReply::NetworkError code) {
 	auto reply = dynamic_cast<QNetworkReply*>(sender());
 	if (code != QNetworkReply::OperationCanceledError)
 		qWarning() << QStringLiteral("Download of %1 failed: %2")
 					  .arg(mOpenFoodFactsCode).arg(reply->errorString());
 
-	//emit loadingFailed();
+	emit loadingFailed();
 }
+/*
+ * https://openfoodfacts.github.io/openfoodfacts-server/api/ref-v2/#get-/api/v2/search
+ * https://wiki.openfoodfacts.org/Open_Food_Facts_Search_API_Version_2
+ * https://world.openfoodfacts.org/api/v2/search
+ * https://world.openfoodfacts.org/api/v2/search?brands=orange&fields=code,brands,brand_owner,generic_name
+ * https://world.openfoodfacts.org/cgi/search.pl?search_terms=banania&search_simple=1&action=process&json=1&fields=code,brands,generic_name,image_url
+ *
+ * */

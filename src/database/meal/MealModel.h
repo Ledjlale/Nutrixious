@@ -50,7 +50,7 @@ public:
 
 	Q_INVOKABLE void addFood(FoodModel * data);
 
-	Q_INVOKABLE virtual bool save();
+	Q_INVOKABLE virtual int save();
 	Q_INVOKABLE virtual void remove();
 	virtual void updateIsSaved();
 

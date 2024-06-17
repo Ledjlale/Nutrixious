@@ -75,22 +75,53 @@ Item {
 			}
 		}
 	}
-
-	VideoOutput {
-		id: videoOutput
+	ColumnLayout {
 		anchors.fill: parent
-		visible: barcodeLoader.status === Loader.Ready
-
-		ScannerOverlay {
-			id: scannerOverlay
-			anchors.fill: parent
-			captureRect: barcodeLoader.captureRect
+		Text{
+			Layout.fillWidth: true
+			horizontalAlignment: Text.AlignHCenter
+			color: Material.foreground
+			maximumLineCount: 3
+			wrapMode: Text.WordWrap
+			text: qsTr('The scan is not very stable. You still give manually the code')
 		}
-		RoundButton{
-			anchors.bottom: parent.bottom
-			anchors.horizontalCenter: parent.horizontalCenter
-			onClicked: {
-				barcodeLoader.active = false
+		RowLayout{
+			TextField{
+				id: manualCode
+				Layout.fillWidth: true
+				Layout.leftMargin: 5
+				keepEditView: true
+				placeholderText: 'Enter the code'
+				onEditingFinished: text = newValue
+			}
+
+			RoundButton{
+				visible: manualCode.text != ''
+				text: 'Use'
+				onClicked: {
+					mainItem.scannedCode = manualCode.text
+					console.log('Entered: ' +manualCode.text)
+					barcodeLoader.active = false
+				}
+			}
+		}
+		VideoOutput {
+			id: videoOutput
+			Layout.fillWidth: true
+			Layout.fillHeight: true
+			visible: barcodeLoader.status === Loader.Ready
+
+			ScannerOverlay {
+				id: scannerOverlay
+				anchors.fill: parent
+				captureRect: barcodeLoader.captureRect
+			}
+			RoundButton{
+				anchors.bottom: parent.bottom
+				anchors.horizontalCenter: parent.horizontalCenter
+				onClicked: {
+					barcodeLoader.active = false
+				}
 			}
 		}
 	}

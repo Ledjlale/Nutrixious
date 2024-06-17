@@ -41,6 +41,16 @@
 		}\
 	}
 
+#define DEFINE_SIMPLE_GETSET(Class, type, x, X) type Class::get##X() const{ \
+	return m##X;\
+	}\
+	void Class::set##X(type data){\
+		if(m##X!= data){\
+			m##X = data;\
+			emit x##Changed();\
+		}\
+	}
+
 #define DEFINE_UNDO_LONGLONG(X) if(mBackupValues.contains(&m##X)) set##X( mBackupValues[&m##X].toLongLong());
 #define DEFINE_UNDO_STRING(X) if(mBackupValues.contains(&m##X)) set##X( mBackupValues[&m##X].toString());
 #define DEFINE_UNDO_DOUBLE(X) if(mBackupValues.contains(&m##X)) set##X( mBackupValues[&m##X].toDouble());

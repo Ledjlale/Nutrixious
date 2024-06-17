@@ -22,16 +22,26 @@
 #define TRAINING_PROXY_MODEL_H
 
 #include "src/tool/proxyModel/SortFilterProxyModel.hpp"
+#include "src/tool/QmlModel.h"
+#include "src/tool/date/DateModel.h"
+#include <QDate>
 
 class TrainingProxyModel: public SortFilterProxyModel {
 Q_OBJECT
+	DECLARE_GETSET(DateModel*,trainingDay,TrainingDay)
+	DECLARE_GETSET(double,calories,Calories)
+
 public:
 	TrainingProxyModel(QObject * parent = nullptr);
 
 	Q_INVOKABLE void update();
+	void updateCalories();
 
 	bool lessThan (const QModelIndex &left, const QModelIndex &right) const override;
+	virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override;
 
+	DateModel* mTrainingDay = nullptr;
+	double mCalories = 0.0;
 };
 
 #endif

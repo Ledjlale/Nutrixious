@@ -34,6 +34,9 @@
 class TrainingModel : public ProgramModel{
 Q_OBJECT
 	Q_PROPERTY(QString startDateTimeStr READ getStartDateTimeStr WRITE setStartDateTimeStr NOTIFY startDateTimeChanged)
+	Q_PROPERTY(QString startTimeStr READ getStartTimeStr WRITE setStartTimeStr NOTIFY startDateTimeChanged)
+
+	DECLARE_GETSET(double,calories,Calories)
 
 public:
 	TrainingModel();	// QML
@@ -47,6 +50,8 @@ public:
 	void setStartDateTime(const QDateTime& data);
 	QString getStartDateTimeStr()const;
 	void setStartDateTimeStr(QString data);
+	QString getStartTimeStr()const;
+	void setStartTimeStr(QString data);
 
 
 	virtual ProgramExerciseModel* insertNewExercise(ProgramExerciseModel *model); // clone and make new
@@ -66,6 +71,7 @@ public:
 	virtual void addQueryValues(DatabaseQuery &query);
 
 	void computeCalorie(TrainingExerciseModel * exercise, TrainingSerieModel * serie);
+	void updateCalories();
 
 	virtual void load(QSqlQuery &query);
 	static TrainingModel *build(QSqlQuery &query, QObject * parent);
@@ -78,6 +84,7 @@ signals:
 
 protected:
 	QDateTime mStartDateTime;
+	double mCalories = 0.0;
 };
 
 #endif
