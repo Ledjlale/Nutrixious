@@ -27,7 +27,7 @@
 	ui/Page/FoodPage.qml
 	ui/Page/ActivitiesPage.qml
 	ui/Page/StatisticsPage.qml
-	ui/Page/ScannerPage.qml
+	ui/Page/AboutPage.qml
 	ui/Page/PersonalDataPage.qml
 
 	ui/Item/Button.qml

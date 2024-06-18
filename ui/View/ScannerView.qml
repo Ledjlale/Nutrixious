@@ -83,7 +83,7 @@ Item {
 			color: Material.foreground
 			maximumLineCount: 3
 			wrapMode: Text.WordWrap
-			text: qsTr('The scan is not very stable. You still give manually the code')
+			text: qsTr("Fill the field with the code if the scan doesn't work as expected")
 		}
 		RowLayout{
 			TextField{

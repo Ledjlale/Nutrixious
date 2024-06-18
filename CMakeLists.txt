@@ -26,6 +26,36 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INSTALL_PREFIX "OUTPUT")
 
 find_package(Qt6 6.5 REQUIRED COMPONENTS Quick QuickControls2 Sql Charts Multimedia Svg)
+find_package(Git)
+
+
+if (GIT_EXECUTABLE)
+  execute_process(
+	COMMAND ${GIT_EXECUTABLE} describe --always
+	OUTPUT_VARIABLE APP_VERSION
+	OUTPUT_STRIP_TRAILING_WHITESPACE
+	WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+  )
+else()
+  set(APP_VERSION "0.0.0")
+endif ()
+
+set(APP_MAJOR_VERSION)
+set(APP_MINOR_VERSION)
+set(APP_MICRO_VERSION)
+set(APP_BRANCH_VERSION)
+#string(REGEX REPLACE "([0-9.]+)-?.*" "\\1" APP_VERSION "${APP_VERSION}")
+#string(REPLACE "." ";" SPLITTED_VERSION "${APP_VERSION}")
+#list(LENGTH SPLITTED_VERSION SPLITTED_APP_VERSION_LENGTH)
+#list(GET SPLITTED_VERSION 0 APP_MAJOR_VERSION)
+#list(GET SPLITTED_VERSION 1 APP_MINOR_VERSION)
+#if (SPLITTED_VERSION_LENGTH GREATER 2)
+#  list(GET SPLITTED_VERSION 2 APP_MICRO_VERSION)
+#endif ()
+
+#set(APP_VERSION ${APP_MAJOR_VERSION}.${APP_MINOR_VERSION}.${APP_MICRO_VERSION})
+message(STATUS "Versions : ${APP_VERSION}")
+
 
 add_subdirectory(external/SCodes/src)
 
@@ -35,6 +65,10 @@ set(_APP_QML_FILES)
 set(_APP_SOURCE_FILES)
 set(_APP_QML_SINGLETONS)
 set(_APP_RC_FILES)
+
+add_definitions("-DAPPLICATION_URL=\"https://github.com/Ledjlale/Nutrixious\"")
+add_definitions("-DAPPLICATION_VERSION_NAME=\"V1 Proof of Concept\"")
+add_definitions("-DAPPLICATION_VERSION=\"${APP_VERSION}\"")
 
 add_subdirectory(ui)
 add_subdirectory(src)

@@ -19,7 +19,7 @@ Focus on Android only! (and Linux for debugging).
 - A Bar code can be scanned to check on Open Food Facts (OFF) database.
 - Food can be build and save from OFF database.
 - Diary edition on meals.
-- Display of Main statistics on trainings, meal calories and weight
+- Display of Main statistics on trainings, meal calories and weight.
 
 ### Main Goals:
 
@@ -49,6 +49,7 @@ Focus on Android only! (and Linux for debugging).
 - Layouts
 - Colors
 - Icons
+- Minor or experimentals improvements.
 
 #### Secondary features:
 - Translations (Weblate)
@@ -59,6 +60,8 @@ Focus on Android only! (and Linux for debugging).
 - Experimentations on Muscle type targets, their modelisation and training program build
 - Statistics
 - Maintenance for Linux, Windows, MacOs, IOS
+- Data calibration from personal data instead of general rules.
+- Experimentals improvements.
 
 ### Dependencies
 Qt6 : https://www.qt.io/

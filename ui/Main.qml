@@ -104,16 +104,16 @@ ApplicationWindow {
 			FoodsPage{}
 		}
 		Component{
-			id: scannerPage
-			ScannerPage{}
-		}
-		Component{
 			id: diaryPage
 			DiaryPage{}
 		}
 		Component{
 			id: mealGroupsPage
 			MealGroupsPage{}
+		}
+		Component{
+			id: aboutPage
+			AboutPage{}
 		}
 	}
 	Item{
@@ -201,7 +201,6 @@ ApplicationWindow {
 					model:[{title: 'Foods', component:foodsPage}
 						,{title: 'Diary', component:diaryPage}
 						,{title: 'Meal Groups', component:mealGroupsPage}
-						,{title: 'Scanner', component:scannerPage}
 						,{title: 'Training', component:trainingPage}
 						, {title: 'Exercises', component:exercisesPage}
 						,{title: 'Programs', component:programsPage}
@@ -209,6 +208,7 @@ ApplicationWindow {
 						,{title: 'Statistics', component:statisticsPage}
 						,{title: 'Personal Data', component:personalDataPage}
 						,{title: 'Settings', component:settingsPage}
+						,{title: 'About', component:aboutPage}
 						]
 					delegate: MouseArea{
 						Layout.fillWidth: true

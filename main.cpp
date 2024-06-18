@@ -175,6 +175,9 @@ int main(int argc, char *argv[]) {
 	selector->setExtraSelectors(selectors);
 	gEngine->addImportPath(":/");
 	gEngine->addImageProvider(ImageProvider::ProviderId, new ImageProvider());
+	gEngine->rootContext()->setContextProperty("applicationUrl", APPLICATION_URL);
+	gEngine->rootContext()->setContextProperty("applicationVersionName", APPLICATION_VERSION_NAME);
+	gEngine->rootContext()->setContextProperty("applicationVersion", APPLICATION_VERSION);
 	const QUrl url(u"qrc:/App/ui/Main.qml"_qs);
     QObject::connect(
 		gEngine,
