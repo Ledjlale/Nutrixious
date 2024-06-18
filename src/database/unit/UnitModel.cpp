@@ -60,7 +60,6 @@ DEFINE_GETSET(UnitModel,double,milliliterValue,MilliliterValue)
 
 int UnitModel::save(){
 	if(mUnitId>0 && !mIsEdited) return true;// Avoid update for nothing
-	qDebug() << "Saving unit " << mName;
 	DatabaseQuery query;
 
 	query.begin(mUnitId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, "units" );

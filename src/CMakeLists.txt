@@ -87,6 +87,7 @@
 
 	src/stat/StatsModel.cpp
 
+	src/tool/logger/Logger.cpp
 	src/tool/proxyModel/SortFilterProxyModel.cpp
 	src/tool/proxyModel/ProxyAbstractObject.hpp
 	src/tool/proxyModel/ObjectListModel.cpp

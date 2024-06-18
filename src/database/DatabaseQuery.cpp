@@ -82,7 +82,6 @@ bool DatabaseQuery::exec(){
 	}
 	for(auto &i : mValues) mQuery.addBindValue(i);
 	if(mType == Update || mType == Delete) mQuery.addBindValue(mCondValue);
-	qDebug() <<getLastExecutedQuery(mQuery);
 	bool i =  mQuery.exec();
 	return i;
 }

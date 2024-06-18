@@ -42,6 +42,7 @@ Focus on Android only! (and Linux for debugging).
 - Daily calories/nutriments monitoring (feature done)
 - Display graphs and statistics on performances (feature done)
 - Graphics and statistics on body status (calories, weight) (feature done)
+- Debug logs (feature done)
 - F-Droid
 
 #### Design:

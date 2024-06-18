@@ -81,7 +81,6 @@ void MealFoodModel::undo(){
 //-------------------------------------------------------------------------------------------------------------------
 
 void MealFoodModel::addQueryValues(DatabaseQuery &query){
-	qDebug() << mConsumptionDateTime.toMSecsSinceEpoch();
 	query.add("consumption_date_time", mConsumptionDateTime.toMSecsSinceEpoch());
 	query.add("meal_group_id", mMealGroupId);
 }
@@ -115,13 +114,6 @@ QList<MealFoodModel*> MealFoodModel::buildAll(QDate date, QObject * parent){
 		query.prepare("SELECT * FROM meal_foods WHERE consumption_date_time ORDER BY consumption_date_time ASC, meal_food_id ASC");
 	}
 
-	QString str = query.executedQuery();
-	const QVariantList list = query.boundValues();
-	for (qsizetype i = list.size() - 1 ; i >= 0; --i){
-		str.replace(":"+QString::number(i),list.at(i).toString());
-	}
-
-	qDebug() << str;
 	if(!query.exec( )) qCritical() << "Cannot select meal foods  : "  << query.lastError().text();
 	while (query.next()) {
 		auto model = build(query, parent);

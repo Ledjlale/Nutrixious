@@ -22,6 +22,9 @@
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
 #include <QQmlFileSelector>
+#include <QApplication>
+#include <QStyle>
+#include "src/tool/logger/Logger.h"
 
 #include <SBarcodeScanner.h>
 
@@ -153,14 +156,16 @@ void registerTypes(){
 
 	qmlRegisterType<StatsModel>("App", 1, 0, "StatsModel");
 	qmlRegisterType<DateModel>("App", 1, 0, "DateModel");
+
+	qmlRegisterSingletonType<Logger>("App", 1,0, "Logger",
+								[](QQmlEngine *engine, QJSEngine *) -> QObject * { return new Logger(engine); });
 }
 
 static QQmlApplicationEngine * gEngine = nullptr;
 
-#include <QApplication>
-#include <QStyle>
 
 int main(int argc, char *argv[]) {
+	Logger::init();
 	QApplication app(argc, argv);	// Not QGuiApplication because of Qt Chart that will crash on QApplication::style()
 	// Ignore vertical sync. This way, we avoid blinking on resizes(and other refresh steps like layouts etc.).
 	auto ignoreVSync = QSurfaceFormat::defaultFormat();
