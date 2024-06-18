@@ -43,13 +43,13 @@ Focus on Android only! (and Linux for debugging).
 - Display graphs and statistics on performances (feature done)
 - Graphics and statistics on body status (calories, weight) (feature done)
 - Debug logs (feature done)
-- F-Droid
 
 #### Design:
 - Rework on usability
 - Layouts
 - Colors
 - Icons
+- F-Droid
 - Minor or experimentals improvements.
 
 #### Secondary features:
