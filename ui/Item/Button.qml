@@ -121,7 +121,7 @@ Control.Button {
 			underline: mainItem.underline
 		}
 	}
-
+/*
 	component ButtonImage: EffectImage {
 		// Layout.fillWidth: true
 		// Layout.fillHeight: true
@@ -129,7 +129,7 @@ Control.Button {
 		imageWidth: mainItem.icon.width
 		imageHeight: mainItem.icon.height
 		colorizationColor: mainItem.contentImageColor
-	}
+	}*/
 
 	contentItem: /*StackLayout {
 		id: stacklayout

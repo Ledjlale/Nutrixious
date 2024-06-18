@@ -33,6 +33,7 @@ Loader {
 	property int imageWidth: width
 	property int imageHeight: height
 	property bool useColor: colorizationColor != undefined
+	signal clicked()
 	sourceComponent: Item {
 		Image {
 			id: image
@@ -43,8 +44,6 @@ Loader {
 			sourceSize.height: height
 			width: mainItem.imageWidth
 			height: mainItem.imageHeight
-			Layout.preferredWidth: mainItem.imageWidth
-			Layout.preferredHeight: mainItem.imageHeight
 			anchors.centerIn: parent
 		}
 		MultiEffect {
@@ -65,6 +64,10 @@ Loader {
 			maskSource: effect
 			colorizationColor: effectEnabled && mainItem.colorizationColor ? mainItem.colorizationColor : 'black'
 			colorization: effectEnabled ? 1.0: 0.0
+		}
+		MouseArea{
+			anchors.fill: parent
+			onClicked: mainItem.clicked()
 		}
 	}
 }

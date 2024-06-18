@@ -31,10 +31,10 @@
 	ui/Page/PersonalDataPage.qml
 
 	ui/Item/Button.qml
+	ui/Item/ButtonImage.qml
 	ui/Item/DatePicker.qml
 	ui/Item/DayNavigationBar.qml
 	ui/Item/Dialog.qml
-	ui/Item/EffectImage.qml
 	ui/Item/MouseArea.qml
 	ui/Item/ScannerOverlay.qml
 	ui/Item/TextField.qml
