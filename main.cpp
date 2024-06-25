@@ -76,6 +76,7 @@
 
 #include "src/tool/QmlData.h"
 #include "src/tool/QmlModel.h"
+#include "src/tool/Utils.h"
 
 #include "src/tool/proxyModel/ObjectListModel.h"
 #include "src/tool/proxyModel/ObjectProxyModel.h"
@@ -159,6 +160,8 @@ void registerTypes(){
 
 	qmlRegisterSingletonType<Logger>("App", 1,0, "Logger",
 								[](QQmlEngine *engine, QJSEngine *) -> QObject * { return new Logger(engine); });
+	qmlRegisterSingletonType<Logger>("App", 1,0, "UtilsCpp",
+								[](QQmlEngine *engine, QJSEngine *) -> QObject * { return new Utils(engine); });
 }
 
 static QQmlApplicationEngine * gEngine = nullptr;

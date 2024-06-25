@@ -67,7 +67,7 @@ Item {
 					text: exerciseModel.name
 					focus: true
 					readOnly: exerciseModel.isSaved
-					keepEditView: exerciseModel.name == ''
+					edit: exerciseModel.name == ''
 					//Material.background: exerciseModel.invalidName ? Material.color(Material.Pink, Material.Shade50) : mainItem.Material.background
 					//Material.foreground: exerciseModel.invalidName ? Material.accent : mainItem.Material.foreground
 					onEditingFinished: {
@@ -80,7 +80,7 @@ Item {
 					Layout.fillWidth: true
 					Layout.leftMargin: 10
 					placeholderText: 'Description'
-					keepEditView:  mainItem.programExerciseModel.description == ''
+					edit:  mainItem.programExerciseModel.description == ''
 					text: mainItem.programExerciseModel.description
 					onEditingFinished: {
 						mainItem.programExerciseModel.description = newValue

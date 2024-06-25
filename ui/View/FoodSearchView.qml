@@ -46,7 +46,7 @@ Item {
 			TextField{
 				id: searchField
 				Layout.fillWidth: true
-				keepEditView: true
+				edit: true
 				placeholderText: 'Search for a saved meal'
 				onEditingFinished: text = newValue
 			}

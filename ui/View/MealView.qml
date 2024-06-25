@@ -24,67 +24,34 @@ import QtQuick.Layouts
 
 import App 1.0
 
-SwipeView{
+SwipeLayout{
 	id: mainItem
-	property var mealFoodModel
-	signal clicked()
-	implicitHeight: descLine.implicitHeight
-	//implicitHeight: mainLayout.implicitHeight // don't work
 
-	ColumnLayout{
-		id: mainLayout
-		height: mainItem.height
-		width: mainItem.width
-		spacing: 0
-		implicitHeight: descLine.implicitHeight
-		Rectangle{
-			Layout.fillWidth: true
-			Layout.fillHeight: true
+	contentItem: Rectangle{
+			width: mainItem.width
+			implicitHeight: descLine.implicitHeight + 5
 			color: Material.background
 			RowLayout{
 				id: descLine
 				anchors.fill: parent
 				ColumnLayout{
+					spacing: 0
 					Text{
 						Layout.fillWidth: true
 						color: Material.foreground
-						text: mealFoodModel.description
+						text: mainItem.modelData.description
 					}
 					Text{
 						Layout.fillWidth: true
 						color: Material.foreground
-						text: mealFoodModel.brand
+						text: mainItem.modelData.brand
 					}
 				}
 				Text{
 					horizontalAlignment: Text.AlignRight
 					color: Material.foreground
-					text: Number.parseFloat(mealFoodModel.computeNutriment(mealFoodModel.calories,mealFoodModel.servingSize,mealFoodModel.servingUnitId,mealFoodModel.baseSize,mealFoodModel.baseUnitId).toFixed(2))
+					text: Number.parseFloat(mainItem.modelData.computeNutriment(mainItem.modelData.calories,mainItem.modelData.servingSize,mainItem.modelData.servingUnitId,mainItem.modelData.baseSize,mainItem.modelData.baseUnitId).toFixed(2))
 				}
 			}
-			MouseArea{
-				anchors.fill: parent
-				onClicked: {
-					mainItem.clicked()
-				}
-			}
-		}
-	}
-	Rectangle{
-		width: mainItem.width
-		height: mainItem.height
-		color: Material.accent
-		RowLayout{
-		anchors.fill: parent
-			Item{
-				Layout.fillWidth: true
-			}
-			Button{
-				text: 'D'
-				onClicked: {
-					mealFoodModel.remove()
-				}
-			}
-		}
 	}
 }

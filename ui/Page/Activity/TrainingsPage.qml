@@ -73,7 +73,7 @@ Item {
 							TrainModelView{
 								id: trainView
 								width: parent.width
-								trainModel: $modelData
+								modelData: $modelData
 								onClicked: trainDetailsList.program = $modelData
 							}
 						}

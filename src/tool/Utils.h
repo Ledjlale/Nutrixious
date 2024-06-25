@@ -22,9 +22,14 @@
 #define UTILS_H
 
 #include <QList>
+#include <QMouseEvent>
+#include <QObject>
+#include <QQuickItem>
 
-class Utils{
+class Utils : public QObject{
+	Q_OBJECT
 public:
+	Utils(QObject * parent = nullptr);
 	template<class Model>
 	static Model* add(Model * model, QList<Model*> &list){
 		int order = model->getOrder();
@@ -79,6 +84,26 @@ public:
 		}
 		return false;
 	}
+	//Q_INVOKABLE static void sendMouseEvent(QObject* object, QMouseEvent * mouseEvent);
+	Q_INVOKABLE static void sendMousePressEvent(QQuickItem* object, int button, int buttons, int modifiers, double x, double y);
+	Q_INVOKABLE static void sendMouseReleaseEvent(QQuickItem* object, int button, int buttons, int modifiers, double x, double y);
+	Q_INVOKABLE static void sendMouseClickEvent(QQuickItem* object, int button, int buttons, int modifiers, double x, double y);
+
+/*
+Q_INVOKABLE static void sendMousePressEvent(QQuickItem* sender, QQuickItem* object, int button, int buttons, int modifiers, double x, double y);
+	Q_INVOKABLE static void sendMouseReleaseEvent(QQuickItem* sender, QQuickItem* object, int button, int buttons, int modifiers, double x, double y);
+	Q_INVOKABLE static void sendMouseClickEvent(QQuickItem* sender, QQuickItem* object, int button, int buttons, int modifiers, double x, double y);
+*/
+
+
+	/*
+	Q_INVOKABLE static void sendMouseEvent(QObject* object, QPointF pos, int button){
+		Qt::MouseButton type = Qt::MouseButton(button);
+		auto down = new QMouseEvent(QMouseEvent::Type::MouseButtonPress, pos, type, type, Qt::KeyboardModifier::NoModifier);
+		auto up = new QMouseEvent(QMouseEvent::Type::MouseButtonRelease, pos, type, type, Qt::KeyboardModifier::NoModifier);
+		QCoreApplication::postEvent(object, down);
+		QCoreApplication::postEvent(object, up);
+	}*/
 };
 
 #endif

@@ -26,5 +26,6 @@ QtObject {
 	property color groupCallButtonColor: "#EEF7F8"
 
 	property string deleteButton: 'image://internal/delete.svg'
+	property string editButton: 'image://internal/edit.svg'
 
 }

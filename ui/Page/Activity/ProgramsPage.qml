@@ -80,6 +80,7 @@ Item {
 			Layout.fillHeight: true
 
 			initialItem: ColumnLayout{
+				width: stackView.width
 				ListView{
 					id: programList
 					Layout.fillWidth: true
@@ -90,17 +91,7 @@ Item {
 							onCountChanged:  programDetailsList.program = count > 0 ? programs.getAt(0) : null
 							Component.onCompleted: programDetailsList.program = count > 0 ? programs.getAt(0) : null
 						}
-					delegate:/*
-						SwipeView{
-							width: programList.width
-							height: currentItem.height
-							currentIndex: 1
-							Rectangle{
-								width: programList.width
-								height: 40
-								color: 'green'
-							}
-							Item{
+					delegate:Item{
 								width: programList.width
 								height: modelView.implicitHeight + 5
 								Rectangle{
@@ -110,92 +101,13 @@ Item {
 								TrainModelView{
 									id: modelView
 									anchors.fill: parent
-									anchors.topMargin: 5
-									trainModel: $modelData
+									implicitWidth: programList.width
+									modelData: $modelData
 									onClicked: {
 										programDetailsList.program = $modelData
 										exercises.update()
 									}
 								}
-							}
-							Rectangle{
-								width: programList.width
-								height: 40
-								color: 'red'
-							}*/
-
-
-					Item{
-								width: programList.width
-								height: modelView.implicitHeight + 5
-								Rectangle{
-									anchors.fill: parent
-									color: Material.background
-								}
-								TrainModelView{
-									id: modelView
-									anchors.fill: parent
-									anchors.topMargin: 5
-									trainModel: $modelData
-									onClicked: {
-										programDetailsList.program = $modelData
-										exercises.update()
-									}
-								}
-
-						/*
-						RowLayout{
-							id: rowLayout
-							spacing: 0
-							anchors.fill: parent
-							Item{
-								//implicitHeight: descLayout.implicitHeight
-								Layout.fillWidth: true
-								height: descLayout.implicitHeight
-								RowLayout{
-									id: descLayout
-									anchors.fill: parent
-									Item{
-										Layout.fillWidth: true
-									}
-									Text{
-										color: Material.foreground
-										text: $modelData.name
-									}
-									Text{
-										color: Material.foreground
-										text: ' | '
-									}
-									Text{
-										color: Material.foreground
-										text: $modelData.description
-									}
-									Item{
-										Layout.fillWidth: true
-									}
-								}
-								MouseArea{
-									anchors.fill: parent
-									onClicked: {
-										programDetailsList.program = $modelData
-										exercises.update()
-										//programExercises.setExercises($modelData.exercises)
-									}
-								}
-							}
-							Button{
-								Layout.fillWidth: true
-								Layout.preferredWidth: implicitWidth
-								Layout.minimumWidth: implicitWidth
-								Layout.maximumWidth: implicitWidth
-								text: 'D'
-								onClicked: {
-									console.log('Try to Delete : ' +$modelData)
-									$modelData.remove()
-								}
-							}
-						}*/
-
 					}
 				}
 				Rectangle{
@@ -272,83 +184,7 @@ Item {
 						}
 					}
 				}
-
-
-
-/*
-				DelegateModel {
-					id: visualModel
-					model: ExerciseProxyModel{
-						id: programExercises
-						property var program
-					}
-					delegate: DragDropTool{
-								id: dragRopTool
-								width: programDetailsList.width
-								height: exerciseModelView.implicitHeight
-								ExerciseModelView{
-									id: exerciseModelView
-									width: programDetailsList.width
-									exerciseModel: $modelData
-								}
-								onHeldChanged: {
-									if(!held){
-										programExercises.program.updateProgramOrder()
-										programDetailsList.interactive = true
-									}else{
-										programDetailsList.interactive = false
-									}
-								}
-							}
-				}
-*/
-/*
-				DelegateModel {
-					id: visualModel
-					model: ExerciseProxyModel{
-						id: programExercises
-						property var program
-					}
-					delegate: RowLayout{
-								width: programDetailsList.width
-								height: exerciseModelView.implicitHeight
-								ExerciseModelView{
-									id: exerciseModelView
-									Layout.fillWidth: true
-									exerciseModel: $modelData
-									DropArea {
-										anchors.fill: parent
-										onDropped: dragRopTool.DelegateModel.move(drag.source.DelegateModel.itemsIndex,
-													dragRopTool.DelegateModel.itemsIndex, 1);
-										onEntered: (drag) => {
-											console.log("move")
-											visualModel.items.move(
-													drag.source.DelegateModel.itemsIndex,
-													dragRopTool.DelegateModel.itemsIndex)
-										}
-									}
-								}
-								DragDropTool{
-									id: dragRopTool
-									Layout.preferredWidth: 40
-									Layout.fillHeight: true
-									target: parent
-								}
-
-							}
-				}
-
-				ListView{
-					id: programDetailsList
-					Layout.fillWidth: true
-					Layout.fillHeight: true
-
-					visible: count > 0
-					clip: true
-					model:visualModel
-				}
-				*/
-			}
 		}
+	}
 	}
 }

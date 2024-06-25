@@ -90,7 +90,7 @@ Item {
 				id: manualCode
 				Layout.fillWidth: true
 				Layout.leftMargin: 5
-				keepEditView: true
+				edit: true
 				placeholderText: 'Enter the code'
 				onEditingFinished: text = newValue
 			}

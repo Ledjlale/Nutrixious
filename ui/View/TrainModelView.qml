@@ -24,24 +24,14 @@ import QtQuick.Layouts
 
 import App 1.0
 
-SwipeView{
+SwipeLayout{
 	id: mainItem
-	property var trainModel
-	property bool isDeletable: true
-	property bool displayDate: true
+	property bool displayDate: false
 
-	implicitHeight: mainLine.implicitHeight
-
-	function saveValues(){
-		//if(nameTextField.isEdited) distanceModel.name = nameTextField.newValue
-	}
-	signal clicked()
-	currentIndex: 0
-	interactive: mainItem.isDeletable
-	RowLayout{
+	contentItem: RowLayout{
 		id: mainLine
 		width: mainItem.width
-		height: mainItem.height
+		//height: mainItem.height
 		//anchors.fill: parent
 		spacing: 0
 		TextField{
@@ -52,65 +42,47 @@ SwipeView{
 			Layout.minimumWidth : descriptionTextField.flipped ? 0 : bestWidth
 			font.bold: true
 			font.pixelSize: 16
-			text: trainModel ? trainModel.name : ''
-			keepEditView: text == ''
+			text: mainItem.modelData ? mainItem.modelData.name : ''
+			edit: text == '' || mainItem.edit
 			placeholderText: 'Name'
-			onEditingFinished: trainModel.name = newValue
-			onClicked: mainItem.clicked()
+			onEditingFinished: mainItem.modelData.name = newValue
+			//onClicked: mainItem.clicked()
 		}
 		TextField{
 			id: descriptionTextField
 			Layout.fillWidth: true
-			text: trainModel ?  trainModel.description : ''
-			keepEditView: text == ''
+			text: mainItem.modelData ?  mainItem.modelData.description : ''
+			edit: text == '' || mainItem.edit
 			placeholderText: 'Description'
 			onEditingFinished: {
-				trainModel.description = newValue
+				mainItem.modelData.description = newValue
 
 				}
 
-			onClicked: mainItem.clicked()
+			//onClicked: mainItem.clicked()
 		}
 		TextField{
 			id: startTimeTextField
 			Layout.fillWidth: true
-			visible: trainModel.startDateTimeStr !== undefined
+			visible: mainItem.modelData.startDateTimeStr !== undefined
 			inputMethodHints: Qt.ImhDigitsOnly
-			text: visible && trainModel ? mainItem.displayDate ? trainModel.startDateTimeStr : trainModel.startTimeStr : ''
+			text: visible && mainItem.modelData ? mainItem.displayDate ? mainItem.modelData.startDateTimeStr : mainItem.modelData.startTimeStr : ''
 			readOnly: !mainItem.displayDate
-			onEditingFinished: mainItem.displayDate ? trainModel.startDateTimeStr = newValue : trainModel.startTimeStr = newValue
+			onEditingFinished: mainItem.displayDate ? mainItem.modelData.startDateTimeStr = newValue : mainItem.modelData.startTimeStr = newValue
 		}
 		Text{
 			visible: text != ''
 			color: Material.foreground
-			text: trainModel.calories ? Number.parseFloat(trainModel.calories.toFixed(2)) : ''
+			text: mainItem.modelData.calories ? Number.parseFloat(mainItem.modelData.calories.toFixed(2)) : ''
 		}
 
 		Button{
-			visible: trainModel.isEdited
+			visible: mainItem.modelData.isEdited
 			text: 'Save'
 			onClicked: {
-				trainModel.save()
+				mainItem.modelData.save()
 			}
 		}
 
-	}
-	Rectangle{
-		width: mainItem.width
-		height: mainItem.height
-		color: Material.accent
-		RowLayout{
-		anchors.fill: parent
-			Item{
-				Layout.fillWidth: true
-			}
-			Button{
-				visible: mainItem.isDeletable
-				text: 'D'
-				onClicked: {
-					trainModel.remove()
-				}
-			}
-		}
 	}
 }

@@ -96,6 +96,7 @@
 	src/tool/date/DateModel.cpp
 	src/tool/QmlData.cpp
 	src/tool/QmlModel.cpp
+	src/tool/Utils.cpp
 
 )
 

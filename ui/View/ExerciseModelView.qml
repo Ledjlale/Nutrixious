@@ -154,7 +154,7 @@ Item{
 								placeholderText: 'Description'
 								text: mainItem.resultModel ? mainItem.resultModel.description
 														: mainItem.exerciseModel ? mainItem.exerciseModel.description : ''
-								keepEditView: !readOnly && text == ''
+								edit: !readOnly && text == ''
 								onEditingFinished: {
 									if( mainItem.resultModel)
 										resultModel.description = newValue

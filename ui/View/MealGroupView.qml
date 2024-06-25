@@ -35,13 +35,13 @@ Item{
 			Layout.fillWidth: true
 			text: mainItem.mealGroup.name
 			placeholderText: 'Group Name'
-			keepEditView: text == ''
+			edit: text == ''
 			onEditingFinished: mainItem.mealGroup.name = newValue
 		}
 		TextField{
 			inputMethodHints: Qt.ImhTime
 			text: mainItem.mealGroup.defaultTimeStr
-			keepEditView: text == ''
+			edit: text == ''
 			placeholderText: 'hh:mm:ss'
 			onEditingFinished: mainItem.mealGroup.defaultTimeStr = newValue
 		}

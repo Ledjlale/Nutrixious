@@ -206,7 +206,8 @@ Item {
 											Layout.fillWidth: true
 											Layout.preferredHeight: implicitHeight
 											visible: $modelData.mealGroupId == sectionItem.model.mealGroupId
-											mealFoodModel: $modelData
+											modelData: $modelData
+											isEditable: false
 											onClicked: {
 												gShowBackButton = true
 												gShowSaveButton = true
@@ -267,7 +268,7 @@ Item {
 								TrainModelView{
 									id: trainView
 									width: parent.width
-									trainModel: $modelData
+									modelData: $modelData
 									displayDate: false
 									//onClicked: trainDetailsList.program = $modelData
 								}

@@ -155,7 +155,7 @@ Item {
 					id: searchView
 					objectName: 'Search'
 					onSearchedCodeChanged:{
-						if(scannedCode != '') {
+						if(searchedCode != '') {
 							stackView.replace(foodEditorComponent, {offCode: searchedCode})
 						}
 					}

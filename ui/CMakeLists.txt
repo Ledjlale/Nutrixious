@@ -35,8 +35,9 @@
 	ui/Item/DatePicker.qml
 	ui/Item/DayNavigationBar.qml
 	ui/Item/Dialog.qml
-	ui/Item/MouseArea.qml
+#	ui/Item/MouseArea.qml
 	ui/Item/ScannerOverlay.qml
+	ui/Item/TextInput.qml
 	ui/Item/TextField.qml
 	ui/Item/SerieFieldPicker.qml
 	ui/Item/Stopwatch.qml
@@ -49,6 +50,8 @@
 	ui/Item/TimePicker/TimePicker.qml
 	ui/Item/TimePicker/TimePickerDialog.qml
 	ui/Item/TimePicker/TimePickerLabel.qml
+
+	ui/Layout/SwipeLayout.qml
 
 	ui/View/ExerciseModelView.qml
 	ui/View/FoodModelView.qml

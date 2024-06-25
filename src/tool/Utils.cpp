@@ -18,53 +18,62 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DatabaseQuery.h"
-#include <QSqlDatabase>
-#include <QSqlQuery>
-#include <QSqlRecord>
-#include <QSqlError>
+#include "Utils.h"
+#include <QCoreApplication>
 
-DatabaseQuery::DatabaseQuery(QObject *parent)
-	: QObject{parent}
-{}
-
-void DatabaseQuery::begin(Type type, QString table){
-	mType = type;
-	mTable = table;
-	mKeys.clear();
-	mValues.clear();
-}
-void DatabaseQuery::add(QString key, QVariant value){
-	switch(mType){
-		case Insert :
-			mKeys << key;
-			mValues << value;
-		break;
-		case Update :
-			mKeys << key + "=?";
-			mValues << value;
-		break;
-	}
+Utils::Utils(QObject * parent) : QObject(parent){
 }
 
-void DatabaseQuery::addConditionnal(QString key, QVariant value ) {
-	mCondKey = key;
-	mCondValue = value;
+void Utils::sendMousePressEvent(QQuickItem* object, int button, int buttons, int modifiers, double x, double y) {
+	QPointF pos(x,y);
+	//pos = sender->mapToItem(object, pos);
+	QMouseEvent * event = new QMouseEvent(QEvent::MouseButtonPress, pos, object->mapToGlobal(pos), (Qt::MouseButton)button, (Qt::MouseButtons)buttons, (Qt::KeyboardModifiers)modifiers);
+	QCoreApplication::postEvent(object, event);
 }
 
-bool DatabaseQuery::exec(){
-	switch(mType){
-		case Insert :{
-			QStringList placeHolders;
-			for(auto &i : mKeys) placeHolders << "?";
-			mQuery.prepare("INSERT INTO "+mTable+"("+mKeys.join(',')+") VALUES("+placeHolders.join(',')+")" +(mCondKey.isEmpty() ? "" :" RETURNING "+mCondKey));
-					}
-		break;
-		case Update :
-			mQuery.prepare("UPDATE " +mTable +" SET " +mKeys.join(',') +" WHERE "+mCondKey+"=?");
-		break;
-	}
-	for(auto &i : mValues) mQuery.addBindValue(i);
-	if(mType == Update) mQuery.addBindValue(mCondValue);
-	return mQuery.exec();
+void Utils::sendMouseReleaseEvent(QQuickItem* object, int button, int buttons, int modifiers, double x, double y) {
+	QPointF pos(x,y);
+	QMouseEvent * event = new QMouseEvent(QEvent::MouseButtonRelease, pos, object->mapToGlobal(pos), (Qt::MouseButton)button, (Qt::MouseButtons)buttons, (Qt::KeyboardModifiers)modifiers);
+	QCoreApplication::postEvent(object, event);
 }
+void Utils::sendMouseClickEvent( QQuickItem* object, int button, int buttons, int modifiers, double x, double y) {
+	sendMousePressEvent(object, button, buttons, modifiers, x, y);
+	sendMouseReleaseEvent(object, button, buttons, modifiers, x, y);
+}
+
+/*
+void Utils::sendMousePressEvent(QQuickItem* sender, QQuickItem* object, int button, int buttons, int modifiers, double x, double y) {
+	QPointF pos(x,y);
+	pos = sender->mapToItem(object, pos);
+	QMouseEvent * event = new QMouseEvent(QEvent::MouseButtonPress, pos, object->mapToGlobal(pos), (Qt::MouseButton)button, (Qt::MouseButtons)buttons, (Qt::KeyboardModifiers)modifiers);
+	QCoreApplication::postEvent(object, event);
+}
+
+void Utils::sendMouseReleaseEvent(QQuickItem* sender, QQuickItem* object, int button, int buttons, int modifiers, double x, double y) {
+	QPointF pos(x,y);
+	pos = sender->mapToItem(object, pos);
+	QMouseEvent * event = new QMouseEvent(QEvent::MouseButtonRelease, pos, object->mapToGlobal(pos), (Qt::MouseButton)button, (Qt::MouseButtons)buttons, (Qt::KeyboardModifiers)modifiers);
+	QCoreApplication::postEvent(object, event);
+}
+void Utils::sendMouseClickEvent(QQuickItem* sender, QQuickItem* object, int button, int buttons, int modifiers, double x, double y) {
+	sendMousePressEvent(sender, object, button, buttons, modifiers, x, y);
+	sendMouseReleaseEvent(sender, object, button, buttons, modifiers, x, y);
+}
+*/
+
+/*
+void Utils::sendMouseEvent(QObject* object, QMouseEvent * mouseEvent) {
+	QMouseEvent * event = new QMouseEvent(mouseEvent->type(), mouseEvent->position(), mouseEvent->globalPosition(), mouseEvent->button(), mouseEvent->buttons(), mouseEvent->modifiers());
+
+	//QMouseEvent(QEvent::Type type, const QPointF &localPos, const QPointF &globalPos, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, const QPointingDevice *device = QPointingDevice::primaryPointingDevice())
+	QCoreApplication::postEvent(object, event);
+}
+*/
+	/*
+	Q_INVOKABLE static void sendMouseEvent(QObject* object, QPointF pos, int button){
+		Qt::MouseButton type = Qt::MouseButton(button);
+		auto down = new QMouseEvent(QMouseEvent::Type::MouseButtonPress, pos, type, type, Qt::KeyboardModifier::NoModifier);
+		auto up = new QMouseEvent(QMouseEvent::Type::MouseButtonRelease, pos, type, type, Qt::KeyboardModifier::NoModifier);
+		QCoreApplication::postEvent(object, down);
+		QCoreApplication::postEvent(object, up);
+	}*/

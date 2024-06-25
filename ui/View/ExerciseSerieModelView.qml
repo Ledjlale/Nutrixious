@@ -71,7 +71,7 @@ SwipeView{
 				height: implicitHeight
 				Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 				visible: !!exerciseUnitModel && (mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useRepetitions : exerciseUnitModel.useRepetitions)
-				keepEditView: mainItem.keepEditView
+				edit: mainItem.keepEditView
 				showTitle: mainItem.showTitle
 				readOnly: mainItem.isReadOnly
 				inputMethodHints: Qt.ImhDigitsOnly
@@ -98,7 +98,7 @@ SwipeView{
 				height: implicitHeight
 				Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 				visible: !!exerciseUnitModel && (mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useWeight :exerciseUnitModel.useWeight)
-				keepEditView: mainItem.keepEditView
+				edit: mainItem.keepEditView
 				showTitle: mainItem.showTitle
 				readOnly: mainItem.isReadOnly
 				inputMethodHints: Qt.ImhDigitsOnly
@@ -126,7 +126,7 @@ SwipeView{
 				height: implicitHeight
 				Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 				visible: !!exerciseUnitModel && (mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useDistance :exerciseUnitModel.useDistance)
-				keepEditView: mainItem.keepEditView
+				edit: mainItem.keepEditView
 				showTitle: mainItem.showTitle
 				readOnly: mainItem.isReadOnly
 				inputMethodHints: Qt.ImhDigitsOnly
@@ -155,7 +155,7 @@ SwipeView{
 				height: implicitHeight
 				Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 				visible: !!exerciseUnitModel && (mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useSpeed :exerciseUnitModel.useSpeed)
-				keepEditView: mainItem.keepEditView
+				edit: mainItem.keepEditView
 				showTitle: mainItem.showTitle
 				readOnly: mainItem.isReadOnly
 				inputMethodHints: Qt.ImhDigitsOnly
@@ -185,7 +185,7 @@ SwipeView{
 				Layout.fillHeight: true
 				Layout.rightMargin: 10
 				visible: !mainItem.trainingResultEdition
-				keepEditView: mainItem.keepEditView
+				edit: mainItem.keepEditView
 				showTitle: mainItem.showTitle || mainItem.trainingResultEdition
 				readOnly:  mainItem.isReadOnly || mainItem.isLive
 				inputMethodHints: Qt.ImhTime

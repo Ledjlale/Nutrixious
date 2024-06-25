@@ -30,7 +30,7 @@ Flipable {
 	property alias text: originalTextField.text
 	property var newValue
 	property bool showTitle: true
-	property bool keepEditView: false
+	property bool edit: false
 	property var inputMethodHints: Qt.ImhNone
 	property string placeholderText
 	property bool readOnly: false
@@ -40,58 +40,22 @@ Flipable {
 	property int horizontalAlignment: Text.AlignLeft
 
 	signal editingFinished()
-	signal clicked()
-
-	function forceActiveFocus(){
-		if(mainItem.flipped) frontItem.forceActiveFocus()
-		else backItem.forceActiveFocus()
-	}
 
 	implicitWidth: flipped ? backItem.implicitWidth : frontItem.implicitWidth
 	implicitHeight: flipped ? backItem.implicitHeight: frontItem.implicitHeight
 
-	property bool flipped: keepEditView
+	property bool flipped: edit
+	property bool showEdit : flipped
+	Binding on showEdit{
+			when: mainItem.edit
+			value: true
+	}
 
-	front: MouseArea{
+	front: Item{
 				id: frontItem
 				anchors.fill: parent
 				implicitHeight: readOnlyLayout.implicitHeight
 				implicitWidth: readOnlyLayout.implicitWidth
-				onClicked: mainItem.clicked()
-				onPressAndHold: if(!mainItem.readOnly) {
-						mainItem.flipped = true
-						backItem.forceActiveFocus()
-					}
-				onDoubleClicked: if(!mainItem.readOnly) {
-						mainItem.flipped = true
-						backItem.forceActiveFocus()
-					}
-/*
-				// Qt hack to detect clicked events while still propagate press events (to scroll views)
-				property bool isPressed : false
-				signal doubleClickDetected()
-				Timer{
-					id: clickDelay
-					interval: 500
-					onTriggered: frontItem.isPressed = false;
-				}
-				onDoubleClickDetected: function(){
-					if(!mainItem.readOnly) {
-						mainItem.flipped = true
-						backItem.forceActiveFocus()
-					}
-				}
-				onPressed: function(mouse){
-					if(frontItem.isPressed){
-						doubleClickDetected()
-						frontItem.isPressed = false;
-					}else{
-						frontItem.isPressed = true;
-						clickDelay.restart()
-					}
-					mouse.accepted=false
-
-				}*/
 				ColumnLayout{
 					id: readOnlyLayout
 					anchors.fill: parent
@@ -119,9 +83,6 @@ Flipable {
 				id: backItem
 				anchors.fill: parent
 				spacing: 5
-				function forceActiveFocus(){
-					textField.forceActiveFocus()
-				}
 				property var qtBug: title.implicitHeight + textField.implicitHeight + 5
 				onQtBugChanged: implicitHeight = qtBug
 				implicitHeight: qtBug
@@ -136,7 +97,7 @@ Flipable {
 					text: mainItem.title
 				}
 
-				Control.TextArea{
+				Control.TextField{
 					id: textField
 					Layout.preferredHeight: implicitHeight
 					Layout.fillWidth: true
@@ -152,16 +113,11 @@ Flipable {
 					color: mainItem.textColor
 					text: mainItem.text === undefined ? '' : mainItem.text
 					placeholderText: mainItem.placeholderText
+
 					onEditingFinished:  {
 						mainItem.newValue = textField.text
 						mainItem.editingFinished()
-						if(!mainItem.keepEditView)
-							mainItem.flipped = false
 					}
-					onActiveFocusChanged: {
-						if(!activeFocus && !mainItem.keepEditView) mainItem.flipped = false
-					}
-					onPressed: mainItem.clicked()
 					Keys.onReturnPressed: function (event){
 						console.log('Return:'+event.modifiers)
 						if (event.modifiers == Qt.NoModifier || event.modifiers & Qt.KeypadModifier) {
@@ -185,33 +141,6 @@ Flipable {
 						}
 					}
 				}
-				/*
-				Control.TextField{
-					id: textField
-					Layout.fillHeight: true
-					Layout.fillWidth: true
-					//Layout.leftMargin: 10
-					//Layout.rightMargin: 10
-					Layout.bottomMargin: 10
-
-					horizontalAlignment: mainItem.horizontalAlignment
-
-					inputMethodHints: mainItem.inputMethodHints
-					readOnly: mainItem.readOnly
-					color: mainItem.textColor
-					text: mainItem.text === undefined ? '' : mainItem.text
-					placeholderText: mainItem.placeholderText
-					onEditingFinished:  {
-						mainItem.newValue = textField.text
-						mainItem.editingFinished()
-						if(!mainItem.keepEditView)
-							mainItem.flipped = false
-					}
-					onActiveFocusChanged: {
-						if(!activeFocus && !mainItem.keepEditView) mainItem.flipped = false
-					}
-					onPressed: mainItem.clicked()
-				}*/
 			}
 
 	transform: Rotation {

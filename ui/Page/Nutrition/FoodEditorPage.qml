@@ -117,7 +117,7 @@ Item {
 					Layout.preferredWidth:  inputMethodHints ==  Qt.ImhFormattedNumbersOnly ? 120 : 240
 					horizontalAlignment: Text.AlignRight
 					inputMethodHints: modelData.inputMethodHints
-					keepEditView: true
+					edit: true
 					property var txt: mainItem.foodModel[modelData.data] < 0 ? '' : mainItem.foodModel[modelData.data]
 					text: txt && inputMethodHints ==  Qt.ImhFormattedNumbersOnly ? Number.parseFloat(txt.toFixed(4)) : txt
 					onEditingFinished: mainItem.foodModel[modelData.data] = newValue
