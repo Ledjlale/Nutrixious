@@ -207,12 +207,12 @@ Item {
 					Component {
 						id: serieComponent
 						ExerciseSerieModelView{
-							serieModel: restingPopup.target.resultSerieModel
+							modelData: restingPopup.target.resultSerieModel
 							exerciseUnitModel: restingPopup.exercise
 							trainingResultEdition: true
 							showCalories: true
 							showSaveButton: false
-							keepEditView: true
+							edit: true
 							isReadOnly: false
 							isLive: false
 							isDeletable: false

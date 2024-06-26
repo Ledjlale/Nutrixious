@@ -168,23 +168,27 @@ Item {
 			id: serieList
 			Layout.fillWidth: true
 			Layout.fillHeight: true
-			Layout.leftMargin: 10
-			Layout.rightMargin: 10
 			Layout.topMargin: 10
 			clip: true
 			model: mainItem.programExerciseModel.series
-			delegate:ExerciseSerieModelView{
-				serieModel: modelData
-				exerciseUnitModel: mainItem.programExerciseModel
-				width: serieList.width
-				isReadOnly: false
-				isDeletable: serieList.count > 1
-				showTitle: index == 0
-				showCalories: false
-				doSave: false
-				showSaveButton: mainItem.showSaveButton
-				showWorkTime: false
-				keepEditView: true
+			delegate: Item{
+					width: serieList.width
+					height: serieView.implicitHeight + 20
+					ExerciseSerieModelView{
+						id: serieView
+						width: parent.width
+						height: parent.height
+						modelData: model.modelData
+						exerciseUnitModel: mainItem.programExerciseModel
+						isReadOnly: false
+						isDeletable: serieList.count > 1
+						showTitle: index == 0
+						showCalories: false
+						doSave: false
+						showSaveButton: mainItem.showSaveButton
+						showWorkTime: false
+						edit: true
+					}
 			}
 		}
 //---------------------------------------------------------------------------------

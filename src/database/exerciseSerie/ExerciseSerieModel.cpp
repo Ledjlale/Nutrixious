@@ -29,12 +29,16 @@ extern QQmlApplicationEngine * gEngine;
 
 ExerciseSerieModel::ExerciseSerieModel() : QmlModel(nullptr){
 	gEngine->setObjectOwnership(this, QQmlEngine::JavaScriptOwnership);
+	connect(this, &ExerciseSerieModel::distanceChanged, this, &ExerciseSerieModel::isSpeedComputableChanged);
+	connect(this, &ExerciseSerieModel::workTimeChanged, this, &ExerciseSerieModel::isSpeedComputableChanged);
 }
 
 ExerciseSerieModel::ExerciseSerieModel(QObject *parent)
 	: QmlModel{parent}
 {
 	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
+	connect(this, &ExerciseSerieModel::distanceChanged, this, &ExerciseSerieModel::isSpeedComputableChanged);
+	connect(this, &ExerciseSerieModel::workTimeChanged, this, &ExerciseSerieModel::isSpeedComputableChanged);
 }
 
 ExerciseSerieModel::ExerciseSerieModel(const ExerciseSerieModel * model, QObject *parent) : ExerciseSerieModel(parent){
@@ -193,6 +197,10 @@ void ExerciseSerieModel::setRepetitions(int data){
 	}
 }
 
+bool ExerciseSerieModel::isSpeedComputable()const{
+	return mWorkTime>0 && mDistance > 0;
+}
+
 //-------------------------------------------------------------------------------------------------------------------
 
 void ExerciseSerieModel::updateIsSaved() {
@@ -296,5 +304,6 @@ void ExerciseSerieModel::remove(){
 void ExerciseSerieModel::computeSpeed(){
 	double hours = getWorkTime() / 3600.0;
 	double km = getDistance() / 1000.0;
-	setSpeed(km / hours);
+	if(hours > 0 )
+		setSpeed(km / hours);
 }

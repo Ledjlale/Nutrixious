@@ -27,7 +27,9 @@ import App 1.0
 SwipeLayout{
 	id: mainItem
 	property bool displayDate: false
-
+	
+	onDeleteClicked: modelData.remove()
+	
 	contentItem: RowLayout{
 		id: mainLine
 		width: mainItem.width

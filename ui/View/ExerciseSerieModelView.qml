@@ -26,14 +26,12 @@ import App 1.0
 //import App.Training 1.0 as Training
 
 import '../Tool/Utils.js' as Utils
-SwipeView{
+SwipeLayout{
 	id: mainItem
-	property var serieModel
 	property var exerciseUnitModel
-	property bool isLive: !!serieModel?.targetSerieModel
-	property bool resting: !!serieModel?.isResting
+	property bool isLive: !!modelData?.targetSerieModel
+	property bool resting: !!modelData?.isResting
 	property bool isReadOnly: isLive
-	property bool isDeletable: true
 	property bool showSaveButton: true
 	property bool showTitle: true
 	property bool showWorkTime: true
@@ -44,20 +42,22 @@ SwipeView{
 	property bool trainingResultEdition: false
 	property bool doSave: true
 	property int margin: 0
-	property bool keepEditView: false
 
 	implicitHeight: contentLayout.implicitHeight
-	currentIndex: 0
-	Rectangle{
+	
+	onDeleteClicked: mainItem.exerciseUnitModel.removeSerie(modelData) 
+	isEditable: !mainItem.isReadOnly
+	
+	contentItem: Rectangle{
 		width: mainItem.width
 		height: mainItem.height
-		//visible: mainItem.isLive && ( serieModel?.isRunning || serieModel?.isDone)
-		color: mainItem.isLive && ( serieModel?.isRunning || serieModel?.isDone)
-				?  serieModel?.isResting
+		//visible: mainItem.isLive && ( modelData?.isRunning || modelData?.isDone)
+		color: mainItem.isLive && ( modelData?.isRunning || modelData?.isDone)
+				?  modelData?.isResting
 					? Material.color(Material.Yellow, Material.Shade100)
-					: serieModel?.resultSerieModel?.isSaved
+					: modelData?.resultSerieModel?.isSaved
 						? Material.color(Material.Green, Material.Shade100)
-						: serieModel?.isDone
+						: modelData?.isDone
 							? Material.color(Material.Blue, Material.Shade100)
 							: Material.color(Material.Amber, Material.Shade300)
 				: 'transparent'
@@ -68,116 +68,116 @@ SwipeView{
 			anchors.rightMargin: mainItem.margin
 			spacing: 0
 			TextField{
-				property bool isGood: !mainItem.isLive || !serieModel?.isDone || (serieModel.resultSerieModel.repetitions >= serieModel.targetSerieModel.repetitions)
+				property bool isGood: !mainItem.isLive || !modelData?.isDone || (modelData.resultSerieModel.repetitions >= modelData.targetSerieModel.repetitions)
 				height: implicitHeight
 				Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 				visible: !!exerciseUnitModel && (mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useRepetitions : exerciseUnitModel.useRepetitions)
-				edit: mainItem.keepEditView
+				edit: mainItem.edit
 				showTitle: mainItem.showTitle
 				readOnly: mainItem.isReadOnly
 				inputMethodHints: Qt.ImhDigitsOnly
 				textColor: isGood ? Material.foreground : Material.accent
 				title: mainItem.showTitle ? 'Reps' : ''
 				text: mainItem.isLive
-							? mainItem.serieModel.isDone
-								? (isGood ? '' : mainItem.serieModel.targetSerieModel.repetitions+'/') + mainItem.serieModel.resultSerieModel.repetitions
-								: mainItem.serieModel.targetSerieModel.repetitions
-							: mainItem.serieModel.repetitions <0 ? '' : mainItem.serieModel.repetitions
+							? mainItem.modelData.isDone
+								? (isGood ? '' : mainItem.modelData.targetSerieModel.repetitions+'/') + mainItem.modelData.resultSerieModel.repetitions
+								: mainItem.modelData.targetSerieModel.repetitions
+							: mainItem.modelData.repetitions <0 ? '' : mainItem.modelData.repetitions
 				//text: mainItem.isLive
 				onEditingFinished: {
 					if(mainItem.isLive) {
-						if(!mainItem.serieModel.isDone)
-							mainItem.serieModel.targetSerieModel.repetitions = newValue
-						mainItem.serieModel.resultSerieModel.repetitions = newValue
+						if(!mainItem.modelData.isDone)
+							mainItem.modelData.targetSerieModel.repetitions = newValue
+						mainItem.modelData.resultSerieModel.repetitions = newValue
 					}else
-						mainItem.serieModel.repetitions = newValue
+						mainItem.modelData.repetitions = newValue
 				}
 				//onImplicitHeightChanged: fieldsList.updateImplicit()
 			}
 			TextField{
-				property bool isGood: !mainItem.isLive || !serieModel?.isDone || (serieModel.resultSerieModel.weight >= serieModel.targetSerieModel.weight)
+				property bool isGood: !mainItem.isLive || !modelData?.isDone || (modelData.resultSerieModel.weight >= modelData.targetSerieModel.weight)
 				height: implicitHeight
 				Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 				visible: !!exerciseUnitModel && (mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useWeight :exerciseUnitModel.useWeight)
-				edit: mainItem.keepEditView
+				edit: mainItem.edit
 				showTitle: mainItem.showTitle
 				readOnly: mainItem.isReadOnly
 				inputMethodHints: Qt.ImhDigitsOnly
 				title: mainItem.showTitle ? 'Weight' : ''
 				textColor: isGood ? Material.foreground : Material.accent
 				text: mainItem.isLive
-							? mainItem.serieModel.isDone
-								?  (isGood ? '' : mainItem.serieModel.targetSerieModel.weight+'/') + Number.parseFloat(mainItem.serieModel.resultSerieModel.weight.toFixed(2))
-								: Number.parseFloat(mainItem.serieModel.targetSerieModel.weight.toFixed(2))
-							: mainItem.serieModel.weight <0 ? '' : Number.parseFloat(mainItem.serieModel.weight.toFixed(2))
+							? mainItem.modelData.isDone
+								?  (isGood ? '' : mainItem.modelData.targetSerieModel.weight+'/') + Number.parseFloat(mainItem.modelData.resultSerieModel.weight.toFixed(2))
+								: Number.parseFloat(mainItem.modelData.targetSerieModel.weight.toFixed(2))
+							: mainItem.modelData.weight <0 ? '' : Number.parseFloat(mainItem.modelData.weight.toFixed(2))
 				placeholderText: 'kg'
 				//text: mainItem.isLive
 				onEditingFinished: {
 					if(mainItem.isLive) {
-						if(!mainItem.serieModel.isDone)
-							mainItem.serieModel.targetSerieModel.weight = newValue
-						mainItem.serieModel.resultSerieModel.weight = newValue
+						if(!mainItem.modelData.isDone)
+							mainItem.modelData.targetSerieModel.weight = newValue
+						mainItem.modelData.resultSerieModel.weight = newValue
 					}else
-						mainItem.serieModel.weight = newValue
+						mainItem.modelData.weight = newValue
 				}
 				//onImplicitHeightChanged: fieldsList.updateImplicit()
 			}
 			TextField{
 				id: distanceField
-				property bool isGood: !mainItem.isLive || !serieModel?.isDone || (serieModel.resultSerieModel.distance >= serieModel.targetSerieModel.distance)
+				property bool isGood: !mainItem.isLive || !modelData?.isDone || (modelData.resultSerieModel.distance >= modelData.targetSerieModel.distance)
 				height: implicitHeight
 				Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 				visible: !!exerciseUnitModel && (mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useDistance :exerciseUnitModel.useDistance)
-				edit: mainItem.keepEditView
+				edit: mainItem.edit
 				showTitle: mainItem.showTitle
 				readOnly: mainItem.isReadOnly
 				inputMethodHints: Qt.ImhDigitsOnly
 				textColor: isGood ? Material.foreground : Material.accent
 				title: mainItem.showTitle ? 'Distance' : ''
 				text: mainItem.isLive
-							? mainItem.serieModel.isDone
-								?  (isGood ? '' : mainItem.serieModel.targetSerieModel.distance+'/') + Number.parseFloat(mainItem.serieModel.resultSerieModel.distance.toFixed(2))
-								: Number.parseFloat(mainItem.serieModel.targetSerieModel.distance.toFixed(2))
-							: mainItem.serieModel.distance <0 ? '' : Number.parseFloat(mainItem.serieModel.distance.toFixed(2))
+							? mainItem.modelData.isDone
+								?  (isGood ? '' : mainItem.modelData.targetSerieModel.distance+'/') + Number.parseFloat(mainItem.modelData.resultSerieModel.distance.toFixed(2))
+								: Number.parseFloat(mainItem.modelData.targetSerieModel.distance.toFixed(2))
+							: mainItem.modelData.distance <0 ? '' : Number.parseFloat(mainItem.modelData.distance.toFixed(2))
 				placeholderText: 'm'
 				//text: mainItem.isLive
 				onEditingFinished: {
 					if(mainItem.isLive) {
-						if(!mainItem.serieModel.isDone)
-							mainItem.serieModel.targetSerieModel.distance = newValue
-						mainItem.serieModel.resultSerieModel.distance = newValue
+						if(!mainItem.modelData.isDone)
+							mainItem.modelData.targetSerieModel.distance = newValue
+						mainItem.modelData.resultSerieModel.distance = newValue
 					}else
-						mainItem.serieModel.distance = newValue
+						mainItem.modelData.distance = newValue
 				}
 				//onImplicitHeightChanged: fieldsList.updateImplicit()
 			}
 
 			TextField{
 				id: speedField
-				property bool isGood: !mainItem.isLive || !serieModel?.isDone || (serieModel.resultSerieModel.speed >= serieModel.targetSerieModel.speed)
+				property bool isGood: !mainItem.isLive || !modelData?.isDone || (modelData.resultSerieModel.speed >= modelData.targetSerieModel.speed)
 				height: implicitHeight
 				Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 				visible: !!exerciseUnitModel && (mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useSpeed :exerciseUnitModel.useSpeed)
-				edit: mainItem.keepEditView
+				edit: mainItem.edit
 				showTitle: mainItem.showTitle
 				readOnly: mainItem.isReadOnly
 				inputMethodHints: Qt.ImhDigitsOnly
 				textColor: isGood ? Material.foreground : Material.accent
 				title: mainItem.showTitle ? 'Speed' : ''
 				text: mainItem.isLive
-							? mainItem.serieModel.isDone
-								? (isGood ? '' : mainItem.serieModel.targetSerieModel.speed+'/') + Number.parseFloat(mainItem.serieModel.resultSerieModel.speed.toFixed(2))
-								: Number.parseFloat(mainItem.serieModel.targetSerieModel.speed.toFixed(2))
-							: mainItem.serieModel.speed <0 ? '' : Number.parseFloat(mainItem.serieModel.speed.toFixed(2))
+							? mainItem.modelData.isDone
+								? (isGood ? '' : mainItem.modelData.targetSerieModel.speed+'/') + Number.parseFloat(mainItem.modelData.resultSerieModel.speed.toFixed(2))
+								: Number.parseFloat(mainItem.modelData.targetSerieModel.speed.toFixed(2))
+							: mainItem.modelData.speed <0 ? '' : Number.parseFloat(mainItem.modelData.speed.toFixed(2))
 				placeholderText: 'km/h'
 				//text: mainItem.isLive
 				onEditingFinished: {
 					if(mainItem.isLive) {
-						if(!mainItem.serieModel.isDone)
-							mainItem.serieModel.targetSerieModel.speed = newValue
-						mainItem.serieModel.resultSerieModel.speed = newValue
+						if(!mainItem.modelData.isDone)
+							mainItem.modelData.targetSerieModel.speed = newValue
+						mainItem.modelData.resultSerieModel.speed = newValue
 					}else
-						mainItem.serieModel.speed = newValue
+						mainItem.modelData.speed = newValue
 				}
 				//onImplicitHeightChanged: fieldsList.updateImplicit()
 			}
@@ -188,7 +188,7 @@ SwipeView{
 				Layout.fillHeight: true
 				Layout.rightMargin: 10
 				visible: mainItem.showRestTime && !mainItem.trainingResultEdition
-				edit: mainItem.keepEditView
+				edit: mainItem.edit
 				showTitle: mainItem.showTitle || mainItem.trainingResultEdition
 				readOnly:  mainItem.isReadOnly || mainItem.isLive
 				inputMethodHints: Qt.ImhTime
@@ -197,17 +197,17 @@ SwipeView{
 				placeholderText: 'hh:mm:ss'
 
 				text: mainItem.isLive
-								? mainItem.serieModel.isDone
-									? mainItem.serieModel.resultSerieModel.restTimeStr
-									: mainItem.serieModel.targetSerieModel.restTimeStr
-								: mainItem.serieModel.restTimeStr
+								? mainItem.modelData.isDone
+									? mainItem.modelData.resultSerieModel.restTimeStr
+									: mainItem.modelData.targetSerieModel.restTimeStr
+								: mainItem.modelData.restTimeStr
 				onEditingFinished: {
 					if(mainItem.isLive) {
-						if(!mainItem.serieModel.isDone)
-							mainItem.serieModel.targetSerieModel.restTimeStr = newValue
-						mainItem.serieModel.resultSerieModel.restTimeStr = newValue
+						if(!mainItem.modelData.isDone)
+							mainItem.modelData.targetSerieModel.restTimeStr = newValue
+						mainItem.modelData.resultSerieModel.restTimeStr = newValue
 					}else
-						mainItem.serieModel.restTimeStr = newValue
+						mainItem.modelData.restTimeStr = newValue
 				}
 
 			}
@@ -217,28 +217,28 @@ SwipeView{
 				Layout.rightMargin: 10
 				Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 
-				visible: mainItem.showWorkTime && ( !!serieModel?.isSaved || !!serieModel?.isDone)
+				visible: mainItem.showWorkTime && ( !!modelData?.isSaved || !!modelData?.isDone)
 				showTitle: mainItem.showTitle || mainItem.trainingResultEdition
 				readOnly:  mainItem.isReadOnly
 				inputMethodHints: Qt.ImhTime
 				elide: Text.ElideLeft
 				title: mainItem.showTitle ? 'WorkTime' : ''
 				placeholderText: 'hh:mm:ss'
-				//textColor: !mainItem.isLive || serieModel.restTime <= serieModel.targetWork.restTime ? Material.foreground : Material.accent
+				//textColor: !mainItem.isLive || modelData.restTime <= modelData.targetWork.restTime ? Material.foreground : Material.accent
 				text: visible
 						? mainItem.isLive
-							? serieModel?.isDone
-								? serieModel.resultSerieModel.workTimeStr
-								: serieModel.targetSerieModel.workTimeStr
-							: serieModel?.workTimeStr || ''
+							? modelData?.isDone
+								? modelData.resultSerieModel.workTimeStr
+								: modelData.targetSerieModel.workTimeStr
+							: modelData?.workTimeStr || ''
 						: ''
 				onEditingFinished: {
 					if(mainItem.isLive) {
-						if(!mainItem.serieModel.isDone)
-							mainItem.serieModel.targetSerieModel.workTimeStr = newValue
-						mainItem.serieModel.resultSerieModel.workTimeStr = newValue
+						if(!mainItem.modelData.isDone)
+							mainItem.modelData.targetSerieModel.workTimeStr = newValue
+						mainItem.modelData.resultSerieModel.workTimeStr = newValue
 					}else
-						mainItem.serieModel.workTimeStr = newValue
+						mainItem.modelData.workTimeStr = newValue
 				}
 			}
 			TextField{
@@ -247,7 +247,7 @@ SwipeView{
 				Layout.rightMargin: 10
 				Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 
-				visible: mainItem.showCalories && (!!serieModel?.isSaved || !!serieModel?.isDone) ||  mainItem.trainingResultEdition
+				visible: mainItem.showCalories && (!!modelData?.isSaved || !!modelData?.isDone) ||  mainItem.trainingResultEdition
 				showTitle: mainItem.showTitle || mainItem.trainingResultEdition
 				readOnly:  mainItem.isReadOnly
 				inputMethodHints: Qt.ImhDigitsOnly
@@ -256,36 +256,36 @@ SwipeView{
 				placeholderText: 'kcal'
 				text: visible
 						? mainItem.isLive
-							? serieModel?.isDone
-								? Number.parseFloat(serieModel.resultSerieModel.calories.toFixed(2))
-								: serieModel.targetSerieModel.calories
-							: Number.parseFloat(serieModel?.calories.toFixed(2)) || ''
+							? modelData?.isDone
+								? Number.parseFloat(modelData.resultSerieModel.calories.toFixed(2))
+								: modelData.targetSerieModel.calories
+							: Number.parseFloat(modelData?.calories.toFixed(2)) || ''
 						: ''
 				onEditingFinished: {
 					if(mainItem.isLive) {
-						if(!mainItem.serieModel.isDone)
-							mainItem.serieModel.targetSerieModel.calories = newValue
-						mainItem.serieModel.resultSerieModel.calories = newValue
+						if(!mainItem.modelData.isDone)
+							mainItem.modelData.targetSerieModel.calories = newValue
+						mainItem.modelData.resultSerieModel.calories = newValue
 					}else
-						mainItem.serieModel.calories = newValue
+						mainItem.modelData.calories = newValue
 				}
 			}
 			Button{
 				Layout.fillWidth: true
 				Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
-				visible: !mainItem.isReadOnly && calorieTextField.visible && !mainItem.isLive && !mainItem.serieModel.isRunning
+				visible: !mainItem.isReadOnly && calorieTextField.visible && !mainItem.isLive && !mainItem.modelData.isRunning
 				text: 'Cal'
 				onClicked:{
-						serieModel.computeCalories()
+						modelData.computeCalories()
 				}
 			}
 			Button{
 				Layout.fillWidth: true
 				Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
-				visible: !mainItem.isReadOnly && speedField.visible && distanceField.visible && !mainItem.isLive && !mainItem.serieModel.isRunning
+				visible: !mainItem.isReadOnly && !mainItem.isLive && !mainItem.modelData.isRunning && mainItem.modelData.isSpeedComputable
 				text: 'Speed'
 				onClicked:{
-						serieModel.computeSpeed()
+						modelData.computeSpeed()
 				}
 			}
 			Rectangle{
@@ -293,7 +293,7 @@ SwipeView{
 				Layout.preferredHeight: 30
 				Layout.preferredWidth: 30
 				color: Material.primary
-				visible: mainItem.showDecrementOrderChange && !serieModel?.isSaved && !serieModel?.isDone && !mainItem.serieModel.isRunning
+				visible: mainItem.showDecrementOrderChange && !modelData?.isSaved && !modelData?.isDone && !mainItem.modelData.isRunning
 
 				radius: width / 2
 				Text{
@@ -304,7 +304,7 @@ SwipeView{
 				MouseArea{
 					anchors.fill: parent
 					onClicked:{
-						mainItem.exerciseUnitModel.decrementSerieOrder(mainItem.serieModel)
+						mainItem.exerciseUnitModel.decrementSerieOrder(mainItem.modelData)
 					}
 				}
 			}
@@ -312,7 +312,7 @@ SwipeView{
 				Layout.alignment: Qt.AlignCenter
 				Layout.preferredHeight: 30
 				Layout.preferredWidth: 30
-				visible: mainItem.showIncrementOrderChange && !serieModel?.isSaved && !serieModel?.isDone && !mainItem.serieModel.isRunning
+				visible: mainItem.showIncrementOrderChange && !modelData?.isSaved && !modelData?.isDone && !mainItem.modelData.isRunning
 				color: Material.primary
 				radius: width / 2
 				Text{
@@ -323,57 +323,24 @@ SwipeView{
 				MouseArea{
 					anchors.fill: parent
 					onClicked:{
-						mainItem.exerciseUnitModel.incrementSerieOrder(mainItem.serieModel)
+						mainItem.exerciseUnitModel.incrementSerieOrder(mainItem.modelData)
 					}
 				}
 			}
 			Button{
 				id: saveButton
 				Layout.preferredWidth: 60
-				visible: !mainItem.isReadOnly && mainItem.showSaveButton && serieModel?.isEdited && !mainItem.serieModel.isRunning || false
+				visible: !mainItem.isReadOnly && mainItem.showSaveButton && modelData?.isEdited && !mainItem.modelData.isRunning || false
 				text: 'Save'
 				onClicked: {
 					if(!mainItem.trainingResultEdition && mainItem.doSave) {
-						serieModel.save()
+						modelData.save()
 					}
-					mainItem.currentIndex = 0
-					mainItem.keepEditView = false
+					mainItem.edit = false
 				}
 			}
 		}
 	}
-	Rectangle{
-		width: mainItem.width
-		height: mainItem.height
-		color: Material.primary
-		RowLayout{
-			anchors.fill: parent
-			Item{Layout.fillWidth: true}
-			Button{
-				id: editButton
-				Layout.preferredWidth: 60
-				visible: !mainItem.isReadOnly && !saveButton.visible || false
-				text: 'Edit'
-				onClicked: {
-					mainItem.currentIndex = 0
-					mainItem.keepEditView = true
-				}
-			}
-
-
-			ButtonImage{
-				id: deleteButton
-				Layout.preferredWidth: 30
-				Layout.preferredHeight: 30
-				Layout.rightMargin: 10
-				visible: !mainItem.isReadOnly && mainItem.isDeletable && !!mainItem.exerciseUnitModel && !mainItem.serieModel.isRunning && !mainItem.serieModel.isDone
-				imageSource: DefaultStyle.deleteButton
-				colorizationColor: Material.foreground
-				onClicked: {
-					mainItem.exerciseUnitModel.removeSerie(serieModel)
-				}
-			}
-		}
-	}
+	
 }
 

@@ -54,7 +54,7 @@ Item{
 					: []
 		delegate:ExerciseSerieModelView{
 			exerciseUnitModel: mainItem.workingExerciseModel ? mainItem.workingExerciseModel : mainItem.exerciseModel
-			serieModel: modelData
+			modelData: modelData
 			width: setList.width
 			margin: mainItem.margin
 			showWorkTime: mainItem.showWorkTime

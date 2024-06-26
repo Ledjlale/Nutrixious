@@ -41,6 +41,8 @@ Q_OBJECT
 	Q_PROPERTY(double speed READ getSpeed WRITE setSpeed NOTIFY speedChanged)
 	Q_PROPERTY(double weight READ getWeight WRITE setWeight NOTIFY weightChanged)
 	Q_PROPERTY(int repetitions READ getRepetitions WRITE setRepetitions NOTIFY repetitionsChanged)
+	
+	Q_PROPERTY(int isSpeedComputable READ isSpeedComputable NOTIFY isSpeedComputableChanged)
 
 public:
 	ExerciseSerieModel();
@@ -84,7 +86,8 @@ public:
 
 	int getRepetitions() const;
 	void setRepetitions(int data);
-
+	
+	bool isSpeedComputable()const;
 
 	virtual void updateIsSaved();
 	virtual void undo();
@@ -97,6 +100,7 @@ public:
 	Q_INVOKABLE virtual void remove();
 	
 	Q_INVOKABLE void computeSpeed();
+	
 
 signals:
 	void serieIdChanged();
@@ -108,6 +112,7 @@ signals:
 	void speedChanged();
 	void weightChanged();
 	void repetitionsChanged();
+	void isSpeedComputableChanged();
 
 	void removed(ExerciseSerieModel * model);
 
@@ -122,6 +127,7 @@ protected:
 	double mWeight = -1.0;
 	int mRepetitions = -1;
 
+	bool mIsSpeedComputable = false;
 //
 	QString mTablePrefix = "";
 };

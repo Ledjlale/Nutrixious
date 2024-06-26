@@ -32,6 +32,8 @@ SwipeDelegate{
 
 	//required property int index
 	property bool edit: false
+	
+	signal deleteClicked(var modelData)
 
 	implicitHeight: contentItem.implicitHeight
 
@@ -74,7 +76,7 @@ SwipeDelegate{
 					colorizationColor: Material.foreground
 					onClicked: {
 						swipe.close()
-						mainItem.modelData.remove()
+						mainItem.deleteClicked(mainItem.modelData)
 					}
 				}
 			}

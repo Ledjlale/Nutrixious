@@ -26,7 +26,9 @@ import App 1.0
 
 SwipeLayout{
 	id: mainItem
-
+	
+	onDeleteClicked: modelData.remove()
+	
 	contentItem: Rectangle{
 			width: mainItem.width
 			implicitHeight: descLine.implicitHeight + 5
