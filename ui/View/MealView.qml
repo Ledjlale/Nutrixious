@@ -26,6 +26,7 @@ import App 1.0
 
 SwipeLayout{
 	id: mainItem
+	property var modelData
 	
 	onDeleteClicked: modelData.remove()
 	

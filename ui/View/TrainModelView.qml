@@ -26,6 +26,7 @@ import App 1.0
 
 SwipeLayout{
 	id: mainItem
+	property var modelData
 	property bool displayDate: false
 	
 	onDeleteClicked: modelData.remove()
@@ -39,9 +40,9 @@ SwipeLayout{
 		TextField{
 			id: nameTextField
 			Layout.fillWidth: true
-			property int bestWidth: Math.min(mainLine.width / mainLine.visibleChildren.length, descriptionTextField.flipped ? 40 : implicitWidth)
-			Layout.preferredWidth: bestWidth
-			Layout.minimumWidth : descriptionTextField.flipped ? 0 : bestWidth
+			//property int bestWidth: Math.min(mainLine.width / mainLine.visibleChildren.length, descriptionTextField.flipped ? 40 : implicitWidth)
+			//Layout.preferredWidth: bestWidth
+			//Layout.minimumWidth : descriptionTextField.flipped ? 0 : bestWidth
 			font.bold: true
 			font.pixelSize: 16
 			text: mainItem.modelData ? mainItem.modelData.name : ''
@@ -73,14 +74,19 @@ SwipeLayout{
 			onEditingFinished: mainItem.displayDate ? mainItem.modelData.startDateTimeStr = newValue : mainItem.modelData.startTimeStr = newValue
 		}
 		Text{
+			Layout.rightMargin: 5
 			visible: text != ''
 			color: Material.foreground
 			text: mainItem.modelData.calories ? Number.parseFloat(mainItem.modelData.calories.toFixed(2)) : ''
 		}
-
-		Button{
+		ButtonImage{
+			id: saveButton
+			Layout.alignment: Qt.AlignCenter
+			Layout.preferredWidth: 25
+			Layout.preferredHeight: 25
 			visible: mainItem.modelData.isEdited
-			text: 'Save'
+			imageSource: DefaultStyle.saveButton
+			colorizationColor: Material.foreground
 			onClicked: {
 				mainItem.modelData.save()
 			}

@@ -26,17 +26,30 @@ import App 1.0
 
 SwipeDelegate{
 	id: mainItem
-	property var modelData
 	property bool isDeletable: true
 	property bool isEditable: true
+	property bool isCaloriesComputable: false
+	property bool isSpeedComputable: false
 
 	//required property int index
 	property bool edit: false
+	property bool autoEditFlip: true
 	
-	signal deleteClicked(var modelData)
+	property var color: 'white'
+	
+	signal caloriesComputationClicked()
+	signal speedComputationClicked()
+	signal deleteClicked()
+	signal editClicked()
 
 	implicitHeight: contentItem.implicitHeight
-
+	leftInset: 0
+	rightInset: 0
+	topInset: 0
+	bottomInset: 0
+	padding: 0
+	spacing: 0
+	
 	swipe.enabled: isDeletable || isEditable
 
 	onClicked: function(mouse) {
@@ -53,6 +66,35 @@ SwipeDelegate{
 				id: choiceLayout
 				height: parent.height
 				anchors.right: parent.right
+				
+				ButtonImage{
+					id: caloriesComputeButton
+					Layout.preferredWidth: 25
+					Layout.preferredHeight: 25
+					Layout.rightMargin: 10
+					visible: mainItem.isCaloriesComputable
+					imageSource: DefaultStyle.caloriesComputationButton
+					colorizationColor: mainItem.color
+					onClicked: {
+						swipe.close()
+						mainItem.caloriesComputationClicked()
+					}
+				}
+				
+				ButtonImage{
+					id: speedComputationButton
+					Layout.preferredWidth: 25
+					Layout.preferredHeight: 25
+					Layout.rightMargin: 10
+					visible: mainItem.isSpeedComputable
+					imageSource: DefaultStyle.speedComputationButton
+					colorizationColor: mainItem.color
+					onClicked: {
+						swipe.close()
+						mainItem.speedComputationClicked()
+					}
+				}
+				
 				ButtonImage{
 					id: editButton
 					Layout.preferredWidth: 25
@@ -60,10 +102,13 @@ SwipeDelegate{
 					Layout.rightMargin: 10
 					visible: mainItem.isEditable
 					imageSource: DefaultStyle.editButton
-					colorizationColor: Material.foreground
+					colorizationColor: mainItem.color
 					onClicked: {
-						swipe.close()
-						mainItem.edit = true
+						if(autoEditFlip){
+							swipe.close()
+							mainItem.edit = true
+						}
+						mainItem.editClicked()
 					}
 				}
 				ButtonImage{
@@ -73,10 +118,10 @@ SwipeDelegate{
 					Layout.rightMargin: 10
 					visible: mainItem.isDeletable
 					imageSource: DefaultStyle.deleteButton
-					colorizationColor: Material.foreground
+					colorizationColor: mainItem.color
 					onClicked: {
 						swipe.close()
-						mainItem.deleteClicked(mainItem.modelData)
+						mainItem.deleteClicked()
 					}
 				}
 			}

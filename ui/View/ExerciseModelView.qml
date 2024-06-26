@@ -92,7 +92,7 @@ Item{
 					id: exerciseItem
 					property var exerciseModel: mainItem.exerciseModel
 					property var programModel: mainItem.programModel
-
+	
 					implicitHeight: mainLayout.implicitHeight
 					signal addClicked(var exerciseModel)
 					onAddClicked: function(exerciseModel) {mainItem.addClicked(exerciseModel) }
@@ -102,155 +102,102 @@ Item{
 					ColumnLayout{
 						id: mainLayout
 						anchors.fill: parent
-						RowLayout{
-							id: rowlayout
-							Layout.rightMargin: 5
-							spacing: 0
-							TextField{
-								id: nameTextField
-								property bool haveName: !!exerciseModel.exerciseModel && exerciseModel.exerciseModel.name != ''
-								Layout.fillWidth: true
-								Layout.topMargin: 5
-								//Layout.preferredWidth: mainItem.width / rowlayout.visibleChildren.length
-								Layout.preferredWidth: Math.max(implicitWidth, exerciseChoice.visible ? exerciseChoice.implicitWidth : 0)
-								showTitle: false
-								readOnly: true
-								placeholderText: 'Name'
-								text: !!exerciseModel.exerciseModel
-									? exerciseModel.exerciseModel.name
+						SwipeLayout{
+							id: mainSwipeLayout
+							Layout.fillWidth: true
+							isDeletable: mainItem.isDeletable
+							onClicked: seriesList.visible = !seriesList.visible
+							onDeleteClicked: {
+								console.log('Try to Delete : ' +exerciseItem.exerciseModel + " in " +exerciseItem.programModel + ' at ' +exerciseItem.exerciseModel.order)
+								exerciseItem.exerciseModel.remove()
+							}
+							onEditClicked: {
+								exerciseItem.editClicked(exerciseModel)
+							}
+							contentItem:RowLayout{
+								id: rowlayout
+								width: mainSwipeLayout.width
+								spacing: 0
+								TextField{
+									id: nameTextField
+									property bool haveName: !!exerciseModel.exerciseModel && exerciseModel.exerciseModel.name != ''
+									Layout.fillWidth: true
+									Layout.topMargin: 5
+									//Layout.preferredWidth: mainItem.width / rowlayout.visibleChildren.length
+									Layout.preferredWidth: Math.max(implicitWidth, exerciseChoice.visible ? exerciseChoice.implicitWidth : 0)
+									showTitle: false
+									readOnly: true
+									placeholderText: 'Name'
+									text: !!exerciseModel.exerciseModel
 										? exerciseModel.exerciseModel.name
-										: 'Unnamed'
-									: ''
-								font.weight: Font.Bold
-								font.bold: true
-								font.pixelSize: 20
-
-								ComboBox{
-									id: exerciseChoice
-									anchors.fill: parent
-									visible: !exerciseModel.exerciseModel
-									textRole: "displayText"
-									valueRole: "$modelData"
-									displayText: currentIndex === -1 ? "Link" : currentText
-									model: ExerciseProxyModel{
-										id: exercises
+											? exerciseModel.exerciseModel.name
+											: 'Unnamed'
+										: ''
+									font.weight: Font.Bold
+									font.bold: true
+									font.pixelSize: 20
+	
+									ComboBox{
+										id: exerciseChoice
+										anchors.fill: parent
+										visible: !exerciseModel.exerciseModel
+										textRole: "displayText"
+										valueRole: "$modelData"
+										displayText: currentIndex === -1 ? "Link" : currentText
+										model: ExerciseProxyModel{
+											id: exercises
+										}
+										onActivated:{
+											exerciseModel.exerciseModel = currentValue
+											exerciseModel.save()
+										}
+										onVisibleChanged: if(visible) exercises.update()
+										Component.onCompleted: if(visible) exercises.update()
 									}
-									onActivated:{
-										exerciseModel.exerciseModel = currentValue
-										exerciseModel.save()
-									}
-									onVisibleChanged: if(visible) exercises.update()
-									Component.onCompleted: if(visible) exercises.update()
+	
 								}
-
-							}
-							TextField{
-								id: descriptionTextField
-								Layout.fillWidth: true
-								Layout.topMargin: 5
-								//Layout.preferredWidth: mainItem.width / rowlayout.visibleChildren.length
-								visible: !readOnly || text != ''// && !!mainItem.workingExerciseModel
-								showTitle: false
-								readOnly: mainItem.isReadOnly
-								placeholderText: 'Description'
-								text: mainItem.resultModel ? mainItem.resultModel.description
-														: mainItem.exerciseModel ? mainItem.exerciseModel.description : ''
-								edit: !readOnly && text == ''
-								onEditingFinished: {
-									if( mainItem.resultModel)
-										resultModel.description = newValue
-									else if(mainItem.exerciseModel)
-										mainItem.exerciseModel.description = newValue
-								}
-							}
-
-							Button{
-								Layout.fillWidth: true
-								Layout.preferredWidth: implicitWidth
-								Layout.maximumWidth: implicitWidth
-								text: seriesList.visible ? '-' : '+'
-								onClicked: seriesList.visible = !seriesList.visible
-							}
-							Button{
-								Layout.fillWidth: true
-								Layout.preferredWidth: implicitWidth
-								visible: !mainItem.isReadOnly && mainItem.showSaveButton && ( workingExerciseModel && mainItem.resultModel.isEdited && mainItem.resultModel.isSaved
-									|| !workingExerciseModel && exerciseItem.exerciseModel.isEdited)
-								text: 'Save'
-								onClicked: {
-									if( workingExerciseModel && workingExerciseModel.isDone)
-										resultModel.save()
-									else
-										exerciseModel.save()
-								}
-							}
-							Button{
-								Layout.fillWidth: true
-								Layout.preferredWidth: implicitWidth
-								//Layout.preferredWidth: 40
-								visible: mainItem.showAddButton
-								text: 'Add'
-								onClicked: {
-									exerciseItem.addClicked(exerciseModel)
-								}
-							}
-							Button{
-								Layout.fillWidth: true
-								Layout.preferredWidth: implicitWidth
-								//Layout.preferredWidth: 40
-								visible: mainItem.showEditButton
-								text: 'Edit'
-								onClicked: {
-									exerciseItem.editClicked(exerciseModel)
-								}
-							}
-							/*
-							Rectangle{
-								Layout.alignment: Qt.AlignCenter
-								Layout.preferredHeight: 30
-								Layout.preferredWidth: 30
-								visible: !!mainItem.programModel
-								color: Material.primary
-								radius: width / 2
-								Text{
-									anchors.centerIn: parent
-									color: 'white'
-									text: '+'
-								}
-								MouseArea{
-									anchors.fill: parent
-									onClicked:{
-										mainItem.programModel.decrementExerciseOrder(mainItem.exerciseModel)
+								TextField{
+									id: descriptionTextField
+									Layout.fillWidth: true
+									Layout.topMargin: 5
+									//Layout.preferredWidth: mainItem.width / rowlayout.visibleChildren.length
+									visible: !readOnly || text != ''// && !!mainItem.workingExerciseModel
+									showTitle: false
+									readOnly: mainItem.isReadOnly
+									placeholderText: 'Description'
+									text: mainItem.resultModel ? mainItem.resultModel.description
+															: mainItem.exerciseModel ? mainItem.exerciseModel.description : ''
+									edit: !readOnly && text == ''
+									onEditingFinished: {
+										if( mainItem.resultModel)
+											resultModel.description = newValue
+										else if(mainItem.exerciseModel)
+											mainItem.exerciseModel.description = newValue
 									}
 								}
-							}
-							Rectangle{
-								Layout.alignment: Qt.AlignCenter
-								Layout.preferredHeight: 30
-								Layout.preferredWidth: 30
-								visible: !!mainItem.programModel
-								color: Material.primary
-								radius: width / 2
-								Text{
-									anchors.centerIn: parent
-									color: 'white'
-									text: '-'
-								}
-								MouseArea{
-									anchors.fill: parent
-									onClicked:{
-										mainItem.programModel.incrementExerciseOrder(mainItem.exerciseModel)
+	
+								Button{
+									Layout.fillWidth: true
+									Layout.preferredWidth: implicitWidth
+									visible: !mainItem.isReadOnly && mainItem.showSaveButton && ( workingExerciseModel && mainItem.resultModel.isEdited && mainItem.resultModel.isSaved
+										|| !workingExerciseModel && exerciseItem.exerciseModel.isEdited)
+									text: 'Save'
+									onClicked: {
+										if( workingExerciseModel && workingExerciseModel.isDone)
+											resultModel.save()
+										else
+											exerciseModel.save()
 									}
 								}
-							}*/
-							Button{
-								visible: mainItem.isDeletable
-								Layout.maximumWidth: 30
-								Layout.preferredWidth: 30
-								text: 'D'
-								onClicked: {
-									console.log('Try to Delete : ' +exerciseItem.exerciseModel + " in " +exerciseItem.programModel + ' at ' +exerciseItem.exerciseModel.order)
-									exerciseItem.exerciseModel.remove()
+								Button{
+									Layout.fillWidth: true
+									Layout.preferredWidth: implicitWidth
+									//Layout.preferredWidth: 40
+									visible: mainItem.showAddButton
+									text: 'Add'
+									onClicked: {
+										exerciseItem.addClicked(exerciseModel)
+									}
 								}
 							}
 						}
@@ -258,7 +205,6 @@ Item{
 							id: seriesList
 							Layout.fillWidth: true
 							Layout.preferredHeight: implicitHeight
-							margin: 5
 							visible: mainItem.expandAll
 							showWorkTime: mainItem.showWorkTime
 							showRestTime: mainItem.showRestTime
@@ -268,6 +214,7 @@ Item{
 							workingExerciseModel: mainItem.workingExerciseModel
 							showSaveButton: mainItem.showSaveButton
 							isReadOnly: mainItem.isReadOnly
+							
 						}
 					}
 				}

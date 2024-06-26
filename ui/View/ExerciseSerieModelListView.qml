@@ -54,7 +54,7 @@ Item{
 					: []
 		delegate:ExerciseSerieModelView{
 			exerciseUnitModel: mainItem.workingExerciseModel ? mainItem.workingExerciseModel : mainItem.exerciseModel
-			modelData: modelData
+			modelData: model.modelData
 			width: setList.width
 			margin: mainItem.margin
 			showWorkTime: mainItem.showWorkTime
@@ -65,6 +65,7 @@ Item{
 			isReadOnly: mainItem.isReadOnly
 			isDeletable: setList.count > 1
 			showTitle: index == 0
+			
 		}
 	}
 }

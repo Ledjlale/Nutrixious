@@ -113,7 +113,7 @@ Item {
 			property var exercise
 			property bool flipped: target?.isResting || false
 			Layout.fillWidth: true
-			Layout.preferredHeight: flipped ? backItem.implicitHeight: frontItem.implicitHeight
+			Layout.preferredHeight: flipped ? backItem.implicitHeight + 10: frontItem.implicitHeight
 
 			function pause(exercise, target){
 			restingPopup.target = target
@@ -166,6 +166,7 @@ Item {
 			back:ColumnLayout{
 				id: backItem
 				anchors.fill: parent
+				spacing: 0
 				Timer{
 					id: restTimer
 					property int count: 0
@@ -183,6 +184,7 @@ Item {
 					}
 				}
 				RowLayout{
+					spacing: 0
 					Text{
 						Layout.alignment: Qt.AlignCenter
 						Layout.fillWidth: true
@@ -203,6 +205,7 @@ Item {
 					Layout.fillHeight: true
 					Layout.leftMargin: 5
 					Layout.rightMargin: 5
+					Layout.bottomMargin: 5
 
 					Component {
 						id: serieComponent

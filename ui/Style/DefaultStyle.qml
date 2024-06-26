@@ -27,5 +27,8 @@ QtObject {
 
 	property string deleteButton: 'image://internal/delete.svg'
 	property string editButton: 'image://internal/edit.svg'
+	property string caloriesComputationButton: 'image://internal/calories.svg'
+	property string speedComputationButton: 'image://internal/speed.svg'
+	property string saveButton: 'image://internal/save.svg'
 
 }
