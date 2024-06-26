@@ -48,6 +48,7 @@ ExerciseModel::ExerciseModel(ExerciseModel * model, QObject *parent)
 
 	mName = initiBackup(model, &model->mName, model->mName, &mName).toString();
 	mMet = initiBackup(model, &model->mMet, model->mMet, &mMet).toDouble();
+	mMetMode = initiBackup(model, &model->mMetMode, model->mMetMode, &mMetMode).toInt();
 	mExerciseId = initiBackup(model, &model->mExerciseId, model->mExerciseId, &mExerciseId).toLongLong();
 }
 
@@ -92,6 +93,8 @@ void ExerciseModel::setMet(double data) {
 		emit metChanged();
 	}
 }
+
+DEFINE_GETSET(ExerciseModel,int,metMode,MetMode)
 
 void ExerciseModel::computeMet(){
 	QSqlQuery query;
@@ -158,6 +161,7 @@ int ExerciseModel::save(){
 
 	query.add("name", mName);
 	query.add("met", mMet);
+	query.add("met_mode", mMetMode);
 	query.addConditionnal("exercise_id",mExerciseId);
 	if(mExerciseId == 0){
 		if(!query.exec()){
@@ -197,12 +201,14 @@ ExerciseModel *ExerciseModel::build(QSqlQuery &query, QObject * parent) {
 	auto idField = query.record().indexOf("exercises.exercise_id");
 	auto nameField = query.record().indexOf("exercises.name");
 	auto metField = query.record().indexOf("exercises.met");
+	auto metModeField = query.record().indexOf("exercises.met_mode");
 	if( idField>= 0 && nameField >= 0 && metField >= 0){
 		ExerciseModel * model = new ExerciseModel(parent);
 	// TODO optimize
 		model->setExerciseId(query.value(idField).toInt());
 		model->setName(query.value(nameField).toString());
 		model->setMet(query.value(metField).toDouble());
+		model->setMetMode(query.value(metModeField).toInt());
 		model->clearBackupValues();
 		return model;
 	}else return nullptr;

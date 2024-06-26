@@ -64,6 +64,7 @@ ExerciseSerieModel * ExerciseSerieModel::clone(QObject *parent)const{
 
 void ExerciseSerieModel::initRandomValues() {
 	mRestTime = std::rand() * 60.0 / RAND_MAX + 1.0;
+	mWorkTime = std::rand() * 120.0 / RAND_MAX + 1.0;
 	mDistance = std::rand() * 20000.0 / RAND_MAX + 1000.0;
 	mRepetitions = std::rand() * 10.0 / RAND_MAX + 5.0;
 	mWeight = std::rand() * 100.0 / RAND_MAX + 5.0;
@@ -290,4 +291,10 @@ void ExerciseSerieModel::remove(){
 		}
 	}
 	emit removed(this);
+}
+
+void ExerciseSerieModel::computeSpeed(){
+	double hours = getWorkTime() / 3600.0;
+	double km = getDistance() / 1000.0;
+	setSpeed(km / hours);
 }

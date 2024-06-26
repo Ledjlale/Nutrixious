@@ -96,6 +96,20 @@ Item {
 						//repsField.forceActiveFocus()
 					}
 				}
+				ComboBox{
+					id: metMode
+					Layout.fillWidth: true
+					textRole: "text"
+					valueRole: "value"
+					model: [{'text':'Default', 'value':0}
+						, {'text':'MET=Speed', 'value':1}]
+					currentIndex: mainItem.exerciseModel.metMode
+					onCurrentValueChanged:{
+						if(	mainItem.exerciseModel){
+							mainItem.exerciseModel.metMode = currentValue
+						}
+					}
+				}
 				Button{
 					text: 'Compute from trainings'
 					onClicked:{

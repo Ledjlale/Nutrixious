@@ -75,6 +75,7 @@ void DatabaseModel::migrate(){
 		if(!query.exec("CREATE TABLE exercises (exercise_id INTEGER PRIMARY KEY"
 				", name TEXT"
 				", met REAL"
+				", met_mode INTEGER"
 				")")) qCritical() << "Cannot create an exercise table  : " << query.lastError().text();
 
 // Programs : List of exercises
@@ -318,6 +319,12 @@ void DatabaseModel::migrate(){
 	if(!query.exec("SELECT open_food_facts_image_url FROM foods LIMIT 1")){
 		if(!query.exec("ALTER TABLE foods ADD COLUMN open_food_facts_image_url TEXT")){
 			qCritical() << "Cannot Add open_food_facts_image_url column into foods: " << query.lastError().text();
+		}else{
+		}
+	}
+	if(!query.exec("SELECT met_mode FROM exercises LIMIT 1")){
+		if(!query.exec("ALTER TABLE exercises ADD COLUMN met_mode INTEGER DEFAULT 0")){
+			qCritical() << "Cannot Add met_mode column into exercises: " << query.lastError().text();
 		}else{
 		}
 	}

@@ -290,12 +290,17 @@ void TrainingModel::computeCalorie(TrainingExerciseModel * exercise, TrainingSer
 
 	if(serie){
 		double met = exercise->getExerciseModel()->getMet();
+		int metMode = exercise->getExerciseModel()->getMetMode();
 		query.prepare("SELECT weight FROM personal_data ORDER BY ABS(? - date_time) LIMIT 1");
 		query.addBindValue(mStartDateTime.toMSecsSinceEpoch());
 		if(query.exec()){
 			if(query.next()){
 				auto weightField = query.record().indexOf("weight");
 				double weight = query.value(weightField).toDouble();
+				double speed = serie->getSpeed();
+				if(metMode == 1 && speed > 0){
+					met = speed;
+				}
 				double factor = met * 3.5 * weight / 200.0;
 				int workTime = serie->getWorkTime();
 				double calories = factor * workTime / 60.0;

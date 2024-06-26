@@ -35,6 +35,7 @@ Item{
 	property bool isLive: !!workingExerciseModel
 	property bool showSaveButton: !isLive
 	property bool showWorkTime: true
+	property bool showRestTime: true
 	property bool showCalories: true
 	property bool showOrderChange: false
 	property bool isReadOnly: false
@@ -57,6 +58,7 @@ Item{
 			width: setList.width
 			margin: mainItem.margin
 			showWorkTime: mainItem.showWorkTime
+			showRestTime: mainItem.showRestTime
 			showCalories: mainItem.showCalories
 			showDecrementOrderChange: mainItem.showOrderChange && setList.count > 1 && index > 0
 			showIncrementOrderChange: mainItem.showOrderChange && setList.count > 1 && index < setList.count - 1

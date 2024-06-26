@@ -37,6 +37,7 @@ SwipeView{
 	property bool showSaveButton: true
 	property bool showTitle: true
 	property bool showWorkTime: true
+	property bool showRestTime: true
 	property bool showCalories: true
 	property bool showDecrementOrderChange: false
 	property bool showIncrementOrderChange: false
@@ -122,6 +123,7 @@ SwipeView{
 				//onImplicitHeightChanged: fieldsList.updateImplicit()
 			}
 			TextField{
+				id: distanceField
 				property bool isGood: !mainItem.isLive || !serieModel?.isDone || (serieModel.resultSerieModel.distance >= serieModel.targetSerieModel.distance)
 				height: implicitHeight
 				Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
@@ -151,6 +153,7 @@ SwipeView{
 			}
 
 			TextField{
+				id: speedField
 				property bool isGood: !mainItem.isLive || !serieModel?.isDone || (serieModel.resultSerieModel.speed >= serieModel.targetSerieModel.speed)
 				height: implicitHeight
 				Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
@@ -184,7 +187,7 @@ SwipeView{
 				Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 				Layout.fillHeight: true
 				Layout.rightMargin: 10
-				visible: !mainItem.trainingResultEdition
+				visible: mainItem.showRestTime && !mainItem.trainingResultEdition
 				edit: mainItem.keepEditView
 				showTitle: mainItem.showTitle || mainItem.trainingResultEdition
 				readOnly:  mainItem.isReadOnly || mainItem.isLive
@@ -274,6 +277,15 @@ SwipeView{
 				text: 'Cal'
 				onClicked:{
 						serieModel.computeCalories()
+				}
+			}
+			Button{
+				Layout.fillWidth: true
+				Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
+				visible: !mainItem.isReadOnly && speedField.visible && distanceField.visible && !mainItem.isLive && !mainItem.serieModel.isRunning
+				text: 'Speed'
+				onClicked:{
+						serieModel.computeSpeed()
 				}
 			}
 			Rectangle{

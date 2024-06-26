@@ -95,6 +95,8 @@ public:
 	Q_INVOKABLE virtual int save();
 	virtual void load(QSqlQuery &query);
 	Q_INVOKABLE virtual void remove();
+	
+	Q_INVOKABLE void computeSpeed();
 
 signals:
 	void serieIdChanged();
@@ -115,8 +117,8 @@ protected:
 	int mWorkTime = 0;
 	int mRestTime = 60;
 	int mOrder = 0;
-	int mDistance = -1;
-	double mSpeed = -1.0;
+	int mDistance = -1;		// m
+	double mSpeed = -1.0;	// km/h
 	double mWeight = -1.0;
 	int mRepetitions = -1;
 

@@ -36,6 +36,7 @@ Item{
 	property bool showRunning: false
 	property bool showTitle: false
 	property bool showWorkTime: true
+	property bool showRestTime: true
 	property bool showCalories: true
 	property bool showOrderChange: false
 	property bool isReadOnly: false
@@ -260,6 +261,7 @@ Item{
 							margin: 5
 							visible: mainItem.expandAll
 							showWorkTime: mainItem.showWorkTime
+							showRestTime: mainItem.showRestTime
 							showCalories: mainItem.showCalories
 							showOrderChange: mainItem.showOrderChange
 							exerciseModel: visible ? exerciseItem.exerciseModel : null

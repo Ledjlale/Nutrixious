@@ -33,6 +33,8 @@ Q_OBJECT
 // DB
 	Q_PROPERTY(QString name MEMBER mName WRITE setName NOTIFY nameChanged)
 	Q_PROPERTY(double met MEMBER mMet WRITE setMet NOTIFY metChanged)
+	
+	DECLARE_GETSET(int,metMode,MetMode)
 
 public:
 	ExerciseModel();	// QML
@@ -66,6 +68,7 @@ protected:
 	qint64 mExerciseId = 0;
 	QString mName;
 	double mMet = 1.0;
+	int mMetMode = 0;	// 1 == Met=Speed
 };
 
 #endif
