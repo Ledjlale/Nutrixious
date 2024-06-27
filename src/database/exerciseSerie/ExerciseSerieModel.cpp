@@ -208,15 +208,14 @@ void ExerciseSerieModel::updateIsSaved() {
 }
 
 void ExerciseSerieModel::undo(){
-	if(mBackupValues.contains(&mOrder)) mOrder = mBackupValues[&mOrder].toInt();
-	if(mBackupValues.contains(&mRestTime)) mRestTime = mBackupValues[&mRestTime].toInt();
-	if(mBackupValues.contains(&mWorkTime)) mWorkTime = mBackupValues[&mWorkTime].toInt();
-
-	if(mBackupValues.contains(&mDistance)) mDistance = mBackupValues[&mDistance].toInt();
-	if(mBackupValues.contains(&mSpeed)) mSpeed = mBackupValues[&mSpeed].toDouble();
-	if(mBackupValues.contains(&mWeight)) mWeight = mBackupValues[&mWeight].toDouble();
-	if(mBackupValues.contains(&mRepetitions)) mRepetitions = mBackupValues[&mRepetitions].toInt();
-
+	DEFINE_UNDO(Int,Order)
+	DEFINE_UNDO(Int,RestTime)
+	DEFINE_UNDO(Int,WorkTime)
+	DEFINE_UNDO(Int,Distance)
+	DEFINE_UNDO(Int,Repetitions)
+	
+	DEFINE_UNDO(Double,Speed)
+	DEFINE_UNDO(Double,Weight)
 
 	QmlModel::undo();
 }

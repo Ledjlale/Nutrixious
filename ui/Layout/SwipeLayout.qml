@@ -28,6 +28,8 @@ SwipeDelegate{
 	id: mainItem
 	property bool isDeletable: true
 	property bool isEditable: true
+	property bool isSavable: false
+	property bool isUndoable: false
 	property bool isCaloriesComputable: false
 	property bool isSpeedComputable: false
 
@@ -41,6 +43,8 @@ SwipeDelegate{
 	signal speedComputationClicked()
 	signal deleteClicked()
 	signal editClicked()
+	signal undoClicked()
+	signal saveClicked()
 
 	implicitHeight: contentItem.implicitHeight
 	leftInset: 0
@@ -92,6 +96,32 @@ SwipeDelegate{
 					onClicked: {
 						swipe.close()
 						mainItem.speedComputationClicked()
+					}
+				}
+				ButtonImage{
+					id: saveButton
+					Layout.preferredWidth: 25
+					Layout.preferredHeight: 25
+					Layout.rightMargin: 10
+					visible: mainItem.isSavable
+					imageSource: DefaultStyle.saveButton
+					colorizationColor: mainItem.color
+					onClicked: {
+						swipe.close()
+						mainItem.saveClicked()
+					}
+				}
+				ButtonImage{
+					id: undoButton
+					Layout.preferredWidth: 25
+					Layout.preferredHeight: 25
+					Layout.rightMargin: 10
+					visible: mainItem.isUndoable
+					imageSource: DefaultStyle.undoButton
+					colorizationColor: mainItem.color
+					onClicked: {
+						swipe.close()
+						mainItem.undoClicked()
 					}
 				}
 				

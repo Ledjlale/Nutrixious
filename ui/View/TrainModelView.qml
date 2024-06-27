@@ -30,6 +30,8 @@ SwipeLayout{
 	property bool displayDate: false
 	
 	onDeleteClicked: modelData.remove()
+	isSavable:  mainItem.modelData.isEdited
+	isEditable: !mainItem.modelData.isEdited
 	
 	contentItem: RowLayout{
 		id: mainLine
@@ -80,15 +82,14 @@ SwipeLayout{
 			text: mainItem.modelData.calories ? Number.parseFloat(mainItem.modelData.calories.toFixed(2)) : ''
 		}
 		ButtonImage{
-			id: saveButton
 			Layout.alignment: Qt.AlignCenter
 			Layout.preferredWidth: 25
 			Layout.preferredHeight: 25
 			visible: mainItem.modelData.isEdited
-			imageSource: DefaultStyle.saveButton
+			imageSource: DefaultStyle.undoButton
 			colorizationColor: Material.foreground
 			onClicked: {
-				mainItem.modelData.save()
+				mainItem.modelData.undo()
 			}
 		}
 

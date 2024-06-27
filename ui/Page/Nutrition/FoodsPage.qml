@@ -35,107 +35,50 @@ Item {
 
 	signal back()
 	signal picked(var food)
+	
 
-
+	Connections{
+		target: mainWindow.header
+		//enabled: mainItem.visible
+		property bool editing: stackView.currentItem.objectName == "Editor"
+		property bool scanning: stackView.currentItem.objectName == "Scanner" && stackView.currentItem.isStarted
+		function onCreate(){
+				stackView.push(foodEditorComponent)
+				mainWindow.header.updateHeaders({'showCreateButton': false, 'showSaveButton': true})
+		}
+		function onBarcode(){
+			if(!scanning)
+				stackView.push(scannerComponent)
+			else
+				stackView.pop()
+		}
+		function onSave(){
+			if(mainItem.isPicker){
+				if(stackView.currentItem.foodModel.isSaved){
+					mainItem.picked(stackView.currentItem.foodModel)
+					stackView.pop()
+				}else{
+					if(stackView.currentItem.foodModel.save() == 1){
+						mainItem.picked(stackView.currentItem.foodModel)
+						stackView.pop()
+					}
+				}
+			}else if(stackView.currentItem.foodModel.save() == 1) {
+				stackView.pop()
+				foodListModel.update()
+			}
+		}
+	}
 
 	ColumnLayout{
 		anchors.fill: parent
 		spacing: 0
-		RowLayout{
-			Button{
-				visible: mainItem.isPicker || stackView.depth > 1
-				text: 'Back'
-				onClicked: if( stackView.depth > 1 ) stackView.pop()
-				else
-					mainItem.back()
-			}
-			Item{
-				Layout.fillWidth: true
-			}
-			Button{
-				visible: stackView.depth == 1
-				property bool searching: stackView.currentItem.objectName == "Search"
-				text: searching ? 'X' : qsTr('Search')
-				onClicked: {
-						if(!searching)
-							stackView.push(searchComponent)
-						else
-							stackView.pop()
-				}
-			}
-			Button{
-				visible: stackView.depth == 1
-				property bool scanning: stackView.currentItem.objectName == "Scanner" && stackView.currentItem.isStarted
-				text: scanning ? 'X' : qsTr('Scan')
-				onClicked: {
-						if(!scanning)
-							stackView.push(scannerComponent)
-						else
-							stackView.pop()
-				}
-			}
-			Button{
-				property bool editing: stackView.currentItem.objectName == "Editor"
-				text: editing
-						?  stackView.currentItem.foodModel.isSaved
-							? mainItem.isPicker
-								? 'Use'
-								: 'Update'
-							: mainItem.isPicker
-								? 'Save & use'
-								: 'Save'
-						: 'Create'
-				onClicked:{
-					if(editing){
-						if(mainItem.isPicker){
-							if(stackView.currentItem.foodModel.isSaved){
-								mainItem.picked(stackView.currentItem.foodModel)
-								stackView.pop()
-							}else{
-								if(stackView.currentItem.foodModel.save() == 1){
-									mainItem.picked(stackView.currentItem.foodModel)
-									stackView.pop()
-								}
-							}
-						}else if(stackView.currentItem.foodModel.save() == 1) {
-							stackView.pop()
-							foodListModel.update()
-						}
-					}else {
-						stackView.push(foodEditorComponent)
-					}
-				}
-			}
-		}
 		StackView{
 			id: stackView
 			Layout.fillHeight: true
 			Layout.fillWidth: true
-			initialItem: ListView{
-				spacing: 5
-				model: FoodProxyModel{
-					id: foodListModel
-					Component.onCompleted: update()
-				}
-				delegate: FoodLineView{
-					width: stackView.width
-					//height: implicitHeight
-					foodModel: $modelData
-					MouseArea{
-						anchors.fill: parent
-						onClicked:{
-							$modelData.autoCompute = mainItem.isPicker && $modelData.isSaved
-							stackView.push(foodEditorComponent, {foodModel:$modelData})
-						}
-					}
-					Rectangle{
-						width: parent.width
-						anchors.bottom: parent.bottom
-						height: 1
-						color: 'gray'
-					}
-				}
-			}
+			initialItem: searchComponent
+			
 			Component{
 				id: scannerComponent
 				ScannerView{
@@ -144,6 +87,7 @@ Item {
 					onScannedCodeChanged:{
 						if(scannedCode != '') {
 							stackView.replace(foodEditorComponent, {offCode: scannedCode})
+							mainWindow.header.updateHeaders({'showCreateButton': false, 'showSaveButton': true})
 						}
 					}
 					Component.onCompleted: start()
@@ -157,7 +101,13 @@ Item {
 					onSearchedCodeChanged:{
 						if(searchedCode != '') {
 							stackView.replace(foodEditorComponent, {offCode: searchedCode})
+							mainWindow.header.updateHeaders({'showCreateButton': false, 'showSaveButton': true})
 						}
+					}
+					onFoodModelFound: function(foodModelSearched){
+						foodModelSearched.autoCompute = mainItem.isPicker && foodModelSearched.isSaved
+						stackView.push(foodEditorComponent, {foodModel:foodModelSearched})
+						mainWindow.header.updateHeaders({'showCreateButton': false, 'showSaveButton': true})
 					}
 				}
 			}

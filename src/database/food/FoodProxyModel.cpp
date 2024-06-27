@@ -26,5 +26,18 @@ FoodProxyModel::FoodProxyModel(QObject *parent)
 {
 	auto list = new FoodListModel( this);
 	connect(this, &FoodProxyModel::update, list, &FoodListModel::update);
+	connect(this,&FoodProxyModel::nameChanged,this, &FoodProxyModel::invalidateFilter);
 	setSourceModel(list);
+}
+
+DEFINE_SIMPLE_GETSET(FoodProxyModel,QString,name,Name)
+
+
+bool FoodProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const{
+	if(mName == "") return true;
+	else{
+		QModelIndex index0 = sourceModel()->index(sourceRow, 0, sourceParent);
+		auto model = sourceModel()->data(index0).value<FoodModel*>();
+		return model->getBrand().contains(mName) || model->getDescription().contains(mName);
+	}
 }

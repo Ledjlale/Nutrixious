@@ -205,6 +205,12 @@ void TrainingModel::load(QSqlQuery &query) {
 	clearBackupValues();
 }
 
+void TrainingModel::undo(){
+	DEFINE_UNDO(Double,Calories)
+	
+	ProgramModel::undo();
+}
+
 TrainingModel *TrainingModel::build(QSqlQuery &query, QObject * parent) {
 	TrainingModel * model = new TrainingModel(parent);
 // TODO optimize

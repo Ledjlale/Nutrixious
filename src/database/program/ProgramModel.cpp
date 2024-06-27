@@ -247,6 +247,14 @@ void ProgramModel::load(QSqlQuery &query){
 	clearBackupValues();
 }
 
+void ProgramModel::undo(){
+	DEFINE_UNDO(String,Name)
+	DEFINE_UNDO(String,Description)
+	
+	QmlModel::undo();
+}
+
+
 QList<ProgramModel*> ProgramModel::buildAll(QObject * parent){
 	QList<ProgramModel*> models;
 	QString tablePrefix = "program";

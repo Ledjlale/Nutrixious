@@ -51,6 +51,7 @@
 		}\
 	}
 
+#define DEFINE_UNDO(Y,X) if(mBackupValues.contains(&m##X)) set##X( mBackupValues[&m##X].to##Y());
 #define DEFINE_UNDO_LONGLONG(X) if(mBackupValues.contains(&m##X)) set##X( mBackupValues[&m##X].toLongLong());
 #define DEFINE_UNDO_STRING(X) if(mBackupValues.contains(&m##X)) set##X( mBackupValues[&m##X].toString());
 #define DEFINE_UNDO_DOUBLE(X) if(mBackupValues.contains(&m##X)) set##X( mBackupValues[&m##X].toDouble());

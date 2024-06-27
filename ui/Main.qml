@@ -33,7 +33,7 @@ ApplicationWindow {
 
 	color: Material.background
 	Material.theme: DefaultStyle.theme
-	property string titleText : 'Programs'
+	property string titleText : 'Diary'
 
 	property bool gShowMenuButton: true
 	property bool gShowBackButton: false
@@ -41,6 +41,10 @@ ApplicationWindow {
 
 	signal gBack()
 	signal gSave()
+	
+	function setHeaders(headers){
+		toolBar.setHeaders(headers)
+	}
 
 	header: ToolBar{
 		id: toolBar
@@ -50,9 +54,8 @@ ApplicationWindow {
 		showBackButton: mainView.depth > 1 || gShowBackButton
 		showMenuButton: mainView.depth == 1 && gShowMenuButton
 		title: menuPanel.show ? '' : mainWindow.titleText
-		onBack: {if(!gShowBackButton) mainView.pop()
-			else
-				mainWindow.gBack()
+		onBack: {
+			mainWindow.gBack()
 		}
 		onMenu:{menuPanel.show = true}
 		onSave: mainWindow.gSave()
@@ -64,20 +67,11 @@ ApplicationWindow {
 		width: parent.width
 		height: parent.height
 		anchors.centerIn: parent
-		initialItem: programsPage
-		//TrainingPage{}
-
-		//OverviewPage{}
-		//DiaryPage{}
-
+		initialItem: diaryPage
 
 		Component{
 			id: programsPage
 			ProgramsPage{}
-		}
-		Component{
-			id: trainingPage
-			TrainingPage{}
 		}
 		Component{
 			id: trainingsPage
@@ -100,12 +94,8 @@ ApplicationWindow {
 			ExercisesPage{}
 		}
 		Component{
-			id: foodsPage
-			FoodsPage{}
-		}
-		Component{
 			id: diaryPage
-			DiaryPage{}
+			DiaryLayout{}
 		}
 		Component{
 			id: mealGroupsPage
@@ -198,10 +188,8 @@ ApplicationWindow {
 				Repeater{
 					id: menuItems
 					//model:[{title: 'Overview'},{title: 'Diary'},{title: 'Food'},{title: 'Training'}, {title: 'Exercises'},{title: 'Programs'},{title: 'Trainings'},{title: 'Statistics'},{title: 'Settings'}]
-					model:[{title: 'Foods', component:foodsPage}
-						,{title: 'Diary', component:diaryPage}
+					model:[{title: 'Diary', component:diaryPage}
 						,{title: 'Meal Groups', component:mealGroupsPage}
-						,{title: 'Training', component:trainingPage}
 						, {title: 'Exercises', component:exercisesPage}
 						,{title: 'Programs', component:programsPage}
 						,{title: 'Trainings', component:trainingsPage}

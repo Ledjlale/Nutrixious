@@ -45,8 +45,10 @@ Item {
 		}
 	}
 	onIsRunningChanged: if(isRunning) {
-						workingModel.start()
-						gShowMenuButton = false
+						if(workingModel.start())
+							gShowMenuButton = false
+						else
+							isRunning = false
 					}else {
 						workingModel.stop()
 						gShowMenuButton = true
@@ -147,17 +149,18 @@ Item {
 					property var currentWork: workingModel.currentWork
 					visible: !!currentWork && !currentWork.isResting && !currentWork.isDone
 					Text{
+						id: elapsedTimeText
 						anchors.centerIn: parent
-						text: timer.count + ' s'
+						text: '0 s'
 						color: 'white'
 						Timer{
 							id: timer
-							property int count:0
 							interval: 1000
 							repeat: true
 							running: timerArea.visible
-							onRunningChanged: count = 0
-							onTriggered: {++count}
+							onTriggered: {
+								elapsedTimeText.text = timerArea.currentWork.getElapsedWorkTime() + ' s'
+							}
 						}
 					}
 				}

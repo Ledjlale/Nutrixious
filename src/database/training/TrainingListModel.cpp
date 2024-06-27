@@ -29,9 +29,6 @@ TrainingListModel::TrainingListModel(QObject *parent)
 	: ProxyAbstractListModel<TrainingModel*>{parent}
 {
 	mList << TrainingModel::buildAll(parent);
-	//mList << StrengthModel::load();
-	//mList << DistanceModel::load();
-	//mList << StepsModel::load();
 	for(auto p : mList)
 		connect((ProgramModel*)p, &ProgramModel::removed, this, &TrainingListModel::handleRemoved);
 }
@@ -71,3 +68,11 @@ void TrainingListModel::handleRemoved(){
 	}
 }
 
+void TrainingListModel::update(){
+	beginResetModel();
+	mList.clear();
+	mList << TrainingModel::buildAll(this);
+	for(auto p : mList)
+		connect((ProgramModel*)p, &ProgramModel::removed, this, &TrainingListModel::handleRemoved);
+	endResetModel();
+}

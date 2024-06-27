@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   id="a"
+   viewBox="0 0 244.92 244.92"
+   version="1.1"
+   sodipodi:docname="search_off_dark.svg"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview5"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="3.2867875"
+     inkscape:cx="122.46"
+     inkscape:cy="122.46"
+     inkscape:window-width="1920"
+     inkscape:window-height="1011"
+     inkscape:window-x="0"
+     inkscape:window-y="1232"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="a" />
+  <defs
+     id="defs1">
+    <style
+       id="style1">.b{fill:#00641e;}.c{fill:#00961e;}.d{fill:#fff;}.e{fill:#ff8c14;}.f{fill:#8c3c00;}</style>
+  </defs>
+  <g
+     id="g5">
+    <g
+       id="g3">
+      <path
+         class="e"
+         d="M61.62,122.32c0-33.82,27.41-61.23,61.23-61.23s61.23,27.41,61.23,61.23H61.62Z"
+         id="path1" />
+      <circle
+         class="f"
+         cx="143.58"
+         cy="82.78"
+         r="3.37"
+         id="circle1" />
+      <circle
+         class="f"
+         cx="159.98"
+         cy="97.84"
+         r="3.37"
+         id="circle2" />
+      <circle
+         class="f"
+         cx="141.43"
+         cy="101.52"
+         r="3.37"
+         id="circle3" />
+    </g>
+    <path
+       class="d"
+       d="M93.15,175.84l-10.88,25.97,14.32,6,10.97-26.19c4.89,1.26,10.01,1.93,15.29,1.93,33.76,0,61.23-27.47,61.23-61.23h-15.52c0,25.2-20.5,45.71-45.71,45.71s-45.71-20.5-45.71-45.71h-15.52c0,22.99,12.74,43.05,31.53,53.52Z"
+       id="path3" />
+    <path
+       class="b"
+       d="M148.17,30.34c-12.04,0-22.5,6.71-27.88,16.59,4.14,3.86,7.27,8.79,8.89,14.38,14.01-3.14,24.53-15.53,24.77-30.43-1.87-.35-3.8-.53-5.78-.53Z"
+       id="path4" />
+    <path
+       class="c"
+       d="M98.68,38.42c-2.38,0-4.7,.27-6.94,.77,3.83,13.23,16.03,22.91,30.5,22.91,2.38,0,4.7-.27,6.94-.77-3.83-13.23-16.03-22.91-30.5-22.91Z"
+       id="path5" />
+  </g>
+</svg>

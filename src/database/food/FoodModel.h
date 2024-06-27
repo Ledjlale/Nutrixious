@@ -120,7 +120,7 @@ protected:
 	QString mOpenFoodFactsImageUrl;
 	double mServingSize = 10.0;
 	double mServingsPerContainer = 1.0;
-	qint64 mServingUnitId = 0;
+	qint64 mServingUnitId = 1;
 
 	double mBaseSize = 100.0;	// Nuriments values are based on this quantity.
 	quint64 mBaseUnitId = 1;

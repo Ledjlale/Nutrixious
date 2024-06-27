@@ -119,6 +119,9 @@ void WorkingSerieModel::startWork(){
 	setIsDone(false);
 	emit workStarted();
 }
+int WorkingSerieModel::getElapsedWorkTime() const{
+	return mStart.secsTo(QDateTime::currentDateTime());
+}
 
 void WorkingSerieModel::endOfCurrentWork(){
 	mResultSerieModel->setWorkTime(mStart.secsTo(QDateTime::currentDateTime()));

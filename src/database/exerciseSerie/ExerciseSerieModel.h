@@ -90,7 +90,7 @@ public:
 	bool isSpeedComputable()const;
 
 	virtual void updateIsSaved();
-	virtual void undo();
+	Q_INVOKABLE virtual void undo();
 
 	Q_INVOKABLE void makeNew();
 

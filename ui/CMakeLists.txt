@@ -43,6 +43,7 @@
 	ui/Item/Stopwatch.qml
 	ui/Item/TimeDisplay.qml
 	ui/Item/ToolBar.qml
+	ui/Item/ToolButtonImage.qml
 
 	ui/Item/Chart/TimeChart.qml
 
@@ -52,6 +53,7 @@
 	ui/Item/TimePicker/TimePickerLabel.qml
 
 	ui/Layout/SwipeLayout.qml
+	ui/Layout/DiaryLayout.qml
 
 	ui/View/ExerciseModelView.qml
 	ui/View/FoodModelView.qml

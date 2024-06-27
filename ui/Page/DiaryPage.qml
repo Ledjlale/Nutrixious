@@ -35,28 +35,32 @@ Item {
 	property TrainingListModel trainings: TrainingListModel{
 	}
 	property int totalRefresh: 1
+	signal exerciseRequested()
+	signal setHeaders(var headers)
+	function updateTrainings(){
+		trainings.update()
+		trains.updateCalories()
+	}
 	onTotalRefreshChanged: mainItem.meals.updateTotals()
 	Connections{
 		target: mainWindow
+		enabled: mainItem.visible
 		function onGSave(){
-			stackView.currentItem.foodModel.save()
+			if(stackView.currentItem.foodModel) stackView.currentItem.foodModel.save()
 			stackView.pop()
-			gShowBackButton = false
-			gShowSaveButton = false
-			gShowMenuButton = true
 			++mainItem.totalRefresh
 		}
 		function onGBack(){
-			stackView.currentItem.foodModel.undo()
+			if(stackView.currentItem.foodModel) stackView.currentItem.foodModel.undo()
 			stackView.pop()
-			gShowBackButton = false
-			gShowSaveButton = false
-			gShowMenuButton = true
 		}
 	}
 	StackView{
 		id: stackView
 		anchors.fill: parent
+		onDepthChanged:
+			if(depth > 1) mainItem.setHeaders({'showBackButton':true, 'showMenuButton':false})
+			else mainItem.setHeaders(null)
 		initialItem:
 		ColumnLayout{
 			width: stackView.width
@@ -209,11 +213,9 @@ Item {
 											modelData: $modelData
 											isEditable: false
 											onClicked: {
-												gShowBackButton = true
-												gShowSaveButton = true
-												gShowMenuButton = false
 												$modelData.autoCompute = true
 												stackView.push(foodEditorComponent, {foodModel:$modelData})
+												mainItem.setHeaders({'showBackButton':true, 'showSaveButton':true, 'showMenuButton':false})
 											}
 										}
 										Rectangle{
@@ -226,13 +228,17 @@ Item {
 										}
 									}
 								}
-								Button{
+								ButtonImage{
 									id: addButton
-									Layout.fillWidth: true
+									Layout.preferredWidth: 80
+									Layout.preferredHeight: 30
+									Layout.alignment: Qt.AlignCenter
 									Layout.topMargin: 5
-									text: 'Add'
+									imageSource: DefaultStyle.addFoodButton
+									colorizationColor: Material.foreground
 									onClicked: {
 										stackView.push(foodPickerComponent, {mealGroup:$modelData})
+										mainItem.setHeaders({'showBackButton':true, 'showMenuButton':false, 'showBarcodeButton':true, 'showCreateButton':true})
 									}
 								}
 							}
@@ -246,32 +252,44 @@ Item {
 								color: 'white'
 								text: 'Exercises'
 							}
+							MouseArea{
+								anchors.fill: parent
+								onClicked: {
+									mainItem.setHeaders(null)
+									mainItem.exerciseRequested()
+								}
+							}
 						}
 						ListView{
-						id: trainingList
-						Layout.fillWidth: true
-						implicitHeight: contentHeight
-						clip: true
-						interactive: false
-						model: TrainingProxyModel{
-							id: trains
-							trainingDay: dayBar.currentDay
-							sourceModel: mainItem.trainings
-						}
-						delegate:
-							Item{
-								width: trainingList.width
-								height: trainView.implicitHeight
-								//anchors.fill: parent
-								//propagateComposedEvents: true
-								//preventStealing: true
-								TrainModelView{
-									id: trainView
-									width: parent.width
-									modelData: $modelData
-									displayDate: false
-									//onClicked: trainDetailsList.program = $modelData
+							id: trainingList
+							Layout.fillWidth: true
+							implicitHeight: contentHeight
+							clip: true
+							interactive: false
+							model: TrainingProxyModel{
+								id: trains
+								trainingDay: dayBar.currentDay
+								sourceModel: mainItem.trainings
+							}
+							delegate:
+								Item{
+									width: trainingList.width
+									height: trainView.implicitHeight
+									//anchors.fill: parent
+									//propagateComposedEvents: true
+									//preventStealing: true
+									TrainModelView{
+										id: trainView
+										width: parent.width
+										modelData: $modelData
+										displayDate: false
+										//onClicked: trainDetailsList.program = $modelData
+									}
 								}
+								
+							footer:Item{
+								height: 50
+								width: trainingList.width
 							}
 						}
 					}

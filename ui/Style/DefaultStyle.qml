@@ -30,5 +30,16 @@ QtObject {
 	property string caloriesComputationButton: 'image://internal/calories.svg'
 	property string speedComputationButton: 'image://internal/speed.svg'
 	property string saveButton: 'image://internal/save.svg'
+	property string undoButton: 'image://internal/undo.svg'
+	property string stopwatchButton: 'image://internal/stopwatch.svg'
+	property string addFoodButton: 'image://internal/add_food.svg'
+	property string searchOFFButton: 'image://internal/search_off.svg'
+	property string searchOFFDarkButton: 'image://internal/search_off_dark.svg'
+	property string searchDatabaseButton: 'image://internal/search_database.svg'
+	property string menuButton: 'image://internal/menu.svg'
+	property string backButton: 'image://internal/back.svg'
+	property string optionsButton: 'image://internal/options.svg'
+	property string createButton: 'image://internal/create.svg'
+	property string barcodeButton: 'image://internal/barcode.svg'
 
 }

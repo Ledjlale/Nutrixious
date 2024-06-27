@@ -46,8 +46,8 @@ public:
 	QList<TrainingSerieModel*> getSeries() const;
 
 	void computeCalories(TrainingSerieModel * serie);
+	Q_INVOKABLE virtual void undo();
 	void updateCalories();
-
 	static TrainingExerciseModel *build(QSqlQuery &query, QObject * parent);
 
 signals:

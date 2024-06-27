@@ -603,6 +603,7 @@ void FoodModel::handleError (QNetworkReply::NetworkError code) {
 
 	emit loadingFailed();
 }
+
 /*
  * https://openfoodfacts.github.io/openfoodfacts-server/api/ref-v2/#get-/api/v2/search
  * https://wiki.openfoodfacts.org/Open_Food_Facts_Search_API_Version_2

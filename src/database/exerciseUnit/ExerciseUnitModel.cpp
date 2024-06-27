@@ -167,11 +167,11 @@ void ExerciseUnitModel::updateIsSaved() {
 }
 
 void ExerciseUnitModel::undo(){
-	if(mBackupValues.contains(&mDescription)) mDescription = mBackupValues[&mDescription].toString();
-	if(mBackupValues.contains(&mUseDistance)) mUseDistance = mBackupValues[&mUseDistance].toBool();
-	if(mBackupValues.contains(&mUseSpeed)) mUseSpeed = mBackupValues[&mUseSpeed].toBool();
-	if(mBackupValues.contains(&mUseWeight)) mUseWeight = mBackupValues[&mUseWeight].toBool();
-	if(mBackupValues.contains(&mUseRepetitions)) mUseRepetitions = mBackupValues[&mUseRepetitions].toBool();
+	DEFINE_UNDO(String,Description)
+	DEFINE_UNDO(Bool,UseDistance)
+	DEFINE_UNDO(Bool,UseSpeed)
+	DEFINE_UNDO(Bool,UseWeight)
+	DEFINE_UNDO(Bool,UseRepetitions)
 
 	QmlModel::undo();
 }

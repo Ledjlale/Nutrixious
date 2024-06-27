@@ -31,11 +31,16 @@ Item {
 	id: mainItem
 
 	property string searchedCode
+	
+	signal foodModelFound(var foodModelSearched)
 
 	property FoodModel foodModel: FoodModel{
 		onOpenFoodFactsFound: function(results) {
 			resultList.model = results
 		}
+	}
+	property FoodProxyModel foodDatabase: FoodProxyModel{
+		Component.onCompleted: update()
 	}
 
 	ColumnLayout{
@@ -43,17 +48,36 @@ Item {
 		RowLayout{
 			Layout.preferredHeight: searchField.implicitHeight
 			Layout.maximumHeight: searchField.implicitHeight
+			
 			TextField{
 				id: searchField
 				Layout.fillWidth: true
 				edit: true
-				placeholderText: 'Search for a saved meal'
+				placeholderText: 'Search for meal'
 				onEditingFinished: text = newValue
 			}
-			Button{
-				text: 'Search'
+			ButtonImage{
+				Layout.preferredWidth: 60
+				Layout.preferredHeight: 60
+				Layout.alignment: Qt.AlignCenter
+				imageSource: DefaultStyle.theme == Material.Dark ? DefaultStyle.searchOFFDarkButton : DefaultStyle.searchOFFButton
+				//colorizationColor: Material.foreground
 				onClicked:{
+					forceActiveFocus()
 					foodModel.findOpenFoodFacts(searchField.text)
+				}
+			}
+			ButtonImage{
+				Layout.preferredWidth: 40
+				Layout.preferredHeight: 40
+				Layout.rightMargin: 5
+				Layout.alignment: Qt.AlignCenter
+				imageSource: DefaultStyle.searchDatabaseButton
+				colorizationColor: Material.foreground
+				onClicked:{
+					forceActiveFocus()
+					foodDatabase.name = searchField.text
+					resultList.model = foodDatabase
 				}
 			}
 		}
@@ -66,12 +90,15 @@ Item {
 			id: resultList
 			Layout.fillWidth: true
 			Layout.fillHeight: true
+			model: mainItem.foodDatabase
+			clip: true
 			delegate:Item{
 				height: 80
 				width: resultList.width
 				MouseArea{
 					anchors.fill: parent
-					onClicked: searchedCode = modelData.code
+					onClicked: if(modelData) searchedCode = modelData.code
+								else foodModelFound($modelData)
 				}
 				RowLayout{
 					id: lineLayout
@@ -82,13 +109,13 @@ Item {
 							id: title
 							Layout.fillWidth: true
 							color: Material.foreground
-							text: modelData.brands ? modelData.brands : ''
+							text: modelData?.brands ? modelData.brands : $modelData?.brand ? $modelData.brand : ''
 						}
 						Text{
 							id: desc
 							Layout.fillWidth: true
 							color: Material.foreground
-							text: modelData.generic_name ? modelData.generic_name : ''
+							text: modelData?.generic_name ? modelData.generic_name : $modelData?.description ? $modelData.description : ''
 							font.italic: true
 						}
 					}
@@ -96,7 +123,7 @@ Item {
 						id: imageField
 						Layout.fillHeight: true
 						Layout.preferredWidth: height
-						source: modelData.image_url
+						source: modelData?.image_url ? modelData?.image_url : $modelData?.imageUrl
 						fillMode: Image.PreserveAspectFit
 
 						MouseArea{

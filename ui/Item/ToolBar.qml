@@ -31,46 +31,126 @@ Control.ToolBar{
 	property bool showMenuButton: true
 	property bool showOptionsButton: true
 	property bool showSaveButton: false
+	property bool showBarcodeButton: false
+	property bool showCreateButton: false
 	property alias title: titleLabel.text
 	property bool displayStopwatch: false
 	signal back()
 	signal menu()
 	signal options()
 	signal save()
+	signal create()
+	signal barcode()
+	
+	
+	function setHeaders(headers){
+		showBackButton = headers.showBackButton != undefined ? headers.showBackButton : false
+		showMenuButton = headers.showMenuButton != undefined  ? headers.showMenuButton : true
+		showOptionsButton = headers.showOptionsButton != undefined  ? headers.showOptionsButton : false
+		showSaveButton = headers.showSaveButton != undefined  ? headers.showSaveButton : false
+		showBarcodeButton = headers.showBarcodeButton != undefined  ? headers.showBarcodeButton : false
+		showCreateButton = headers.showCreateButton != undefined  ? headers.showCreateButton : false
+		if( headers.title != undefined) title = headers.title
+	}
+	
+	function updateHeaders(headers){
+		if(headers.showBackButton != undefined) showBackButton = headers.showBackButton
+		if(headers.showMenuButton != undefined) showMenuButton = headers.showMenuButton
+		if(headers.showOptionsButton != undefined) showOptionsButton = headers.showOptionsButton
+		if(headers.showSaveButton != undefined) showSaveButton = headers.showSaveButton
+		if(headers.showBarcodeButton != undefined) showBarcodeButton = headers.showBarcodeButton
+		if(headers.showCreateButton != undefined) showCreateButton = headers.showCreateButton
+	}
+	
 	RowLayout {
-		 anchors.fill: parent
-		 Control.ToolButton {
+		anchors.fill: parent
+		ToolButtonImage{
+			Layout.preferredHeight: 20
+			Layout.preferredWidth: 20
+			Layout.leftMargin: 5
 			visible: mainItem.showMenuButton
-			text: qsTr("=")
+			imageSource: DefaultStyle.menuButton
+			colorizationColor: 'white'
 			onClicked: mainItem.menu()
-		 }
-		 Control.ToolButton {
+		}
+		
+		ToolButtonImage{
+			Layout.preferredHeight: 20
+			Layout.preferredWidth: 20
+			Layout.leftMargin: 5
 			visible: mainItem.showBackButton
-			text: qsTr("‹")
+			imageSource: DefaultStyle.backButton
+			colorizationColor: 'white'
 			onClicked: mainItem.back()
-		 }
-		 Control.Label {
+		}
+		 
+		Control.Label {
 			id: titleLabel
+			Layout.leftMargin: 10
+			Layout.rightMargin: 5
 			visible: !!text
 			elide: Control.Label.ElideRight
 			horizontalAlignment: Qt.AlignLeft
 			verticalAlignment: Qt.AlignVCenter
 			Layout.fillWidth: true
+			color: 'white'
+			font.pixelSize: 17
 		}
-		Control.ToolButton {
-			text: qsTr("T")
-			onClicked: mainItem.displayStopwatch = !mainItem.displayStopwatch
+		ToolButtonImage{
+			Layout.preferredHeight: 25
+			Layout.preferredWidth: 25
+			Layout.rightMargin: 5
+			imageSource: DefaultStyle.stopwatchButton
+			colorizationColor: mainItem.displayStopwatch ? Control.Material.accent : 'white'
+			onClicked:  mainItem.displayStopwatch = !mainItem.displayStopwatch
 		}
-
-		Control.ToolButton {
-			visible: mainItem.showOptionsButton
-			text: qsTr("⋮")
-			onClicked: mainItem.options()
+		
+		ToolButtonImage{
+			Layout.preferredWidth: 25
+			Layout.preferredHeight: 25
+			Layout.leftMargin: 5
+			Layout.rightMargin: 5
+			visible: mainItem.showBarcodeButton
+			imageSource: DefaultStyle.barcodeButton
+			colorizationColor: 'white'
+			onClicked:{
+				mainItem.barcode()
+			}
 		}
-		Control.ToolButton {
+		
+		ToolButtonImage{
+			Layout.preferredWidth: 25
+			Layout.preferredHeight: 25
+			Layout.leftMargin: 5
+			Layout.rightMargin: 5
+			visible: mainItem.showCreateButton
+			imageSource: DefaultStyle.createButton
+			colorizationColor: 'white'
+			onClicked:{
+				mainItem.create()
+			}
+		}
+		
+		ToolButtonImage {
+			Layout.preferredHeight: 25
+			Layout.preferredWidth: 25
+			Layout.leftMargin: 5
+			Layout.rightMargin: 5
 			visible: mainItem.showSaveButton
-			text: qsTr("S")
+			imageSource: DefaultStyle.saveButton
+			colorizationColor: 'white'
 			onClicked: mainItem.save()
+		}
+		
+		ToolButtonImage{
+			Layout.preferredHeight: 25
+			Layout.preferredWidth: 25
+			Layout.leftMargin: 5
+			Layout.rightMargin: 5
+			visible: mainItem.showOptionsButton
+			imageSource: DefaultStyle.optionsButton
+			colorizationColor: 'white'
+			onClicked: mainItem.options()
 		}
 	}
 }

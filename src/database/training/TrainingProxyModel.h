@@ -35,7 +35,7 @@ public:
 	TrainingProxyModel(QObject * parent = nullptr);
 
 	Q_INVOKABLE void update();
-	void updateCalories();
+	Q_INVOKABLE void updateCalories();
 
 	bool lessThan (const QModelIndex &left, const QModelIndex &right) const override;
 	virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override;

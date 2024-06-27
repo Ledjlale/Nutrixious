@@ -42,6 +42,7 @@ public:
 
 	virtual void addQueryValues(DatabaseQuery &query);
 	virtual void load(QSqlQuery &query);
+	Q_INVOKABLE virtual void undo();
 	static TrainingSerieModel *build(QSqlQuery &query, QObject * parent);
 
 	double getCalories() const;

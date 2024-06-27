@@ -22,15 +22,21 @@
 #define DATABASE_FOOD_PROXY_MODEL_H
 
 #include "src/tool/proxyModel/SortFilterProxyModel.hpp"
+#include "src/tool/QmlModel.h"
 
 class FoodProxyModel: public SortFilterProxyModel {
 Q_OBJECT
+	DECLARE_GETSET(QString,name,Name)
 public:
 	FoodProxyModel(QObject * parent = nullptr);
+	
+	virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const;
 
 signals:
 	void update();
 
+protected:
+	QString mName;
 };
 
 #endif

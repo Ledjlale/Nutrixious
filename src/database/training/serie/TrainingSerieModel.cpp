@@ -75,6 +75,13 @@ void TrainingSerieModel::load(QSqlQuery &query) {
 	setCalories(query.value(caloriesField).toDouble());
 	clearBackupValues();
 }
+
+void TrainingSerieModel::undo(){
+	DEFINE_UNDO(Double,Calories)
+	
+	ProgramSerieModel::undo();
+}
+
 TrainingSerieModel *TrainingSerieModel::build(QSqlQuery &query, QObject * parent) {
 	TrainingSerieModel * model = new TrainingSerieModel(parent);
 	model->load(query);

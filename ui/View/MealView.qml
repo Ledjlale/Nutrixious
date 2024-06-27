@@ -42,12 +42,15 @@ SwipeLayout{
 					Text{
 						Layout.fillWidth: true
 						color: Material.foreground
+						wrapMode: Text.WordWrap
 						text: mainItem.modelData.description
 					}
 					Text{
 						Layout.fillWidth: true
 						color: Material.foreground
+						wrapMode: Text.WordWrap
 						text: mainItem.modelData.brand
+						
 					}
 				}
 				Text{

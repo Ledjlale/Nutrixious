@@ -73,7 +73,6 @@ public:
 	void setOrder(int data);
 
 	virtual void updateIsSaved();
-	virtual void undo();
 
 // Serie
 	QVariantList getVariantSeries() const;
@@ -98,6 +97,7 @@ public:
 	Q_INVOKABLE virtual int save();
 	virtual void saveValues(DatabaseQuery &query);
 	virtual void load(QSqlQuery &query);
+	Q_INVOKABLE virtual void undo();
 	Q_INVOKABLE virtual void remove();
 
 signals:

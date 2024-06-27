@@ -56,6 +56,7 @@ Item {
 			id: fieldsList
 			Layout.fillWidth: true
 			Layout.fillHeight: true
+			clip: true
 			model:[{title:'Brand', data: 'brand', editUnits: false, inputMethodHints: Qt.ImhNone, isComputable:false, showImage:true}
 					, {title:'Description', data: 'description', editUnits: false, inputMethodHints: Qt.ImhNone, isComputable:false}
 					, {title:'Serving Size', data: 'servingSize', editUnits: 'servingUnitId', inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:false}

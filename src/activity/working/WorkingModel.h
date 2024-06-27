@@ -63,7 +63,7 @@ public:
 	bool isResting()const;
 	void setIsResting(bool data);
 
-	Q_INVOKABLE void start();	// Start from 0
+	Q_INVOKABLE bool start();	// Start from 0
 	Q_INVOKABLE void stop();
 	Q_INVOKABLE void resume();	// Resume after pause
 	Q_INVOKABLE void save();

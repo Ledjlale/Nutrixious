@@ -69,11 +69,6 @@ Item {
 					if(!mainItem.isRunning) gShowMenuButton = true
 				}
 			}
-			Button{
-				text: 'Reload'
-				visible: stackView.depth == 1
-				onClicked: programs.update()
-			}
 		}
 		StackView{
 			id: stackView

@@ -72,6 +72,8 @@ public:
 
 	Q_INVOKABLE virtual int save();
 	Q_INVOKABLE virtual void remove();
+	Q_INVOKABLE virtual void undo();
+	
 	virtual void load(QSqlQuery &query);
 	static QList<ProgramModel*> buildAll(QObject * parent);
 	static ProgramModel *build(QSqlQuery &query, QObject * parent);

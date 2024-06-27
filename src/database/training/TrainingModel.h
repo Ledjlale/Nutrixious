@@ -74,6 +74,7 @@ public:
 	void updateCalories();
 
 	virtual void load(QSqlQuery &query);
+	Q_INVOKABLE virtual void undo();
 	static TrainingModel *build(QSqlQuery &query, QObject * parent);
 	static QList<TrainingModel*> buildAll(QObject * parent);
 	static QList<TrainingModel*> buildAll(QList<ExerciseModel *> exercises, QObject * parent);

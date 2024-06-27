@@ -93,6 +93,12 @@ void TrainingExerciseModel::updateCalories() {
 	setCalories(calories);
 }
 
+void TrainingExerciseModel::undo(){
+	DEFINE_UNDO(Double,Calories)
+	
+	ProgramExerciseModel::undo();
+}
+
 TrainingExerciseModel *TrainingExerciseModel::build(QSqlQuery &query, QObject * parent) {
 	TrainingExerciseModel * model = new TrainingExerciseModel(parent);
 	model->ProgramExerciseModel::load(query);

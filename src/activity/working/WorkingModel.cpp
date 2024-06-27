@@ -126,16 +126,17 @@ void WorkingModel::setIsResting(bool data){
 	}
 }
 
-void WorkingModel::start(){
+bool WorkingModel::start(){
 	mResultModel->setStartDateTime(QDateTime::currentDateTime());
 	if(mExercises.size() == 0){
 		qCritical() << "Cannot start : no exercises in working model";
-		return;
+		return false;
 	}
 	mCurrentExercise = mExercises.begin();
 	(*mCurrentExercise)->startWork();
 	emit workingNextExercise(0);
 	emit currentWorkChanged();// because affectation of iterator is done before the WorkingModel signal.
+	return true;
 }
 void WorkingModel::stop(){
 }
@@ -147,7 +148,8 @@ void WorkingModel::save(){
 }
 
 void WorkingModel::endOfCurrentWork(){
-	(*mCurrentExercise)->endOfCurrentWork();
+	if(mCurrentExercise != mExercises.end())
+		(*mCurrentExercise)->endOfCurrentWork();
 	setIsWorking(false);
 	setIsResting(true);
 }
