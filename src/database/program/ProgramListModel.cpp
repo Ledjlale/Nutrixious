@@ -59,10 +59,10 @@ QVariant ProgramListModel::data (const QModelIndex &index, int role) const {
 }
 
 void ProgramListModel::create(){
-	beginInsertRows(QModelIndex(), 0,0);
+	beginInsertRows(QModelIndex(), mList.size(),mList.size());
 	auto model = new ProgramModel(this);
 	connect(model, &ProgramModel::removed, this, &ProgramListModel::handleRemoved);
-	mList.push_front(model);
+	mList.push_back(model);
 	endInsertRows();
 }
 

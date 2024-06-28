@@ -76,6 +76,7 @@ SwipeDelegate{
 					Layout.preferredWidth: 25
 					Layout.preferredHeight: 25
 					Layout.rightMargin: 10
+					Layout.alignment: Qt.AlignCenter
 					visible: mainItem.isCaloriesComputable
 					imageSource: DefaultStyle.caloriesComputationButton
 					colorizationColor: mainItem.color
@@ -90,6 +91,7 @@ SwipeDelegate{
 					Layout.preferredWidth: 25
 					Layout.preferredHeight: 25
 					Layout.rightMargin: 10
+					Layout.alignment: Qt.AlignCenter
 					visible: mainItem.isSpeedComputable
 					imageSource: DefaultStyle.speedComputationButton
 					colorizationColor: mainItem.color
@@ -103,6 +105,7 @@ SwipeDelegate{
 					Layout.preferredWidth: 25
 					Layout.preferredHeight: 25
 					Layout.rightMargin: 10
+					Layout.alignment: Qt.AlignCenter
 					visible: mainItem.isSavable
 					imageSource: DefaultStyle.saveButton
 					colorizationColor: mainItem.color
@@ -116,6 +119,7 @@ SwipeDelegate{
 					Layout.preferredWidth: 25
 					Layout.preferredHeight: 25
 					Layout.rightMargin: 10
+					Layout.alignment: Qt.AlignCenter
 					visible: mainItem.isUndoable
 					imageSource: DefaultStyle.undoButton
 					colorizationColor: mainItem.color
@@ -146,6 +150,7 @@ SwipeDelegate{
 					Layout.preferredWidth: 25
 					Layout.preferredHeight: 25
 					Layout.rightMargin: 10
+					Layout.alignment: Qt.AlignCenter
 					visible: mainItem.isDeletable
 					imageSource: DefaultStyle.deleteButton
 					colorizationColor: mainItem.color

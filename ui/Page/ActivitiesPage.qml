@@ -33,7 +33,7 @@ Item {
 			Layout.fillHeight: true
 			Layout.fillWidth: true
 			currentIndex: 0
-			ExercisesPage{}
+			//ExercisesPage{}
 			//StrengthPage{}
 			//StepsPage{}
 			//DistancePage{}

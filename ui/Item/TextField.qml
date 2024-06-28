@@ -42,7 +42,7 @@ Flipable {
 	signal editingFinished()
 
 	implicitWidth: flipped ? backItem.implicitWidth : frontItem.implicitWidth
-	implicitHeight: flipped ? backItem.implicitHeight: frontItem.implicitHeight
+	implicitHeight: flipped ? backItem.implicitHeight + 5: frontItem.implicitHeight
 
 	property bool flipped: edit
 	property bool showEdit : flipped

@@ -71,7 +71,7 @@ ApplicationWindow {
 
 		Component{
 			id: programsPage
-			ProgramsPage{}
+			ExercisesLayout{}
 		}
 		Component{
 			id: trainingsPage
@@ -88,10 +88,6 @@ ApplicationWindow {
 		Component{
 			id: settingsPage
 			SettingsPage{}
-		}
-		Component{
-			id: exercisesPage
-			ExercisesPage{}
 		}
 		Component{
 			id: diaryPage
@@ -190,7 +186,6 @@ ApplicationWindow {
 					//model:[{title: 'Overview'},{title: 'Diary'},{title: 'Food'},{title: 'Training'}, {title: 'Exercises'},{title: 'Programs'},{title: 'Trainings'},{title: 'Statistics'},{title: 'Settings'}]
 					model:[{title: 'Diary', component:diaryPage}
 						,{title: 'Meal Groups', component:mealGroupsPage}
-						, {title: 'Exercises', component:exercisesPage}
 						,{title: 'Programs', component:programsPage}
 						,{title: 'Trainings', component:trainingsPage}
 						,{title: 'Statistics', component:statisticsPage}

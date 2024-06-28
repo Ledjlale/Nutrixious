@@ -58,7 +58,7 @@ Focus on Android only! (and Linux for debugging).
 - Import/Export data
 - Multi local account (main interest for Desktop)
 - Sharing progression
-- Experimentations on Muscle type targets, their modelisation and training program build
+- Experimentations on Muscle type targets, their modelisation (3D) and training program build
 - Statistics
 - Maintenance for Linux, Windows, MacOs, IOS
 - Data calibration from personal data instead of general rules.

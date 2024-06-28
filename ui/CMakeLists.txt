@@ -54,6 +54,7 @@
 
 	ui/Layout/SwipeLayout.qml
 	ui/Layout/DiaryLayout.qml
+	ui/Layout/ExercisesLayout.qml
 
 	ui/View/ExerciseModelView.qml
 	ui/View/FoodModelView.qml
@@ -68,7 +69,7 @@
 	ui/View/MealGroupView.qml
 
 	ui/Page/Activity/ExerciseEditorPage.qml
-	ui/Page/Activity/ExercisesPage.qml
+	ui/Page/Activity/ExerciseUnitEditorPage.qml
 	ui/Page/Activity/ProgramsPage.qml
 	ui/Page/Activity/ProgramEditorPage.qml
 

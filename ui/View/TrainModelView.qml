@@ -85,11 +85,16 @@ SwipeLayout{
 			Layout.alignment: Qt.AlignCenter
 			Layout.preferredWidth: 25
 			Layout.preferredHeight: 25
+			Layout.rightMargin: 5
 			visible: mainItem.modelData.isEdited
-			imageSource: DefaultStyle.undoButton
+			imageSource: mainItem.modelData.isSaved ? DefaultStyle.undoButton : DefaultStyle.saveButton
 			colorizationColor: Material.foreground
 			onClicked: {
-				mainItem.modelData.undo()
+				forceActiveFocus()
+				if(mainItem.modelData.isSaved)
+					mainItem.modelData.undo()
+				else
+					mainItem.modelData.save()
 			}
 		}
 

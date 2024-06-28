@@ -26,65 +26,33 @@ import App 1.0
 
 Item {
 	id: mainItem
-
+	property var programModel: programDetailsList.program
+	signal newExerciseRequested()
+	signal addExerciseRequested(var parameters)
+	signal editExerciseRequested(var parameters)
+	
+	onVisibleChanged: if(visible) exercises.update()
+	Connections{
+		target: mainWindow.header
+		enabled: mainItem.visible
+		function onCreate(){
+			programs.create()
+			programList.positionViewAtEnd()
+		}
+	}
 	ColumnLayout{
 		anchors.fill: parent
-		RowLayout{
-			Button{
-				text: 'Back'
-				visible: stackView.depth > 1
-				onClicked: {
-					while(stackView.depth > 1)
-						stackView.pop();
-				}
-			}
-			Item{
-				Layout.fillWidth: true
-			}
-			Component{
-				id: programEditorComponent
-				ProgramEditorPage{}
-			}
-			Button{
-				Layout.fillWidth: true
-				Layout.preferredWidth: implicitWidth
-				text: stackView.depth == 1 ? 'New Program'
-											:  stackView.currentItem.editMode == 0
-												? 'Create'
-												: 'Save'
-				onClicked: if(stackView.depth == 1) {
-						programs.create();
-					}else {
-						if(stackView.currentItem.save()){
-							while(stackView.depth > 1)
-								stackView.pop();
-							exercises.update()
-						}
-						//stackView.replace(programEditorComponent);
-					}
-			}
-			Button{
-				Layout.fillWidth: true
-				Layout.preferredWidth: implicitWidth
-				text: 'Reload'
-				visible: stackView.depth == 1
-				onClicked: {
-					programs.update()
-					exercises.update()
-				}
-			}
-		}
 		StackView{
 			id: stackView
 			Layout.fillWidth: true
 			Layout.fillHeight: true
-
+			background:Rectangle{color: Material.background}
 			initialItem: ColumnLayout{
 				width: stackView.width
 				ListView{
 					id: programList
-					Layout.fillWidth: true
 					Layout.fillHeight: true
+					Layout.fillWidth: true
 					clip: true
 					model:  ProgramProxyModel{
 							id: programs
@@ -113,7 +81,7 @@ Item {
 				Rectangle{
 					Layout.fillWidth: true
 					Layout.preferredHeight: 1
-					color: 'black'
+					color: DefaultStyle.theme == Material.Dark ? 'white' : 'black'
 				}
 				Text{
 					Layout.fillWidth: true
@@ -133,34 +101,33 @@ Item {
 						valueRole: "$modelData"
 						model: ExerciseProxyModel{
 							id: exercises
+							Component.onCompleted: update()
 						}
 					}
-					Button{
-						Layout.fillWidth: true
-						Layout.preferredWidth: implicitWidth
+					ButtonImage{
+						Layout.preferredWidth: 25
+						Layout.preferredHeight: 25
+						Layout.rightMargin: 5
 						visible: !!exerciseChoice.currentValue
-						text: 'Add'
-						onClicked: {
-							if(stackView.depth == 1) {
-								stackView.push(exerciseEditorComponent,{exerciseModel:exerciseChoice.currentValue});
-							}
-						}
+						imageSource: DefaultStyle.editButton
+						colorizationColor: Material.foreground
+						onClicked: mainItem.editExerciseRequested({exerciseModel:exerciseChoice.currentValue})
 					}
-
-					Button{
-						Layout.fillWidth: true
-						Layout.preferredWidth: implicitWidth
-						Component{
-							id: exerciseEditorComponent
-							ExerciseEditorPage{
-								programModel: programDetailsList.program
-								showSaveButton: false
-							}
-						}
-						text: 'New Exercise'
-						visible: stackView.depth == 1
-						onClicked: if(stackView.depth == 1)
-										stackView.push(exerciseEditorComponent);
+					ButtonImage{
+						Layout.preferredWidth: 40
+						Layout.preferredHeight: 40
+						Layout.rightMargin: 5
+						visible: !!exerciseChoice.currentValue
+						imageSource: DefaultStyle.addExerciseButton
+						colorizationColor: Material.foreground
+						onClicked: mainItem.addExerciseRequested({exerciseModel:exerciseChoice.currentValue})
+					}
+					ButtonImage{
+						Layout.preferredWidth: 25
+						Layout.preferredHeight: 25
+						imageSource: DefaultStyle.createButton
+						colorizationColor: Material.foreground
+						onClicked: mainItem.newExerciseRequested()
 					}
 				}
 				ListView{
@@ -180,7 +147,7 @@ Item {
 						showCalories: false
 						showEditButton: true
 						onEditClicked: function(model){
-							stackView.push(exerciseEditorComponent, {programExerciseModel:model, exerciseModel:model.exerciseModel, editMode:1});
+							mainItem.addExerciseRequested( {programExerciseModel:model, exerciseModel:model.exerciseModel, editMode:1})
 						}
 					}
 				}

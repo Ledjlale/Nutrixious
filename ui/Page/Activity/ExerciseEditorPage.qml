@@ -23,175 +23,87 @@ import QtQuick.Controls.Material
 import QtQuick.Layouts
 
 import App 1.0
+import '../../Tool/Utils.js' as Utils
 
 Item {
 	id: mainItem
-	property int editMode: 0	// 0=New, 1=Edit
-	property bool showSaveButton: true
-	property alias exerciseModel: programExerciseModelId.exerciseModel
-	property var programExerciseModel: ProgramExerciseModel {
-		id: programExerciseModelId
-		Component.onCompleted: updateFromLastProgram()
-	}
-	property var serieModel: ProgramSerieModel{
-		id: serieModelId
-	}
-	property var programModel
-	Component.onCompleted: Material.background = Qt.darker(Material.background, 1.02)
-
-	function save(){
-		if(editMode == 0){
-			mainItem.programModel.addNewExercise(mainItem.programExerciseModel)
-			return mainItem.programModel.save()
-		}else if(editMode == 1){
-			return mainItem.programExerciseModel.save()
+	property var exerciseModel
+	signal closed()
+	
+	Connections{
+		target: mainWindow.header
+		enabled: mainItem.visible
+		function onSave(){
+			if(mainItem.exerciseModel.save() == 1)
+				mainItem.closed()
 		}
 	}
+	Connections{
+		target: mainItem.exerciseModel
+		function onIsEditedChanged(){
+			mainWindow.header.updateHeaders({'showSaveButton':mainItem.exerciseModel.isEdited})
+		}
+	}
+	
 	ColumnLayout{
 		anchors.fill: parent
-		spacing: 0
-//---------------------------------------------------------------------------------
-//							EXERCISE
-		RowLayout{
-			ColumnLayout{
-				Text{
-					Layout.fillWidth: true
-					horizontalAlignment: Text.AlignHCenter
-					text: 'Exercise description'
-					color: Material.foreground
+		ColumnLayout{
+			visible: !!mainItem.exerciseModel
+			TextField{
+				Layout.fillWidth: true
+				Layout.leftMargin: 10
+				edit: true
+				title: 'Name'
+				text: mainItem.exerciseModel?.name || ''
+				onEditingFinished: {
+					mainItem.exerciseModel.name = newValue
 				}
-				TextField{
-					Layout.fillWidth: true
-					Layout.leftMargin: 10
-					placeholderText: 'Name'
-					text: exerciseModel.name
-					focus: true
-					readOnly: exerciseModel.isSaved
-					edit: exerciseModel.name == ''
-					//Material.background: exerciseModel.invalidName ? Material.color(Material.Pink, Material.Shade50) : mainItem.Material.background
-					//Material.foreground: exerciseModel.invalidName ? Material.accent : mainItem.Material.foreground
-					onEditingFinished: {
-						mainItem.exerciseModel.name = newValue
-						descrtiptionField.forceActiveFocus()
-					}
-				}
-				TextField{
-					id: descrtiptionField
-					Layout.fillWidth: true
-					Layout.leftMargin: 10
-					placeholderText: 'Description'
-					edit:  mainItem.programExerciseModel.description == ''
-					text: mainItem.programExerciseModel.description
-					onEditingFinished: {
-						mainItem.programExerciseModel.description = newValue
-						metField.forceActiveFocus()
-					}
-				}
+			}
+			RowLayout{
 				TextField{
 					id: metField
 					Layout.fillWidth: true
 					Layout.leftMargin: 10
-					inputMethodHints: Qt.ImhDigitsOnly
+					inputMethodHints: Qt.ImhFormattedNumbersOnly
+					edit: true
 					title: 'MET'
-					text: exerciseModel.met
+					text: mainItem.exerciseModel?.met.toFixed(2) || ''
 					onEditingFinished: {
-						exerciseModel.met = newValue
+						mainItem.exerciseModel.met = newValue
 						//repsField.forceActiveFocus()
 					}
 				}
+				ComboBox{
+					id: metMode
+					Layout.fillWidth: true
+					Layout.alignment: Qt.AlignBottom
+					textRole: "text"
+					valueRole: "value"
+					model: [{'text':'Default', 'value':0}
+						, {'text':'MET=Speed', 'value':1}]
+					currentIndex: mainItem.exerciseModel ? mainItem.exerciseModel.metMode : -1
+					onCurrentValueChanged:{
+						if(	mainItem.exerciseModel){
+							mainItem.exerciseModel.metMode = currentValue
+						}
+					}
+				}				
 			}
-			SerieFieldPicker{
-				//Layout.fillHeight: true
-				Layout.preferredHeight: implicitHeight
-				Layout.preferredWidth: implicitWidth
-				exerciseUnitModel: mainItem.programExerciseModel
-			}
-		}
-		Rectangle{
-			Layout.fillWidth: true
-			Layout.preferredHeight: 2
-			color: 'black'
-		}
-		RowLayout{
-			Layout.leftMargin: 10
-			Text{
-				Layout.fillWidth: true
-				horizontalAlignment: Text.AlignHCenter
-				text: 'Definition'
-				color: Material.foreground
-			}/*
-			SerieFieldPicker{
-
-			}*/
-		}
-/*
-		ListView{
-			id: exerciseFieldList
-			Layout.fillWidth: true
-			Layout.leftMargin: 10
-			Layout.preferredHeight: !!model ? model.length * 40 : 0
-
-			visible: mainItem.type > 0
-			orientation: ListView.Horizontal
-			model: ExerciseUnitProxyModel{
-				exercises: mainItem.programExerciseModel.exercises
-			}
-			spacing: 0
-			delegate: TextField{
-				width: exerciseFieldList.width / exerciseFieldList.count
-				height: exerciseFieldList.height
-				inputMethodHints: Qt.ImhDigitsOnly
-				title: modelData.name
-				text: modelData.value
-				onEditingFinished: {
-					modelData.value = newValue
+			Button{
+				text: 'Compute from trainings'
+				onClicked:{
+					mainItem.exerciseModel.computeMet()
 				}
 			}
 		}
-*/
-//---------------------------------------------------------------------------------
-//							SERIE
-		Button{
-			Layout.fillWidth: true
-			Layout.preferredWidth: implicitWidth
-			Layout.alignment: Qt.AlignCenter
-			text: 'Add Serie'
-			//Material.background: programExerciseModelId.invalidSets ? Material.color(Material.Pink, Material.Shade50) : mainItem.Material.background
-			//Material.foreground: programExerciseModelId.invalidSets ? Material.accent : mainItem.Material.foreground
-
-			onClicked: {
-				mainItem.programExerciseModel.addSerie()
-			}
-		}
-
-		ListView{
-			id: serieList
-			Layout.fillWidth: true
+		Item{
 			Layout.fillHeight: true
-			Layout.topMargin: 10
-			clip: true
-			model: mainItem.programExerciseModel.series
-			delegate: Item{
-					width: serieList.width
-					height: serieView.implicitHeight + 20
-					ExerciseSerieModelView{
-						id: serieView
-						width: parent.width
-						height: parent.height
-						modelData: model.modelData
-						exerciseUnitModel: mainItem.programExerciseModel
-						isReadOnly: false
-						isDeletable: serieList.count > 1
-						showTitle: index == 0
-						showCalories: false
-						doSave: false
-						showSaveButton: mainItem.showSaveButton
-						showWorkTime: false
-						edit: true
-					}
-			}
-		}
-//---------------------------------------------------------------------------------
 
+		}
 	}
+
+	Dialog {
+		id: error
+	}
+
 }
