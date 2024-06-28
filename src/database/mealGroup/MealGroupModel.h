@@ -50,6 +50,8 @@ public:
 	QString getDefaultTimeStr()const;
 	void setDefaultTimeStr(QString data);
 
+	virtual void updateIsSaved();
+	Q_INVOKABLE virtual void undo();
 	Q_INVOKABLE virtual int save();
 	Q_INVOKABLE virtual void remove();
 

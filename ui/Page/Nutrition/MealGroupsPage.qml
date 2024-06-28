@@ -31,25 +31,43 @@ import App 1.0
 
 Item {
 	id: mainItem
-
+	onVisibleChanged: if(visible) mealGroups.update()
 	ColumnLayout{
 		anchors.fill: parent
 		spacing: 0
-		Button{
-			text: 'Add'
-			onClicked: mealGroups.addNewMealGroup()
-		}
 		ListView{
 			id: mealGroupList
 			Layout.fillWidth: true
 			Layout.fillHeight: true
+			clip: true
 			model: MealGroupProxyModel{
 				id: mealGroups
+				showAll: true
 				Component.onCompleted: update()
 			}
 			delegate: MealGroupView{
 				width: mealGroupList.width
 				mealGroup: $modelData
+			}
+			footer:	Item{
+				width: mealGroupList.width
+				height: 40
+				ButtonImage{
+					id: addButton
+					anchors.centerIn: parent
+					width: 80
+					height: 30
+					//Layout.preferredWidth: 80
+					//Layout.preferredHeight: 30
+					//Layout.alignment: Qt.AlignCenter
+					//Layout.topMargin: 5
+					imageSource: DefaultStyle.addFoodButton
+					colorizationColor: Material.foreground
+					onClicked: {
+						mealGroups.addNewMealGroup()
+						mealGroupList.positionViewAtEnd()
+					}
+				}
 			}
 		}
 	}

@@ -39,7 +39,7 @@ MealGroupModel::MealGroupModel(QObject *parent)
 	: QmlModel{parent}
 {
 	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
-
+	connect(this, &MealGroupModel::mealGroupIdChanged, this, &MealGroupModel::updateIsSaved);
 }
 
 MealGroupModel::MealGroupModel(MealGroupModel * model, QObject *parent)
@@ -51,11 +51,14 @@ MealGroupModel::MealGroupModel(MealGroupModel * model, QObject *parent)
 	mMealGroupId = initiBackup(model, &model->mMealGroupId, model->mMealGroupId, &mMealGroupId).toLongLong();
 	mDefaultTime = initiBackup(model, &model->mDefaultTime, model->mDefaultTime, &mDefaultTime).toTime();
 	mIsDisplayed = initiBackup(model, &model->mIsDisplayed, model->mIsDisplayed, &mIsDisplayed).toBool();
+	connect(this, &MealGroupModel::mealGroupIdChanged, this, &MealGroupModel::updateIsSaved);
+	updateIsSaved();
 }
 
 MealGroupModel::MealGroupModel(QString name, QTime defaultTime){
 	mName = name;
 	mDefaultTime = defaultTime;
+	connect(this, &MealGroupModel::mealGroupIdChanged, this, &MealGroupModel::updateIsSaved);
 }
 
 MealGroupModel* MealGroupModel::clone(QObject*parent) {
@@ -86,6 +89,15 @@ DEFINE_GETSET(MealGroupModel,bool,isDisplayed,IsDisplayed)
 
 //-------------------------------------------------------------------------------------------------------------------
 
+void MealGroupModel::updateIsSaved() {
+	setIsSaved(getMealGroupId() > 0);
+}
+
+void MealGroupModel::undo(){
+	DEFINE_UNDO(String,Name)
+	DEFINE_UNDO(Time,DefaultTime)
+	DEFINE_UNDO(Bool,IsDisplayed)
+}
 
 int MealGroupModel::save(){
 	if(mMealGroupId>0 && !mIsEdited) return true;// Avoid update for nothing

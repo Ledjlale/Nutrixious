@@ -82,7 +82,7 @@ qint64 ExerciseSerieModel::getSerieId()const{
 void ExerciseSerieModel::setSerieId(qint64 id) {
 	if(mSerieId != id){
 		mSerieId = id;
-		setIsSaved(getSerieId() > 0);
+		updateIsSaved();
 		emit serieIdChanged();
 	}
 }

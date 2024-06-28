@@ -35,7 +35,7 @@ StackLayout{
 	onCurrentIndexChanged: {
 		lastHeaders = {'showBackButton':currentIndex > 0,
 			'showMenuButton':currentIndex==0,
-			'title' : currentIndex == 0 ? 'Diary' : 'Training'
+			'title' : currentIndex == 0 ? 'Diary' : currentIndex == 1 ? 'Training' : 'Meal Groups'
 		}
 		mainWindow.setHeaders(lastHeaders)
 	}
@@ -47,19 +47,25 @@ StackLayout{
 		enabled: mainItem.isHeaderOwner
 		function onGBack(){
 			if(mainItem.currentIndex>0) {
+				if(mainItem.currentIndex == 2)
+					diaryPage.updateMealGroups()
+				else
+					diaryPage.updateTrainings()
 				mainItem.currentIndex= 0
-				diaryPage.updateTrainings()
 			}
 		}
 	}
 	DiaryPage{
 		id: diaryPage
 		onExerciseRequested: currentIndex = 1
+		onMealGroupRequested: currentIndex = 2
 		onSetHeaders: function(headers) {
 			isHeaderOwner = !headers
 			mainWindow.setHeaders(headers ? headers : lastHeaders)
 		}
 	}
 	TrainingPage{
+	}
+	MealGroupsPage{
 	}
 }

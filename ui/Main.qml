@@ -94,10 +94,6 @@ ApplicationWindow {
 			DiaryLayout{}
 		}
 		Component{
-			id: mealGroupsPage
-			MealGroupsPage{}
-		}
-		Component{
 			id: aboutPage
 			AboutPage{}
 		}
@@ -185,7 +181,6 @@ ApplicationWindow {
 					id: menuItems
 					//model:[{title: 'Overview'},{title: 'Diary'},{title: 'Food'},{title: 'Training'}, {title: 'Exercises'},{title: 'Programs'},{title: 'Trainings'},{title: 'Statistics'},{title: 'Settings'}]
 					model:[{title: 'Diary', component:diaryPage}
-						,{title: 'Meal Groups', component:mealGroupsPage}
 						,{title: 'Programs', component:programsPage}
 						,{title: 'Trainings', component:trainingsPage}
 						,{title: 'Statistics', component:statisticsPage}

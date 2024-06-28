@@ -27,6 +27,7 @@ MealGroupProxyModel::MealGroupProxyModel(QObject *parent)
 	setSourceModel(model);
 	connect(this, &MealGroupProxyModel::update, model, &MealGroupListModel::update);
 	connect(this, &MealGroupProxyModel::addNewMealGroup, model, &MealGroupListModel::addNewMealGroup);
+	connect(this, &MealGroupProxyModel::showAllChanged, this, &MealGroupProxyModel::invalidateFilter);
 }
 
 QString MealGroupProxyModel::getNameFromId(int id) const{
@@ -37,4 +38,12 @@ QString MealGroupProxyModel::getNameFromId(int id) const{
 }
 
 
+bool MealGroupProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const{
+	if(mShowAll) return true;
+	else{
+		QModelIndex index0 = sourceModel()->index(sourceRow, 0, sourceParent);
+		auto model = sourceModel()->data(index0).value<MealGroupModel*>();
+		return model->getIsDisplayed();
+	}
+}
 

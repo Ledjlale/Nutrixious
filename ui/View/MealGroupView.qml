@@ -24,40 +24,57 @@ import QtQuick.Layouts
 
 import App 1.0
 
-Item{
+SwipeLayout{
 	id: mainItem
 	property var mealGroup
-	implicitHeight: mainRow.implicitHeight
-	RowLayout{
+	implicitHeight: mainRow.implicitHeight + 10
+	isDeletable: true
+	isEditable: !mainItem.edit
+	isSavable: mainItem.mealGroup.isEdited && mainItem.mealGroup.isSaved
+	onDeleteClicked: mainItem.mealGroup.remove()
+	onSaveClicked: {
+		mainItem.mealGroup.save()
+		mainItem.edit = false
+	}
+	contentItem: RowLayout{
 		id: mainRow
-		anchors.fill: parent
+		width: mainItem.width
+		height: mainItem.height
 		TextField{
 			Layout.fillWidth: true
 			text: mainItem.mealGroup.name
 			placeholderText: 'Group Name'
-			edit: text == ''
+			edit: text == '' || mainItem.edit
 			onEditingFinished: mainItem.mealGroup.name = newValue
 		}
 		TextField{
 			inputMethodHints: Qt.ImhTime
 			text: mainItem.mealGroup.defaultTimeStr
-			edit: text == ''
+			edit: text == '' || mainItem.edit
 			placeholderText: 'hh:mm:ss'
 			onEditingFinished: mainItem.mealGroup.defaultTimeStr = newValue
 		}
 		Switch{
 			checked: mainItem.mealGroup.isDisplayed
+			text: checked ? 'Show' : 'Hide'
 			onCheckedChanged: mainItem.mealGroup.isDisplayed = checked
 		}
-		Button{
+		ButtonImage{
+			Layout.alignment: Qt.AlignCenter
+			Layout.preferredWidth: 25
+			Layout.preferredHeight: 25
+			Layout.rightMargin: 5
 			visible: mainItem.mealGroup.isEdited
-			text: 'Save'
-			onClicked: mainItem.mealGroup.save()
-		}
-		Button{
-			visible: mainItem.mealGroup.isSaved
-			text: 'D'
-			onClicked: mainItem.mealGroup.remove()
+			imageSource: mainItem.mealGroup.isSaved ? DefaultStyle.undoButton : DefaultStyle.saveButton
+			colorizationColor: Material.foreground
+			onClicked: {
+				forceActiveFocus()
+				if(mainItem.mealGroup.isSaved)
+					mainItem.mealGroup.undo()
+				else
+					mainItem.mealGroup.save()
+				mainItem.edit = false
+			}
 		}
 	}
 }

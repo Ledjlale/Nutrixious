@@ -25,14 +25,20 @@
 
 class MealGroupProxyModel: public SortFilterProxyModel {
 Q_OBJECT
+	Q_PROPERTY(bool showAll MEMBER mShowAll NOTIFY showAllChanged)
 public:
 	MealGroupProxyModel(QObject * parent = nullptr);
 
 	Q_INVOKABLE QString getNameFromId(int id) const;
 
+	virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const;
+	
 	signals:
 		void update();
 		void addNewMealGroup();
+		void showAllChanged();
+protected:
+	bool mShowAll = false;
 };
 
 #endif

@@ -37,9 +37,13 @@ Item {
 	property int totalRefresh: 1
 	signal exerciseRequested()
 	signal setHeaders(var headers)
+	signal mealGroupRequested()
 	function updateTrainings(){
 		trainings.update()
 		trains.updateCalories()
+	}
+	function updateMealGroups(){
+		mealGroups.update()
 	}
 	onTotalRefreshChanged: mainItem.meals.updateTotals()
 	Connections{
@@ -141,6 +145,7 @@ Item {
 			Flickable{
 				Layout.fillWidth: true
 				Layout.fillHeight: true
+				contentWidth: width
 				contentHeight: mainColumnLayout.implicitHeight
 				clip: true
 				ColumnLayout{
@@ -149,6 +154,7 @@ Item {
 					ListView{
 						id: mealGroupList
 						Layout.fillWidth: true
+						
 						implicitHeight: contentHeight
 						clip: true
 						model: mainItem.mealGroups
@@ -156,18 +162,24 @@ Item {
 						delegate:
 							ColumnLayout{
 								width: mealGroupList.width
-								height: sectionItem.height + mealFoodsList.contentHeight + addButton.height + 4*spacing
+								height: sectionItem.implicitHeight +15+ mealFoodsList.contentHeight + addButton.height + 4*spacing
 								spacing: 5
-								Rectangle{
+								SwipeLayout{
 									id: sectionItem
 									property var model: $modelData
-									width: mealGroupList.width
-									height: sectionRow.implicitHeight + 10
-									color: Material.color(Material.BlueGrey)
-									RowLayout{
+									Layout.fillWidth: true
+									Layout.preferredHeight: sectionRow.implicitHeight + 15
+									isDeletable: false
+									isEditable: true
+									onEditClicked:{
+										mainItem.mealGroupRequested()
+									}
+									background:Rectangle{
+										color: Material.color(Material.BlueGrey)
+									}
+									contentItem: RowLayout{
 										id: sectionRow
-										anchors.fill: parent
-										anchors.margins: 5
+										width: mealGroupList.width
 										Text{
 											id: mealGroupTitle
 											Layout.fillWidth: true
