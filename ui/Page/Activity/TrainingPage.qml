@@ -57,16 +57,17 @@ Item {
 					mainItem.selectedProgramModel = currentValue
 				}
 			}
-			Button{
+			ButtonImage{
+				Layout.alignment: Qt.AlignCenter
+				Layout.preferredWidth: 40
+				Layout.preferredHeight: 40
+				Layout.leftMargin: 5
+				Layout.rightMargin: 5
 				visible: programChoice.currentIndex >= 0
-				text: mainItem.isRunning
-						? stackView.depth == 2 //&& stackView.currentItem.trainingModel.isSaved
-							? 'Back'
-							: 'Cancel'
-						: 'Begin'
+				imageSource: mainItem.isRunning ? DefaultStyle.landingButton : DefaultStyle.startupButton
 				onClicked: {
+					forceActiveFocus()
 					mainItem.isRunning = !mainItem.isRunning
-					if(!mainItem.isRunning) gShowMenuButton = true
 				}
 			}
 		}

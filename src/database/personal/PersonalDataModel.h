@@ -69,9 +69,11 @@ public:
 	void setHeight(int data);
 
 
+	virtual void updateIsSaved();
 	Q_INVOKABLE virtual bool add();
 	Q_INVOKABLE virtual int save();
 	Q_INVOKABLE virtual void remove();
+	Q_INVOKABLE virtual void undo();
 
 	static QList<PersonalDataModel*> loadAll(QObject * parent);
 	static PersonalDataModel *load(QSqlQuery &query, QObject * parent);

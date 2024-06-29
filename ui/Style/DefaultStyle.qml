@@ -43,5 +43,11 @@ QtObject {
 	property string optionsButton: 'image://internal/options.svg'
 	property string createButton: 'image://internal/create.svg'
 	property string barcodeButton: 'image://internal/barcode.svg'
+	property string playButton: 'image://internal/play.svg'
+	property string stopButton: 'image://internal/stop.svg'
+	property string startupButton: 'image://internal/startup.svg'
+	property string landingButton: 'image://internal/landing.svg'
+	property string resumeButton: 'image://internal/resume.svg'
+	
 
 }

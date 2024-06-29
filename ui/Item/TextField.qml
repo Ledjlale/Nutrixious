@@ -42,7 +42,7 @@ Flipable {
 	signal editingFinished()
 
 	implicitWidth: flipped ? backItem.implicitWidth : frontItem.implicitWidth
-	implicitHeight: flipped ? backItem.implicitHeight + 5: frontItem.implicitHeight
+	implicitHeight: flipped ? backItem.implicitHeight : frontItem.implicitHeight
 
 	property bool flipped: edit
 	property bool showEdit : flipped
@@ -50,7 +50,6 @@ Flipable {
 			when: mainItem.edit
 			value: true
 	}
-
 	front: Item{
 				id: frontItem
 				anchors.fill: parent
@@ -60,6 +59,7 @@ Flipable {
 					id: readOnlyLayout
 					anchors.fill: parent
 					spacing: 0
+					//implicitHeight: originalTextField.contentHeight
 					Text{
 						Layout.fillWidth: true
 						color: mainItem.textColor
@@ -68,9 +68,8 @@ Flipable {
 					}
 					Text{
 						id: originalTextField
-						Layout.fillHeight: true
 						Layout.fillWidth: true
-						Layout.margins: 10
+						//Layout.margins: 5
 						horizontalAlignment: mainItem.horizontalAlignment
 						elide: mainItem.elide
 						color: mainItem.textColor
@@ -82,11 +81,10 @@ Flipable {
 	back: ColumnLayout{
 				id: backItem
 				anchors.fill: parent
-				spacing: 5
-				property var qtBug: title.implicitHeight + textField.implicitHeight + 5
-				onQtBugChanged: implicitHeight = qtBug
-				implicitHeight: qtBug
-				onImplicitHeightChanged: if( implicitHeight != qtBug) implicitHeight = qtBug
+				//property var qtBug: title.implicitHeight + textField.implicitHeight + 5
+				//onQtBugChanged: implicitHeight = qtBug
+				//implicitHeight: qtBug
+				//onImplicitHeightChanged: if( implicitHeight != qtBug) implicitHeight = qtBug
 				Text{
 					id: title
 					Layout.fillWidth: true
@@ -101,10 +99,8 @@ Flipable {
 					id: textField
 					Layout.preferredHeight: implicitHeight
 					Layout.fillWidth: true
-					//Layout.leftMargin: 10
-					//Layout.rightMargin: 10
-					Layout.bottomMargin: 100
 					Layout.topMargin: 5
+					Layout.bottomMargin: 10
 
 					horizontalAlignment: mainItem.horizontalAlignment
 					wrapMode: TextEdit.WordWrap

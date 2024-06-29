@@ -57,6 +57,7 @@ QVariant MealGroupListModel::data (const QModelIndex &index, int role) const {
 void MealGroupListModel::addNewMealGroup(){
 	beginInsertRows(QModelIndex(), mList.size(), mList.size());
 	mList << new MealGroupModel(this);
+	connect(mList.last(), &MealGroupModel::removed, this, &MealGroupListModel::handleRemoved);
 	endInsertRows();
 }
 

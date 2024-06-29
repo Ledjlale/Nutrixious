@@ -56,11 +56,14 @@ Item {
 				onEditingFinished:lastDataModel.sex = newValue
 			}
 		}
-		Button{
+		ButtonImage{
+			Layout.preferredWidth: 80
+			Layout.preferredHeight: 30
 			Layout.alignment: Qt.AlignCenter
-			Layout.preferredWidth: 60
-			text: 'Add'
-			onClicked:{
+			Layout.topMargin: 5
+			imageSource: DefaultStyle.addFoodButton
+			colorizationColor: Material.foreground
+			onClicked: {
 				if(lastDataModel.add())allModels.update()
 			}
 		}
@@ -68,46 +71,73 @@ Item {
 			id: personalDataList
 			Layout.fillHeight: true
 			Layout.fillWidth: true
+			spacing: 0
 			model: PersonalDataProxyModel{
 				id: allModels
 				Component.onCompleted: update()
 			}
-			delegate:RowLayout{
+			delegate:SwipeLayout{
+				id: dataRow
 				width: personalDataList.width
-				TextField{
-					Layout.fillWidth: true
-					inputMethodHints: Qt.ImhDigitsOnly
-					text: $modelData.dateTimeStr
-					readOnly: false
-					onEditingFinished: $modelData.dateTimeStr = newValue
+				isDeletable: true
+				isUndoable: $modelData.isEdited
+				isEditable: !$modelData.isEdited
+				onDeleteClicked: $modelData.remove()
+				onUndoClicked: {
+					$modelData.undo()
+					edit = false
 				}
-				TextField{
-					title: 'Weight'
-					showTitle: index == 0
-					text: $modelData.weight
-					onEditingFinished:$modelData.weight = newValue
-				}
-				TextField{
-					title: 'Height'
-					showTitle: index == 0
-					text: $modelData.height
-					onEditingFinished:$modelData.height = newValue
-				}
-				TextField{
-					title: 'Sex'
-					showTitle: index == 0
-					text: $modelData.sex
-					onEditingFinished:$modelData.sex = newValue
-				}
-				Button{
-
-					visible: $modelData.isEdited
-					text: 'S'
-					onClicked: $modelData.save()
-				}
-				Button{
-					text: 'D'
-					onClicked: $modelData.remove()
+				
+				contentItem: RowLayout{
+					width: parent.width
+					height: implicitHeight + 10
+					TextField{
+						Layout.fillWidth: true
+						inputMethodHints: Qt.ImhDigitsOnly
+						edit: dataRow.edit
+						title: ' '
+						text: $modelData.dateTimeStr
+						readOnly: false
+						onEditingFinished: $modelData.dateTimeStr = newValue
+					}
+					TextField{
+						Layout.preferredWidth: 80
+						title: 'Weight'
+						showTitle: index == 0
+						edit: dataRow.edit
+						text: $modelData.weight
+						onEditingFinished:$modelData.weight = newValue
+					}
+					TextField{
+						Layout.preferredWidth: 80
+						title: 'Height'
+						showTitle: index == 0
+						edit: dataRow.edit
+						text: $modelData.height
+						onEditingFinished:$modelData.height = newValue
+					}
+					TextField{
+						Layout.preferredWidth: 50
+						title: 'Sex'
+						showTitle: index == 0
+						edit: dataRow.edit
+						text: $modelData.sex
+						onEditingFinished:$modelData.sex = newValue
+					}
+					ButtonImage{
+						Layout.alignment: Qt.AlignCenter
+						Layout.preferredWidth: 25
+						Layout.preferredHeight: 25
+						Layout.rightMargin: 5
+						visible: $modelData.isEdited
+						imageSource: DefaultStyle.saveButton
+						colorizationColor: Material.foreground
+						onClicked: {
+							forceActiveFocus()
+							$modelData.save()
+							dataRow.edit = false
+						}
+					}
 				}
 			}
 		}

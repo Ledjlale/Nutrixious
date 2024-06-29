@@ -72,18 +72,30 @@ Item {
 				}
 				Component.onCompleted: exercises.update()
 			}
-			Button{
+			ButtonImage{
+				Layout.alignment: Qt.AlignCenter
+				Layout.preferredWidth: 30
+				Layout.preferredHeight: 30
+				Layout.rightMargin: 5
 				visible: !workingModel.targetModel.isSaved && exerciseChoice.currentIndex >= 0
-				text: 'Add Exo'
+				imageSource: DefaultStyle.addExerciseButton
+				colorizationColor: Material.foreground
 				onClicked: {
-						workingModel.addExercise(exerciseChoice.currentValue)
+					forceActiveFocus()
+					workingModel.addExercise(exerciseChoice.currentValue)
 				}
 			}
-
-			Button{
-				visible: !workingModel.targetModel.isSaved
-				text: mainItem.isRunning ? 'Stop' : 'Run'
-				onClicked: mainItem.isRunning = !mainItem.isRunning
+			ButtonImage{
+				Layout.alignment: Qt.AlignCenter
+				Layout.preferredWidth: 30
+				Layout.preferredHeight: 30
+				Layout.rightMargin: 5
+				visible: !workingModel.targetModel.isSaved && exercisesList.count > 0
+				imageSource: mainItem.isRunning ? DefaultStyle.stopButton : DefaultStyle.playButton
+				onClicked: {
+					forceActiveFocus()
+					mainItem.isRunning = !mainItem.isRunning
+				}
 			}
 		}
 		ListView{
@@ -196,11 +208,18 @@ Item {
 						color: restTimer.diff >= 0 ? Material.foreground : Material.accent
 						font.weight: Font.Bold
 					}
-					Button{
+					
+					ButtonImage{
+						Layout.alignment: Qt.AlignCenter
 						Layout.preferredWidth: 60
+						Layout.preferredHeight: 60
 						Layout.rightMargin: 5
-						text: 'Unpause'
-						onClicked: restingPopup.target.isResting = false
+						imageSource: DefaultStyle.resumeButton
+						colorizationColor: Material.foreground
+						onClicked: {
+							forceActiveFocus()
+							restingPopup.target.isResting = false
+						}
 					}
 				}
 				Loader{

@@ -34,93 +34,55 @@ Item {
 		TabBar{
 			id: bar
 			Layout.fillWidth: true
+			currentIndex: 0
 			TabButton{
+				width: Math.max(100, implicitWidth)
+				text: 'Personal data'
+			}
+			TabButton{
+				width: Math.max(100, implicitWidth)
+				text: 'Trainings'
+			}
+			TabButton{
+				width: Math.max(100,implicitWidth)
 				text: 'Exercises'
 			}
 			TabButton{
+				width: Math.max(100,implicitWidth)
 				text: 'Nutrition'
 			}
 			onCurrentIndexChanged: {
-				exerciseChoice.currentIndex = -1
-				nutritionChoice.currentIndex = 0
-				timeView.clear()
-			}
-		}
-		Item{// StackLayout is not used because Qt bug on layout refreshing.
-			id: stackLayout
-			Layout.fillWidth: true
-			Layout.preferredHeight: currentIndex == 0 ? exercisesLayout.implicitHeight : nutritionLayout.implicitHeight
-			property int currentIndex: bar.currentIndex
-			ColumnLayout{
-				id: exercisesLayout
-				anchors.fill: parent
-				property var statsModel: StatsModel{
-					id: stats
-					function compute(mode){
-						var points = stats.computeOnSerie(mode)
-						if(points && points.length)timeView.displayPoints(points)
-					}
-					onExerciseModelChanged: {compute(StatsModel.WEIGHT) }
+				switch(currentIndex){
+				case 1 : stackView.replace(trainingsComponent); break;
+				case 2 : stackView.replace(exerciseComponent); break;
+				case 3 : stackView.replace(nutritionComponent); break;
+				default:{
+					stackView.replace(personalDataComponent);
 				}
-				visible: stackLayout.currentIndex == 0
-				RowLayout{
-					ComboBox{
-						id: exerciseChoice
-						Layout.fillWidth: true
-						textRole: "displayText"
-						valueRole: "$modelData"
-						model: ExerciseProxyModel{
-							id: exercises
-						}
-						Component.onCompleted: exercises.update()
-						onCurrentValueChanged:{
-							stats.setExercise(currentValue)
-						}
-					}
-					ComboBox{
-						id: modeChoice
-						Layout.fillWidth: true
-						textRole: "text"
-						valueRole: "value"
-						model: stats.availableSerieModes
-						onCurrentValueChanged:{
-							stats.compute(currentValue)
-
-						}
-					}
-					Button{
-						text: 'Reload'
-						onClicked: exercises.update()
-					}
-				}
-			}
-
-			ColumnLayout{
-				id: nutritionLayout
-				property var statsModel: StatsModel{
-						id: nutritionTimeStats
-				}
-				anchors.fill: parent
-				visible: stackLayout.currentIndex == 1
-				ComboBox{
-					id: nutritionChoice
-					Layout.fillWidth: true
-					model:['Nutrition', 'Body Weight','Calories']
-					onCurrentIndexChanged: {
-						var points
-						if( currentIndex == 1 )
-							points = nutritionTimeStats.computeBodyWeights()
-						else if(currentIndex == 2)
-							points = nutritionTimeStats.computeNutritionCalories()
-						if(points && points.length)timeView.displayPoints(points)
-					}
 				}
 			}
 		}
-		TimeChart{
-			id: timeView
+		StackView{
+			id: stackView
 			Layout.fillWidth: true
 			Layout.fillHeight: true
+			initialItem: personalDataComponent
+			Component{
+				id: personalDataComponent
+				PersonalDataPage{}
+			}
+			Component{
+				id: trainingsComponent
+				TrainingsPage{}
+			}
+			Component{
+				id: exerciseComponent
+				ExerciseStatsPage{}
+			}
+			Component{
+				id: nutritionComponent
+				NutritionStatsPage{}
+			}
 		}
 	}
 }

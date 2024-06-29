@@ -97,6 +97,7 @@ void MealGroupModel::undo(){
 	DEFINE_UNDO(String,Name)
 	DEFINE_UNDO(Time,DefaultTime)
 	DEFINE_UNDO(Bool,IsDisplayed)
+	QmlModel::undo();
 }
 
 int MealGroupModel::save(){

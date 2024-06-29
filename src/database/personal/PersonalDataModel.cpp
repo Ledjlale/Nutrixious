@@ -40,6 +40,8 @@ PersonalDataModel::PersonalDataModel(QObject *parent)
 	gEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);// Avoid QML to destroy it when passing by Q_INVOKABLE
 	mDateTime = QDateTime::currentDateTime();
 	mBirthday = QDate(1983,8,1);
+	connect(this, &PersonalDataModel::personalDataIdChanged, this, &PersonalDataModel::updateIsSaved);
+	updateIsSaved();
 }
 
 PersonalDataModel::PersonalDataModel(PersonalDataModel * model, QObject *parent)
@@ -51,6 +53,8 @@ PersonalDataModel::PersonalDataModel(PersonalDataModel * model, QObject *parent)
 	mHeight = model->getHeight();
 	mDateTime = model->getDateTime();
 	mBirthday = model->getBirthday();
+	connect(this, &PersonalDataModel::personalDataIdChanged, this, &PersonalDataModel::updateIsSaved);
+	updateIsSaved();
 }
 
 PersonalDataModel* PersonalDataModel::clone(QObject*parent) {
@@ -182,6 +186,10 @@ bool PersonalDataModel::add(){
 	return result;
 }
 
+void PersonalDataModel::updateIsSaved() {
+	setIsSaved(getPersonalDataId() > 0);
+}
+
 int PersonalDataModel::save(){
 	if(mPersonalDataId>0 && !mIsEdited) return true;// Avoid update for nothing
 	DatabaseQuery query;
@@ -223,6 +231,15 @@ void PersonalDataModel::remove(){
 		}
 	}
 	emit removed(this);
+}
+
+void PersonalDataModel::undo() {
+	DEFINE_UNDO(Int,Sex)
+	DEFINE_UNDO(Double,Weight)
+	DEFINE_UNDO(Double,Height)
+	DEFINE_UNDO(DateTime,DateTime)
+	DEFINE_UNDO(Date,Birthday)
+	QmlModel::undo();
 }
 
 PersonalDataModel *PersonalDataModel::load(QSqlQuery &query, QObject * parent) {

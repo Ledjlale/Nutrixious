@@ -70,20 +70,12 @@ ApplicationWindow {
 		initialItem: diaryPage
 
 		Component{
-			id: programsPage
+			id: exercisesLayout
 			ExercisesLayout{}
-		}
-		Component{
-			id: trainingsPage
-			TrainingsPage{}
 		}
 		Component{
 			id: statisticsPage
 			StatisticsPage{}
-		}
-		Component{
-			id: personalDataPage
-			PersonalDataPage{}
 		}
 		Component{
 			id: settingsPage
@@ -181,10 +173,8 @@ ApplicationWindow {
 					id: menuItems
 					//model:[{title: 'Overview'},{title: 'Diary'},{title: 'Food'},{title: 'Training'}, {title: 'Exercises'},{title: 'Programs'},{title: 'Trainings'},{title: 'Statistics'},{title: 'Settings'}]
 					model:[{title: 'Diary', component:diaryPage}
-						,{title: 'Programs', component:programsPage}
-						,{title: 'Trainings', component:trainingsPage}
-						,{title: 'Statistics', component:statisticsPage}
-						,{title: 'Personal Data', component:personalDataPage}
+						,{title: 'Offline exercises', component:exercisesLayout}
+						,{title: 'History', component:statisticsPage}
 						,{title: 'Settings', component:settingsPage}
 						,{title: 'About', component:aboutPage}
 						]

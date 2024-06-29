@@ -30,8 +30,11 @@ SwipeLayout{
 	property bool displayDate: false
 	
 	onDeleteClicked: modelData.remove()
-	isSavable:  mainItem.modelData.isEdited
+	isUndoable:  mainItem.modelData.isEdited
 	isEditable: !mainItem.modelData.isEdited
+	onUndoClicked: {
+		mainItem.modelData.undo()
+	}
 	
 	contentItem: RowLayout{
 		id: mainLine
@@ -87,14 +90,11 @@ SwipeLayout{
 			Layout.preferredHeight: 25
 			Layout.rightMargin: 5
 			visible: mainItem.modelData.isEdited
-			imageSource: mainItem.modelData.isSaved ? DefaultStyle.undoButton : DefaultStyle.saveButton
+			imageSource: DefaultStyle.saveButton
 			colorizationColor: Material.foreground
 			onClicked: {
 				forceActiveFocus()
-				if(mainItem.modelData.isSaved)
-					mainItem.modelData.undo()
-				else
-					mainItem.modelData.save()
+				mainItem.modelData.save()
 			}
 		}
 

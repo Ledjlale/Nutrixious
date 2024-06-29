@@ -28,7 +28,6 @@
 	ui/Page/ActivitiesPage.qml
 	ui/Page/StatisticsPage.qml
 	ui/Page/AboutPage.qml
-	ui/Page/PersonalDataPage.qml
 
 	ui/Item/Button.qml
 	ui/Item/ButtonImage.qml
@@ -74,8 +73,12 @@
 	ui/Page/Activity/ProgramEditorPage.qml
 
 	ui/Page/Activity/TrainingPage.qml
-	ui/Page/Activity/TrainingsPage.qml
 	ui/Page/Activity/LivePage.qml
+	
+	ui/Page/History/TrainingsPage.qml
+	ui/Page/History/PersonalDataPage.qml
+	ui/Page/History/ExerciseStatsPage.qml
+	ui/Page/History/NutritionStatsPage.qml
 
 	ui/Page/Nutrition/NutritionPage.qml
 	ui/Page/Nutrition/FoodEditorPage.qml

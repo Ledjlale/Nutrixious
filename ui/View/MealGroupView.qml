@@ -30,10 +30,10 @@ SwipeLayout{
 	implicitHeight: mainRow.implicitHeight + 10
 	isDeletable: true
 	isEditable: !mainItem.edit
-	isSavable: mainItem.mealGroup.isEdited && mainItem.mealGroup.isSaved
+	isUndoable: mainItem.mealGroup.isEdited
 	onDeleteClicked: mainItem.mealGroup.remove()
-	onSaveClicked: {
-		mainItem.mealGroup.save()
+	onUndoClicked: {
+		mainItem.mealGroup.undo()
 		mainItem.edit = false
 	}
 	contentItem: RowLayout{
@@ -64,15 +64,12 @@ SwipeLayout{
 			Layout.preferredWidth: 25
 			Layout.preferredHeight: 25
 			Layout.rightMargin: 5
-			visible: mainItem.mealGroup.isEdited
-			imageSource: mainItem.mealGroup.isSaved ? DefaultStyle.undoButton : DefaultStyle.saveButton
+			visible: mainItem.mealGroup.isEdited || !mainItem.mealGroup.isSaved
+			imageSource: DefaultStyle.saveButton
 			colorizationColor: Material.foreground
 			onClicked: {
 				forceActiveFocus()
-				if(mainItem.mealGroup.isSaved)
-					mainItem.mealGroup.undo()
-				else
-					mainItem.mealGroup.save()
+				mainItem.mealGroup.save()
 				mainItem.edit = false
 			}
 		}
