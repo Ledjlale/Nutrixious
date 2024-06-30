@@ -29,6 +29,13 @@ import '../Tool/Utils.js' as Utils
 
 Item {
 	id: mainItem
+	property var lastHeaders: {'showBackButton': false,
+			'showMenuButton': true,
+			'title': 'History'
+		}
+	Component.onCompleted:{
+		mainWindow.setHeaders(lastHeaders)
+	}
 	ColumnLayout{
 		anchors.fill: parent
 		TabBar{

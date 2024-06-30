@@ -34,6 +34,9 @@ Item {
 	}
 	property TrainingListModel trainings: TrainingListModel{
 	}
+	PersonalDataModel{
+		id: lastDataModel
+	}
 	property int totalRefresh: 1
 	signal exerciseRequested()
 	signal setHeaders(var headers)
@@ -76,21 +79,20 @@ Item {
 				onPrevious: updateFromDate()
 				Component.onCompleted: updateFromDate()
 				function updateFromDate(){
-					if(mainWindow.header.displayBody) lastDataModel.loadLastBefore(dayBar.currentDay)
+					lastDataModel.loadLastIn(dayBar.currentDay)
 					mealFoods.updateFromDate(currentDay)
+					// This day need to have data
+					if(!mainWindow.header.displayBody && dayBar.currentDay.isToday && !lastDataModel.isSameDay(currentDay))
+						mainWindow.header.displayBody = true
 				}
 			}
 //---------------------------------		OVERVIEW
 			RowLayout{
 				visible: mainWindow.header.displayBody
-				onVisibleChanged: if(visible) lastDataModel.loadLastIn(dayBar.currentDay)
-				PersonalDataModel{
-					id: lastDataModel 
-				}
-				
 				RowLayout{
 					width: parent.width
 					height: implicitHeight + 10
+					property bool editable: dayBar.currentDay.isToday
 					TextField{
 						Layout.fillWidth: true
 						visible: lastDataModel.isSaved
@@ -103,20 +105,20 @@ Item {
 					TextField{
 						Layout.fillWidth: true
 						title: 'Weight'
-						edit:true
+						edit: parent.editable
 						text: lastDataModel.weight
 						onEditingFinished:lastDataModel.weight = newValue
 					}
 					TextField{
 						Layout.fillWidth: true
 						title: 'Height'
-						edit: true
+						edit: parent.editable
 						text: lastDataModel.height
 						onEditingFinished:lastDataModel.height = newValue
 					}
 					SexBox{
 						Layout.fillWidth: true
-						edit: true
+						edit: parent.editable
 						value: lastDataModel.sex
 						onAccepted:lastDataModel.sex = newValue
 					}
@@ -125,6 +127,7 @@ Item {
 						Layout.preferredWidth: 25
 						Layout.preferredHeight: 25
 						Layout.rightMargin: 5
+						visible: parent.editable
 						imageSource: DefaultStyle.addDataButton
 						colorizationColor: Material.foreground
 						onClicked: {

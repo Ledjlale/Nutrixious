@@ -18,30 +18,26 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick
-import QtQuick.Controls.Material
-import QtQuick.Layouts
+#ifndef CHANGE_DAY_TIMER_H
+#define CHANGE_DAY_TIMER_H
 
-import App 1.0
+#include <QObject>
+#include <QDateTime>
+#include <QTimer>
 
-Item {
-	id: mainItem
-	property var lastHeaders: {'showBackButton': false,
-			'showMenuButton': true,
-			'title': 'Settings'
-		}
-	Component.onCompleted:{
-		mainWindow.setHeaders(lastHeaders)
-	}
-	ColumnLayout{
-		anchors.fill: parent
-		
-		Switch {
-			id: darkThemeSwitch
-			Layout.alignment: Qt.AlignCenter
-			text: qsTr("Dark")
-			checked: DefaultStyle.theme == Material.Dark
-			onCheckedChanged: DefaultStyle.theme= darkThemeSwitch.checked ? Material.Dark : Material.Light
-		}
-	}
-}
+class ChangeDayTimer: public QObject{
+Q_OBJECT
+public:
+	ChangeDayTimer(QObject* parent = nullptr);
+	static ChangeDayTimer* getInstance();
+	
+	void onTimeout();
+signals:
+	void minuteChanged();
+	void dayChanged();
+protected:
+	QTimer mTimer;
+	static ChangeDayTimer* gInstance;
+};
+
+#endif

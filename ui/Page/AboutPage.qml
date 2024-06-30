@@ -31,6 +31,13 @@ import App 1.0
 
 Item {
 	id: mainItem
+	property var lastHeaders: {'showBackButton': false,
+			'showMenuButton': true,
+			'title': 'About'
+		}
+	Component.onCompleted:{
+		mainWindow.setHeaders(lastHeaders)
+	}
 	StackView{
 		id: stackView
 		anchors.fill: parent

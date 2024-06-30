@@ -19,11 +19,15 @@
  */
 
 #include "DateModel.h"
+#include "ChangeDayTimer.h"
 
+QTimer * DateModel::gMinutes = nullptr;
 
 DateModel::DateModel() : QObject(nullptr){
 	mDate = QDate::currentDate();
 	mTime = QTime::currentTime();
+	connect(this, &DateModel::dateChanged, this, &DateModel::isTodayChanged);
+	connect(ChangeDayTimer::getInstance(), &ChangeDayTimer::dayChanged, this, &DateModel::isTodayChanged);
 }
 
 
@@ -64,7 +68,10 @@ QDateTime DateModel::getDateTime() const {
 	return QDateTime(mDate,mTime);
 }
 
-
+bool DateModel::isToday()const {
+	return mDate == QDate::currentDate();
+}
+	
 void DateModel::nextDay(){
 	setDate(mDate.addDays(1));
 }

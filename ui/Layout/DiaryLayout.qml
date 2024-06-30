@@ -34,19 +34,21 @@ StackLayout{
 	property bool isHeaderOwner: true
 	currentIndex: 0
 	onCurrentIndexChanged: {
-		lastHeaders = {'showBackButton':currentIndex > 0,
-			'showMenuButton':currentIndex==0,
-			'showBodyButton': currentIndex==0,
-			'title' : currentIndex == 0 ? 'Diary' : currentIndex == 1 ? 'Training' : 'Meal Groups'
+		if(mainItem.visible) {
+			lastHeaders = {'showBackButton':currentIndex > 0,
+				'showMenuButton':currentIndex==0,
+				'showBodyButton': currentIndex==0,
+				'title' : currentIndex == 0 ? 'Diary' : currentIndex == 1 ? 'Training' : 'Meal Groups'
+			}
+			mainWindow.setHeaders(lastHeaders)
 		}
-		mainWindow.setHeaders(lastHeaders)
 	}
 	Component.onCompleted:{
 		mainWindow.setHeaders(lastHeaders)
 	}
 	Connections{
 		target: mainWindow
-		enabled: mainItem.isHeaderOwner
+		enabled: mainItem.isHeaderOwner && mainItem.visible
 		function onGBack(){
 			if(mainItem.currentIndex>0) {
 				if(mainItem.currentIndex == 2)

@@ -81,6 +81,7 @@ public:
 	static void set(QSqlQuery &query,PersonalDataModel * model);
 	Q_INVOKABLE void loadLast();
 	Q_INVOKABLE void loadLastIn(DateModel * data );
+	Q_INVOKABLE virtual bool isSameDay(DateModel *data);
 
 signals:
 	void personalDataIdChanged();

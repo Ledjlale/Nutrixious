@@ -93,6 +93,7 @@
 	src/tool/proxyModel/ObjectListModel.cpp
 	src/tool/proxyModel/ObjectProxyModel.cpp
 	src/tool/provider/ImageProvider.cpp
+	src/tool/date/ChangeDayTimer.cpp
 	src/tool/date/DateModel.cpp
 	src/tool/QmlData.cpp
 	src/tool/QmlModel.cpp

@@ -70,7 +70,7 @@ Control.ToolBar{
 		anchors.fill: parent
 		ToolButtonImage{
 			Layout.preferredHeight: 20
-			Layout.preferredWidth: 20
+			Layout.preferredWidth: 40
 			Layout.leftMargin: 5
 			visible: mainItem.showMenuButton
 			imageSource: DefaultStyle.menuButton
@@ -80,7 +80,7 @@ Control.ToolBar{
 		
 		ToolButtonImage{
 			Layout.preferredHeight: 20
-			Layout.preferredWidth: 20
+			Layout.preferredWidth: 40
 			Layout.leftMargin: 5
 			visible: mainItem.showBackButton
 			imageSource: DefaultStyle.backButton
@@ -90,7 +90,7 @@ Control.ToolBar{
 		 
 		Control.Label {
 			id: titleLabel
-			Layout.leftMargin: 10
+			Layout.leftMargin: 15
 			Layout.rightMargin: 5
 			visible: !!text
 			elide: Control.Label.ElideRight
@@ -98,7 +98,8 @@ Control.ToolBar{
 			verticalAlignment: Qt.AlignVCenter
 			Layout.fillWidth: true
 			color: 'white'
-			font.pixelSize: 17
+			font.pixelSize: 18
+			font.bold: true
 		}
 		ToolButtonImage{
 			Layout.preferredHeight: 25

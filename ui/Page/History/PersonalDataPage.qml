@@ -95,7 +95,7 @@ Item {
 						Layout.fillWidth: true
 						inputMethodHints: Qt.ImhDigitsOnly
 						edit: dataRow.edit
-						title: ' '
+						showTitle: false
 						text: $modelData.dateTimeStr
 						readOnly: false
 						onEditingFinished: $modelData.dateTimeStr = newValue

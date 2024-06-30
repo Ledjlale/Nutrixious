@@ -306,9 +306,13 @@ void PersonalDataModel::loadLastIn(DateModel * data ){
 	QSqlQuery query;
 	QDateTime endOfDay(data->getDate(), QTime(23,59,59));
 	query.prepare( "SELECT * FROM personal_data WHERE date_time < ? ORDER BY date_time DESC LIMIT 1");
-	query.addBindValue(endOfDay);
+	query.addBindValue(endOfDay.toMSecsSinceEpoch());
 	if(!query.exec())
 		qCritical() << "Cannot select last personal data  : "  << query.lastError().text();
 	else if(query.next())
 		set(query, this);
+}
+
+bool PersonalDataModel::isSameDay(DateModel *data) {
+	return data->getDate() == mDateTime.date();
 }

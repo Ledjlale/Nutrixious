@@ -23,11 +23,13 @@
 
 #include <QObject>
 #include <QDateTime>
+#include <QTimer>
 
 class DateModel: public QObject{
 Q_OBJECT
 	Q_PROPERTY(QString date READ getDateStr NOTIFY dateChanged)
 	Q_PROPERTY(QString time READ getTimeStr NOTIFY timeChanged)
+	Q_PROPERTY(bool isToday READ isToday NOTIFY isTodayChanged)
 public:
 	DateModel();
 
@@ -38,12 +40,18 @@ public:
 	
 	QTime getTime() const;
 	QDateTime getDateTime() const;
+	
+	bool isToday()const;
 
 	Q_INVOKABLE void nextDay();
 	Q_INVOKABLE void previousDay();
+	void minuteTriggered();
+	
+	static QTimer *gMinutes;
 signals:
 	void dateChanged();
 	void timeChanged();
+	void isTodayChanged();
 protected:
 	QDate mDate;
 	QTime mTime;

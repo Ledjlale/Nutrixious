@@ -569,7 +569,7 @@ void DatabaseModel::insertDefaultData() {
 		for(int i = 0 ; i < 100 ; ++i){
 			personalData << new PersonalDataModel();
 			personalData.back()->setBirthday(QDate(1983,8,1));
-			personalData.back()->setDateTime(QDateTime::fromString("2024/01/01 10:00:00", "yyyy/MM/dd hh:mm:ss").addDays(i));
+			personalData.back()->setDateTime(QDateTime::fromString("2024/03/01 10:00:00", "yyyy/MM/dd hh:mm:ss").addDays(i));
 			personalData.back()->setHeight(180);
 			personalData.back()->setWeight(100 - (i * 20.0 / 100.0));
 			personalData.back()->setSex(0);
