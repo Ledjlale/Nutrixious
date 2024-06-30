@@ -72,11 +72,70 @@ Item {
 			DayNavigationBar{
 				id: dayBar
 				Layout.fillWidth : true
-				onNext: mealFoods.updateFromDate(currentDay)
-				onPrevious: mealFoods.updateFromDate(currentDay)
-				Component.onCompleted: mealFoods.updateFromDate(currentDay)
+				onNext: updateFromDate()
+				onPrevious: updateFromDate()
+				Component.onCompleted: updateFromDate()
+				function updateFromDate(){
+					if(mainWindow.header.displayBody) lastDataModel.loadLastBefore(dayBar.currentDay)
+					mealFoods.updateFromDate(currentDay)
+				}
 			}
 //---------------------------------		OVERVIEW
+			RowLayout{
+				visible: mainWindow.header.displayBody
+				onVisibleChanged: if(visible) lastDataModel.loadLastIn(dayBar.currentDay)
+				PersonalDataModel{
+					id: lastDataModel 
+				}
+				
+				RowLayout{
+					width: parent.width
+					height: implicitHeight + 10
+					TextField{
+						Layout.fillWidth: true
+						visible: lastDataModel.isSaved
+						inputMethodHints: Qt.ImhDigitsOnly
+						title: ' '
+						text: lastDataModel.dateTimeStr
+						readOnly: false
+						onEditingFinished: lastDataModel.dateTimeStr = newValue
+					}
+					TextField{
+						Layout.fillWidth: true
+						title: 'Weight'
+						edit:true
+						text: lastDataModel.weight
+						onEditingFinished:lastDataModel.weight = newValue
+					}
+					TextField{
+						Layout.fillWidth: true
+						title: 'Height'
+						edit: true
+						text: lastDataModel.height
+						onEditingFinished:lastDataModel.height = newValue
+					}
+					SexBox{
+						Layout.fillWidth: true
+						edit: true
+						value: lastDataModel.sex
+						onAccepted:lastDataModel.sex = newValue
+					}
+					ButtonImage{
+						Layout.alignment: Qt.AlignCenter
+						Layout.preferredWidth: 25
+						Layout.preferredHeight: 25
+						Layout.rightMargin: 5
+						imageSource: DefaultStyle.addDataButton
+						colorizationColor: Material.foreground
+						onClicked: {
+							forceActiveFocus()
+							lastDataModel.add()
+							lastDataModel.loadLastIn(dayBar.currentDay)
+						}
+					}
+				}
+			}
+//-------------------------------------------------------------
 			RowLayout {
 				spacing: 0
 				ColumnLayout{

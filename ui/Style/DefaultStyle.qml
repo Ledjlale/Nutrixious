@@ -33,7 +33,8 @@ QtObject {
 	property string undoButton: 'image://internal/undo.svg'
 	property string stopwatchButton: 'image://internal/stopwatch.svg'
 	property string addFoodButton: 'image://internal/add_food.svg'
-	property string addProgramButton: 'image://internal/add_food.svg'
+	property string addDataButton: addFoodButton
+	property string addProgramButton: addFoodButton
 	property string addExerciseButton: 'image://internal/add_food.svg'
 	property string searchOFFButton: 'image://internal/search_off.svg'
 	property string searchOFFDarkButton: 'image://internal/search_off_dark.svg'
@@ -48,6 +49,7 @@ QtObject {
 	property string startupButton: 'image://internal/startup.svg'
 	property string landingButton: 'image://internal/landing.svg'
 	property string resumeButton: 'image://internal/resume.svg'
+	property string bodyButton: 'image://internal/body.svg'
 	
 
 }

@@ -28,6 +28,7 @@
 #include <QDateTime>
 
 #include "src/tool/QmlModel.h"
+#include "src/tool/date/DateModel.h"
 
 class PersonalDataModel : public QmlModel{
 Q_OBJECT
@@ -79,6 +80,7 @@ public:
 	static PersonalDataModel *load(QSqlQuery &query, QObject * parent);
 	static void set(QSqlQuery &query,PersonalDataModel * model);
 	Q_INVOKABLE void loadLast();
+	Q_INVOKABLE void loadLastIn(DateModel * data );
 
 signals:
 	void personalDataIdChanged();

@@ -33,8 +33,10 @@ Control.ToolBar{
 	property bool showSaveButton: false
 	property bool showBarcodeButton: false
 	property bool showCreateButton: false
+	property bool showBodyButton: false
 	property alias title: titleLabel.text
 	property bool displayStopwatch: false
+	property bool displayBody: false
 	signal back()
 	signal menu()
 	signal options()
@@ -45,6 +47,7 @@ Control.ToolBar{
 	
 	function setHeaders(headers){
 		showBackButton = headers.showBackButton != undefined ? headers.showBackButton : false
+		showBodyButton = headers.showBodyButton != undefined ? headers.showBodyButton : false
 		showMenuButton = headers.showMenuButton != undefined  ? headers.showMenuButton : true
 		showOptionsButton = headers.showOptionsButton != undefined  ? headers.showOptionsButton : false
 		showSaveButton = headers.showSaveButton != undefined  ? headers.showSaveButton : false
@@ -55,6 +58,7 @@ Control.ToolBar{
 	
 	function updateHeaders(headers){
 		if(headers.showBackButton != undefined) showBackButton = headers.showBackButton
+		if(headers.showBodyButton != undefined) showBodyButton = headers.showBodyButton
 		if(headers.showMenuButton != undefined) showMenuButton = headers.showMenuButton
 		if(headers.showOptionsButton != undefined) showOptionsButton = headers.showOptionsButton
 		if(headers.showSaveButton != undefined) showSaveButton = headers.showSaveButton
@@ -95,6 +99,15 @@ Control.ToolBar{
 			Layout.fillWidth: true
 			color: 'white'
 			font.pixelSize: 17
+		}
+		ToolButtonImage{
+			Layout.preferredHeight: 25
+			Layout.preferredWidth: 25
+			Layout.rightMargin: 5
+			visible: mainItem.showBodyButton
+			imageSource: DefaultStyle.bodyButton
+			colorizationColor: mainItem.displayBody ? Control.Material.accent : 'white'
+			onClicked:  mainItem.displayBody = !mainItem.displayBody
 		}
 		ToolButtonImage{
 			Layout.preferredHeight: 25

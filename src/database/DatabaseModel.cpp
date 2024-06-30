@@ -38,6 +38,8 @@
 #include "mealGroup/MealGroupModel.h"
 #include "mealFood/MealFoodModel.h"
 #include "unit/UnitModel.h"
+// Debug
+bool DatabaseModel::gStartFromScratch = true;
 
 DatabaseModel::DatabaseModel(QObject *parent)
 	: QObject{parent}
@@ -49,6 +51,7 @@ void DatabaseModel::migrate(){
 	QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
 #ifdef QT_DEBUG
 	db.setDatabaseName(":memory:");
+	//db.setDatabaseName("data");
 #else
 	db.setDatabaseName("data");
 #endif
@@ -339,84 +342,88 @@ void DatabaseModel::migrate(){
 
 void DatabaseModel::initFoodData(){
 #ifdef QT_DEBUG
-	QList<FoodModel*> models;
-
-	models << new FoodModel();
-	models.back()->initRandomValues();
-	models.back()->setOpenFoodFactsCode("3335880006048");
-	//models.back()->setOpenFoodFactsImageUrl("https://images.openfoodfacts.org/images/products/333/588/000/6048/front_fr.25.400.jpg");
-	models << new FoodModel();
-	models.back()->initRandomValues();
-	//models.back()->setImageUrl("https://images.openfoodfacts.org/images/products/333/588/000/6048/front_fr.25.400.jpg");
-
-	models << new FoodModel();
-	models.back()->initRandomValues();
-	models << new FoodModel();
-	models.back()->initRandomValues();
-
-	for(auto i : models){
-		if(i->save() == 2) {
-			bool end = false;
-			connect(i, &FoodModel::saved, [&end](){end = true;});
-			connect(i, &FoodModel::loadingFailed, [&end](){end = true;});
-			while(!end) QCoreApplication::processEvents();
+	if(!gStartFromScratch){
+		QList<FoodModel*> models;
+	
+		models << new FoodModel();
+		models.back()->initRandomValues();
+		models.back()->setOpenFoodFactsCode("3335880006048");
+		//models.back()->setOpenFoodFactsImageUrl("https://images.openfoodfacts.org/images/products/333/588/000/6048/front_fr.25.400.jpg");
+		models << new FoodModel();
+		models.back()->initRandomValues();
+		//models.back()->setImageUrl("https://images.openfoodfacts.org/images/products/333/588/000/6048/front_fr.25.400.jpg");
+	
+		models << new FoodModel();
+		models.back()->initRandomValues();
+		models << new FoodModel();
+		models.back()->initRandomValues();
+	
+		for(auto i : models){
+			if(i->save() == 2) {
+				bool end = false;
+				connect(i, &FoodModel::saved, [&end](){end = true;});
+				connect(i, &FoodModel::loadingFailed, [&end](){end = true;});
+				while(!end) QCoreApplication::processEvents();
+			}
+			i->deleteLater();
 		}
-		i->deleteLater();
 	}
 #endif
 }
 void DatabaseModel::initMealFoodData(){
 #ifdef QT_DEBUG
-	QList<MealFoodModel*> models;
-
-	models << new MealFoodModel();
-	models.back()->setMealGroupId(1);
-	models.back()->setServingUnitId(1);
-	models.back()->setBrand("a");
-	models.back()->setCalories(200);
-	models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate(),QTime(8,0,0) ));
-
-	models << new MealFoodModel();
-	models.back()->setMealGroupId(1);
-	models.back()->setServingUnitId(1);
-	models.back()->setBrand("b");
-	models.back()->setCalories(50);
-	models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate(),QTime(8,0,0) ));
-
-	models << new MealFoodModel();
-	models.back()->setMealGroupId(2);
-	models.back()->setServingUnitId(1);
-	models.back()->setBrand("c");
-	models.back()->setCalories(119);
-
-	models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate(),QTime(12,0,0) ));
-
-
-	models << new MealFoodModel();
-	models.back()->setMealGroupId(1);
-	models.back()->setServingUnitId(1);
-	models.back()->setBrand("a");
-	models.back()->setCalories(150);
-	models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate().addDays(-2),QTime(8,0,0) ));
-
-	models << new MealFoodModel();
-	models.back()->setMealGroupId(1);
-	models.back()->setServingUnitId(1);
-	models.back()->setBrand("b");
-	models.back()->setCalories(100);
-	models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate().addDays(-2),QTime(8,0,0) ));
-
-	models << new MealFoodModel();
-	models.back()->setMealGroupId(2);
-	models.back()->setServingUnitId(1);
-	models.back()->setBrand("c");
-	models.back()->setCalories(519);
-
-	models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate().addDays(-2),QTime(12,0,0) ));
-
-	for(auto i : models){
-		i->save();
-		i->deleteLater();
+	if(!gStartFromScratch) {
+		QList<MealFoodModel*> models;
+	
+		models << new MealFoodModel();
+		models.back()->setMealGroupId(1);
+		models.back()->setServingUnitId(1);
+		models.back()->setBrand("a");
+		models.back()->setCalories(200);
+		models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate(),QTime(8,0,0) ));
+	
+		models << new MealFoodModel();
+		models.back()->setMealGroupId(1);
+		models.back()->setServingUnitId(1);
+		models.back()->setBrand("b");
+		models.back()->setCalories(50);
+		models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate(),QTime(8,0,0) ));
+	
+		models << new MealFoodModel();
+		models.back()->setMealGroupId(2);
+		models.back()->setServingUnitId(1);
+		models.back()->setBrand("c");
+		models.back()->setCalories(119);
+	
+		models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate(),QTime(12,0,0) ));
+	
+	
+		models << new MealFoodModel();
+		models.back()->setMealGroupId(1);
+		models.back()->setServingUnitId(1);
+		models.back()->setBrand("a");
+		models.back()->setCalories(150);
+		models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate().addDays(-2),QTime(8,0,0) ));
+	
+		models << new MealFoodModel();
+		models.back()->setMealGroupId(1);
+		models.back()->setServingUnitId(1);
+		models.back()->setBrand("b");
+		models.back()->setCalories(100);
+		models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate().addDays(-2),QTime(8,0,0) ));
+	
+		models << new MealFoodModel();
+		models.back()->setMealGroupId(2);
+		models.back()->setServingUnitId(1);
+		models.back()->setBrand("c");
+		models.back()->setCalories(519);
+	
+		models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate().addDays(-2),QTime(12,0,0) ));
+	
+		for(auto i : models){
+			i->save();
+			i->deleteLater();
+		}
 	}
 #endif
 }
@@ -490,95 +497,97 @@ void DatabaseModel::insertVersion2Data() {
 void DatabaseModel::insertDefaultData() {
 	insertVersion2Data();
 #ifdef QT_DEBUG
-	QVector<ExerciseModel *> exercises;
-	QVector<ProgramExerciseModel *> programExercises;
-	QVector<ProgramSerieModel *> series;
-	QVector<ProgramModel *> programs;
-
-	programs << new ProgramModel();
-	programs.back()->setName("Str");
-	programs.back()->setDescription("Testouille");
-
-	exercises << new ExerciseModel();
-	exercises.back()->setName("Bike");
-	exercises.back()->save();
-	programExercises << new ProgramExerciseModel(nullptr);
-	programExercises.back()->setUseWeight(false);
-	programExercises.back()->setUseRepetitions(false);
-	programExercises.back()->setExerciseModel(exercises.back());
-	series << new ProgramSerieModel();
-	series.back()->setDistance(5000);
-	programExercises.back()->insertSerie(series.back());
-	programs.back()->insertExercise(programExercises.back());
-
-
-	exercises << new ExerciseModel();
-	exercises.back()->setName("Shoulder");
-	exercises.back()->save();
-	programExercises << new ProgramExerciseModel(nullptr);
-	programExercises.back()->setDescription("Lateral elevations");
-	programExercises.back()->setUseDistance(false);
-	programExercises.back()->setUseSpeed(false);
-	programExercises.back()->setExerciseModel(exercises.back());
-
-	series << new ProgramSerieModel(programExercises.back());
-	series.back()->setRepetitions(12);
-	series.back()->setWeight(15);
-	series.back()->setRestTime(1);
-	programExercises.back()->insertSerie(series.back());
-
-	series << new ProgramSerieModel(programExercises.back());
-	series.back()->setRepetitions(12);
-	series.back()->setWeight(10);
-	series.back()->setRestTime(5);
-	programExercises.back()->insertSerie(series.back());
-
-	programs.back()->insertExercise(programExercises.back());
-
-
-	programs.back()->save();
-
-
-//  Trainings
-
-	QVector<TrainingModel *> trainings;
-	QVector<TrainingExerciseModel *> trainingExercises;
-	QVector<TrainingSerieModel *> trainingSeries;
-
-
-	for(int i = 0 ; i < 200 ; ++i){
-		trainings << new TrainingModel(programs.back(), nullptr);
-		trainings.back()->setDescription("Debug");
-		trainings.back()->setStartDateTime(QDateTime::fromString("2024/01/01 10:00:00", "yyyy/MM/dd hh:mm:ss").addDays(i));
-		trainings.back()->initRandomValues();
-		trainings.back()->save();
+	if(!gStartFromScratch) {
+		QVector<ExerciseModel *> exercises;
+		QVector<ProgramExerciseModel *> programExercises;
+		QVector<ProgramSerieModel *> series;
+		QVector<ProgramModel *> programs;
+	
+		programs << new ProgramModel();
+		programs.back()->setName("Str");
+		programs.back()->setDescription("Testouille");
+	
+		exercises << new ExerciseModel();
+		exercises.back()->setName("Bike");
+		exercises.back()->save();
+		programExercises << new ProgramExerciseModel(nullptr);
+		programExercises.back()->setUseWeight(false);
+		programExercises.back()->setUseRepetitions(false);
+		programExercises.back()->setExerciseModel(exercises.back());
+		series << new ProgramSerieModel();
+		series.back()->setDistance(5000);
+		programExercises.back()->insertSerie(series.back());
+		programs.back()->insertExercise(programExercises.back());
+	
+	
+		exercises << new ExerciseModel();
+		exercises.back()->setName("Shoulder");
+		exercises.back()->save();
+		programExercises << new ProgramExerciseModel(nullptr);
+		programExercises.back()->setDescription("Lateral elevations");
+		programExercises.back()->setUseDistance(false);
+		programExercises.back()->setUseSpeed(false);
+		programExercises.back()->setExerciseModel(exercises.back());
+	
+		series << new ProgramSerieModel(programExercises.back());
+		series.back()->setRepetitions(12);
+		series.back()->setWeight(15);
+		series.back()->setRestTime(1);
+		programExercises.back()->insertSerie(series.back());
+	
+		series << new ProgramSerieModel(programExercises.back());
+		series.back()->setRepetitions(12);
+		series.back()->setWeight(10);
+		series.back()->setRestTime(5);
+		programExercises.back()->insertSerie(series.back());
+	
+		programs.back()->insertExercise(programExercises.back());
+	
+	
+		programs.back()->save();
+	
+	
+	//  Trainings
+	
+		QVector<TrainingModel *> trainings;
+		QVector<TrainingExerciseModel *> trainingExercises;
+		QVector<TrainingSerieModel *> trainingSeries;
+	
+	
+		for(int i = 0 ; i < 200 ; ++i){
+			trainings << new TrainingModel(programs.back(), nullptr);
+			trainings.back()->setDescription("Debug");
+			trainings.back()->setStartDateTime(QDateTime::fromString("2024/01/01 10:00:00", "yyyy/MM/dd hh:mm:ss").addDays(i));
+			trainings.back()->initRandomValues();
+			trainings.back()->save();
+		}
+	
+	
+		// Personal Data
+		QVector<PersonalDataModel*> personalData;
+	
+		for(int i = 0 ; i < 100 ; ++i){
+			personalData << new PersonalDataModel();
+			personalData.back()->setBirthday(QDate(1983,8,1));
+			personalData.back()->setDateTime(QDateTime::fromString("2024/01/01 10:00:00", "yyyy/MM/dd hh:mm:ss").addDays(i));
+			personalData.back()->setHeight(180);
+			personalData.back()->setWeight(100 - (i * 20.0 / 100.0));
+			personalData.back()->setSex(0);
+			personalData.back()->save();
+		}
+	
+	
+		for(auto i : personalData) i->deleteLater();
+	
+		for(auto i : trainingSeries) i->deleteLater();
+		for(auto i : trainingExercises) i->deleteLater();
+		for(auto i : trainings) i->deleteLater();
+	
+	
+		for(auto i : series) i->deleteLater();
+		for(auto i : programExercises) i->deleteLater();
+		for(auto i : programs) i->deleteLater();
 	}
-
-
-	// Personal Data
-	QVector<PersonalDataModel*> personalData;
-
-	for(int i = 0 ; i < 100 ; ++i){
-		personalData << new PersonalDataModel();
-		personalData.back()->setBirthday(QDate(1983,8,1));
-		personalData.back()->setDateTime(QDateTime::fromString("2024/01/01 10:00:00", "yyyy/MM/dd hh:mm:ss").addDays(i));
-		personalData.back()->setHeight(180);
-		personalData.back()->setWeight(100 - (i * 20.0 / 100.0));
-		personalData.back()->setSex(0);
-		personalData.back()->save();
-	}
-
-
-	for(auto i : personalData) i->deleteLater();
-
-	for(auto i : trainingSeries) i->deleteLater();
-	for(auto i : trainingExercises) i->deleteLater();
-	for(auto i : trainings) i->deleteLater();
-
-
-	for(auto i : series) i->deleteLater();
-	for(auto i : programExercises) i->deleteLater();
-	for(auto i : programs) i->deleteLater();
 #endif
 }
 

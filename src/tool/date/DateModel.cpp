@@ -55,6 +55,16 @@ void DateModel::setDate(QDate data){
 	}
 }
 
+QTime DateModel::getTime() const{
+	return mTime;
+}
+
+
+QDateTime DateModel::getDateTime() const {
+	return QDateTime(mDate,mTime);
+}
+
+
 void DateModel::nextDay(){
 	setDate(mDate.addDays(1));
 }

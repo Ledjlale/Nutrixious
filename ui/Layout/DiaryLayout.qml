@@ -28,6 +28,7 @@ StackLayout{
 	id: mainItem
 	property var lastHeaders: {'showBackButton': false,
 			'showMenuButton': true,
+			'showBodyButton': true,
 			'title': 'Diary'
 		}
 	property bool isHeaderOwner: true
@@ -35,6 +36,7 @@ StackLayout{
 	onCurrentIndexChanged: {
 		lastHeaders = {'showBackButton':currentIndex > 0,
 			'showMenuButton':currentIndex==0,
+			'showBodyButton': currentIndex==0,
 			'title' : currentIndex == 0 ? 'Diary' : currentIndex == 1 ? 'Training' : 'Meal Groups'
 		}
 		mainWindow.setHeaders(lastHeaders)

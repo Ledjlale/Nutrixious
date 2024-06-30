@@ -36,6 +36,7 @@
 	ui/Item/Dialog.qml
 #	ui/Item/MouseArea.qml
 	ui/Item/ScannerOverlay.qml
+	ui/Item/SexBox.qml
 	ui/Item/TextInput.qml
 	ui/Item/TextField.qml
 	ui/Item/SerieFieldPicker.qml

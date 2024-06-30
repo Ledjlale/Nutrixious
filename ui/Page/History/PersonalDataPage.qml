@@ -48,12 +48,12 @@ Item {
 				text: lastDataModel.height
 				onEditingFinished:lastDataModel.height = newValue
 			}
-			TextField{
+			SexBox{
 				Layout.fillWidth: true
 				flipped: true
 				title: 'Sex'
-				text: lastDataModel.sex
-				onEditingFinished:lastDataModel.sex = newValue
+				value: lastDataModel.sex
+				onAccepted:lastDataModel.sex = newValue
 			}
 		}
 		ButtonImage{
@@ -116,13 +116,12 @@ Item {
 						text: $modelData.height
 						onEditingFinished:$modelData.height = newValue
 					}
-					TextField{
+					SexBox{
 						Layout.preferredWidth: 50
-						title: 'Sex'
 						showTitle: index == 0
 						edit: dataRow.edit
-						text: $modelData.sex
-						onEditingFinished:$modelData.sex = newValue
+						value: $modelData.sex
+						onAccepted:$modelData.sex = newValue
 					}
 					ButtonImage{
 						Layout.alignment: Qt.AlignCenter

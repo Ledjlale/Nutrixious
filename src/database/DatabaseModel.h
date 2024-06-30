@@ -38,7 +38,7 @@ public:
 	static void insertDefaultData_old();
 	static void insertVersion2Data();
 
-
+	static bool gStartFromScratch;
 };
 
 #endif
