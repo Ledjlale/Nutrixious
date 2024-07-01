@@ -122,7 +122,7 @@ Item {
 		}
 		Flipable{
 			id: restingPopup
-			property int restTime
+			property var restTime
 			property var target
 			property var exercise
 			property bool flipped: target?.isResting || false
@@ -132,7 +132,7 @@ Item {
 			function pause(exercise, target){
 			restingPopup.target = target
 			restingPopup.exercise = exercise
-			restingPopup.restTime = target.targetExerciseModel ? target.targetExerciseModel.restTime : target.targetSerieModel.restTime
+			restingPopup.restTime = Date.now()/1000 + (target.targetExerciseModel ? target.targetExerciseModel.restTime : target.targetSerieModel.restTime)
 			//open()
 			//flippableItem.flipped = true
 		}
@@ -184,14 +184,12 @@ Item {
 				spacing: 0
 				Timer{
 					id: restTimer
-					property int count: 0
-					property int diff: restingPopup.restTime - count
+					property int diff: visible ? restingPopup.restTime - Date.now()/1000 : 0
 					interval: 1000
 					running: !!restingPopup.target && restingPopup.target.isResting
-					onRunningChanged: count = 0
 					repeat: true
 					onTriggered:{
-						++count
+						diff = restingPopup.restTime - Date.now()/1000
 						if( autoRunCheckBox.checked && diff <= 0 ) {
 							restingPopup.target.isResting = false
 							restingPopup.close()
