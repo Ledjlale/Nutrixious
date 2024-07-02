@@ -345,6 +345,7 @@ Item {
 								id: trains
 								trainingDay: dayBar.currentDay
 								sourceModel: mainItem.trainings
+								Component.onCompleted: trains.updateCalories()
 							}
 							delegate:
 								Item{
