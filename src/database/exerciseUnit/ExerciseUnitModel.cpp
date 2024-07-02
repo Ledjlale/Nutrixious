@@ -254,7 +254,10 @@ void ExerciseUnitModel::setCanHaveSeries(bool data) {
 int ExerciseUnitModel::save(){
 	DatabaseQuery query;
 
-	if(!mExercise.second) return false;
+	if(!mExercise.second){
+		qWarning() << "Cannot save exercise unit: no exercise model linked";
+		return 0;
+	}
 	mExercise.second->save();
 
 	if( mExerciseUnitId > 0 && !getIsEdited()){
@@ -262,6 +265,8 @@ int ExerciseUnitModel::save(){
 		for(auto e : mSeries) {
 			saved = saved || e->save();
 		}
+		if(!saved)
+			qWarning() << "Cannot save exercise unit : Error on series";
 		return saved;
 	}
 

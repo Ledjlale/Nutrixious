@@ -27,11 +27,15 @@ import App 1.0
 Item {
 	id: mainItem
 	property var programModel: programDetailsList.program
+	property var mainProgramModel: programs.mainProgram
 	signal newExerciseRequested()
 	signal addExerciseRequested(var parameters)
 	signal editExerciseRequested(var parameters)
 	
-	onVisibleChanged: if(visible) exercises.update()
+	onVisibleChanged: if(visible) {
+		programs.update()
+		exercises.update()
+	}
 	Connections{
 		target: mainWindow.header
 		enabled: mainItem.visible
@@ -75,6 +79,7 @@ Item {
 										programDetailsList.program = $modelData
 										exercises.update()
 									}
+									onSaved: programs.invalidate()
 								}
 					}
 				}
@@ -142,7 +147,7 @@ Item {
 						width: programDetailsList.width
 						exerciseModel: modelData
 						programModel: programDetailsList.program
-						isDeletable: true
+						isDeletable: !programModel.isMain
 						showWorkTime: false
 						showCalories: false
 						showEditButton: true

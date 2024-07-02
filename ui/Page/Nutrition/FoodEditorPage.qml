@@ -38,6 +38,19 @@ Item {
 		}
 	signal saved()
 	onOffCodeChanged: if(offCode) mainItem.foodModel.loadFromOpenFoodFacts(offCode)
+	onVisibleChanged: if(visible){
+		console.log("FoodEditor visible")
+		mainWindow.header.setHeaders( {'showBackButton': true,
+			'showMenuButton': false,
+			'showSaveButton': true,
+			'title': 'Food Editor'
+		})
+	}
+	Component.onCompleted: mainWindow.header.setHeaders( {'showBackButton': true,
+			'showMenuButton': false,
+			'showSaveButton': true,
+			'title': 'Food Editor'
+		})
 	Connections{
 		target: mainItem.foodModel
 		function onSaved(){
@@ -169,6 +182,7 @@ Item {
 			Text{
 				id: errorText
 				anchors.centerIn: parent
+				color: Material.foreground
 			}
 			MouseArea{
 				anchors.fill: parent

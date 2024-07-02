@@ -29,6 +29,7 @@ Item {
 	id: mainItem
 	property bool isRunning : false
 	property var selectedProgramModel
+	signal back()
 	onIsRunningChanged: if(isRunning){
 			stackView.push(livePage, {targetProgramModel: mainItem.selectedProgramModel});
 		}else {
@@ -37,6 +38,13 @@ Item {
 	Component{
 		id: livePage
 		LivePage{
+		}
+	}
+	Connections{
+		target: mainWindow.header
+		enabled: mainItem.visible
+		function onBack(){
+			mainItem.back()
 		}
 	}
 	ColumnLayout{

@@ -40,9 +40,12 @@ Item {
 		}
 	}
 	property FoodProxyModel foodDatabase: FoodProxyModel{
-		Component.onCompleted: update()
+		//Component.onCompleted: update()
 	}
-
+	onVisibleChanged:if(visible){
+		foodDatabase.update()
+		mainWindow.setHeaders({'showBackButton':true, 'showMenuButton':false, 'showBarcodeButton':true, 'showCreateButton':true, 'title':'Foods'})
+	}
 	ColumnLayout{
 		anchors.fill: parent
 		RowLayout{

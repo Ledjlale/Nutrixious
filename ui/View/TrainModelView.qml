@@ -28,10 +28,12 @@ SwipeLayout{
 	id: mainItem
 	property var modelData
 	property bool displayDate: false
+	signal saved()
 	
 	onDeleteClicked: modelData.remove()
 	isUndoable:  mainItem.modelData.isEdited
-	isEditable: !mainItem.modelData.isEdited
+	isEditable: !mainItem.modelData.isEdited && !mainItem.modelData.isMain
+	isDeletable: !mainItem.modelData.isMain
 	onUndoClicked: {
 		mainItem.modelData.undo()
 	}
@@ -59,6 +61,7 @@ SwipeLayout{
 		TextField{
 			id: descriptionTextField
 			Layout.fillWidth: true
+			horizontalAlignment: Text.AlignRight
 			text: mainItem.modelData ?  mainItem.modelData.description : ''
 			edit: text == '' || mainItem.edit
 			placeholderText: 'Description'
@@ -72,6 +75,7 @@ SwipeLayout{
 		TextField{
 			id: startTimeTextField
 			Layout.fillWidth: true
+			Layout.leftMargin: 5
 			visible: mainItem.modelData.startDateTimeStr !== undefined
 			inputMethodHints: Qt.ImhDigitsOnly
 			text: visible && mainItem.modelData ? mainItem.displayDate ? mainItem.modelData.startDateTimeStr : mainItem.modelData.startTimeStr : ''
@@ -95,6 +99,7 @@ SwipeLayout{
 			onClicked: {
 				forceActiveFocus()
 				mainItem.modelData.save()
+				mainItem.saved()
 			}
 		}
 

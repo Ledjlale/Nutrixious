@@ -36,7 +36,7 @@ Q_OBJECT
 	Q_PROPERTY(QString description READ getDescription WRITE setDescription NOTIFY descriptionChanged)
 
 	Q_PROPERTY(QVariantList exercises READ getVariantExercises NOTIFY exercisesChanged)
-
+	
 public:
 	ProgramModel();	// QML
 	ProgramModel(QObject *parent);
@@ -52,10 +52,12 @@ public:
 
 	QString getDescription() const;
 	void setDescription(QString description);
-
+	
+	DECLARE_GETSET(bool, isMain, IsMain)
+	
 	QVariantList getVariantExercises() const;
 	const QList<ProgramExerciseModel*>& getExercises() const;
-	Q_INVOKABLE virtual void addNewExercise(ProgramExerciseModel *model);	// Clone and make new
+	Q_INVOKABLE virtual QVariant addNewExercise(ProgramExerciseModel *model);	// Clone and make new
 	virtual ProgramExerciseModel* insertNewExercise(ProgramExerciseModel *model); // clone and make new
 	virtual ProgramExerciseModel* insertExercise(ProgramExerciseModel *model);// Insert and set parent ID
 	Q_INVOKABLE void removeExercise(ProgramExerciseModel *model);
@@ -90,6 +92,7 @@ protected:
 	qint64 mId = 0;
 	QString mName;
 	QString mDescription;
+	bool mIsMain = false;
 	QList<ProgramExerciseModel*> mExercises;
 
 	QString mTablePrefix = "program";

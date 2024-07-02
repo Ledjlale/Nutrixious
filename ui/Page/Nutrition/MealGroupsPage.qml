@@ -31,7 +31,20 @@ import App 1.0
 
 Item {
 	id: mainItem
-	onVisibleChanged: if(visible) mealGroups.update()
+	signal back()
+	
+	
+	property bool isCurrentItem: false
+	onIsCurrentItemChanged: if(isCurrentItem) {
+		mealGroups.update()
+	}
+	Connections{
+		target: mainWindow.header
+		enabled: mainItem.isCurrentItem
+		function onBack(){
+			mainItem.back()
+		}
+	}
 	ColumnLayout{
 		anchors.fill: parent
 		spacing: 0

@@ -229,7 +229,7 @@ int ExerciseSerieModel::save(){
 	DatabaseQuery query;
 
 	if( mSerieId > 0 && !getIsEdited()){
-		return false;
+		return true;
 	}
 
 	query.begin(mSerieId == 0 ? DatabaseQuery::Insert : DatabaseQuery::Update, mTablePrefix+"_exercise_series");

@@ -76,10 +76,12 @@ SwipeLayout{
 		height: parent.height
 		width: parent.width
 		spacing: 0
+		onImplicitWidthChanged: console.log(width + " / " +implicitWidth)
 		TextField{
 			property bool isGood: !mainItem.isLive || !modelData?.isDone || (modelData.resultSerieModel.repetitions >= modelData.targetSerieModel.repetitions)
 			Layout.preferredHeight: implicitHeight
 			Layout.fillWidth: true
+			Layout.preferredWidth: 0
 			//Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 			visible: !!exerciseUnitModel && (mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useRepetitions : exerciseUnitModel.useRepetitions)
 			edit: mainItem.edit
@@ -108,6 +110,7 @@ SwipeLayout{
 			property bool isGood: !mainItem.isLive || !modelData?.isDone || (modelData.resultSerieModel.weight >= modelData.targetSerieModel.weight)
 			Layout.preferredHeight: implicitHeight
 			Layout.fillWidth: true
+			Layout.preferredWidth: 0
 			//Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 			visible: !!exerciseUnitModel && (mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useWeight :exerciseUnitModel.useWeight)
 			edit: mainItem.edit
@@ -138,6 +141,7 @@ SwipeLayout{
 			property bool isGood: !mainItem.isLive || !modelData?.isDone || (modelData.resultSerieModel.distance >= modelData.targetSerieModel.distance)
 			Layout.preferredHeight: implicitHeight
 			Layout.fillWidth: true
+			Layout.preferredWidth: 0
 			//Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 			visible: !!exerciseUnitModel && (mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useDistance :exerciseUnitModel.useDistance)
 			edit: mainItem.edit
@@ -169,6 +173,7 @@ SwipeLayout{
 			property bool isGood: !mainItem.isLive || !modelData?.isDone || (modelData.resultSerieModel.speed >= modelData.targetSerieModel.speed)
 			Layout.preferredHeight: implicitHeight
 			Layout.fillWidth: true
+			Layout.preferredWidth: 0
 			//Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 			visible: !!exerciseUnitModel && (mainItem.isLive || mainItem.trainingResultEdition ? exerciseUnitModel.targetExerciseModel.useSpeed :exerciseUnitModel.useSpeed)
 			edit: mainItem.edit
@@ -200,6 +205,7 @@ SwipeLayout{
 			Layout.fillWidth: true
 			//Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 			Layout.fillHeight: true
+			Layout.preferredWidth: 0
 			visible: mainItem.showRestTime && !mainItem.trainingResultEdition
 			edit: mainItem.edit
 			showTitle: mainItem.showTitle || mainItem.trainingResultEdition
@@ -222,12 +228,12 @@ SwipeLayout{
 				}else
 					mainItem.modelData.restTimeStr = newValue
 			}
-
 		}
 		TextField{
 			id: workTextField
 			Layout.fillHeight: true
 			Layout.fillWidth: true
+			Layout.preferredWidth: 0
 			//Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 			visible: mainItem.showWorkTime && ( !!modelData?.isSaved || !!modelData?.isDone)
 			showTitle: mainItem.showTitle || mainItem.trainingResultEdition
@@ -259,6 +265,7 @@ SwipeLayout{
 			id: calorieTextField
 			Layout.fillHeight: true
 			Layout.fillWidth: true
+			Layout.preferredWidth: 0
 			//Layout.preferredWidth: mainItem.width / contentLayout.visibleChildren.length
 			visible: mainItem.showCalories && (!!modelData?.isSaved || !!modelData?.isDone) ||  mainItem.trainingResultEdition
 			showTitle: mainItem.showTitle || mainItem.trainingResultEdition
@@ -324,6 +331,7 @@ SwipeLayout{
 				}
 			}
 		}*/
+		
 		ButtonImage{
 			id: saveButton
 			Layout.alignment: Qt.AlignCenter

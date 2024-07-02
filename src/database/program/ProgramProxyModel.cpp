@@ -27,13 +27,27 @@ ProgramProxyModel::ProgramProxyModel(QObject *parent)
 {
 	auto model = new ProgramListModel(this);
 	connect(this, &ProgramProxyModel::create, model, &ProgramListModel::create);
+	connect(model, &ProgramListModel::mainProgramChanged, this, &ProgramProxyModel::mainProgramChanged);
 	setSourceModel(model);
+	sort(0);
+}
+
+QVariant ProgramProxyModel::getMainProgram()const{
+	return dynamic_cast<ProgramListModel*>( sourceModel())->getMainProgram();
 }
 
 void ProgramProxyModel::update(){
 	sourceModel()->deleteLater();
 	auto model = new ProgramListModel(this);
 	connect(this, &ProgramProxyModel::create, model, &ProgramListModel::create);
+	connect(model, &ProgramListModel::mainProgramChanged, this, &ProgramProxyModel::mainProgramChanged);
 	setSourceModel(model);
 }
 
+bool ProgramProxyModel::lessThan (const QModelIndex &left, const QModelIndex &right) const{
+	auto l = sourceModel()->data(left);
+	auto r = sourceModel()->data(right);
+	auto ml = l.value<ProgramModel*>();
+	auto mr = r.value<ProgramModel*>();
+	return mr->getIsMain() || ml->getName() < mr->getName();
+}

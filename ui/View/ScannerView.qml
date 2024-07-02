@@ -43,6 +43,7 @@ Item {
 	function stop(){
 		barcodeLoader.active = false
 	}
+	Component.onCompleted: mainWindow.setHeaders({'showBackButton':true, 'showMenuButton':false, 'title':'Barcode Scanner'})
 	CameraPermission{
 		id: permission
 		onStatusChanged: if(status === Qt.PermissionStatus.Granted)

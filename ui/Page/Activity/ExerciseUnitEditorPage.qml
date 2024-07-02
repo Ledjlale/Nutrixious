@@ -37,11 +37,16 @@ Item {
 		id: serieModelId
 	}
 	property var programModel
+	property var mainProgramModel
 	signal closed()
 	Component.onCompleted: Material.background = Qt.darker(Material.background, 1.02)
 
 	function save(){
 		if(editMode == 0){
+			if(mainProgramModel && !mainItem.programModel.isMain){// Add to main group
+				mainItem.programExerciseModel = mainItem.mainProgramModel.addNewExercise(mainItem.programExerciseModel)
+				mainItem.mainProgramModel.save()
+			}
 			mainItem.programModel.addNewExercise(mainItem.programExerciseModel)
 			return mainItem.programModel.save()
 		}else if(editMode == 1){
@@ -74,10 +79,11 @@ Item {
 					Layout.fillWidth: true
 					Layout.leftMargin: 10
 					placeholderText: 'Name'
+					title: 'Main name'
 					text: exerciseModel.name
 					focus: true
 					readOnly: exerciseModel.isSaved
-					edit: exerciseModel.name == ''
+					edit: true
 					//Material.background: exerciseModel.invalidName ? Material.color(Material.Pink, Material.Shade50) : mainItem.Material.background
 					//Material.foreground: exerciseModel.invalidName ? Material.accent : mainItem.Material.foreground
 					onEditingFinished: {
@@ -89,8 +95,9 @@ Item {
 					id: descrtiptionField
 					Layout.fillWidth: true
 					Layout.leftMargin: 10
+					title: 'Sub description'
 					placeholderText: 'Description'
-					edit:  mainItem.programExerciseModel.description == ''
+					edit: true
 					text: mainItem.programExerciseModel.description
 					onEditingFinished: {
 						mainItem.programExerciseModel.description = newValue
@@ -171,6 +178,7 @@ Item {
 			imageSource: DefaultStyle.addExerciseButton
 			colorizationColor: Material.foreground
 			onClicked: {
+				forceActiveFocus();
 				mainItem.programExerciseModel.addSerie()
 			}
 		}

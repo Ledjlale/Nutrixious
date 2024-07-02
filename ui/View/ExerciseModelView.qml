@@ -165,6 +165,7 @@ Item{
 									showTitle: false
 									readOnly: mainItem.isReadOnly
 									placeholderText: 'Description'
+									horizontalAlignment: Text.AlignRight
 									text: mainItem.resultModel ? mainItem.resultModel.description
 															: mainItem.exerciseModel ? mainItem.exerciseModel.description : ''
 									edit: !readOnly && text == ''

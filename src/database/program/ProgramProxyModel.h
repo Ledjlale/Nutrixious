@@ -25,12 +25,17 @@
 
 class ProgramProxyModel: public SortFilterProxyModel {
 Q_OBJECT
+	Q_PROPERTY(QVariant mainProgram READ getMainProgram NOTIFY mainProgramChanged)
 public:
 	ProgramProxyModel(QObject * parent = nullptr);
-
+	
+	QVariant getMainProgram()const;
+	
 	Q_INVOKABLE void update();
+    virtual bool lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const override;
 signals:
 	void create();
+	void mainProgramChanged();
 
 };
 

@@ -489,8 +489,8 @@ void DatabaseModel::initUnitsData(){
 
 void DatabaseModel::insertVersion2Data() {
 	ProgramModel * programModel = new ProgramModel(nullptr);
-	programModel->setName("AllExercises");
-	programModel->setDescription("Create all your exercises in this program to store them.\nIt will be easier to add them in other programs or while training.");
+	programModel->setName("All Exercises");
+	programModel->setDescription("Regroup all your exercises.\nOther programs will contains sub exercises");
 	programModel->save();
 	programModel->deleteLater();
 }

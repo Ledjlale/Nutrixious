@@ -33,19 +33,24 @@ StackLayout{
 		}
 	property bool isHeaderOwner: true
 	currentIndex: 0
+	/*
 	onCurrentIndexChanged: {
 		if(mainItem.visible) {
 			lastHeaders = {'showBackButton':currentIndex > 0,
 				'showMenuButton':currentIndex==0,
 				'showBodyButton': currentIndex==0,
-				'title' : currentIndex == 0 ? 'Diary' : currentIndex == 1 ? 'Training' : 'Meal Groups'
+				'title' : currentIndex == 0 ? 'Diary'
+					: currentIndex == 1 ? 'Training'
+					: currentIndex == 2 ? 'Meal Groups'
+					: 'Foods'
 			}
 			mainWindow.setHeaders(lastHeaders)
 		}
-	}
+	}*/
 	Component.onCompleted:{
-		mainWindow.setHeaders(lastHeaders)
+		//mainWindow.setHeaders(lastHeaders)
 	}
+	/*
 	Connections{
 		target: mainWindow
 		enabled: mainItem.isHeaderOwner && mainItem.visible
@@ -58,18 +63,50 @@ StackLayout{
 				mainItem.currentIndex= 0
 			}
 		}
-	}
+	}*/
 	DiaryPage{
 		id: diaryPage
+		isCurrentItem: StackLayout.isCurrentItem
 		onExerciseRequested: currentIndex = 1
 		onMealGroupRequested: currentIndex = 2
 		onSetHeaders: function(headers) {
 			isHeaderOwner = !headers
 			mainWindow.setHeaders(headers ? headers : lastHeaders)
 		}
+		onFoodPickerRequested: function(mealGroup){
+			foodPage.mealGroup = mealGroup
+			foodPage.isEdition = false
+			currentIndex = 3
+		}
+		onFoodEditorRequested: function(foodModel) {
+			currentIndex = 3
+			foodPage.isEdition = true
+			foodPage.editFoodModel(foodModel)
+		}
 	}
 	TrainingPage{
+		onBack: mainItem.currentIndex = 0
 	}
 	MealGroupsPage{
+		isCurrentItem: StackLayout.isCurrentItem
+		onBack: mainItem.currentIndex = 0
+	}
+	
+	FoodsPage{
+		id: foodPage
+		property var mealGroup
+		isPicker: true
+		isCurrentItem: StackLayout.isCurrentItem
+
+		onBack: mainItem.currentIndex = 0
+		onPicked: function(food){
+			if(foodPage.isEdition)
+				food.save()
+			else
+				diaryPage.meals.addFoodModel(food, mealGroup, diaryPage.currentDay)
+			mainItem.currentIndex = 0
+			++diaryPage.totalRefresh
+		}
+					
 	}
 }

@@ -32,14 +32,25 @@ import App 1.0
 Item {
 	id: mainItem
 	property bool isPicker: false
+	property bool isEdition: false
 
 	signal back()
 	signal picked(var food)
 	
+	property bool isCurrentItem: false
+	onIsCurrentItemChanged: if(isCurrentItem) {
+		console.log("FoodsPage visible")
+		mainWindow.setHeaders({'showBackButton':true, 'showMenuButton':false, 'showBarcodeButton':true, 'showCreateButton':true, 'title':'Foods'})
+	}
+	
+	function editFoodModel(foodModelToEdit){
+		foodModelToEdit.autoCompute = mainItem.isPicker && foodModelToEdit.isSaved
+		stackView.push(foodEditorComponent, {foodModel:foodModelToEdit})
+	}
 
 	Connections{
 		target: mainWindow.header
-		//enabled: mainItem.visible
+		enabled: mainItem.isCurrentItem
 		property bool editing: stackView.currentItem.objectName == "Editor"
 		property bool scanning: stackView.currentItem.objectName == "Scanner" && stackView.currentItem.isStarted
 		function onCreate(){
@@ -53,20 +64,35 @@ Item {
 				stackView.pop()
 		}
 		function onSave(){
+			console.log("FoodsPage onSave")
 			if(mainItem.isPicker){
 				if(stackView.currentItem.foodModel.isSaved){
 					mainItem.picked(stackView.currentItem.foodModel)
 					stackView.pop()
+					mainItem.back()
 				}else{
-					if(stackView.currentItem.foodModel.save() == 1){
+					var result = stackView.currentItem.foodModel.save()
+					if( result == 1){
 						mainItem.picked(stackView.currentItem.foodModel)
 						stackView.pop()
+						mainItem.back()
+					}else if(result == 2){
+						console.log("waiting for download")
+					}else {
+						console.log("couldn't save")
 					}
 				}
 			}else if(stackView.currentItem.foodModel.save() == 1) {
-				stackView.pop()
-				foodListModel.update()
+				
 			}
+		}
+		function onBack(){
+			if(stackView.depth > 1) {
+				stackView.pop()
+				if(mainItem.isEdition)
+					mainItem.back()
+			}else
+				mainItem.back()
 		}
 	}
 
@@ -87,7 +113,6 @@ Item {
 					onScannedCodeChanged:{
 						if(scannedCode != '') {
 							stackView.replace(foodEditorComponent, {offCode: scannedCode})
-							mainWindow.header.updateHeaders({'showCreateButton': false, 'showSaveButton': true})
 						}
 					}
 					Component.onCompleted: start()
@@ -100,14 +125,12 @@ Item {
 					objectName: 'Search'
 					onSearchedCodeChanged:{
 						if(searchedCode != '') {
-							stackView.replace(foodEditorComponent, {offCode: searchedCode})
-							mainWindow.header.updateHeaders({'showCreateButton': false, 'showSaveButton': true})
+							stackView.push(foodEditorComponent, {offCode: searchedCode})
 						}
 					}
 					onFoodModelFound: function(foodModelSearched){
 						foodModelSearched.autoCompute = mainItem.isPicker && foodModelSearched.isSaved
 						stackView.push(foodEditorComponent, {foodModel:foodModelSearched})
-						mainWindow.header.updateHeaders({'showCreateButton': false, 'showSaveButton': true})
 					}
 				}
 			}
@@ -116,14 +139,14 @@ Item {
 				FoodEditorPage{
 					id: editor
 					objectName: 'Editor'
-					onSaved: {
+					onSaved:{
 						if(mainItem.isPicker){
 							mainItem.picked(foodModel)
 							stackView.pop()
-						}else {
-							foodListModel.update()
+							mainItem.back()
+						}else
 							stackView.pop()
-						}
+						
 					}
 				}
 			}

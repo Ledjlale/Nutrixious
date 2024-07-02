@@ -37,10 +37,14 @@ Item {
 	PersonalDataModel{
 		id: lastDataModel
 	}
+	property alias currentDay: dayBar.currentDay
 	property int totalRefresh: 1
 	signal exerciseRequested()
 	signal setHeaders(var headers)
 	signal mealGroupRequested()
+	signal foodPickerRequested(var mealGroup)
+	signal foodEditorRequested(var params)
+	
 	function updateTrainings(){
 		trainings.update()
 		trains.updateCalories()
@@ -49,18 +53,13 @@ Item {
 		mealGroups.update()
 	}
 	onTotalRefreshChanged: mainItem.meals.updateTotals()
-	Connections{
-		target: mainWindow
-		enabled: mainItem.visible
-		function onGSave(){
-			if(stackView.currentItem.foodModel) stackView.currentItem.foodModel.save()
-			stackView.pop()
-			++mainItem.totalRefresh
-		}
-		function onGBack(){
-			if(stackView.currentItem.foodModel) stackView.currentItem.foodModel.undo()
-			stackView.pop()
-		}
+	property bool isCurrentItem: false
+	onIsCurrentItemChanged: if(isCurrentItem) {
+		mainWindow.header.setHeaders( {'showBackButton': false,
+			'showMenuButton': true,
+			'showBodyButton': true,
+			'title': 'Diary'
+		})
 	}
 	StackView{
 		id: stackView
@@ -288,8 +287,9 @@ Item {
 											isEditable: false
 											onClicked: {
 												$modelData.autoCompute = true
-												stackView.push(foodEditorComponent, {foodModel:$modelData})
-												mainItem.setHeaders({'showBackButton':true, 'showSaveButton':true, 'showMenuButton':false})
+												mainItem.foodEditorRequested( $modelData)
+												//stackView.push(foodEditorComponent, {foodModel:$modelData})
+												//mainItem.setHeaders({'showBackButton':true, 'showSaveButton':true, 'showMenuButton':false})
 											}
 										}
 										Rectangle{
@@ -311,8 +311,9 @@ Item {
 									imageSource: DefaultStyle.addFoodButton
 									colorizationColor: Material.foreground
 									onClicked: {
-										stackView.push(foodPickerComponent, {mealGroup:$modelData})
-										mainItem.setHeaders({'showBackButton':true, 'showMenuButton':false, 'showBarcodeButton':true, 'showCreateButton':true})
+										mainItem.foodPickerRequested( $modelData)
+										//stackView.push(foodPickerComponent, {mealGroup:$modelData})
+										//mainItem.setHeaders({'showBackButton':true, 'showMenuButton':false, 'showBarcodeButton':true, 'showCreateButton':true})
 									}
 								}
 							}
@@ -369,31 +370,7 @@ Item {
 					}
 			}
 		}
-		Component{
-			id: foodPickerComponent
-			FoodsPage{
-				width: stackView.width
-				height: stackView.height
-				property var mealGroup
-				isPicker: true
-
-				onBack: stackView.pop()
-				onPicked: function(food){
-					mainItem.meals.addFoodModel(food, mealGroup, dayBar.currentDay)
-					stackView.pop()
-					++mainItem.totalRefresh
-				}
-			}
-		}
-		Component{
-			id: foodEditorComponent
-			FoodEditorPage{
-				onSaved: {
-					stackView.pop()
-					++mainItem.totalRefresh
-				}
-			}
-		}
+		
 	}
 }
 

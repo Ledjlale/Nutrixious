@@ -273,7 +273,7 @@ int FoodModel::save(){
 		saveImage();
 		return 2;
 	}
-	if(mId>0 && !mIsEdited) return true;// Avoid update for nothing
+	if(mId>0 && !mIsEdited) return 1;// Avoid update for nothing
 
 	qDebug() << "Saving " << mTablePrefix  << mBrand << mDescription;
 	//saveImage();
@@ -313,7 +313,7 @@ int FoodModel::save(){
 	if(mId == 0){
 		if(!query.exec()){
 			qCritical() << "Cannot save " << mTablePrefix << " : " << query.mQuery.lastError().text();
-			return false;
+			return 0;
 		}
 		auto fieldNo = query.mQuery.record().indexOf(mTablePrefix+"_id");
 		while (query.mQuery.next()) {
@@ -323,14 +323,14 @@ int FoodModel::save(){
 	}else{
 		if(!query.exec()) {
 			qCritical() << "Cannot update " << mTablePrefix << query.mQuery.lastError().text();
-			return false;
+			return 0;
 		}else {
 			qDebug() << "Update " << mTablePrefix  << ": " << mId;
 		}
 	}
 	clearBackupValues();
 	emit saved();
-	return true;
+	return 1;
 }
 
 void FoodModel::saveValues(DatabaseQuery &query){
@@ -610,5 +610,8 @@ void FoodModel::handleError (QNetworkReply::NetworkError code) {
  * https://world.openfoodfacts.org/api/v2/search
  * https://world.openfoodfacts.org/api/v2/search?brands=orange&fields=code,brands,brand_owner,generic_name
  * https://world.openfoodfacts.org/cgi/search.pl?search_terms=banania&search_simple=1&action=process&json=1&fields=code,brands,generic_name,image_url
- *
+ * / Eau
+// https://ssl-api.openfoodfacts.org/api/v0/product/3257971101015.json
+// Lait
+// https://ssl-api.openfoodfacts.org/api/v0/product/3520836330036.json
  * */

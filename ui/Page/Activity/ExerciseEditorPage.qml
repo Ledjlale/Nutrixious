@@ -53,6 +53,7 @@ Item {
 				Layout.fillWidth: true
 				Layout.leftMargin: 10
 				edit: true
+				readOnly: false
 				title: 'Name'
 				text: mainItem.exerciseModel?.name || ''
 				onEditingFinished: {
@@ -66,6 +67,7 @@ Item {
 					Layout.leftMargin: 10
 					inputMethodHints: Qt.ImhFormattedNumbersOnly
 					edit: true
+					readOnly: false
 					title: 'MET'
 					text: mainItem.exerciseModel?.met.toFixed(2) || ''
 					onEditingFinished: {

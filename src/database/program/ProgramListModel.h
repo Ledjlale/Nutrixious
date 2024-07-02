@@ -32,8 +32,11 @@ public:
 	QVariant data (const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
 	void create();
+	QVariant getMainProgram()const;
 
 	void handleRemoved();
+signals:
+	void mainProgramChanged();
 };
 
 #endif

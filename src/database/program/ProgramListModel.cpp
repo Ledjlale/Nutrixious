@@ -36,6 +36,13 @@ ProgramListModel::ProgramListModel(QObject *parent)
 		connect(p, &ProgramModel::removed, this, &ProgramListModel::handleRemoved);
 }
 
+QVariant ProgramListModel::getMainProgram() const{
+	for(auto i : mList){
+		if(i->getIsMain()) return QVariant::fromValue(i);
+	}
+	return QVariant();
+}
+
 QHash<int, QByteArray> ProgramListModel::roleNames () const {
 	QHash<int, QByteArray> roles;
 	roles[Qt::DisplayRole] = "$modelData";
@@ -52,7 +59,7 @@ QVariant ProgramListModel::data (const QModelIndex &index, int role) const {
 	if (role == Qt::DisplayRole) {
 		return QVariant::fromValue(model);
 	}else{
-		return model->getName();
+		return model->getName() + (model->getDescription().isEmpty() ? "" : "-" +model->getDescription());
 	}
 
 	return QVariant();

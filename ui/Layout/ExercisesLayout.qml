@@ -88,6 +88,7 @@ StackView{
 		id: exerciseUnitEditorComponent
 		ExerciseUnitEditorPage{
 			programModel: programsPage.programModel
+			mainProgramModel: programsPage.mainProgramModel
 			showSaveButton: false
 			onClosed: {
 				mainWindow.setHeaders(lastHeaders)

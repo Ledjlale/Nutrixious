@@ -50,6 +50,7 @@ ProgramModel::ProgramModel(ProgramModel * model, QObject *parent) : ProgramModel
 	for(auto i : model->getExercises()){
 		insertExercise(new ProgramExerciseModel(i, this));
 	}
+	setIsMain(mId == 1);
 }
 
 void ProgramModel::initRandomValues(){
@@ -65,6 +66,7 @@ void ProgramModel::setId(qint64 id) {
 	if(mId != id) {
 		mId = id;
 		setIsSaved(mId > 0);
+		setIsMain(mId == 1);
 		emit idChanged();
 	}
 
@@ -94,6 +96,8 @@ void ProgramModel::setDescription(QString data) {
 	}
 }
 
+DEFINE_SIMPLE_GETSET(ProgramModel,bool,isMain, IsMain)
+
 QVariantList ProgramModel::getVariantExercises() const {
 	QVariantList exercises;
 	for(auto exercise: mExercises){
@@ -107,8 +111,10 @@ const QList<ProgramExerciseModel*>& ProgramModel::getExercises()const {
 	return mExercises;
 }
 
-void ProgramModel::addNewExercise(ProgramExerciseModel *model) {
-	insertExercise(model->clone(this))->makeNew();
+QVariant ProgramModel::addNewExercise(ProgramExerciseModel *model) {
+	auto newModel = insertExercise(model->clone(this));
+	newModel->makeNew();
+	return QVariant::fromValue(newModel);
 }
 
 ProgramExerciseModel* ProgramModel::insertNewExercise(ProgramExerciseModel *model) {
