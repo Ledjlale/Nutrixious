@@ -1,5 +1,5 @@
 # Nutrixious
-An experimental application to manage foods and physical trainings without the need of having an online account.
+An experimental and personnal application to manage foods and physical trainings without the need of having an online account.
 There are no ads and no paid services.
 
 It will allow you to follow your physical training and carry out calorie assessments by integrating nutritional management.

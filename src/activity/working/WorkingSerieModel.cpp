@@ -114,22 +114,39 @@ void WorkingSerieModel::setOrder(int data){
 
 void WorkingSerieModel::startWork(){
 	mStart = QDateTime::currentDateTime();
+	mResultSerieModel->setWorkTime(0);
+	mResultSerieModel->setRestTime(0);
 	setIsRunning(true);
 	setIsResting(false);
 	setIsDone(false);
 	emit workStarted();
 }
+
+void WorkingSerieModel::pause(){
+	mResultSerieModel->setWorkTime(mStart.secsTo(QDateTime::currentDateTime()) + mResultSerieModel->getWorkTime());
+	mStart = QDateTime::currentDateTime();
+}
+
+void WorkingSerieModel::unpause(){
+	mResultSerieModel->setRestTime(mStart.secsTo(QDateTime::currentDateTime()) + mResultSerieModel->getRestTime());
+	mStart = QDateTime::currentDateTime();
+}
+
 int WorkingSerieModel::getElapsedWorkTime() const{
-	return mStart.secsTo(QDateTime::currentDateTime());
+	return mStart.secsTo(QDateTime::currentDateTime()) + mResultSerieModel->getWorkTime();
+}
+
+int WorkingSerieModel::getElapsedRestTime() const{
+	return mStart.secsTo(QDateTime::currentDateTime()) + mResultSerieModel->getRestTime();
 }
 
 void WorkingSerieModel::endOfCurrentWork(){
-	mResultSerieModel->setWorkTime(mStart.secsTo(QDateTime::currentDateTime()));
+	mResultSerieModel->setWorkTime(mStart.secsTo(QDateTime::currentDateTime()) + mResultSerieModel->getWorkTime());
 	setIsResting(true);
 }
 
 void WorkingSerieModel::endOfCurrentRest() {
-	mResultSerieModel->setRestTime(mStart.secsTo(QDateTime::currentDateTime()));
+	mResultSerieModel->setRestTime(mStart.secsTo(QDateTime::currentDateTime()) + mResultSerieModel->getRestTime());
 	emit finished();
 }
 

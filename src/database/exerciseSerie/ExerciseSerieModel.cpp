@@ -140,6 +140,10 @@ void ExerciseSerieModel::setRestTimeStr(QString data){
 	setRestTime(QTime::fromString(data, "hh:mm:ss").msecsSinceStartOfDay() / 1000);
 }
 
+void ExerciseSerieModel::addRestTime(int secs){
+	setRestTime(getRestTime()+secs);
+}
+
 QString ExerciseSerieModel::getWorkTimeStr() const{
 	return QLocale().toString(QTime::fromMSecsSinceStartOfDay(mWorkTime*1000), "hh:mm:ss");
 }

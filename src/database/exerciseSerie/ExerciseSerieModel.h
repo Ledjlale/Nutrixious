@@ -68,6 +68,7 @@ public:
 
 	QString  getRestTimeStr() const;
 	void setRestTimeStr(QString data);
+	Q_INVOKABLE void addRestTime(int secs);
 
 	QString getWorkTimeStr() const;
 	void setWorkTimeStr(QString data);

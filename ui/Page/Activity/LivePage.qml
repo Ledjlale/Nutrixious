@@ -27,7 +27,8 @@ import '../../Tool/Utils.js' as Utils
 
 Item {
 	id: mainItem
-	property bool isRunning
+	property bool isStarted : false
+	property bool isRunning: false
 	property var lastExercise
 	property var targetProgramModel
 	onTargetProgramModelChanged: workingModel.loadFromProgram(targetProgramModel)
@@ -42,17 +43,32 @@ Item {
 		onFinished: {
 			finishPopup.open()
 			mainItem.isRunning = false
+			mainItem.isStarted = false
 		}
 	}
-	onIsRunningChanged: if(isRunning) {
-						if(workingModel.start())
-							gShowMenuButton = false
-						else
-							isRunning = false
-					}else {
-						workingModel.stop()
-						gShowMenuButton = true
-					}
+	
+	function start(){
+		if(workingModel.start()) {
+			gShowMenuButton = false
+			isRunning = true
+			isStarted = true
+		}else
+			isRunning = false
+	}
+	function stop(){
+		workingModel.stop()
+		gShowMenuButton = true
+		isRunning = false
+		isStarted = false
+	}
+	function pause(){
+		workingModel.currentWork.pause()
+		isRunning = false
+	}
+	function unpause(){
+		workingModel.currentWork.unpause()
+		isRunning = true
+	}
 	ColumnLayout{
 		anchors.fill: parent
 		RowLayout{
@@ -86,6 +102,7 @@ Item {
 				}
 			}
 			ButtonImage{
+			
 				Layout.alignment: Qt.AlignCenter
 				Layout.preferredWidth: 30
 				Layout.preferredHeight: 30
@@ -94,7 +111,12 @@ Item {
 				imageSource: mainItem.isRunning ? DefaultStyle.stopButton : DefaultStyle.playButton
 				onClicked: {
 					forceActiveFocus()
-					mainItem.isRunning = !mainItem.isRunning
+					if(!mainItem.isStarted)
+						mainItem.start()
+					else if( mainItem.isRunning )
+						mainItem.pause()
+					else
+						mainItem.unpause()
 				}
 			}
 		}
@@ -171,7 +193,10 @@ Item {
 							repeat: true
 							running: timerArea.visible
 							onTriggered: {
-								elapsedTimeText.text = timerArea.currentWork.getElapsedWorkTime() + ' s'
+								if(mainItem.isRunning)
+									elapsedTimeText.text = timerArea.currentWork.getElapsedWorkTime() + ' s'
+								else
+									elapsedTimeText.text = timerArea.currentWork.getElapsedRestTime() + ' s'
 							}
 						}
 					}
@@ -198,15 +223,26 @@ Item {
 				}
 				RowLayout{
 					spacing: 0
-					Text{
+					ColumnLayout{
 						Layout.alignment: Qt.AlignCenter
-						Layout.fillWidth: true
-						horizontalAlignment: Text.AlignHCenter
-						text: 'Resting : '+restTimer.diff + " s " +(restTimer.diff > 0 ? 'left' : '')
-						color: restTimer.diff >= 0 ? Material.foreground : Material.accent
-						font.weight: Font.Bold
+						spacing: 0
+						Text{
+							Layout.alignment: Qt.AlignCenter
+							Layout.fillWidth: true
+							horizontalAlignment: Text.AlignHCenter
+							text: 'Resting : '+restTimer.diff + " s " +(restTimer.diff > 0 ? 'left' : '')
+							color: restTimer.diff >= 0 ? Material.foreground : Material.accent
+							font.weight: Font.Bold
+						}
+						Text{
+							Layout.alignment: Qt.AlignCenter
+							Layout.fillWidth: true
+							horizontalAlignment: Text.AlignHCenter
+							visible: restingPopup.target?.resultSerieModel.restTime > 0
+							text: 'Already paused : ' + restingPopup.target?.resultSerieModel.restTime+ 's'
+							color: Material.accent
+						}
 					}
-					
 					ButtonImage{
 						Layout.alignment: Qt.AlignCenter
 						Layout.preferredWidth: 60

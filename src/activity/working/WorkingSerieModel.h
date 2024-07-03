@@ -65,8 +65,10 @@ public:
 	virtual void endOfCurrentWork();
 	virtual void endOfCurrentRest();
 	virtual QVariant getCurrentWork();
-
+	Q_INVOKABLE void pause();
+	Q_INVOKABLE void unpause();
 	Q_INVOKABLE int getElapsedWorkTime() const;
+	Q_INVOKABLE int getElapsedRestTime() const;
 	Q_INVOKABLE virtual int save();
 
 	virtual void fillRandomValues(); // Debug
