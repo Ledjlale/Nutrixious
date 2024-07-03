@@ -23,9 +23,9 @@ Focus on Android only! (and Linux for debugging).
 
 ### Main Goals:
 
-- V0: Main features (Proof of concept)
-- V1: Design (Usability)
-- V2: Secondary features (Improvements)
+- V1: Main features (Proof of concept)
+- V2: Usability and Secondary features (Improvements)
+
 
 #### Main features:
 - Setup exercises (feature done)
@@ -42,8 +42,6 @@ Focus on Android only! (and Linux for debugging).
 - Display graphs and statistics on performances (feature done)
 - Graphics and statistics on body status (calories, weight) (feature done)
 - Debug logs (feature done)
-
-#### Design:
 - Rework on usability
 - Layouts
 - Colors
@@ -63,6 +61,7 @@ Focus on Android only! (and Linux for debugging).
 - Maintenance for Linux, Windows, MacOs, IOS
 - Data calibration from personal data instead of general rules.
 - Experimentals improvements.
+- Recipes and temporary foods.
 
 ### Dependencies
 Qt6 : https://www.qt.io/

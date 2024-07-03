@@ -39,7 +39,7 @@
 #include "mealFood/MealFoodModel.h"
 #include "unit/UnitModel.h"
 // Debug
-bool DatabaseModel::gStartFromScratch = true;
+bool DatabaseModel::gStartFromScratch = false;
 
 DatabaseModel::DatabaseModel(QObject *parent)
 	: QObject{parent}
@@ -490,7 +490,7 @@ void DatabaseModel::initUnitsData(){
 void DatabaseModel::insertVersion2Data() {
 	ProgramModel * programModel = new ProgramModel(nullptr);
 	programModel->setName("All Exercises");
-	programModel->setDescription("Regroup all your exercises.\nOther programs will contains sub exercises");
+	programModel->setDescription("This program regroup all your exercises.\nOther programs will contains sub exercises");
 	programModel->save();
 	programModel->deleteLater();
 }

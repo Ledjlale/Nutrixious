@@ -236,7 +236,7 @@ Item {
 										mainItem.mealGroupRequested()
 									}
 									background:Rectangle{
-										color: Material.color(Material.BlueGrey)
+										color: DefaultStyle.mealGroupSectionColor
 									}
 									contentItem: RowLayout{
 										id: sectionRow
@@ -244,12 +244,14 @@ Item {
 										Text{
 											id: mealGroupTitle
 											Layout.fillWidth: true
+											Layout.leftMargin: 5
 											color: 'white'
 											text:  $modelData.name
 											//Component.onCompleted: text = $modelData.name
 										}
 										Text{
 											id: totalCalories
+											Layout.rightMargin: 5
 											color: 'white'
 											text: mainItem.totalRefresh ? Number.parseFloat(mainItem.meals.calories($modelData.mealGroupId).toFixed(2)) : ''
 											Connections{

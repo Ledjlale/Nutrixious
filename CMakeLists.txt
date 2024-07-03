@@ -67,7 +67,7 @@ set(_APP_QML_SINGLETONS)
 set(_APP_RC_FILES)
 
 add_definitions("-DAPPLICATION_URL=\"https://github.com/Ledjlale/Nutrixious\"")
-add_definitions("-DAPPLICATION_VERSION_NAME=\"V0 Proof of Concept\"")
+add_definitions("-DAPPLICATION_VERSION_NAME=\"V1 Proof of Concept\"")
 add_definitions("-DAPPLICATION_VERSION=\"${APP_VERSION}\"")
 
 add_subdirectory(ui)

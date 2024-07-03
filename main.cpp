@@ -196,6 +196,11 @@ int main(int argc, char *argv[]) {
 	QQuickStyle::setStyle("Material");
 	registerTypes();
 	gEngine->load(url);
+#ifdef QT_DEBUG
+	const QUrl colorPicker(u"qrc:/App/ui/Tool/ColorPicker.qml"_qs);
+    
+	//gEngine->load(colorPicker);
+#endif
 	int result = app.exec();
 	gEngine->deleteLater();
 	return result;

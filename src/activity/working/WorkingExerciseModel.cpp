@@ -88,6 +88,16 @@ QList<WorkingSerieModel*> WorkingExerciseModel::getSeries()const{
 	return mSeries;
 }
 
+void WorkingExerciseModel::removeSerie(WorkingSerieModel *model){
+	if(mSeries.removeOne(model)) {
+		mTargetExerciseModel->removeSerie(model->getTargetSerieModel());
+		mResultExerciseModel->removeSerie(model->getResultSerieModel());
+		model->deleteLater();
+		emit seriesChanged();
+	}
+}
+
+
 void WorkingExerciseModel::decrementSerieOrder(WorkingSerieModel *model) {
 	if(Utils::decrementOrder<WorkingSerieModel>(model, mSeries)){
 		emit seriesChanged();

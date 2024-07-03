@@ -106,6 +106,7 @@ Item{
 							id: mainSwipeLayout
 							Layout.fillWidth: true
 							isDeletable: mainItem.isDeletable
+							isEditable: !mainItem.isReadOnly
 							onClicked: seriesList.visible = !seriesList.visible
 							onDeleteClicked: {
 								console.log('Try to Delete : ' +exerciseItem.exerciseModel + " in " +exerciseItem.programModel + ' at ' +exerciseItem.exerciseModel.order)

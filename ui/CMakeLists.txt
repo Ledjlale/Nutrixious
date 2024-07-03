@@ -87,6 +87,7 @@
 	ui/Page/Nutrition/MealGroupsPage.qml
 
 
+	ui/Tool/ColorPicker.qml
 	ui/Tool/DragDropTool.qml
 	ui/Tool/Utils.js
 )

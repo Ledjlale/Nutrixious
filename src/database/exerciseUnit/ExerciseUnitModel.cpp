@@ -209,8 +209,8 @@ void ExerciseUnitModel::makeNew(){
 }
 
 void ExerciseUnitModel::removeSerie(ExerciseSerieModel *model) {
-	mSeries.removeOne(model);
-	model->deleteLater();
+	if(mSeries.removeOne(model))
+		model->deleteLater();
 	emit seriesChanged();
 }
 

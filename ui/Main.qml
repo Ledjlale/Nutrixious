@@ -33,6 +33,7 @@ ApplicationWindow {
 
 	color: Material.background
 	Material.theme: DefaultStyle.theme
+	//Material.primary: DefaultStyle.primary
 	property string titleText : 'Diary'
 
 	property bool gShowMenuButton: true
@@ -169,6 +170,10 @@ ApplicationWindow {
 						}
 					}
 				}
+				Item{
+					Layout.fillHeight: true
+					Layout.fillWidth: true
+				}
 				Repeater{
 					id: menuItems
 					//model:[{title: 'Overview'},{title: 'Diary'},{title: 'Food'},{title: 'Training'}, {title: 'Exercises'},{title: 'Programs'},{title: 'Trainings'},{title: 'Statistics'},{title: 'Settings'}]
@@ -180,7 +185,8 @@ ApplicationWindow {
 						]
 					delegate: MouseArea{
 						Layout.fillWidth: true
-						Layout.preferredHeight: (menuPanel.height - 150)/ menuItems.count
+						Layout.fillHeight: true
+						//Layout.preferredHeight: (menuPanel.height - 150)/ menuItems.count
 						onClicked: {
 							//mainView.currentIndex = index
 							mainView.replace(modelData.component)
@@ -215,10 +221,6 @@ ApplicationWindow {
 							}
 						}
 					}
-				}
-				Item{
-					Layout.fillWidth: true
-					Layout.fillHeight: true
 				}
 			}
 		}

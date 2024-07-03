@@ -98,6 +98,7 @@ Item {
 						showTitle: index == 0
 						showWorkTime: true
 						showRestTime: false
+						expandAll: true
 					}
 				}
 			}

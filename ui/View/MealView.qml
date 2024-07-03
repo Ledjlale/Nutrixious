@@ -39,6 +39,7 @@ SwipeLayout{
 				anchors.fill: parent
 				ColumnLayout{
 					spacing: 0
+					Layout.leftMargin: 5
 					Text{
 						Layout.fillWidth: true
 						color: Material.foreground
@@ -54,6 +55,7 @@ SwipeLayout{
 					}
 				}
 				Text{
+					Layout.rightMargin: 5
 					horizontalAlignment: Text.AlignRight
 					color: Material.foreground
 					text: Number.parseFloat(mainItem.modelData.computeNutriment(mainItem.modelData.calories,mainItem.modelData.servingSize,mainItem.modelData.servingUnitId,mainItem.modelData.baseSize,mainItem.modelData.baseUnitId).toFixed(2))
