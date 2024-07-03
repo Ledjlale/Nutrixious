@@ -100,10 +100,13 @@ StackLayout{
 
 		onBack: mainItem.currentIndex = 0
 		onPicked: function(food){
-			if(foodPage.isEdition)
+			if(foodPage.isEdition){
+				console.log("Save edited food")
 				food.save()
-			else
+			}else{
+				console.log("Add food to model")
 				diaryPage.meals.addFoodModel(food, mealGroup, diaryPage.currentDay)
+			}
 			mainItem.currentIndex = 0
 			++diaryPage.totalRefresh
 		}

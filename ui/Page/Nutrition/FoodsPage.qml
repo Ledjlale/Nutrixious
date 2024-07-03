@@ -64,7 +64,7 @@ Item {
 				stackView.pop()
 		}
 		function onSave(){
-			console.log("FoodsPage onSave")
+			console.log("FoodsPage onSave button")
 			if(mainItem.isPicker){
 				if(stackView.currentItem.foodModel.isSaved){
 					mainItem.picked(stackView.currentItem.foodModel)
@@ -73,9 +73,6 @@ Item {
 				}else{
 					var result = stackView.currentItem.foodModel.save()
 					if( result == 1){
-						mainItem.picked(stackView.currentItem.foodModel)
-						stackView.pop()
-						mainItem.back()
 					}else if(result == 2){
 						console.log("waiting for download")
 					}else {

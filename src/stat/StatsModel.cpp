@@ -176,7 +176,7 @@ QVariantList StatsModel::computeNutritionCalories() const {
 	QVariantList points;
 	QMap<QDate, double> sums;
 	for(auto i : models){
-		sums[i->getConsumptionDateTime().date()] += i->getCalories();
+		sums[i->getConsumptionDateTime().date()] += i->computeNutriment(i->getCalories());
 		i->deleteLater();
 	}
 	for(auto p = sums.begin() ; p != sums.end() ; ++p) {
