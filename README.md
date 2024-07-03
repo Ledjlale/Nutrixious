@@ -23,10 +23,9 @@ Focus on Android only! (and Linux for debugging).
 
 ### Main Goals:
 
-- V1: Main features (Proof of concept)
-- V2: Design (Usability)
-- V3: Secondary features (Improvements)
-- V4: ReDesign (Quality)
+- V0: Main features (Proof of concept)
+- V1: Design (Usability)
+- V2: Secondary features (Improvements)
 
 #### Main features:
 - Setup exercises (feature done)
@@ -51,6 +50,7 @@ Focus on Android only! (and Linux for debugging).
 - Icons
 - F-Droid
 - Minor or experimentals improvements.
+- Tutorials
 
 #### Secondary features:
 - Translations (Weblate)

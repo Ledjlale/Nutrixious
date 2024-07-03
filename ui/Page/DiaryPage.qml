@@ -327,6 +327,14 @@ Item {
 								color: 'white'
 								text: 'Exercises'
 							}
+							Image{
+								anchors.right: parent.right
+								anchors.rightMargin: 5
+								anchors.verticalCenter: parent.verticalCenter
+								height: 40
+								width:40
+								source: "image://internal/nutrixious_logo.svg"
+							}
 							MouseArea{
 								anchors.fill: parent
 								onClicked: {

@@ -85,6 +85,7 @@ StackLayout{
 		}
 	}
 	TrainingPage{
+		isCurrentItem: StackLayout.isCurrentItem
 		onBack: mainItem.currentIndex = 0
 	}
 	MealGroupsPage{

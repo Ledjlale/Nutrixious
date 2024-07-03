@@ -35,6 +35,10 @@ Item {
 		}else {
 			stackView.pop()
 		}
+	property bool isCurrentItem: false
+	onIsCurrentItemChanged: if(isCurrentItem) {
+		mainWindow.setHeaders({'showBackButton':true, 'showMenuButton':false, 'title':'Training'})
+	}
 	Component{
 		id: livePage
 		LivePage{
