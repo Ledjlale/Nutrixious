@@ -124,7 +124,7 @@ Control.ToolBar{
 			Layout.preferredHeight: 25
 			Layout.leftMargin: 5
 			Layout.rightMargin: 5
-			visible: mainItem.showBarcodeButton
+			visible: SettingsCpp.openFoodFactsEnabled && mainItem.showBarcodeButton
 			imageSource: DefaultStyle.barcodeButton
 			colorizationColor: 'white'
 			onClicked:{

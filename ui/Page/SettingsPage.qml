@@ -35,13 +35,24 @@ Item {
 	}
 	ColumnLayout{
 		anchors.fill: parent
-		
+		spacing: 15
+		Item{
+			Layout.fillHeight: true
+		}
+		Switch {
+			id: oFFSwitch
+			text: qsTr('Open Food Facts for search and barcode')
+			checked: SettingsCpp.openFoodFactsEnabled
+			onCheckedChanged: if(SettingsCpp.openFoodFactsEnabled != checked) SettingsCpp.openFoodFactsEnabled = checked
+		}
 		Switch {
 			id: darkThemeSwitch
-			Layout.alignment: Qt.AlignCenter
-			text: qsTr("Dark")
+			text: qsTr("Dark Mode")
 			checked: DefaultStyle.theme == Material.Dark
 			onCheckedChanged: DefaultStyle.theme= darkThemeSwitch.checked ? Material.Dark : Material.Light
+		}
+		Item{
+			Layout.fillHeight: true
 		}
 	}
 }

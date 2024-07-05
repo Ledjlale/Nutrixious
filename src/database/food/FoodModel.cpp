@@ -28,12 +28,12 @@
 #include <QSqlField>
 #include <QSqlQuery>
 #include <QSqlRecord>
+#include <QSslSocket>
 #include "qstandardpaths.h"
 #include "src/database/DatabaseQuery.h"
 #include "src/database/unit/UnitListModel.h"
 
 #include "src/tool/Utils.h"
-
 
 extern QQmlApplicationEngine * gEngine;
 
@@ -412,39 +412,48 @@ static QNetworkAccessManager *gManager = new QNetworkAccessManager(nullptr);
 void FoodModel::saveImage() {
 	QNetworkRequest request;
 	QUrl url(mOpenFoodFactsImageUrl);
+#ifndef QT_NO_SSL
 	if(!QSslSocket::supportsSsl()) {
+#endif
 		qWarning() << "Https has been requested but SSL is not supported. Fallback to http. Install manually OpenSSL libraries in your PATH.";
 		url.setScheme("http");
+#ifndef QT_NO_SSL
 	}
+#endif
 	request.setUrl(url);
 	//request.setRawHeader("User-Agent", "MyOwnBrowser 1.0");
 
 	QNetworkReply *reply = gManager->get(request);
 	connect(reply, &QNetworkReply::finished, this, &FoodModel::openFoodFactsImageDownloaded);
 	connect(reply, &QNetworkReply::errorOccurred, this, &FoodModel::handleError);
+#ifndef QT_NO_SSL
 	connect(reply, &QNetworkReply::sslErrors, this, &FoodModel::handleSslErrors);
-
 	qDebug() << "Device supports OpenSSL: " << QSslSocket::supportsSsl();
+#endif
 }
 
 
 void FoodModel::findOpenFoodFacts(const QString& name){
 	QNetworkRequest request;
 	QUrl url("https://world.openfoodfacts.org/cgi/search.pl?search_terms="+name+"&search_simple=1&action=process&json=1&fields=code,brands,generic_name,image_url");
+#ifndef QT_NO_SSL
 	if(!QSslSocket::supportsSsl()) {
+#endif
 		qWarning() << "Https has been requested but SSL is not supported. Fallback to http. Install manually OpenSSL libraries in your PATH.";
 		url.setScheme("http");
+#ifndef QT_NO_SSL
 	}
+#endif
 	request.setUrl(url);
 	//request.setRawHeader("User-Agent", "MyOwnBrowser 1.0");
 
 	QNetworkReply *reply = gManager->get(request);
 	connect(reply, &QNetworkReply::finished, this, &FoodModel::openFoodFactsFoundResults);
 	connect(reply, &QNetworkReply::errorOccurred, this, &FoodModel::handleError);
+#ifndef QT_NO_SSL
 	connect(reply, &QNetworkReply::sslErrors, this, &FoodModel::handleSslErrors);
-
 	qDebug() << "Device supports OpenSSL: " << QSslSocket::supportsSsl();
-
+#endif
 }
 
 void FoodModel::loadFromOpenFoodFacts(const QString& code) {
@@ -452,19 +461,24 @@ void FoodModel::loadFromOpenFoodFacts(const QString& code) {
 	qWarning() << code;
 	QNetworkRequest request;
 	QUrl url("https://ssl-api.openfoodfacts.org/api/v0/product/" +code+".json&fields="+getAllFields().join(','));
+#ifndef QT_NO_SSL
 	if(!QSslSocket::supportsSsl()) {
+#endif
 		qWarning() << "Https has been requested but SSL is not supported. Fallback to http. Install manually OpenSSL libraries in your PATH.";
 		url.setScheme("http");
+#ifndef QT_NO_SSL
 	}
+#endif
 	request.setUrl(url);
 	//request.setRawHeader("User-Agent", "MyOwnBrowser 1.0");
 
 	QNetworkReply *reply = gManager->get(request);
 	connect(reply, &QNetworkReply::finished, this, &FoodModel::openFoodFactsDownloaded);
 	connect(reply, &QNetworkReply::errorOccurred, this, &FoodModel::handleError);
+#ifndef QT_NO_SSL
 	connect(reply, &QNetworkReply::sslErrors, this, &FoodModel::handleSslErrors);
-
 	qDebug() << "Device supports OpenSSL: " << QSslSocket::supportsSsl();
+#endif
 }
 
 void FoodModel::openFoodFactsImageDownloaded(){
@@ -543,7 +557,7 @@ void FoodModel::openFoodFactsDownloaded(){
 		if( nutrimentsMap.contains("vitamin-c_100g")) setVitaminC(nutrimentsMap["vitamin-c_100g"].toDouble());
 	}
 }
-
+#ifndef QT_NO_SSL
 void FoodModel::handleSslErrors (const QList<QSslError> &sslErrors) {
 
 	qDebug() << "Device supports OpenSSL: " << QSslSocket::supportsSsl();
@@ -564,6 +578,7 @@ void FoodModel::handleSslErrors (const QList<QSslError> &sslErrors) {
 	Q_UNUSED(sslErrors);
 #endif
 }
+#endif
 
 void FoodModel::openFoodFactsFoundResults(){
 	auto reply = dynamic_cast<QNetworkReply*>(sender());

@@ -1,3 +1,6 @@
 [submodule "external/SCodes"]
 	path = external/SCodes
-	url = https://github.com/scytheStudio/SCodes.git
+	url = https://github.com/Ledjlale/SCodes.git
+[submodule "external/android_openssl"]
+	path = external/android_openssl
+	url = https://github.com/Ledjlale/android_openssl.git
