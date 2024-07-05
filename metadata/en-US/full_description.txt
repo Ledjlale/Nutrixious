@@ -1,0 +1,7 @@
+An experimental and personnal application to manage foods and physical trainings without the need of having an online account.
+There are no ads and no paid services.
+
+Foods can be retrieved from Open Food Facts.
+
+It will allow you to follow your physical training and carry out calorie assessments by integrating nutritional management.
+

@@ -38,6 +38,7 @@ QtObject {
 	property string landingButton: 'image://internal/landing.svg'
 	property string resumeButton: 'image://internal/resume.svg'
 	property string bodyButton: 'image://internal/body.svg'
+	property string donateButton: 'image://internal/donate.svg'
 	
 
 }

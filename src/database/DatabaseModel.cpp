@@ -378,24 +378,62 @@ void DatabaseModel::initMealFoodData(){
 		models << new MealFoodModel();
 		models.back()->setMealGroupId(1);
 		models.back()->setServingUnitId(1);
-		models.back()->setBrand("a");
-		models.back()->setCalories(200);
+		models.back()->setBrand("Carrefour,carrefour bio");
+		models.back()->setDescription("Yogurt, fermented milk or diary speciality, plain");
+		models.back()->setCalories(86);
+		models.back()->setServingSize(125);
+		models.back()->setTotalFat(3.1);
+		models.back()->setTotalCarbohydrate(11);
+		models.back()->setProtein(3.4);
 		models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate(),QTime(8,0,0) ));
 	
 		models << new MealFoodModel();
 		models.back()->setMealGroupId(1);
 		models.back()->setServingUnitId(1);
-		models.back()->setBrand("b");
-		models.back()->setCalories(50);
+		models.back()->setBrand("Bjorg");
+		models.back()->setDescription("Biscuit (cookie), with chocolate, prepacked");
+		models.back()->setCalories(481);
+		models.back()->setServingSize(25);
+		models.back()->setTotalFat(20);
+		models.back()->setTotalCarbohydrate(65);
+		models.back()->setProtein(7.6);
 		models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate(),QTime(8,0,0) ));
 	
 		models << new MealFoodModel();
 		models.back()->setMealGroupId(2);
 		models.back()->setServingUnitId(1);
-		models.back()->setBrand("c");
-		models.back()->setCalories(119);
-	
+		models.back()->setBrand("ProSain");
+		models.back()->setDescription("Ratatouille cooked");
+		models.back()->setCalories(92);
+		models.back()->setServingSize(145);
+		models.back()->setTotalFat(7.2);
+		models.back()->setTotalCarbohydrate(5.3);
+		models.back()->setProtein(1.5);
 		models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate(),QTime(12,0,0) ));
+		
+		models << new MealFoodModel();
+		models.back()->setMealGroupId(2);
+		models.back()->setServingUnitId(1);
+		models.back()->setBrand("Phare d'Eckmühl");
+		models.back()->setDescription("Tuna, flaked, in oil, canned, drained");
+		models.back()->setCalories(141);
+		models.back()->setServingSize(160);
+		models.back()->setTotalFat(7.3);
+		models.back()->setTotalCarbohydrate(3.4);
+		models.back()->setProtein(15);
+		models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate(),QTime(12,0,0) ));
+		
+		models << new MealFoodModel();
+		models.back()->setMealGroupId(3);
+		models.back()->setServingUnitId(1);
+		models.back()->setBrand("Carrefour, Carrefour Bio d'Eckmühl");
+		models.back()->setDescription("Brownie (chocolate cake)");
+		models.back()->setCalories(479);
+		models.back()->setServingSize(40);
+		models.back()->setTotalFat(31);
+		models.back()->setTotalCarbohydrate(43);
+		models.back()->setProtein(6);
+		models.back()->setConsumptionDateTime(QDateTime(QDate::currentDate(),QTime(16,0,0) ));
 	
 	
 		models << new MealFoodModel();
@@ -504,45 +542,102 @@ void DatabaseModel::insertDefaultData() {
 		QVector<ProgramModel *> programs;
 	
 		programs << new ProgramModel();
-		programs.back()->setName("Str");
-		programs.back()->setDescription("Testouille");
-	
+		programs.back()->setName("Morning");
+		programs.back()->setDescription("J1");
+		
 		exercises << new ExerciseModel();
-		exercises.back()->setName("Bike");
+		exercises.back()->setName("Running");
+		exercises.back()->setMetMode(1);
 		exercises.back()->save();
 		programExercises << new ProgramExerciseModel(nullptr);
+		programExercises.back()->setDescription(" ");
 		programExercises.back()->setUseWeight(false);
 		programExercises.back()->setUseRepetitions(false);
 		programExercises.back()->setExerciseModel(exercises.back());
 		series << new ProgramSerieModel();
-		series.back()->setDistance(5000);
+		series.back()->setDistance(2250);
+		series.back()->setSpeed(10.36);
+		series.back()->setRestTime(5*60);
 		programExercises.back()->insertSerie(series.back());
 		programs.back()->insertExercise(programExercises.back());
 	
 	
 		exercises << new ExerciseModel();
-		exercises.back()->setName("Shoulder");
+		exercises.back()->setName("Elliptical Bike");
+		exercises.back()->setMet(6);
 		exercises.back()->save();
 		programExercises << new ProgramExerciseModel(nullptr);
-		programExercises.back()->setDescription("Lateral elevations");
+		programExercises.back()->setDescription(" ");
+		programExercises.back()->setUseDistance(false);
+		programExercises.back()->setUseWeight(false);
+		programExercises.back()->setUseSpeed(false);
+		programExercises.back()->setUseRepetitions(false);
+		programExercises.back()->setExerciseModel(exercises.back());
+		series << new ProgramSerieModel();
+		programExercises.back()->insertSerie(series.back());
+		programs.back()->insertExercise(programExercises.back());
+	
+	
+		exercises << new ExerciseModel();
+		exercises.back()->setName("Shoulder SS pre");
+		exercises.back()->setMet(2);
+		exercises.back()->save();
+		programExercises << new ProgramExerciseModel(nullptr);
+		programExercises.back()->setDescription("Lateral elevations + seated press");
+		programExercises.back()->setUseDistance(false);
+		programExercises.back()->setUseSpeed(false);
+		programExercises.back()->setExerciseModel(exercises.back());
+	
+		series << new ProgramSerieModel(programExercises.back());
+		series.back()->setRepetitions(40);
+		series.back()->setWeight(5);
+		series.back()->setRestTime(60);
+		programExercises.back()->insertSerie(series.back());
+	
+		series << new ProgramSerieModel(programExercises.back());
+		series.back()->setRepetitions(40);
+		series.back()->setWeight(5);
+		series.back()->setRestTime(60);
+		programExercises.back()->insertSerie(series.back());
+		
+		series << new ProgramSerieModel(programExercises.back());
+		series.back()->setRepetitions(40);
+		series.back()->setWeight(5);
+		series.back()->setRestTime(60);
+		programExercises.back()->insertSerie(series.back());
+	
+		programs.back()->insertExercise(programExercises.back());
+		
+//-----
+		exercises << new ExerciseModel();
+		exercises.back()->setName("Pectoralss SS post");
+		exercises.back()->setMet(2);
+		exercises.back()->save();
+		programExercises << new ProgramExerciseModel(nullptr);
+		programExercises.back()->setDescription("Bench press + lying spread");
 		programExercises.back()->setUseDistance(false);
 		programExercises.back()->setUseSpeed(false);
 		programExercises.back()->setExerciseModel(exercises.back());
 	
 		series << new ProgramSerieModel(programExercises.back());
 		series.back()->setRepetitions(12);
-		series.back()->setWeight(15);
-		series.back()->setRestTime(1);
+		series.back()->setWeight(11);
+		series.back()->setRestTime(60);
 		programExercises.back()->insertSerie(series.back());
 	
 		series << new ProgramSerieModel(programExercises.back());
-		series.back()->setRepetitions(12);
-		series.back()->setWeight(10);
-		series.back()->setRestTime(5);
+		series.back()->setRepetitions(8);
+		series.back()->setWeight(11);
+		series.back()->setRestTime(60);
+		programExercises.back()->insertSerie(series.back());
+		
+		series << new ProgramSerieModel(programExercises.back());
+		series.back()->setRepetitions(6);
+		series.back()->setWeight(11);
+		series.back()->setRestTime(60);
 		programExercises.back()->insertSerie(series.back());
 	
 		programs.back()->insertExercise(programExercises.back());
-	
 	
 		programs.back()->save();
 	

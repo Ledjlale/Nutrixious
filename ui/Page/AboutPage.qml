@@ -59,6 +59,10 @@ Item {
 						color: Material.foreground
 						text: ('Version %1').arg(applicationVersion)
 					}
+					Button{
+						text: "Logs"
+						onClicked: stackView.push(logView)
+					}
 				}
 
 				Text{
@@ -69,10 +73,15 @@ Item {
 					text: '<a href="'+applicationUrl+'">'+applicationUrl+'</a>'
 					onLinkActivated: (link)=> Qt.openUrlExternally(link)
 				}
-				Button{
-					text: "Logs"
-					onClicked: stackView.push(logView)
+				ButtonImage{
+					Layout.preferredWidth: 120
+					Layout.preferredHeight: 40
+					Layout.alignment: Qt.AlignCenter
+					imageSource: DefaultStyle.donateButton
+					onClicked: Qt.openUrlExternally('https://liberapay.com/Ledjlale/donate')
 				}
+				
+				
 			}
 		}
 	}

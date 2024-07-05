@@ -209,7 +209,7 @@ SwipeLayout{
 			visible: mainItem.showRestTime && !mainItem.trainingResultEdition
 			edit: mainItem.edit
 			showTitle: mainItem.showTitle || mainItem.trainingResultEdition
-			readOnly:  mainItem.isReadOnly || mainItem.isLive
+			readOnly:  mainItem.isReadOnly
 			inputMethodHints: Qt.ImhTime
 			elide: Text.ElideLeft
 			title: mainItem.showTitle ? 'RestTime' : ''
