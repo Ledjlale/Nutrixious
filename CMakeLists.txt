@@ -20,12 +20,12 @@
 
 cmake_minimum_required(VERSION 3.16)
 set(TARGET_NAME Nutrixious)
-project(${TARGET_NAME} VERSION 0.1 LANGUAGES CXX)
+project(${TARGET_NAME} VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INSTALL_PREFIX "OUTPUT")
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Quick QuickControls2 Sql Charts Multimedia Svg)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Quick QuickControls2 Sql Charts Multimedia Svg Concurrent Network)
 find_package(Git)
 
 
@@ -37,8 +37,14 @@ if (GIT_EXECUTABLE)
 	WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
   )
 else()
-  set(APP_VERSION "0.0.0")
+  set(APP_VERSION "1.0.0")
 endif ()
+if(NOT ANDROID_VERSION_CODE)
+	set(ANDROID_VERSION_CODE "100000")
+endif()
+if(NOT ANDROID_VERSION_NAME)
+	set(ANDROID_VERSION_NAME ${APP_VERSION})
+endif()
 
 set(APP_MAJOR_VERSION)
 set(APP_MINOR_VERSION)
@@ -80,8 +86,9 @@ qt_add_resources(${TARGET_NAME} "resources" PREFIX "/" FILES ${_APP_RC_FILES})
 
 set_source_files_properties(${_APP_QML_SINGLETONS} PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 set_property(TARGET ${TARGET_NAME} APPEND PROPERTY
-	QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/asset/android
+	QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_BINARY_DIR}/asset/android
 )
+	
 
 qt_add_qml_module(${TARGET_NAME}
 	URI App
@@ -91,15 +98,20 @@ qt_add_qml_module(${TARGET_NAME}
 	SOURCES ${_APP_SOURCE_FILES}
 )
 
+#if (ANDROID)
+#	include(FetchContent)
+#	FetchContent_Declare(
+#		android_openssl
+#		DOWNLOAD_EXTRACT_TIMESTAMP true
+#		URL https://github.com/KDAB/android_openssl/archive/refs/heads/master.zip
+#	)
+#	FetchContent_MakeAvailable(android_openssl)
+#	include(${android_openssl_SOURCE_DIR}/android_openssl.cmake)
+#	add_android_openssl_libraries(${TARGET_NAME})
+#endif()
 if (ANDROID)
-	include(FetchContent)
-	FetchContent_Declare(
-		android_openssl
-		DOWNLOAD_EXTRACT_TIMESTAMP true
-		URL https://github.com/KDAB/android_openssl/archive/refs/heads/master.zip
-	)
-	FetchContent_MakeAvailable(android_openssl)
-	include(${android_openssl_SOURCE_DIR}/android_openssl.cmake)
+# Need to be build with NDK=21.0.6113669
+	include("external/android_openssl/android_openssl.cmake")
 	add_android_openssl_libraries(${TARGET_NAME})
 endif()
 
@@ -107,16 +119,17 @@ endif()
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
 set_target_properties(${TARGET_NAME} PROPERTIES
-	MACOSX_BUNDLE_GUI_IDENTIFIER org.ledjlale.nutrixious
+	MACOSX_BUNDLE_GUI_IDENTIFIER org.ledjlale.Nutrixious
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
+    OUTPUT_NAME ${TARGET_NAME}
 )
 include_directories(/usr/local/include)
 
 target_link_libraries(${TARGET_NAME}
-	PRIVATE Qt6::Quick Qt6::QuickControls2 Qt6::Sql Qt6::Charts Qt6::Svg SCodes
+	PRIVATE Qt6::Quick Qt6::QuickControls2 Qt6::Sql Qt6::Charts Qt6::Svg Qt6::Concurrent SCodes
 )
 include(GNUInstallDirs)
 install(TARGETS ${TARGET_NAME}

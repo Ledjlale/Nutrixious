@@ -71,6 +71,8 @@
 #include "src/activity/working/WorkingExerciseModel.h"
 #include "src/activity/working/WorkingSerieModel.h"
 
+#include "src/setting/SettingsModel.h"
+
 #include "src/stat/StatsModel.h"
 
 
@@ -162,46 +164,52 @@ void registerTypes(){
 								[](QQmlEngine *engine, QJSEngine *) -> QObject * { return new Logger(engine); });
 	qmlRegisterSingletonType<Logger>("App", 1,0, "UtilsCpp",
 								[](QQmlEngine *engine, QJSEngine *) -> QObject * { return new Utils(engine); });
+	qmlRegisterSingletonType<SettingsModel>("App", 1,0, "SettingsCpp",
+								[](QQmlEngine *engine, QJSEngine *) -> QObject * { return new SettingsModel(engine); });
 }
 
 static QQmlApplicationEngine * gEngine = nullptr;
 
 
 int main(int argc, char *argv[]) {
+	int result = -1;
 	Logger::init();
-	QApplication app(argc, argv);	// Not QGuiApplication because of Qt Chart that will crash on QApplication::style()
-	// Ignore vertical sync. This way, we avoid blinking on resizes(and other refresh steps like layouts etc.).
-	auto ignoreVSync = QSurfaceFormat::defaultFormat();
-	ignoreVSync.setSwapInterval(0);
-	QSurfaceFormat::setDefaultFormat(ignoreVSync);
-	DatabaseModel::migrate();
-	app.setWindowIcon(QIcon(":/asset/icons/nutrixious_logo.svg"));
-
-	QStringList selectors("custom");
-	gEngine = new QQmlApplicationEngine();
-	auto selector = new QQmlFileSelector(gEngine, gEngine);
-	selector->setExtraSelectors(selectors);
-	gEngine->addImportPath(":/");
-	gEngine->addImageProvider(ImageProvider::ProviderId, new ImageProvider());
-	gEngine->rootContext()->setContextProperty("applicationUrl", APPLICATION_URL);
-	gEngine->rootContext()->setContextProperty("applicationVersionName", APPLICATION_VERSION_NAME);
-	gEngine->rootContext()->setContextProperty("applicationVersion", APPLICATION_VERSION);
-	const QUrl url(u"qrc:/App/ui/Main.qml"_qs);
-    QObject::connect(
-		gEngine,
-        &QQmlApplicationEngine::objectCreationFailed,
-        &app,
-        []() { QCoreApplication::exit(-1); },
-		Qt::QueuedConnection);
-	QQuickStyle::setStyle("Material");
-	registerTypes();
-	gEngine->load(url);
-#ifdef QT_DEBUG
-	const QUrl colorPicker(u"qrc:/App/ui/Tool/ColorPicker.qml"_qs);
-    
-	//gEngine->load(colorPicker);
-#endif
-	int result = app.exec();
-	gEngine->deleteLater();
+	{
+		QApplication app(argc, argv);	// Not QGuiApplication because of Qt Chart that will crash on QApplication::style()
+		// Ignore vertical sync. This way, we avoid blinking on resizes(and other refresh steps like layouts etc.).
+		auto ignoreVSync = QSurfaceFormat::defaultFormat();
+		ignoreVSync.setSwapInterval(0);
+		QSurfaceFormat::setDefaultFormat(ignoreVSync);
+		DatabaseModel::migrate();
+		app.setWindowIcon(QIcon(":/asset/icons/nutrixious_logo.svg"));
+	
+		QStringList selectors("custom");
+		gEngine = new QQmlApplicationEngine(&app);
+		auto selector = new QQmlFileSelector(gEngine, gEngine);
+		selector->setExtraSelectors(selectors);
+		gEngine->addImportPath(":/");
+		gEngine->addImageProvider(ImageProvider::ProviderId, new ImageProvider());
+		gEngine->rootContext()->setContextProperty("applicationUrl", APPLICATION_URL);
+		gEngine->rootContext()->setContextProperty("applicationVersionName", APPLICATION_VERSION_NAME);
+		gEngine->rootContext()->setContextProperty("applicationVersion", APPLICATION_VERSION);
+		const QUrl url(u"qrc:/App/ui/Main.qml"_qs);
+		QObject::connect(
+			gEngine,
+			&QQmlApplicationEngine::objectCreationFailed,
+			&app,
+			[]() { QCoreApplication::exit(-1); },
+			Qt::QueuedConnection);
+		QQuickStyle::setStyle("Material");
+		registerTypes();
+		gEngine->load(url);
+	#ifdef QT_DEBUG
+		const QUrl colorPicker(u"qrc:/App/ui/Tool/ColorPicker.qml"_qs);
+		
+		//gEngine->load(colorPicker);
+	#endif
+		result = app.exec();
+		delete  gEngine;// If not, there will be a deadlock from QPixmapReader
+	}
+	qInfo() << "Exiting application with code " << result;
 	return result;
 }

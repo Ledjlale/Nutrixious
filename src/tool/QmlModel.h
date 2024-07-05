@@ -30,6 +30,12 @@
 	void set##X(type data);\
 	Q_SIGNAL void x##Changed();
 
+#define DECLARE_GETSET_READ(type, x, X) public:\
+	Q_PROPERTY(type x READ get##X WRITE set##X NOTIFY x##Changed)\
+	type get##X() const; \
+	void set##X(type data);\
+	Q_SIGNAL void x##Changed();
+	
 #define DEFINE_GETSET(Class, type, x, X) type Class::get##X() const{ \
 	return m##X;\
 	}\

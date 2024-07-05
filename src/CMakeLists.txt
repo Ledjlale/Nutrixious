@@ -84,7 +84,9 @@
 	src/database/unit/UnitModel.cpp
 	src/database/unit/UnitListModel.cpp
 	src/database/unit/UnitProxyModel.cpp
-
+	
+	src/setting/SettingsModel.cpp
+	
 	src/stat/StatsModel.cpp
 
 	src/tool/logger/Logger.cpp

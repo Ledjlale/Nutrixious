@@ -63,6 +63,7 @@ Item {
 				Layout.preferredWidth: 60
 				Layout.preferredHeight: 60
 				Layout.alignment: Qt.AlignCenter
+				visible: SettingsCpp.openFoodFactsEnabled
 				imageSource: DefaultStyle.theme == Material.Dark ? DefaultStyle.searchOFFDarkButton : DefaultStyle.searchOFFButton
 				//colorizationColor: Material.foreground
 				onClicked:{

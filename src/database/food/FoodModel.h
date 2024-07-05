@@ -99,7 +99,9 @@ public:
 	void openFoodFactsImageDownloaded();
 	void openFoodFactsDownloaded();
 	void openFoodFactsFoundResults();
+#ifndef QT_NO_SSL
 	void handleSslErrors (const QList<QSslError> &sslErrors);
+#endif
 	void handleError (QNetworkReply::NetworkError code);
 
 signals:
