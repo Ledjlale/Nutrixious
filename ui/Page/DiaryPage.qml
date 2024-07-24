@@ -133,6 +133,7 @@ Item {
 							forceActiveFocus()
 							lastDataModel.add()
 							lastDataModel.loadLastIn(dayBar.currentDay)
+							mainWindow.header.displayBody = false
 						}
 					}
 				}
