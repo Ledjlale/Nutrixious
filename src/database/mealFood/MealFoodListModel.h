@@ -46,6 +46,7 @@ public:
 	Q_INVOKABLE void update();
 	Q_INVOKABLE void updateFromDate(DateModel * data);
 	Q_INVOKABLE void addFoodModel(FoodModel *model, MealGroupModel *groupModel, DateModel *dateModel );
+	Q_INVOKABLE void addCustomMeal(MealGroupModel *groupModel, DateModel *dateModel );
 	Q_INVOKABLE double calories(qint64 mealGroupId);
 
 	void handleRemoved(FoodModel *model);

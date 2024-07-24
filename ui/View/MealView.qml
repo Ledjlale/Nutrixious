@@ -54,11 +54,18 @@ SwipeLayout{
 						
 					}
 				}
-				Text{
+				TextField{
 					Layout.rightMargin: 5
 					horizontalAlignment: Text.AlignRight
-					color: Material.foreground
 					text: Number.parseFloat(mainItem.modelData.computeNutriment(mainItem.modelData.calories,mainItem.modelData.servingSize,mainItem.modelData.servingUnitId,mainItem.modelData.baseSize,mainItem.modelData.baseUnitId).toFixed(2))
+					edit: text == '0'
+					readOnly: !edit
+					title: 'Calories'
+					showTitle: edit
+					onEditingFinished: {
+						mainItem.modelData.calories = newValue
+						mainItem.modelData.save()
+					}
 				}
 			}
 	}

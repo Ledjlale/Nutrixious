@@ -96,6 +96,15 @@ void MealFoodListModel::addFoodModel(FoodModel *model, MealGroupModel *groupMode
 	add(newModel);
 }
 
+void MealFoodListModel::addCustomMeal(MealGroupModel *groupModel, DateModel *dateModel ){
+	auto newModel = new MealFoodModel(nullptr, groupModel, this);
+	newModel->setConsumptionDateTime(QDateTime(dateModel->getDate(), newModel->getConsumptionDateTime().time()));
+	connect(newModel, &MealFoodModel::removed, this, &MealFoodListModel::handleRemoved);
+	connect(newModel, &MealFoodModel::caloriesChanged, this, &MealFoodListModel::caloriesChanged);
+	newModel->save();
+	add(newModel);
+}
+
 double MealFoodListModel::calories(qint64 mealGroupId){
 	double cal = 0.0;
 	for(auto i : mList){

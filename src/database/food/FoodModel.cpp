@@ -54,38 +54,43 @@ FoodModel::FoodModel(const FoodModel * model, QObject *parent)
 	connect(this, &FoodModel::idChanged, this, &FoodModel::updateIsSaved);
 	//connect(this, &FoodModel::servingSizeChanged, this, &FoodModel::recomputeFromServingSize);
 	mTablePrefix = "food";
-	mId = initiBackup(model, &model->mId, model->mId, &mId).toLongLong();
-	mOpenFoodFactsCode = initiBackup(model, &model->mOpenFoodFactsCode, model->mOpenFoodFactsCode, &mOpenFoodFactsCode).toString();
-	mOpenFoodFactsImageUrl = initiBackup(model, &model->mOpenFoodFactsImageUrl, model->mOpenFoodFactsImageUrl, &mOpenFoodFactsImageUrl).toString();
-	mBrand = initiBackup(model, &model->mBrand, model->mBrand, &mBrand).toString();
-	mImageUrl = initiBackup(model, &model->mImageUrl, model->mImageUrl, &mImageUrl).toString();
-	mDescription = initiBackup(model, &model->mDescription, model->mDescription, &mDescription).toString();
-	mServingUnitId = initiBackup(model, &model->mServingUnitId, model->mServingUnitId, &mServingUnitId).toLongLong();
-
-	mServingSize = initiBackup(model, &model->mServingSize, model->mServingSize, &mServingSize).toDouble();
-	mServingsPerContainer = initiBackup(model, &model->mServingsPerContainer, model->mServingsPerContainer, &mServingsPerContainer).toDouble();
-
-	mBaseUnitId = initiBackup(model, &model->mBaseUnitId, model->mBaseUnitId, &mBaseUnitId).toLongLong();
-	mBaseSize = initiBackup(model, &model->mBaseSize, model->mBaseSize, &mBaseSize).toDouble();
-
-	mCalories = initiBackup(model, &model->mCalories, model->mCalories, &mCalories).toDouble();
-	mTotalFat = initiBackup(model, &model->mTotalFat, model->mTotalFat, &mTotalFat).toDouble();
-	mSaturatedFat = initiBackup(model, &model->mSaturatedFat, model->mSaturatedFat, &mSaturatedFat).toDouble();
-	mTransFat = initiBackup(model, &model->mTransFat, model->mTransFat, &mTransFat).toDouble();
-	mPolyUnsaturatedFat = initiBackup(model, &model->mPolyUnsaturatedFat, model->mPolyUnsaturatedFat, &mPolyUnsaturatedFat).toDouble();
-	mMonoUnsaturatedFat = initiBackup(model, &model->mMonoUnsaturatedFat, model->mMonoUnsaturatedFat, &mMonoUnsaturatedFat).toDouble();
-	mCholesterol = initiBackup(model, &model->mCholesterol, model->mCholesterol, &mCholesterol).toDouble();
-	mSodium = initiBackup(model, &model->mSodium, model->mSodium, &mSodium).toDouble();
-	mTotalCarbohydrate = initiBackup(model, &model->mTotalCarbohydrate, model->mTotalCarbohydrate, &mTotalCarbohydrate).toDouble();
-	mDietaryFiber = initiBackup(model, &model->mDietaryFiber, model->mDietaryFiber, &mDietaryFiber).toDouble();
-	mSugar = initiBackup(model, &model->mSugar, model->mSugar, &mSugar).toDouble();
-	mProtein = initiBackup(model, &model->mProtein, model->mProtein, &mProtein).toDouble();
-	mCalcium = initiBackup(model, &model->mCalcium, model->mCalcium, &mCalcium).toDouble();
-	mIron = initiBackup(model, &model->mIron, model->mIron, &mIron).toDouble();
-	mPotassium = initiBackup(model, &model->mPotassium, model->mPotassium, &mPotassium).toDouble();
-	mVitaminA = initiBackup(model, &model->mVitaminA, model->mVitaminA, &mVitaminA).toDouble();
-	mVitaminC = initiBackup(model, &model->mVitaminC, model->mVitaminC, &mVitaminC).toDouble();
-
+	if(model){
+		mId = initiBackup(model, &model->mId, model->mId, &mId).toLongLong();
+		mOpenFoodFactsCode = initiBackup(model, &model->mOpenFoodFactsCode, model->mOpenFoodFactsCode, &mOpenFoodFactsCode).toString();
+		mOpenFoodFactsImageUrl = initiBackup(model, &model->mOpenFoodFactsImageUrl, model->mOpenFoodFactsImageUrl, &mOpenFoodFactsImageUrl).toString();
+		mBrand = initiBackup(model, &model->mBrand, model->mBrand, &mBrand).toString();
+		mImageUrl = initiBackup(model, &model->mImageUrl, model->mImageUrl, &mImageUrl).toString();
+		mDescription = initiBackup(model, &model->mDescription, model->mDescription, &mDescription).toString();
+		mServingUnitId = initiBackup(model, &model->mServingUnitId, model->mServingUnitId, &mServingUnitId).toLongLong();
+	
+		mServingSize = initiBackup(model, &model->mServingSize, model->mServingSize, &mServingSize).toDouble();
+		mServingsPerContainer = initiBackup(model, &model->mServingsPerContainer, model->mServingsPerContainer, &mServingsPerContainer).toDouble();
+	
+		mBaseUnitId = initiBackup(model, &model->mBaseUnitId, model->mBaseUnitId, &mBaseUnitId).toLongLong();
+		mBaseSize = initiBackup(model, &model->mBaseSize, model->mBaseSize, &mBaseSize).toDouble();
+	
+		mCalories = initiBackup(model, &model->mCalories, model->mCalories, &mCalories).toDouble();
+		mTotalFat = initiBackup(model, &model->mTotalFat, model->mTotalFat, &mTotalFat).toDouble();
+		mSaturatedFat = initiBackup(model, &model->mSaturatedFat, model->mSaturatedFat, &mSaturatedFat).toDouble();
+		mTransFat = initiBackup(model, &model->mTransFat, model->mTransFat, &mTransFat).toDouble();
+		mPolyUnsaturatedFat = initiBackup(model, &model->mPolyUnsaturatedFat, model->mPolyUnsaturatedFat, &mPolyUnsaturatedFat).toDouble();
+		mMonoUnsaturatedFat = initiBackup(model, &model->mMonoUnsaturatedFat, model->mMonoUnsaturatedFat, &mMonoUnsaturatedFat).toDouble();
+		mCholesterol = initiBackup(model, &model->mCholesterol, model->mCholesterol, &mCholesterol).toDouble();
+		mSodium = initiBackup(model, &model->mSodium, model->mSodium, &mSodium).toDouble();
+		mTotalCarbohydrate = initiBackup(model, &model->mTotalCarbohydrate, model->mTotalCarbohydrate, &mTotalCarbohydrate).toDouble();
+		mDietaryFiber = initiBackup(model, &model->mDietaryFiber, model->mDietaryFiber, &mDietaryFiber).toDouble();
+		mSugar = initiBackup(model, &model->mSugar, model->mSugar, &mSugar).toDouble();
+		mProtein = initiBackup(model, &model->mProtein, model->mProtein, &mProtein).toDouble();
+		mCalcium = initiBackup(model, &model->mCalcium, model->mCalcium, &mCalcium).toDouble();
+		mIron = initiBackup(model, &model->mIron, model->mIron, &mIron).toDouble();
+		mPotassium = initiBackup(model, &model->mPotassium, model->mPotassium, &mPotassium).toDouble();
+		mVitaminA = initiBackup(model, &model->mVitaminA, model->mVitaminA, &mVitaminA).toDouble();
+		mVitaminC = initiBackup(model, &model->mVitaminC, model->mVitaminC, &mVitaminC).toDouble();
+	}else {
+		mDescription = "Custom";
+		mServingSize = mBaseSize;
+	}
+	
 }
 
 FoodModel* FoodModel::clone(QObject*parent) {

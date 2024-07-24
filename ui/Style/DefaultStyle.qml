@@ -23,6 +23,7 @@ QtObject {
 	property string addFoodButton: 'image://internal/add_food.svg'
 	property string addDataButton: addFoodButton
 	property string addProgramButton: addFoodButton
+	property string appendRowButton: 'image://internal/append_row.svg'
 	property string addExerciseButton: 'image://internal/add_food.svg'
 	property string searchOFFButton: 'image://internal/search_off.svg'
 	property string searchOFFDarkButton: 'image://internal/search_off_dark.svg'
