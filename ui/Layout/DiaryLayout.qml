@@ -86,7 +86,10 @@ StackLayout{
 	}
 	TrainingPage{
 		isCurrentItem: StackLayout.isCurrentItem
-		onBack: mainItem.currentIndex = 0
+		onBack: {
+			mainItem.currentIndex = 0
+			diaryPage.updateTrainings()
+		}
 	}
 	MealGroupsPage{
 		isCurrentItem: StackLayout.isCurrentItem

@@ -640,7 +640,23 @@ void DatabaseModel::insertDefaultData() {
 		programs.back()->insertExercise(programExercises.back());
 	
 		programs.back()->save();
-	
+//----
+		programs << new ProgramModel();
+		programs.back()->setName("Simple");
+		programs.back()->setDescription("One");
+		
+		programExercises << new ProgramExerciseModel(nullptr);
+		programExercises.back()->setDescription(" ");
+		programExercises.back()->setUseWeight(false);
+		programExercises.back()->setUseRepetitions(false);
+		programExercises.back()->setExerciseModel(exercises.front());
+		series << new ProgramSerieModel();
+		series.back()->setDistance(2250);
+		series.back()->setSpeed(10.36);
+		series.back()->setRestTime(5*60);
+		programExercises.back()->insertSerie(series.back());
+		programs.back()->insertExercise(programExercises.back());
+		programs.back()->save();
 	
 	//  Trainings
 	
