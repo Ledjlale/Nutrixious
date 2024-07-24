@@ -127,18 +127,18 @@ protected:
 	double mBaseSize = 100.0;	// Nuriments values are based on this quantity.
 	quint64 mBaseUnitId = 1;
 
-	double mCalories = -1.0;
-	double mTotalFat = -1.0;
+	double mCalories = 0.0;
+	double mTotalFat = 0.0;
 	double mSaturatedFat = -1.0;
 	double mTransFat = -1.0;
 	double mPolyUnsaturatedFat = -1.0;
 	double mMonoUnsaturatedFat = -1.0;
 	double mCholesterol = -1.0;
 	double mSodium = -1.0;
-	double mTotalCarbohydrate = -1.0;
+	double mTotalCarbohydrate = 0.0;
 	double mDietaryFiber = -1.0;
 	double mSugar = -1.0;
-	double mProtein = -1.0;
+	double mProtein = 0.0;
 	double mCalcium = -1.0;
 	double mIron = -1.0;
 	double mPotassium = -1.0;

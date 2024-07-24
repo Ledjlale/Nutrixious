@@ -289,8 +289,10 @@ Item {
 											modelData: $modelData
 											isEditable: false
 											onClicked: {
-												$modelData.autoCompute = true
-												mainItem.foodEditorRequested( $modelData)
+												if(!mealView.isEditable){
+													$modelData.autoCompute = true
+													mainItem.foodEditorRequested( $modelData)
+												}
 												//stackView.push(foodEditorComponent, {foodModel:$modelData})
 												//mainItem.setHeaders({'showBackButton':true, 'showSaveButton':true, 'showMenuButton':false})
 											}
@@ -305,18 +307,32 @@ Item {
 										}
 									}
 								}
-								ButtonImage{
-									id: addButton
-									Layout.preferredWidth: 80
-									Layout.preferredHeight: 30
+								RowLayout{
 									Layout.alignment: Qt.AlignCenter
-									Layout.topMargin: 5
-									imageSource: DefaultStyle.addFoodButton
-									colorizationColor: Material.foreground
-									onClicked: {
-										mainItem.foodPickerRequested( $modelData)
-										//stackView.push(foodPickerComponent, {mealGroup:$modelData})
-										//mainItem.setHeaders({'showBackButton':true, 'showMenuButton':false, 'showBarcodeButton':true, 'showCreateButton':true})
+									ButtonImage{
+										id: addButton
+										Layout.preferredWidth: 80
+										Layout.preferredHeight: 30
+										Layout.topMargin: 5
+										imageSource: DefaultStyle.appendRowButton
+										colorizationColor: Material.foreground
+										onClicked: {
+											mainItem.meals.addCustomMeal(sectionItem.model, dayBar.currentDay)
+										}
+									}
+									ButtonImage{
+										id: addCustomButton
+										Layout.preferredWidth: 80
+										Layout.preferredHeight: 30
+										Layout.alignment: Qt.AlignCenter
+										Layout.topMargin: 5
+										imageSource: DefaultStyle.addFoodButton
+										colorizationColor: Material.foreground
+										onClicked: {
+											mainItem.foodPickerRequested( $modelData)
+											//stackView.push(foodPickerComponent, {mealGroup:$modelData})
+											//mainItem.setHeaders({'showBackButton':true, 'showMenuButton':false, 'showBarcodeButton':true, 'showCreateButton':true})
+										}
 									}
 								}
 							}
