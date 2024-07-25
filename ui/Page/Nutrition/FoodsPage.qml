@@ -33,14 +33,19 @@ Item {
 	id: mainItem
 	property bool isPicker: false
 	property bool isEdition: false
+	property bool isRecipeTarget: false
 
 	signal back()
 	signal picked(var food)
+	signal createRecipeRequest()
+	
 	
 	property bool isCurrentItem: false
+//	property bool _isCurrentItem: isCurrentItem && stackView.currentItem.objectName != 'RecipeEditor'
+	
 	onIsCurrentItemChanged: if(isCurrentItem) {
 		console.log("FoodsPage visible")
-		mainWindow.setHeaders({'showBackButton':true, 'showMenuButton':false, 'showBarcodeButton':true, 'showCreateButton':true, 'title':'Foods'})
+		mainWindow.setHeaders({'showBackButton':true, 'showMenuButton':false, 'showBarcodeButton':true, 'showCreateButton':true, 'showRecipeButton': true, 'title':'Foods'})
 	}
 	
 	function editFoodModel(foodModelToEdit){
@@ -54,8 +59,13 @@ Item {
 		property bool editing: stackView.currentItem.objectName == "Editor"
 		property bool scanning: stackView.currentItem.objectName == "Scanner" && stackView.currentItem.isStarted
 		function onCreate(){
-				stackView.push(foodEditorComponent)
-				mainWindow.header.updateHeaders({'showCreateButton': false, 'showSaveButton': true})
+			stackView.push(foodEditorComponent)
+			mainWindow.header.updateHeaders({'showCreateButton': false, 'showSaveButton': true})
+		}
+		function onRecipe(){
+			mainItem.createRecipeRequest()
+			//stackView.push(recipeEditorComponent)
+			//mainWindow.header.updateHeaders({'showCreateButton': false, 'showSaveButton': true})
 		}
 		function onBarcode(){
 			if(!scanning)
@@ -83,7 +93,17 @@ Item {
 				
 			}
 		}
+		function onOk(){
+			console.log("Ok for FoodsPage")
+			if(mainItem.isRecipeTarget){
+				if(!stackView.currentItem.foodModel.isSaved){
+					stackView.currentItem.foodModel.save()
+				}
+				mainItem.picked(stackView.currentItem.ingredientModel)
+			}
+		}
 		function onBack(){
+			console.log("Back")
 			if(stackView.depth > 1) {
 				stackView.pop()
 				if(mainItem.isEdition)
@@ -125,6 +145,7 @@ Item {
 							stackView.push(foodEditorComponent, {offCode: searchedCode})
 						}
 					}
+					
 					onFoodModelFound: function(foodModelSearched){
 						foodModelSearched.autoCompute = mainItem.isPicker && foodModelSearched.isSaved
 						stackView.push(foodEditorComponent, {foodModel:foodModelSearched})
@@ -136,6 +157,7 @@ Item {
 				FoodEditorPage{
 					id: editor
 					objectName: 'Editor'
+					isRecipeTarget:mainItem.isRecipeTarget
 					onSaved:{
 						if(mainItem.isPicker){
 							mainItem.picked(foodModel)
@@ -147,6 +169,16 @@ Item {
 					}
 				}
 			}
+			/*
+			Component{
+				id: recipeEditorComponent
+				RecipeEditorPage{
+					id: recipePage
+					objectName: 'RecipeEditor'
+					//isCurrentItem: StackLayout.isCurrentItem
+				}
+			}
+			*/
 		}
 	}
 }

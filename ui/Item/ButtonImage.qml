@@ -29,11 +29,13 @@ Loader {
 	active: visible
 	property var imageSource
 	property var fillMode: Image.PreserveAspectFit
-	property var colorizationColor
+	property color colorizationColor
+	
 	property int imageWidth: width
 	property int imageHeight: height
 	property bool useColor: colorizationColor != undefined
 	signal clicked()
+	asynchronous: true	// If not true, colorization may be not correctly updated in some cases.
 	sourceComponent: Item {
 		Image {
 			id: image
@@ -62,7 +64,7 @@ Loader {
 			anchors.fill: effect
 			source: effect
 			maskSource: effect
-			colorizationColor: effectEnabled && mainItem.colorizationColor ? mainItem.colorizationColor : 'black'
+			colorizationColor: effectEnabled && mainItem.colorizationColor ?  mainItem.colorizationColor : 'black'
 			colorization: effectEnabled ? 1.0: 0.0
 		}
 		MouseArea{

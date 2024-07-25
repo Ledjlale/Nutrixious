@@ -328,6 +328,37 @@ void DatabaseModel::migrate(){
 		else{
 			initMealFoodData();
 		}
+//-----------------------------------------------------------------------------------------------------------------------
+//					RECIPE
+		if(!query.exec("CREATE TABLE recipes (recipe_id INTEGER PRIMARY KEY"
+			", brand TEXT"
+			", description TEXT"
+			", recipe_unit_id INTEGER"
+			", recipe_size INTEGER"
+			", FOREIGN KEY (recipe_unit_id) REFERENCES units (unit_id) ON UPDATE CASCADE ON DELETE SET NULL"
+			")"
+		))
+			qCritical() << "Cannot create recipe table: " << query.lastError().text();
+		else{
+			initMealFoodData();
+		}
+
+		if(!query.exec("CREATE TABLE recipe_ingredients (recipe_ingredient_id INTEGER PRIMARY KEY"
+			", recipe_id INTEGER"
+			", food_id INTEGER"
+			", ingredient_unit_id INTEGER"
+			", ingredient_size INTEGER"
+			", FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON UPDATE CASCADE ON DELETE CASCADE"
+			", FOREIGN KEY (ingredient_unit_id) REFERENCES units (unit_id) ON UPDATE CASCADE ON DELETE SET NULL"
+			", FOREIGN KEY (food_id) REFERENCES foods (food_id) ON UPDATE CASCADE ON DELETE CASCADE"
+			")"
+		))
+			qCritical() << "Cannot create meal foods table: " << query.lastError().text();
+		else{
+			initMealFoodData();
+		}
+		
+		
 
 		insertDefaultData();
 

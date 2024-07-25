@@ -80,6 +80,14 @@
 	src/database/mealGroup/MealGroupModel.cpp
 	src/database/mealGroup/MealGroupListModel.cpp
 	src/database/mealGroup/MealGroupProxyModel.cpp
+	
+	src/database/recipe/RecipeModel.cpp
+	src/database/recipe/RecipeListModel.cpp
+	src/database/recipe/RecipeProxyModel.cpp
+
+	src/database/recipeIngredient/RecipeIngredientModel.cpp
+	src/database/recipeIngredient/RecipeIngredientListModel.cpp
+	src/database/recipeIngredient/RecipeIngredientProxyModel.cpp
 
 	src/database/unit/UnitModel.cpp
 	src/database/unit/UnitListModel.cpp

@@ -18,38 +18,36 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ExerciseSerieListModel.h"
+#include "RecipeListModel.h"
 
 #include <QDebug>
 #include <QSqlQuery>
 #include <QSqlRecord>
 
-#include "ExerciseSerieModel.h"
+#include "RecipeModel.h"
 
-ExerciseSerieListModel::ExerciseSerieListModel(QObject *parent)
-	: ProxyAbstractListModel<ExerciseSerieModel*>{parent}
+RecipeListModel::RecipeListModel(QObject *parent)
+	: ProxyAbstractListModel<RecipeModel*>{parent}
 {
+}
+
+void RecipeListModel::update(){
+	beginResetModel();
+	mList.clear();
+	mList << RecipeModel::buildAll(this);
 	for(auto e : mList)
-		connect(e, &ExerciseSerieModel::removed, this, &ExerciseSerieListModel::handleRemoved);
+		connect(e, &RecipeModel::removed, this, &RecipeListModel::handleRemoved);
+	endResetModel();
 }
 
-ExerciseSerieListModel::ExerciseSerieListModel(QVariantList series, QObject *parent)
-	: ProxyAbstractListModel<ExerciseSerieModel*>{parent}
-{
-	for(auto serie : series){
-		auto e = serie.value<ExerciseSerieModel*>();
-		connect(e, &ExerciseSerieModel::removed, this, &ExerciseSerieListModel::handleRemoved);
-		mList << e;
-	}
-}
-
-QHash<int, QByteArray> ExerciseSerieListModel::roleNames () const {
+QHash<int, QByteArray> RecipeListModel::roleNames () const {
 	QHash<int, QByteArray> roles;
 	roles[Qt::DisplayRole] = "$modelData";
+	roles[Qt::DisplayRole+1] = "displayText";
 	return roles;
 }
 
-QVariant ExerciseSerieListModel::data (const QModelIndex &index, int role) const {
+QVariant RecipeListModel::data (const QModelIndex &index, int role) const {
 	int row = index.row();
 
 	if (!index.isValid() || row < 0 || row >= mList.count())
@@ -57,23 +55,14 @@ QVariant ExerciseSerieListModel::data (const QModelIndex &index, int role) const
 	auto model = mList[row];
 	if (role == Qt::DisplayRole) {
 		return QVariant::fromValue(model);
+	}else{
+		return model->getBrand();
 	}
 
 	return QVariant();
 }
 
-
-
-QVariantList ExerciseSerieListModel::getExercises() const{
-	QVariantList models;
-	for(auto exercise : mList){
-		models << QVariant::fromValue(exercise);
-	}
-	return models;
-}
-
-
-void ExerciseSerieListModel::handleRemoved(ExerciseSerieModel * model){
+void RecipeListModel::handleRemoved(RecipeModel * model){
 	auto it = std::find(mList.begin(), mList.end(), model);
 	if( it != mList.end()){
 		int row = it - mList.begin();

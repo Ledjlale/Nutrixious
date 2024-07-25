@@ -1,3 +1,5 @@
+# 1.0.1 (untagged)
+- Recipes
 
 # 1.0.1 - 2024-07-29
 - Make current personal data in read-mode after adding it.

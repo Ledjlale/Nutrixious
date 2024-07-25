@@ -18,24 +18,23 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DATABASE_EXERCISE_SERIE_LIST_MODEL_H
-#define DATABASE_EXERCISE_SERIE_LIST_MODEL_H
+#ifndef DATABASE_RECIPE_LIST_MODEL_H
+#define DATABASE_RECIPE_LIST_MODEL_H
 
 #include "src/tool/proxyModel/ProxyAbstractListModel.hpp"
-#include "ExerciseSerieModel.h"
+#include "RecipeModel.h"
 
-class ExerciseSerieListModel: public ProxyAbstractListModel<ExerciseSerieModel*> {
+class RecipeListModel: public ProxyAbstractListModel<RecipeModel*> {
 Q_OBJECT
 public:
-	ExerciseSerieListModel(QObject * parent = nullptr);
-	ExerciseSerieListModel(QVariantList series, QObject * parent);
+	RecipeListModel(QObject * parent = nullptr);
 
 	virtual QHash<int, QByteArray> roleNames () const override;
 	QVariant data (const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-	QVariantList getExercises() const;
+	void update();
 
-	void handleRemoved(ExerciseSerieModel *model);
+	void handleRemoved(RecipeModel *model);
 
 };
 

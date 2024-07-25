@@ -64,7 +64,7 @@ StackLayout{
 			}
 		}
 	}*/
-	DiaryPage{
+	DiaryPage{//0
 		id: diaryPage
 		isCurrentItem: StackLayout.isCurrentItem
 		onExerciseRequested: currentIndex = 1
@@ -84,19 +84,19 @@ StackLayout{
 			foodPage.editFoodModel(foodModel)
 		}
 	}
-	TrainingPage{
+	TrainingPage{//1
 		isCurrentItem: StackLayout.isCurrentItem
 		onBack: {
 			mainItem.currentIndex = 0
 			diaryPage.updateTrainings()
 		}
 	}
-	MealGroupsPage{
+	MealGroupsPage{//2
 		isCurrentItem: StackLayout.isCurrentItem
 		onBack: mainItem.currentIndex = 0
 	}
 	
-	FoodsPage{
+	FoodsPage{//3
 		id: foodPage
 		property var mealGroup
 		isPicker: true
@@ -114,6 +114,11 @@ StackLayout{
 			mainItem.currentIndex = 0
 			++diaryPage.totalRefresh
 		}
-					
+		onCreateRecipeRequest: mainItem.currentIndex = 4
+	}
+	RecipeEditorPage{//4
+		id: recipePage
+		isCurrentItem: StackLayout.isCurrentItem
+		onBack: mainItem.currentIndex = 3
 	}
 }

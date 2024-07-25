@@ -20,6 +20,7 @@ QtObject {
 	property string saveButton: 'image://internal/save.svg'
 	property string undoButton: 'image://internal/undo.svg'
 	property string stopwatchButton: 'image://internal/stopwatch.svg'
+	property string recipeButton: 'image://internal/recipe.svg'
 	property string addFoodButton: 'image://internal/add_food.svg'
 	property string addDataButton: addFoodButton
 	property string addProgramButton: addFoodButton
@@ -40,6 +41,6 @@ QtObject {
 	property string resumeButton: 'image://internal/resume.svg'
 	property string bodyButton: 'image://internal/body.svg'
 	property string donateButton: 'image://internal/donate.svg'
+	property string okButton: 'image://internal/ok.svg'
 	
-
 }

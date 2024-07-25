@@ -32,25 +32,35 @@ import App 1.0
 Item {
 	id: mainItem
 	property string offCode
+	property bool isRecipeTarget:false
+	
+	property bool isSavable: !mainItem.isRecipeTarget || !mainItem.foodModel.isSaved
 	property var foodModel: FoodModel{
 			id: foodModel
-
-		}
-	signal saved()
-	onOffCodeChanged: if(offCode) mainItem.foodModel.loadFromOpenFoodFacts(offCode)
-	onVisibleChanged: if(visible){
-		console.log("FoodEditor visible")
-		mainWindow.header.setHeaders( {'showBackButton': true,
-			'showMenuButton': false,
-			'showSaveButton': true,
-			'title': 'Food Editor'
-		})
 	}
-	Component.onCompleted: mainWindow.header.setHeaders( {'showBackButton': true,
-			'showMenuButton': false,
-			'showSaveButton': true,
-			'title': 'Food Editor'
-		})
+	property var ingredientModel: RecipeIngredientModel{
+		ingredientSize: mainItem.foodModel.servingSize
+		ingredientUnitId: mainItem.foodModel.servingUnitId
+		foodId: mainItem.foodModel.id
+		foodModel: mainItem.foodModel
+	}
+	signal saved()
+	
+	function updateHeaders(){
+		if(visible){
+			console.log("FoodEditor visible")
+			mainWindow.header.setHeaders( {'showBackButton': true,
+				'showMenuButton': false,
+				'showSaveButton': mainItem.isSavable,
+				'showOkButton': !mainItem.isSavable && mainItem.isRecipeTarget,
+				'title': 'Food Editor'
+			})
+		}
+	}
+	
+	onOffCodeChanged: if(offCode) mainItem.foodModel.loadFromOpenFoodFacts(offCode)
+	onVisibleChanged: updateHeaders()
+	Component.onCompleted: updateHeaders()
 	Connections{
 		target: mainItem.foodModel
 		function onSaved(){
@@ -59,6 +69,16 @@ Item {
 		function onLoadingFailed(){
 			errorText.text = "Cannot save. If the food have an Open Food Facts image URL, the image could'nt be download. Restart saving."
 			errorPopup.open()
+		}
+// Binding in case of recipe edition
+		function onIdChanged(){
+			mainItem.ingredientModel.foodId = mainItem.foodModel.id
+		}
+		function onServingSizeChanged(){
+			mainItem.ingredientModel.ingredientSize = mainItem.foodModel.servingSize
+		}
+		function onServingUnitIdChanged(){
+			mainItem.ingredientModel.ingredientUnitId = mainItem.foodModel.servingUnitId
 		}
 	}
 	ColumnLayout{
@@ -70,11 +90,10 @@ Item {
 			Layout.fillWidth: true
 			Layout.fillHeight: true
 			clip: true
+			property bool isEditable: !mainItem.foodModel.isSaved || !mainItem.isRecipeTarget
 			model:[{title:'Brand', data: 'brand', editUnits: false, inputMethodHints: Qt.ImhNone, isComputable:false, showImage:true}
 					, {title:'Description', data: 'description', editUnits: false, inputMethodHints: Qt.ImhNone, isComputable:false}
-					, {title:'Serving Size', data: 'servingSize', editUnits: 'servingUnitId', inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:false}
-					//, {title:'Serving per container', data: 'servingsPerContainer', editUnits: false}
-
+					, {title:(mainItem.isRecipeTarget ? 'Ingredient Size' : 'Serving Size'), data: 'servingSize', editUnits: 'servingUnitId', inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:false, isEditable: true}
 					, {title:'Base size', data: 'baseSize', editUnits: 'baseUnitId', inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:false}
 					, {title:'Calories ( kcal )', data: 'calories', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:true}
 					, {title:'Total Fat ( g )', data: 'totalFat', editUnits: false, inputMethodHints: Qt.ImhFormattedNumbersOnly, isComputable:true}
@@ -131,7 +150,7 @@ Item {
 					Layout.preferredWidth:  inputMethodHints ==  Qt.ImhFormattedNumbersOnly ? 120 : 240
 					horizontalAlignment: Text.AlignRight
 					inputMethodHints: modelData.inputMethodHints
-					edit: true
+					edit: modelData.isEditable == undefined ? fieldsList.isEditable : modelData.isEditable
 					property var txt: mainItem.foodModel[modelData.data] < 0 ? '' : mainItem.foodModel[modelData.data]
 					text: txt && inputMethodHints ==  Qt.ImhFormattedNumbersOnly ? Number.parseFloat(txt.toFixed(4)) : txt
 					onEditingFinished: mainItem.foodModel[modelData.data] = newValue
@@ -141,6 +160,7 @@ Item {
 					visible: !!modelData.editUnits
 					textRole: "displayText"
 					valueRole: "id"
+					enabled: modelData.isEditable == undefined ? fieldsList.isEditable : modelData.isEditable
 					model: UnitProxyModel{
 						id: unitProxyModel
 						filterType: UnitProxyModel.WEIGHT | UnitProxyModel.VOLUME

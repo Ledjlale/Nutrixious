@@ -33,7 +33,9 @@ Control.ToolBar{
 	property bool showSaveButton: false
 	property bool showBarcodeButton: false
 	property bool showCreateButton: false
+	property bool showRecipeButton: false
 	property bool showBodyButton: false
+	property bool showOkButton: false
 	property alias title: titleLabel.text
 	property bool displayStopwatch: false
 	property bool displayBody: false
@@ -43,6 +45,8 @@ Control.ToolBar{
 	signal save()
 	signal create()
 	signal barcode()
+	signal recipe()
+	signal ok()
 	
 	
 	function setHeaders(headers){
@@ -53,6 +57,8 @@ Control.ToolBar{
 		showSaveButton = headers.showSaveButton != undefined  ? headers.showSaveButton : false
 		showBarcodeButton = headers.showBarcodeButton != undefined  ? headers.showBarcodeButton : false
 		showCreateButton = headers.showCreateButton != undefined  ? headers.showCreateButton : false
+		showRecipeButton = headers.showRecipeButton != undefined  ? headers.showRecipeButton : false
+		showOkButton = headers.showOkButton != undefined  ? headers.showOkButton : false
 		if( headers.title != undefined) title = headers.title
 	}
 	
@@ -64,6 +70,8 @@ Control.ToolBar{
 		if(headers.showSaveButton != undefined) showSaveButton = headers.showSaveButton
 		if(headers.showBarcodeButton != undefined) showBarcodeButton = headers.showBarcodeButton
 		if(headers.showCreateButton != undefined) showCreateButton = headers.showCreateButton
+		if(headers.showRecipeButton != undefined) showRecipeButton = headers.showRecipeButton
+		if(headers.showOkButton != undefined) showOkButton = headers.showOkButton
 	}
 	
 	RowLayout {
@@ -137,6 +145,19 @@ Control.ToolBar{
 			Layout.preferredHeight: 25
 			Layout.leftMargin: 5
 			Layout.rightMargin: 5
+			visible: mainItem.showRecipeButton
+			imageSource: DefaultStyle.recipeButton
+			colorizationColor: 'white'
+			onClicked:{
+				mainItem.recipe()
+			}
+		}
+		
+		ToolButtonImage{
+			Layout.preferredWidth: 25
+			Layout.preferredHeight: 25
+			Layout.leftMargin: 5
+			Layout.rightMargin: 5
 			visible: mainItem.showCreateButton
 			imageSource: DefaultStyle.createButton
 			colorizationColor: 'white'
@@ -154,6 +175,17 @@ Control.ToolBar{
 			imageSource: DefaultStyle.saveButton
 			colorizationColor: 'white'
 			onClicked: mainItem.save()
+		}
+		
+		ToolButtonImage {
+			Layout.preferredHeight: 25
+			Layout.preferredWidth: 25
+			Layout.leftMargin: 5
+			Layout.rightMargin: 5
+			visible: mainItem.showOkButton
+			imageSource: DefaultStyle.okButton
+			colorizationColor: 'white'
+			onClicked: mainItem.ok()
 		}
 		
 		ToolButtonImage{

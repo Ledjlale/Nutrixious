@@ -85,6 +85,7 @@
 	ui/Page/Nutrition/FoodEditorPage.qml
 	ui/Page/Nutrition/FoodsPage.qml
 	ui/Page/Nutrition/MealGroupsPage.qml
+	ui/Page/Nutrition/RecipeEditorPage.qml
 
 
 	ui/Tool/ColorPicker.qml

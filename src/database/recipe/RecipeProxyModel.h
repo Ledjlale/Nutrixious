@@ -18,25 +18,25 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DATABASE_EXERCISE_SERIE_LIST_MODEL_H
-#define DATABASE_EXERCISE_SERIE_LIST_MODEL_H
+#ifndef DATABASE_RECIPE_PROXY_MODEL_H
+#define DATABASE_RECIPE_PROXY_MODEL_H
 
-#include "src/tool/proxyModel/ProxyAbstractListModel.hpp"
-#include "ExerciseSerieModel.h"
+#include "src/tool/proxyModel/SortFilterProxyModel.hpp"
+#include "src/tool/QmlModel.h"
 
-class ExerciseSerieListModel: public ProxyAbstractListModel<ExerciseSerieModel*> {
+class RecipeProxyModel: public SortFilterProxyModel {
 Q_OBJECT
+	DECLARE_GETSET(QString,name,Name)
 public:
-	ExerciseSerieListModel(QObject * parent = nullptr);
-	ExerciseSerieListModel(QVariantList series, QObject * parent);
+	RecipeProxyModel(QObject * parent = nullptr);
+	
+	virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const;
 
-	virtual QHash<int, QByteArray> roleNames () const override;
-	QVariant data (const QModelIndex &index, int role = Qt::DisplayRole) const override;
+signals:
+	void update();
 
-	QVariantList getExercises() const;
-
-	void handleRemoved(ExerciseSerieModel *model);
-
+protected:
+	QString mName;
 };
 
 #endif

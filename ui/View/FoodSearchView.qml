@@ -40,11 +40,15 @@ Item {
 		}
 	}
 	property FoodProxyModel foodDatabase: FoodProxyModel{
-		//Component.onCompleted: update()
+		Component.onCompleted: mainItem.updateDatabase()
 	}
-	onVisibleChanged:if(visible){
-		foodDatabase.update()
-		mainWindow.setHeaders({'showBackButton':true, 'showMenuButton':false, 'showBarcodeButton':true, 'showCreateButton':true, 'title':'Foods'})
+	onVisibleChanged:updateDatabase()
+	function updateDatabase(){
+		if(visible){
+			console.log("Update Dabatase")
+			foodDatabase.update()
+			mainWindow.setHeaders({'showBackButton':true, 'showMenuButton':false, 'showBarcodeButton':true, 'showCreateButton':true, 'title':'Foods'})
+		}
 	}
 	ColumnLayout{
 		anchors.fill: parent

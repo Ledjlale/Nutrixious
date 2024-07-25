@@ -53,6 +53,11 @@
 #include "src/database/mealFood/MealFoodListModel.h"
 #include "src/database/mealFood/MealFoodProxyModel.h"
 
+#include "src/database/recipe/RecipeModel.h"
+#include "src/database/recipeIngredient/RecipeIngredientModel.h"
+#include "src/database/recipeIngredient/RecipeIngredientListModel.h"
+#include "src/database/recipeIngredient/RecipeIngredientProxyModel.h"
+
 #include "src/database/training/serie/TrainingSerieModel.h"
 #include "src/database/training/exercise/TrainingExerciseModel.h"
 #include "src/database/training/TrainingModel.h"
@@ -146,7 +151,12 @@ void registerTypes(){
 	qmlRegisterType<MealGroupListModel>("App", 1, 0, "MealGroupListModel");
 	qmlRegisterType<MealGroupProxyModel>("App", 1, 0, "MealGroupProxyModel");
 
-
+	qmlRegisterType<RecipeModel>("App", 1, 0, "RecipeModel");
+	qRegisterMetaType<RecipeModel*>("RecipeModel*");
+	
+	qmlRegisterType<RecipeIngredientModel>("App", 1, 0, "RecipeIngredientModel");
+	qmlRegisterType<RecipeIngredientListModel>("App", 1, 0, "RecipeIngredientListModel");
+	qmlRegisterType<RecipeIngredientProxyModel>("App", 1, 0, "RecipeIngredientProxyModel");
 
 	qmlRegisterType<UnitModel>("App", 1, 0, "UnitModel");
 	qRegisterMetaType<UnitModel*>("UnitModel*");

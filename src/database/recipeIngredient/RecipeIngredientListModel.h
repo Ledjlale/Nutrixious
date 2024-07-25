@@ -18,25 +18,28 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DATABASE_EXERCISE_SERIE_LIST_MODEL_H
-#define DATABASE_EXERCISE_SERIE_LIST_MODEL_H
+#ifndef DATABASE_RECIPE_INGREDIENT_LIST_MODEL_H
+#define DATABASE_RECIPE_INGREDIENT_LIST_MODEL_H
 
 #include "src/tool/proxyModel/ProxyAbstractListModel.hpp"
-#include "ExerciseSerieModel.h"
+#include "RecipeIngredientModel.h"
+#include "src/database/recipe/RecipeModel.h"
+#include "src/tool/date/DateModel.h"
 
-class ExerciseSerieListModel: public ProxyAbstractListModel<ExerciseSerieModel*> {
+class RecipeIngredientListModel: public ProxyAbstractListModel<RecipeIngredientModel*> {
 Q_OBJECT
 public:
-	ExerciseSerieListModel(QObject * parent = nullptr);
-	ExerciseSerieListModel(QVariantList series, QObject * parent);
+	RecipeIngredientListModel(QObject * parent = nullptr);
 
 	virtual QHash<int, QByteArray> roleNames () const override;
 	QVariant data (const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-	QVariantList getExercises() const;
+	void update(qint64 recipeId);
+	void setRecipeModel(RecipeModel * recipe);
 
-	void handleRemoved(ExerciseSerieModel *model);
-
+	void handleRemoved(RecipeIngredientModel *model);
+protected:
+	RecipeModel *mRecipeModel = nullptr;
 };
 
 #endif
