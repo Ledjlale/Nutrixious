@@ -86,54 +86,59 @@ Item {
 				}
 			}
 //---------------------------------		OVERVIEW
-			RowLayout{
+			SwipeLayout{
+				id: overviewLayout
+				Layout.fillWidth : true
 				visible: mainWindow.header.displayBody
-				RowLayout{
-					width: parent.width
-					height: implicitHeight + 10
-					property bool editable: dayBar.currentDay.isToday
-					TextField{
-						Layout.fillWidth: true
-						visible: lastDataModel.isSaved
-						inputMethodHints: Qt.ImhDigitsOnly
-						title: ' '
-						text: lastDataModel.dateTimeStr
-						readOnly: false
-						onEditingFinished: lastDataModel.dateTimeStr = newValue
-					}
-					TextField{
-						Layout.fillWidth: true
-						title: 'Weight'
-						edit: parent.editable
-						text: lastDataModel.weight
-						onEditingFinished:lastDataModel.weight = newValue
-					}
-					TextField{
-						Layout.fillWidth: true
-						title: 'Height'
-						edit: parent.editable
-						text: lastDataModel.height
-						onEditingFinished:lastDataModel.height = newValue
-					}
-					SexBox{
-						Layout.fillWidth: true
-						edit: parent.editable
-						value: lastDataModel.sex
-						onAccepted:lastDataModel.sex = newValue
-					}
-					ButtonImage{
-						Layout.alignment: Qt.AlignCenter
-						Layout.preferredWidth: 25
-						Layout.preferredHeight: 25
-						Layout.rightMargin: 5
-						visible: parent.editable
-						imageSource: DefaultStyle.addDataButton
-						colorizationColor: Material.foreground
-						onClicked: {
-							forceActiveFocus()
-							lastDataModel.add()
-							lastDataModel.loadLastIn(dayBar.currentDay)
-							mainWindow.header.displayBody = false
+				isEditable: true
+				contentItem: RowLayout{
+					width: overviewLayout.width
+					RowLayout{
+						width: parent.width
+						height: implicitHeight + 10
+						property bool editable: (dayBar.currentDay.isToday && lastDataModel.dateTimeStr && !lastDataModel.isSameDay(dayBar.currentDay))|| overviewLayout.edit
+						TextField{
+							Layout.fillWidth: true
+							visible: lastDataModel.isSaved
+							inputMethodHints: Qt.ImhDigitsOnly
+							title: ' '
+							text: lastDataModel.dateTimeStr
+							readOnly: false
+							onEditingFinished: lastDataModel.dateTimeStr = newValue
+						}
+						TextField{
+							Layout.fillWidth: true
+							title: 'Weight'
+							edit: parent.editable
+							text: lastDataModel.weight
+							onEditingFinished:lastDataModel.weight = newValue
+						}
+						TextField{
+							Layout.fillWidth: true
+							title: 'Height'
+							edit: parent.editable
+							text: lastDataModel.height
+							onEditingFinished:lastDataModel.height = newValue
+						}
+						SexBox{
+							Layout.fillWidth: true
+							edit: parent.editable
+							value: lastDataModel.sex
+							onAccepted:lastDataModel.sex = newValue
+						}
+						ButtonImage{
+							Layout.alignment: Qt.AlignCenter
+							Layout.preferredWidth: 25
+							Layout.preferredHeight: 25
+							Layout.rightMargin: 5
+							visible: parent.editable
+							imageSource: DefaultStyle.addDataButton
+							colorizationColor: Material.foreground
+							onClicked: {
+								forceActiveFocus()
+								lastDataModel.add()
+								lastDataModel.loadLastIn(dayBar.currentDay)
+							}
 						}
 					}
 				}

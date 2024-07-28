@@ -107,7 +107,6 @@ void PersonalDataModel::setDateTimeStr(QString data) {
 	}
 }
 
-
 QDate PersonalDataModel::getBirthday() const{
 	return mBirthday;
 }

@@ -1,4 +1,7 @@
 
+# 1.0.1 (unreleased)
+- Make current personal data in read-mode after adding it.
+
 # 1.0.0
 - Programs, exercises, foods and personal data can be set.
 - Customizable meals are managed in a diary.
