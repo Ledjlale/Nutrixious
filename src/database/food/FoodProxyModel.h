@@ -30,7 +30,8 @@ Q_OBJECT
 public:
 	FoodProxyModel(QObject * parent = nullptr);
 	
-	virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const;
+	virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override;
+	virtual bool lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const override;
 
 signals:
 	void update();

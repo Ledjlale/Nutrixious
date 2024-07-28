@@ -158,6 +158,7 @@ DEFINE_GETSET(FoodModel,double,vitaminA,VitaminA)
 DEFINE_GETSET(FoodModel,double,vitaminC,VitaminC)
 
 DEFINE_GETSET(FoodModel,bool,autoCompute,AutoCompute)
+DEFINE_SIMPLE_GETSET(FoodModel,QDateTime,lastUsed,LastUsed)
 
 //-------------------------------------------------------------------------------------------------------------------
 
@@ -416,6 +417,26 @@ QList<FoodModel*> FoodModel::buildAll(QObject * parent){
 		models << model;
 	}
 
+	if(!query.exec( "SELECT open_food_facts_code, brand, description, MAX(consumption_date_time) FROM meal_foods GROUP BY open_food_facts_code, brand, description ORDER BY consumption_date_time DESC")) qCritical() << "Cannot select all meal foods for storage order  : "  << query.lastError().text();
+	
+	while (query.next()) {
+		qInfo() << query.value(3).toLongLong() << query.value(0).toString() << query.value(1).toString() << query.value(2).toString();
+		for(int i = 0 ; i < models.size() ; ++i){
+			auto item = models[i];
+			if(item->getLastUsed().isValid()) continue;
+			bool setLast = false;
+			QString code = query.value(0).toString();
+			if( !code.isEmpty()){
+				if(code == item->getOpenFoodFactsCode()){
+					item->setLastUsed(QDateTime::fromMSecsSinceEpoch(query.value(3).toLongLong()));
+					break;
+				}
+			}else if(item->getOpenFoodFactsCode().isEmpty() && item->getBrand() == query.value(1).toString() && item->getDescription() == query.value(2).toString()){
+				item->setLastUsed(QDateTime::fromMSecsSinceEpoch(query.value(3).toLongLong()));
+				break;
+			}
+		}
+	}
 	return models;
 }
 
