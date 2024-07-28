@@ -395,6 +395,17 @@ void FoodModel::load(QSqlQuery &query){
 	clearBackupValues();
 }
 
+bool FoodModel::loadFromOpenFoodFactsCode(QString code){
+	QSqlQuery query;
+	if(!query.exec( QStringLiteral("SELECT * FROM foods WHERE open_food_facts_code ='%1'").arg(code) )) qCritical() << "Cannot select food from OFF  : "  << query.lastError().text();
+	bool haveResult = false;
+	while (query.next()) {
+		load(query);
+		haveResult = true;
+	}
+	return haveResult;
+}
+
 QList<FoodModel*> FoodModel::buildAll(QObject * parent){
 	QList<FoodModel*> models;
 	QSqlQuery query;
@@ -463,7 +474,8 @@ void FoodModel::findOpenFoodFacts(const QString& name){
 
 void FoodModel::loadFromOpenFoodFacts(const QString& code) {
 	setOpenFoodFactsCode(code);
-	qWarning() << code;
+	qInfo() << "Search for OFF code: " << code;
+	if( loadFromOpenFoodFactsCode(code)) return;
 	QNetworkRequest request;
 	QUrl url("https://ssl-api.openfoodfacts.org/api/v0/product/" +code+".json&fields="+getAllFields().join(','));
 #ifndef QT_NO_SSL
