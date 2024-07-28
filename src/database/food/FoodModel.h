@@ -66,6 +66,9 @@ Q_OBJECT
 
 	DECLARE_GETSET(double,baseSize,BaseSize)
 	DECLARE_GETSET(qint64,baseUnitId,BaseUnitId)
+	
+	
+	DECLARE_GETSET(QDateTime,lastUsed,LastUsed)
 
 public:
 	FoodModel();	// QML
@@ -149,6 +152,7 @@ protected:
 	bool mAutoCompute = false;
 // Internal
 	QString mTablePrefix = "";
+	QDateTime mLastUsed;
 
 };
 

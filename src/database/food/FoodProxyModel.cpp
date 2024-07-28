@@ -28,6 +28,7 @@ FoodProxyModel::FoodProxyModel(QObject *parent)
 	connect(this, &FoodProxyModel::update, list, &FoodListModel::update);
 	connect(this,&FoodProxyModel::nameChanged,this, &FoodProxyModel::invalidateFilter);
 	setSourceModel(list);
+	sort(0,Qt::DescendingOrder);
 }
 
 DEFINE_SIMPLE_GETSET(FoodProxyModel,QString,name,Name)
@@ -38,6 +39,14 @@ bool FoodProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourcePa
 	else{
 		QModelIndex index0 = sourceModel()->index(sourceRow, 0, sourceParent);
 		auto model = sourceModel()->data(index0).value<FoodModel*>();
-		return model->getBrand().contains(mName) || model->getDescription().contains(mName);
+		return model->getBrand().contains(mName,Qt::CaseInsensitive) || model->getDescription().contains(mName,Qt::CaseInsensitive);
 	}
+}
+
+bool FoodProxyModel::lessThan (const QModelIndex &left, const QModelIndex &right) const{
+	auto l = sourceModel()->data(left);
+	auto r = sourceModel()->data(right);
+	auto ml = l.value<FoodModel*>();
+	auto mr = r.value<FoodModel*>();
+	return ml->getLastUsed() < mr->getLastUsed();
 }
