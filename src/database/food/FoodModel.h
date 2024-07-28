@@ -91,6 +91,7 @@ public:
 
 	static FoodModel *build(QSqlQuery &query, QObject * parent);
 	void load(QSqlQuery &query);
+	bool loadFromOpenFoodFactsCode(QString code);
 
 
 	Q_INVOKABLE void loadFromOpenFoodFacts(const QString& code);
