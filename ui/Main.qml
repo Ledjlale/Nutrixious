@@ -46,7 +46,11 @@ ApplicationWindow {
 	function setHeaders(headers){
 		toolBar.setHeaders(headers)
 	}
-
+	
+	onClosing: (close) => {
+         close.accepted = false
+         quitConfirm.open()
+	}
 	header: ToolBar{
 		id: toolBar
 		z: -1
@@ -234,6 +238,12 @@ ApplicationWindow {
 		Stopwatch{
 			anchors.fill: parent
 		}
+	}
+	Dialog{
+		id: quitConfirm
+		text: 'Would you like to quit the application?'
+		standardButtons: Dialog.Yes | Dialog.No
+		onAccepted: Qt.quit()
 	}
 	Popup{
 		id: mainErrorPopup
