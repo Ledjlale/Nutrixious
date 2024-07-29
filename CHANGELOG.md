@@ -5,6 +5,7 @@
 - Insensitive case search on foods.
 - Sort foods by last used.
 - Export/import database.
+- Exit popup confirmation.
 
 # 1.0.0
 - Programs, exercises, foods and personal data can be set.

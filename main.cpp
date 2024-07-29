@@ -199,6 +199,7 @@ int main(int argc, char *argv[]) {
 			&app,
 			[]() { QCoreApplication::exit(-1); },
 			Qt::QueuedConnection);
+		QObject::connect(gEngine, &QQmlApplicationEngine::quit,&app, QCoreApplication::quit);
 		QQuickStyle::setStyle("Material");
 		registerTypes();
 		gEngine->load(url);
