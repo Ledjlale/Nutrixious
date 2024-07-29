@@ -208,6 +208,7 @@ int main(int argc, char *argv[]) {
 		//gEngine->load(colorPicker);
 	#endif
 		result = app.exec();
+		qInfo() << "Deleting QML engine before exit";
 		delete  gEngine;// If not, there will be a deadlock from QPixmapReader
 	}
 	qInfo() << "Exiting application with code " << result;

@@ -29,7 +29,10 @@ class SettingsModel : public QObject {
     Q_OBJECT
     DECLARE_GETSET_READ(bool,openFoodFactsEnabled,OpenFoodFactsEnabled)
 public:
-	SettingsModel(QObject *parent);    
+	SettingsModel(QObject *parent);
+	
+	Q_INVOKABLE bool saveDatabase(QString path);
+	Q_INVOKABLE bool loadDatabase(QString path);    
 };
 
 #endif

@@ -4,6 +4,7 @@
 - Avoid to recreate food if OFF has already be stored.
 - Insensitive case search on foods.
 - Sort foods by last used.
+- Export/import database.
 
 # 1.0.0
 - Programs, exercises, foods and personal data can be set.

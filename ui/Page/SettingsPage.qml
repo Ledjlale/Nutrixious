@@ -21,6 +21,8 @@
 import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
+import QtQuick.Dialogs
+import QtCore
 
 import App 1.0
 
@@ -50,6 +52,39 @@ Item {
 			text: qsTr("Dark Mode")
 			checked: DefaultStyle.theme == Material.Dark
 			onCheckedChanged: DefaultStyle.theme= darkThemeSwitch.checked ? Material.Dark : Material.Light
+		}
+		RowLayout{
+			Button{
+				text: 'Export Database'
+				onClicked: saveDialog.open()
+				FileDialog {
+					id: saveDialog
+					fileMode: FileDialog.SaveFile
+					currentFolder: StandardPaths.standardLocations(StandardPaths.DocumentsLocation)[0]
+					onAccepted: {
+						if(!SettingsCpp.saveDatabase(selectedFile))
+							mainErrorPopup.text = "Error on saving. Database couldn't be exported. Check logs for more details";
+						else
+							mainErrorPopup.text = "Database saved.";
+						mainErrorPopup.open()
+					}
+				}
+			}
+			Button{
+				text: 'Import Database (erase old data!)'
+				onClicked: loadDialog.open()
+				FileDialog {
+					id: loadDialog
+					currentFolder: StandardPaths.standardLocations(StandardPaths.DocumentsLocation)[0]
+					onAccepted: {
+						if(!SettingsCpp.loadDatabase(selectedFile))
+							mainErrorPopup.text = "Error on loading. Database couldn't be restored. Check logs for more details";
+						else
+							mainErrorPopup.text = "Database restored.";	
+						mainErrorPopup.open()
+					}
+				}
+			}
 		}
 		Item{
 			Layout.fillHeight: true
