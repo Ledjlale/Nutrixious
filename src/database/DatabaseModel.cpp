@@ -133,7 +133,7 @@ void DatabaseModel::migrate(){
 	int fieldNo = query.record().indexOf("user_version");
 	while (query.next()) {
 		version = query.value(fieldNo).toInt();
-		qDebug() << "Database Version detected : " << version;
+		qInfo() << "Database Version detected : " << version;
 	}
 	if(version == 0){
 		qDebug() << "Creating database";
@@ -401,7 +401,7 @@ void DatabaseModel::migrate(){
 	fieldNo = query.record().indexOf("user_version");
 	while (query.next()) {
 		version = query.value(fieldNo).toInt();
-		qDebug() << "Final Database Version : " << version;
+		qInfo() << "Final Database Version : " << version;
 	}
 }
 

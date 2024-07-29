@@ -53,3 +53,7 @@ export PATH=$Qt_DIR/bin:$PATH
 cd $BUILD_PATH
 $Qt_DIR/bin/qt-cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo --log-level=WARNING -DANDROID_VERSION_CODE=$2 -DANDROID_VERSION_NAME=$1
 cmake --build . --target all --parallel
+echo "Cleaning all memory"
+rm -rf build-qtandroid
+rm -rf qthost-output
+rm -rf qtandroid-output
