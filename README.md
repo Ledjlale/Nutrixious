@@ -42,10 +42,6 @@ Focus on Android only! (and Linux for debugging).
 - Display graphs and statistics on performances (feature done)
 - Graphics and statistics on body status (calories, weight) (feature done)
 - Debug logs (feature done)
-- Rework on usability
-- Layouts
-- Colors
-- Icons
 - F-Droid
 - Minor or experimentals improvements.
 - Tutorials
@@ -53,7 +49,7 @@ Focus on Android only! (and Linux for debugging).
 #### Secondary features:
 - Translations (Weblate)
 - Optimizations
-- Import/Export data
+- Import/Export data (feature done)
 - Multi local account (main interest for Desktop)
 - Sharing progression
 - Experimentations on Muscle type targets, their modelisation (3D) and training program build
@@ -61,7 +57,7 @@ Focus on Android only! (and Linux for debugging).
 - Maintenance for Linux, Windows, MacOs, IOS
 - Data calibration from personal data instead of general rules.
 - Experimentals improvements.
-- Recipes and temporary foods.
+- Recipes and temporary foods
 
 ### Dependencies
 Qt6 : https://www.qt.io/

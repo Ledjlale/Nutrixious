@@ -1,5 +1,5 @@
 
-# 1.0.1 (unreleased)
+# 1.0.1 - 2024-07-29
 - Make current personal data in read-mode after adding it.
 - Avoid to recreate food if OFF has already be stored.
 - Insensitive case search on foods.
@@ -7,7 +7,7 @@
 - Export/import database.
 - Exit popup confirmation.
 
-# 1.0.0
+# 1.0.0 - 2024-07-24
 - Programs, exercises, foods and personal data can be set.
 - Customizable meals are managed in a diary.
 - A physical training on a program can be done from diary.
