@@ -24,6 +24,8 @@
 #include <QSqlRecord>
 #include <QSqlError>
 #include <QCoreApplication>
+#include <QFile>
+#include <QDir>
 
 #include "program/exercise/ProgramExerciseModel.h"
 #include "program/serie/ProgramSerieModel.h"
@@ -47,19 +49,82 @@ DatabaseModel::DatabaseModel(QObject *parent)
 
 // ex_ => exercises
 
-void DatabaseModel::migrate(){
-	QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+bool DatabaseModel::saveDatabase(QString path){
+	QSqlQuery query;
+	QFile file(path);
+	QFile backup("backup.db");
+	QDir d;
+	if(backup.exists()) backup.remove();
+	if(!query.exec(QStringLiteral("VACUUM INTO 'backup.db'"))){
+		qCritical() << "Cannot backup database : "<< query.lastError().text();
+		return false;
+	}
+	QFile copy("backup.db");
+	if(!copy.open(QIODeviceBase::ReadOnly)) {
+		qCritical() << "Cannot open backup file for reading";
+		return false;
+	}
+	if(!file.open(QIODeviceBase::WriteOnly)) {
+		qCritical() << "Cannot open file for writting";
+		return false;
+	}
+	
+	while (!copy.atEnd()) {// QFile::copy doesn't seems to work and if file has been removed, there are issues with Android permissions.
+		QByteArray line = copy.readLine();
+		file.write(line);
+	}
+	copy.remove();
+	qInfo() << "Saving complete";
+	
+	return true;
+}
+
+QString DatabaseModel::getDbName(){
 #ifdef QT_DEBUG
-	db.setDatabaseName(":memory:");
-	//db.setDatabaseName("data");
+	return ":memory:";
+	//return "data";
 #else
-	db.setDatabaseName("data");
+	return "data";
 #endif
+}
+
+bool DatabaseModel::loadDatabase(QString path){
+	bool ok = true;
+	QString dbName = getDbName();
+	QSqlDatabase db = QSqlDatabase::database();
+	db.close();
+	QFile copy(path);
+	QFile backup(dbName);
+	if(!backup.rename(dbName+".bak")){
+		qCritical() << QObject::tr("Cannot backup current database");
+		db.open();
+		return false;
+	}
+	if(!copy.copy(dbName)){
+		qCritical() << QObject::tr("Cannot copy source file for loading database");
+		backup.rename(dbName);
+		db.open();
+		return false;
+	}
+	if(!db.open()){
+		qCritical() << QObject::tr("Unknown database. Revert to backup");
+		QFile r(dbName);
+		r.remove();
+		backup.rename(dbName);
+		db.open();
+		return false;
+	}
+	backup.remove();
+	db.open();
+	return true;
+}
+
+void DatabaseModel::migrate(){
+	QString dbName = getDbName();
+	QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+	db.setDatabaseName(dbName);
 	if (!db.open()) {
-		qCritical() << QObject::tr("Unable to establish a database connection.\n"
-						"This example needs SQLite support. Please read "
-						"the Qt SQL driver documentation for information how "
-						"to build it.");
+		qCritical() << QObject::tr("Unable to establish a database connection.\n");
 		return;
 	}
 	QSqlQuery query;

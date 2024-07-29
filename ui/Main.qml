@@ -235,5 +235,27 @@ ApplicationWindow {
 			anchors.fill: parent
 		}
 	}
-
+	Popup{
+		id: mainErrorPopup
+		property alias text: errorText.text
+		height: mainWindow.height
+		width: mainWindow.width
+		//y: -mapToGlobal(0,0).y
+		Rectangle{
+			color: Material.background
+			anchors.fill: parent
+			Text{
+				id: errorText
+				anchors.fill: parent
+				horizontalAlignment: Text.AlignHCenter
+				verticalAlignment: Text.AlignVCenter
+				color: Material.foreground
+				wrapMode: Text.WordWrap
+			}
+			MouseArea{
+				anchors.fill: parent
+				onClicked: mainErrorPopup.close()
+			}
+		}
+	}
 }

@@ -19,7 +19,10 @@
  */
 
 #include "SettingsModel.h"
+#include "src/database/DatabaseModel.h"
 #include <QSettings>
+#include <QUrl>
+#include <QDir>
 
 SettingsModel::SettingsModel(QObject *parent)
 	: QObject{parent}
@@ -34,5 +37,20 @@ void SettingsModel::setOpenFoodFactsEnabled(bool data){
 	QSettings settings;
 	settings.setValue("OpenFoodFactsEnabled", data);
 	emit openFoodFactsEnabledChanged();
+}
+
+bool SettingsModel::saveDatabase(QString path){
+	QFileInfo fileInfo(path);
+	return DatabaseModel::saveDatabase( fileInfo.absoluteFilePath());
+}
+
+bool SettingsModel::loadDatabase(QString path){
+	QFileInfo fileInfo(path);
+	if(fileInfo.exists())
+		return DatabaseModel::loadDatabase( fileInfo.absoluteFilePath());
+	else{
+		qWarning() << "Cannot import database because file doesn't exist";
+		return false;
+	}
 }
 

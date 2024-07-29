@@ -28,7 +28,10 @@ class DatabaseModel : public QObject {
 	Q_OBJECT
 public:
 	explicit DatabaseModel(QObject *parent = nullptr);
+	static QString getDbName();
 
+	static bool saveDatabase(QString path);
+	static bool loadDatabase(QString path);
 	static void migrate();
 	static void initFoodData();
 	static void initMealFoodData();
