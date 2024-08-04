@@ -6,6 +6,10 @@ It will allow you to follow your physical training and carry out calorie assessm
 
 <noscript><a href="https://liberapay.com/Ledjlale/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript>
 
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/org.ledjlale.Nutrixious/)
+
 ## RoadMap:
 
 ### Current Status
