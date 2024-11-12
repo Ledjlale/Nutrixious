@@ -1,3 +1,5 @@
+# As of 12/11/2024 and since Github policy on forcing athentication that need a tracked device, this repo is no more longer maintained.
+
 # Nutrixious
 An experimental and personnal application to manage foods and physical trainings without the need of having an online account.
 There are no ads and no paid services.
